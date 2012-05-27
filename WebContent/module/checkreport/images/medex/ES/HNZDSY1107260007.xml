@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="247827" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ES" extension="HNZDSY1107260007" />
+    </patientIDInfo>
+    <patientName>LIU QIANG LI^^^^=留强立^^^^</patientName>
+    <patientGender>1</patientGender>
+    <patientDOB>19580101</patientDOB>
+    <patientAge>53</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>
+      </streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ES" extension="HNZDSY1107260007" />
+    <clinicDiagnose>
+      <narrativeBlock>原发性肝癌</narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ES" extension="HNZDSY1107260007" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>单云竹</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>肝病消化中心二科门诊</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>主机一</depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ES" extension="HNZDSY1107260007" />
+    <deviceType>ES</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2011-7-26 10:06:11</examDate>
+    <bodyPart>电子胃镜检查</bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>HNZDSY1107260007</studyUID>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095755.640.0.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095800.146.1.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095830.812.2.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095831.984.3.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095835.100.4.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095837.765.5.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095919.406.6.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095923.234.7.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095929.146.8.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095930.359.9.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726095957.359.10.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726100003.140.11.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726100011.593.12.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ES" extension="HNZDSY1107260007" />
+    <reportFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110726100541.131.JPG</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>李磊</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-7-26 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[    距门齿36CM以下可见食管四壁有蓝色静脉隆起，呈蛇状，直径约0.5CM，红色征阳性，距门齿37CM1点方向可见溃疡形成，表面覆白苔，大小约0.3X0.3CM,齿状线欠清晰，胃底可见曲张静脉，胃体黏膜呈蛇皮样改变，胃窦黏膜普遍红白相间，以红为主，幽门口圆，十二指肠球部未见异常。
+    ]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>阳性</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[    食管静脉曲张套扎术后
+    食管静脉曲张（中度）
+    食管溃疡
+    胃底静脉曲张
+    门脉高压性胃病
+    ]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

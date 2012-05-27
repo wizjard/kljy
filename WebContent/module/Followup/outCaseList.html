@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>门诊记录</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="Followup.js"></script>
+<script type="text/javascript" src="../../module/biomedical/MemberInfoForm.js"></script>
+<script type="text/javascript">
+var PID=App.util.getHtmlParameters('id');
+//liugang 2011-08-06修改
+var HISPID = App.util.getHtmlParameters('HISPID');
+var actHISPID = App.util.getHtmlParameters('actHISPID');
+var memzhenPID = App.util.getHtmlParameters('memzhenPID');
+var flag = App.util.getHtmlParameters('flag');
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'border',
+		items:[
+			Ext.apply(Followup(),{
+				region:'center',
+				xtype:'grid',
+				border:true,
+				id:'case-list-grid', 
+				title:'门诊记录列表',
+				tbar:createToolbar(),
+				
+				listeners:{
+					render:function(){
+					//liugang 2011-08-06修改
+							//查找HIS中该病人的所有的门诊记录
+						this.getStore().baseParams={method:'executeOnePatientOutCase',id:PID,hisPID:HISPID};
+						this.getStore().load();
+					}
+				}
+			})
+		]
+	});
+});
+
+function createToolbar(){
+	return new Ext.Toolbar({items:[
+		{
+			xtype:'tbseparator'
+		},{
+			text:'门诊记录',
+			tooltip:'编辑门诊记录',
+			handler:function(){
+				var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+				if(_ss.length==0){
+					alert('请选择需要操作的门诊记录。');
+					return;
+				}
+				//liugang 2011-08-06修改
+				
+				window.parent.document.getElementById('iframe').src='outCaseMain.html?KID='+_ss[0].data.id+'&PID='+PID+'&outRegno='+_ss[0].data.outRegno+'&HISPID='+HISPID+'&flag='+flag;
+			}
+		}
+		,{
+			xtype:'tbseparator'
+		},
+		'->',{
+			text:'&nbsp;返回&nbsp;',
+			tooltip:'返回门诊病人列表',
+			handler:function(){
+			//liugang 2011-08-06修改
+				if(flag == 'act'){
+					//查找HIS中该病人的所有的门诊记录
+					window.parent.backFirstPage();
+				}else if(flag=='ward'){
+					window.parent.backAllPage();
+				}else if(flag=='search'){
+					window.parent.backFirstPageSearch();
+				}else{
+					window.parent.backFirstPage();
+				}
+			}
+		}
+	]});
+}
+
+//父页面操作使用
+function selectOneRecord(){
+	var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择需要操作的门诊记录。');
+		return;
+	}else{
+		return _ss[0].data.outTime;
+	}
+}
+
+//父页面使用返回KID
+function selectOneRecordKID(){
+	var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择需要操作的门诊记录。');
+		return ;
+	}else{
+		return _ss[0].data.id;
+	}
+}
+
+//父页面使用返回整个对象
+function selectOneRecordAll(){
+	var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择需要操作的门诊记录。');
+		return ;
+	}else{
+		return _ss[0];
+	}
+}
+
+function loadPatSimInfo(){
+	var _div=Ext.get('PatSimInfo-DIV');
+	if (!_div) {
+		Ext.DomHelper.append(Ext.getBody(), {
+			tag: 'div',
+			id: 'PatSimInfo-DIV'
+		});
+		_div=Ext.get('PatSimInfo-DIV');
+	}
+	_div.load({
+		url:App.App_Info.BasePath+'/module/Patient/PatSimpleInfo.jsp?timestamp='+new Date().getTime()+'&id='+PID,
+		scripts:true,
+		text:'正在获取病人基本信息......'
+	});
+}
+
+</script>
+</head>
+<body>
+</body>
+</html>

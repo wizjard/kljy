@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Loader-Page</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.getBody().load({
+		url:App.App_Info.BasePath+App.util.getHtmlParameters('src'),
+		scripts:true,
+		nocache:true,
+		text:'页面加载中，请稍候... ...'
+	});
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>

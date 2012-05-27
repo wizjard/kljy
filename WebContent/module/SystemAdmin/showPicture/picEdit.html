@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>编辑图片</title>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<link type="text/css" rel="stylesheet"
+			href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css" />
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		
+		<script type="text/javascript" src="script/picEdit.js"></script>
+		<style type="text/css">
+.item-title {
+	padding-left: 1em;
+	line-height: 18px;
+	font-size: 14px;
+	font-weight: bold;
+}
+</style>
+	</head>
+	<body>
+		<form>
+		<input type="hidden" name="id" value="-1"/>
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff
+			cellPadding=2>
+			<tr>
+				<td colspan=4 class="title">
+					图片信息
+				</td>
+			</tr>
+			<tr>
+				<td colspan=4 class="item-title">
+					基本
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="t1" width="100">
+					图片来源：
+				</td>
+				<td class="t2">
+					<select name="typeName" id="typeName">
+						<option value="医务处图片">医务处图片</option>
+					</select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="t1" width="100">
+					图片名称：
+				</td>
+				<td class="t2">
+					<input name="picTitle" type="text" style="width: 30%" />
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="t1" width="100">
+					上传图片：
+				</td>
+				<td>
+					<table cellpadding="0" cellspacing="0">
+						<tr>
+							<td>
+								<iframe scrolling="no" id="uploadFrame1" height="200" width="400"
+									frameborder="0"
+									src="../../../PUBLIC/fileUpload/uploadPicture.html"></iframe>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="4">
+					<div style="text-align: center">
+						<input type="button" value="保存" onclick="SaveData()" />
+						<input type="reset" value="重置" style="margin-left: 2em" />
+					</div>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</body>
+</html>

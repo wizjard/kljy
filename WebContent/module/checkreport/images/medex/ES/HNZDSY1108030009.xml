@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="248027" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ES" extension="HNZDSY1108030009" />
+    </patientIDInfo>
+    <patientName>LI YONG DONG^^^^=李永东^^^^</patientName>
+    <patientGender>1</patientGender>
+    <patientDOB>19770101</patientDOB>
+    <patientAge>34</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>
+      </streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ES" extension="HNZDSY1108030009" />
+    <clinicDiagnose>
+      <narrativeBlock>肝炎</narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ES" extension="HNZDSY1108030009" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>王建芳</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>肝病内分泌科</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>主机二</depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ES" extension="HNZDSY1108030009" />
+    <deviceType>ES</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2011-8-3 10:06:17</examDate>
+    <bodyPart>电子胃镜检查</bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>HNZDSY1108030009</studyUID>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100145.140.0.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100204.828.1.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100216.187.2.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100234.593.3.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100258.468.4.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100414.875.5.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100415.578.6.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100448.671.7.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100455.218.8.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100505.468.9.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ES" extension="HNZDSY1108030009" />
+    <reportFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110803100643.609.JPG</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>马军伟</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-8-3 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[食管通过顺利，黏膜光滑，呈橘红色，齿状线清晰，未见静脉曲张。胃黏膜光滑，呈红白相间，以红为主，胃窦部明显。黏液池量中等，有白色物漂浮。幽门口圆，十二指肠未见异常。]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>阳性</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[慢性浅表性胃炎]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

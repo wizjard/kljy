@@ -1,0 +1,18 @@
+.application_form_add {
+	background: url(images/application_form_add.png) left center
+		no-repeat !important;
+}
+
+.application_form_delete {
+	background: url(images/application_form_delete.png) left center
+		no-repeat !important;
+}
+
+.application_form_edit {
+	background: url(images/application_form_edit.png) left center
+		no-repeat !important;
+}
+
+.hide{display:none  !important}
+.tree2 .x-tree-ec-icon{display:none}
+.tree2 .sep{height:15px;overflow:hidden}

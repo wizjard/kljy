@@ -1,0 +1,150 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		initPage();
+		$('input[type="radio"]').click(function(){
+			plcPushScore();
+		});
+	});
+	
+	function initPage(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'plc_findByScid',
+				scId:scId
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					if(json){
+						FormUtil.setFormValues('form',json);
+					}
+				}
+			},'json'
+		);
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'plc_saveOrUpdate',
+				data:JSON.stringify(data)
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					$('input[name="id"]').val(json.id);
+				}
+			},
+			'json'
+		 );
+	}
+	
+	function plcPushScore(){
+		var tumor = isRadioSelected(document.getElementsByName('tumor'));
+		var ce = isRadioSelected(document.getElementsByName('ce'));
+		var cln = isRadioSelected(document.getElementsByName('cln'));
+		var pm = isRadioSelected(document.getElementsByName('pm'));
+		var cgrade = isRadioSelected(document.getElementsByName('cgrade'));
+		var stage = isRadioSelected(document.getElementsByName('stage'));
+		if(ce == 1 && cln == 1 && pm == 1 && cgrade == 1){
+			if(tumor == 1){
+				$('input[name="stage"]').val('Ⅰa');
+			}else if(tumor == 2){
+				$('input[name="stage"]').val('Ⅰb');
+			}else if(tumor == 3){
+				$('input[name="stage"]').val('Ⅱa');
+			}else if(tumor == 4){
+				$('input[name="stage"]').val('Ⅱb');
+			}else{
+				$('input[name="stage"]').val('');
+			}
+		}else if(ce == 2 && cln == 1 && pm == 1 && cgrade == 1){
+			$('input[name="stage"]').val('Ⅱb');
+		}else if(ce == 1 && cln == 1 && pm == 1 && cgrade == 2){
+			$('input[name="stage"]').val('Ⅱb');
+		}else if((ce == 3 || cln == 2 || pm == 2) && (cgrade == 1 || cgrade == 2)){
+			$('input[name="stage"]').val('Ⅲa');
+		}else if(cgrade == 3){
+			$('input[name="stage"]').val('Ⅲb');
+		}else{
+			$('input[name="stage"]').val('');
+		}
+	}
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr><td colspan="6" style="font-size:20px;color:red;">原发性肝癌临床分期</td></tr>
+		<tr>
+			<td width="120" align="center">肿瘤</td>
+			<td width="130" align="center">癌栓</td>
+			<td width="90" align="center">腹腔淋巴结转移</td>
+			<td width="80" align="center">远处转移</td>
+			<td width="130" align="center">Child分级</td>
+			<td width="100" align="center">分期</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="1" /></div><div style="float:left;">单个≤3cm </div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="ce" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cln" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="pm" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="1" /></div><div style="float:left;">Child-pugh A</div></div></td>
+			<td rowspan="10"><input type="text" name="stage" value="" style="width:90px; height:20px;" readOnly/></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="2" /></div><div style="float:left;">单个或两个≤5cm，在半肝</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="ce" value="2" /></div><div style="float:left;">门静脉分支、肝静脉或胆管癌栓</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cln" value="2" /></div><div style="float:left;">有</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="pm" value="2" /></div><div style="float:left;">有</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="2" /></div><div style="float:left;">Child-pugh B</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="3" /></div><div style="float:left;">单个或两个≤10cm，在半肝或两个≤5cm，在左、右两半肝</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="ce" value="3" /></div><div style="float:left;">门静脉主干或下腔静脉癌栓</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="3" /></div><div style="float:left;">Child-pugh C</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="4" /></div><div style="float:left;">单个或两个＞10cm，在半肝或两个＞5cm，在左、右两半肝</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

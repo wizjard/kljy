@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>腹痛</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+	<script language="javascript">
+    	function closeWindow(){
+			var _values = new Array();	
+			var _obj = document.getElementsByTagName('select');
+			for(var i=0;i<_obj.length;i++){
+				_values[i] = _obj[i].value;	
+			}
+			var _sum="";
+			
+			for(var i=0;i< _values.length;i++){
+				if( _values[i]!=""){
+					_sum += _values[i]+ ",";
+				}
+			}
+			//查询最后一个','的下标位置
+			var _num = _sum.lastIndexOf(",");
+			//从第0个下标开始截取长度为_num的字符串
+			_sum = _sum.slice(0,_num);
+			window.returnValue = _sum;
+			window.close();
+		}
+    </script>
+</head>
+
+<body>
+	<table width="511" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="98" align="right">腹痛位置：</td>
+        <td width="135">
+            <select name="vomitingCharacter" id="vomitingCharacter">
+                <option value=""></option>
+                <option value="全腹">全腹</option>
+                <option value="上腹">上腹</option>
+                <option value="下腹">下腹</option>
+                <option value="中上腹">中上腹</option>
+                <option value="中下腹">中下腹</option>
+                <option value="右上腹">右上腹</option>
+                <option value="右下腹">右下腹</option>
+                <option value="左上腹">左上腹</option>
+                <option value="左下腹">左下腹</option>
+                <option value="右肋下">右肋下</option>
+                <option value="左肋下">左肋下</option>
+            </select>
+        </td>
+        <td width="119" align="right">表现类型：</td>
+        <td width="214">
+            <select name="vomitingContent" id="vomitingContent">
+                <option value=""></option>
+                <option value="胀痛">胀痛</option>
+                <option value="疼痛">疼痛</option>
+                <option value="胀闷">胀闷</option>
+                <option value="隐痛">隐痛</option>
+                <option value="钝痛" >钝痛</option>
+                <option value="绞痛">绞痛</option>
+                <option value="剧痛">剧痛</option>
+                <option value="刀割样疼痛">刀割样疼痛</option>
+                <option value="放射性疼痛">放射性疼痛</option>
+                <option value="烧灼样疼痛">烧灼样疼痛</option>
+             </select>
+        </td>
+  </tr>
+  <tr>
+        <td align="right">发作状态：</td>
+        <td>
+        	<select name="apHappenStatus" id="apHappenStatus">
+            	<option value=""></option>
+                <option value="偶有发作">偶有发作</option>
+                <option value="间断性发作">间断性发作</option>
+                <option value="阵发性发作">阵发性发作</option>
+                <option value="持续性发作">持续性发作</option>
+            </select>
+        
+        </td>
+        <td align="right">病情演变：</td>
+        <td>
+        	<select name="apEvolution" id="apEvolution" >
+            	<option value=""></option>
+                <option value="好转">好转</option>
+                <option value="缓解">缓解</option>
+                <option value="减轻">减轻</option>
+                <option value="加重">加重</option>
+                <option value="进行性加重">进行性加重</option>
+            </select>  
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

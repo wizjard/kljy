@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>病程记录打印</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/Lodop/CheckActivX.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<!--<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>-->
+<script type="text/javascript">
+var LODOP=null;
+var id=App.util.getHtmlParameters('id');
+var PID=App.util.getHtmlParameters('PID');
+$(function(){
+	LODOP=document.getElementById("LODOP");
+	/*CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+	var rh=new RepoertHeader();
+	rh.basePath=App.App_Info.BasePath;
+	rh.el=$('#page-header').get(0);
+	rh.cid=id;
+	rh.config.title='新生儿记录';
+	rh.create();*/
+	
+	registrationPageHead(id,'新生儿记录','#page-header');
+	
+	var tpl='<table width="99%" border=0 cellpadding=0 cellspacing=0 class="con">'+
+			'<tr>'+
+				'<td class="time">{time}</td><td class="title">{title}</td><td class="nbsp">&nbsp;</td>'+
+			'</tr>'+
+			'<tr><td colspan=3 class="content">{content}</td></tr>'+
+			'<tr>'+
+				'<td colspan=3>'+
+					'<table width="100%" border=0 cellpadding=0 cellspacing=0>'+
+						'<tr>'+
+							'<td class="docsign">&nbsp;</td>'+
+							'<td class="docsign2">{checker}</td>'+
+							'<td class="docsign1">{submiter}</td>'+
+						'</tr>'+
+					'</table>'+
+				'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td colspan=3 class="line"><div class="line-div">--------------------------------------------------------------------------------</div></td>'+
+			'</tr>'+
+		'</table>';
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/BabyRec.do',
+		{
+			method:'DailyCourseRec_findAllByCaseID',
+			id:id
+		},
+		function(data){
+			$.each(data,function(){
+				$(tpl
+				  .replace('{time}',this.time)
+				  .replace('{title}',this.title)
+				  .replace('{content}',this.content.replaceAll(' ','&nbsp;').replaceAll('\n','<p>').replaceAll(',','，'))
+				  .replace('{submiter}',GetUserName(this.submiter))
+				  .replace('{checker}',GetUserName(this.checker)))
+				.appendTo('#table-div');
+			});
+		},
+		'json'
+	);
+	
+	var babyRec = '<table width="100%" border=0 cellpadding=0 cellspacing=0>'+
+						    	'<tr>'+
+						    	'	<td>婴儿姓名：<input type="text" id="name" style="border-top:0px;border-left:0px;border-right:0px;"/></td>'+
+						    	'	<td>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：<input type="text" id="gender" style="border-top:0px;border-left:0px;border-right:0px"/></td>'+
+						    	'</tr>'+
+						    	'<tr>'+
+									'<td colspan=2 class="line"><div class="line-div">----------------------------------------------------------------'+
+							    							'----------------------------------------------------</div>'+
+							    	'</td>'+
+								'</tr>'+
+						    	'</table>';	
+	$(babyRec).appendTo("#babyInfo");
+	getBabyInfo();
+					    	
+});
+function getBabyInfo(){
+	var url= App.App_Info.BasePath+'/InHospitalCase/BabyRec.do'+'?method=getBabyInfo';
+	$.getJSON(url,{pid:PID,pcid:id},function(babyInfo){
+	if(babyInfo != 0){
+		babyId = babyInfo[0].id;
+		$("#name").val(babyInfo[0].name);
+		if(babyInfo[0].gender == 0){
+			$("#gender").val("男");
+		}else{
+			$("#gender").val("女");
+		}		
+		$("#birthDate").val(babyInfo[0].birthDate);
+		$("#birthWeight").val(babyInfo[0].birthWeight);
+	}
+	});
+}
+function GetUserName(_id){
+	var rst='';
+	if(!isNaN(_id)&&_id>0)
+		$.ajax({
+			url:App.App_Info.BasePath+'/common/CommonAction.do',
+			data:{
+				method:'GetIndependentDictionaryText',
+				code:'userName',
+				value:_id
+			},
+			async:false,
+			dataType:'text',
+			success:function(_data){
+				rst=_data;
+			}
+		});
+	return rst;
+}
+function CreatePrintPage(){
+	LODOP.PRINT_INIT("病程记录打印任务");
+	LODOP.SET_PRINT_PAGESIZE(1,0,0,"A4");
+	/*LODOP.ADD_PRINT_IMAGE(20,80,70,86,'<img width="70" height="86" src="'+App.App_Info.BasePath+'/PUBLIC/images/youanLogo.jpg"/>');
+	LODOP.SET_PRINT_STYLEA(1,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(36,150,597,40,"首都医科大学附属北京佑安医院");
+	LODOP.SET_PRINT_STYLEA(2,"FontSize",17);
+	LODOP.SET_PRINT_STYLEA(2,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(2,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(63,152,594,25,"BeiJing YouAn Hospital,Capital Medical University");
+	LODOP.SET_PRINT_STYLEA(3,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(3,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(85,315,340,40,"新 生 儿 记 录");
+	LODOP.SET_PRINT_STYLEA(4,"FontSize",19);
+	LODOP.SET_PRINT_STYLEA(4,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(4,"ItemType",1);*/
+	
+	LODOP.ADD_PRINT_IMAGE(20,80,50,67,'<img width="50" height="67" src="'+App.App_Info.BasePath+'/PUBLIC/images/youanLogo.jpg"/>');
+	LODOP.SET_PRINT_STYLEA(1,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(50,130,400,40,"首都医科大学附属北京佑安医院");
+	LODOP.SET_PRINT_STYLEA(2,"FontSize",15);
+	LODOP.SET_PRINT_STYLEA(2,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(2,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(70,130,400,25,"BeiJing YouAn Hospital,Capital Medical University");
+	LODOP.SET_PRINT_STYLEA(3,"FontSize",7);
+	LODOP.SET_PRINT_STYLEA(3,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(3,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(85,315,340,40,"新 生 儿 记 录");
+	LODOP.SET_PRINT_STYLEA(4,"FontSize",19);
+	LODOP.SET_PRINT_STYLEA(4,"Bold",1);
+	LODOP.SET_PRINT_STYLEA(4,"ItemType",1);
+	
+	//LODOP.ADD_PRINT_TEXT(115,150,100,20,"第"+document.getElementById('inHspTimes').innerText+"次住院");
+	LODOP.ADD_PRINT_TEXT(115,150,100,20,"第"+$('#pInhspTimes').text()+"次住院");
+	LODOP.SET_PRINT_STYLEA(5,"ItemType",1);
+	//LODOP.ADD_PRINT_TEXT(115,620,150,20,"病案号："+document.getElementById('patientNo').innerText);
+	LODOP.ADD_PRINT_TEXT(115,620,150,20,"病案号："+ $('#pNo').text()+"");
+	LODOP.SET_PRINT_STYLEA(6,"ItemType",1);
+	//LODOP.ADD_PRINT_TEXT(100,620,150,20,"姓  名："+document.getElementById('patientName').innerText);
+	LODOP.ADD_PRINT_TEXT(100,620,150,20,"姓  名："+ $('#pName').text()+"");
+	LODOP.SET_PRINT_STYLEA(7,"ItemType",1);
+	LODOP.ADD_PRINT_LINE(129,80,129,750,0,1);
+	LODOP.SET_PRINT_STYLEA(8,"ItemType",1);
+	LODOP.ADD_PRINT_TEXT(115,343,110,20,"第 # 页 ");
+	
+	LODOP.SET_PRINT_STYLEA(9,"ItemType",2);
+	LODOP.ADD_PRINT_LINE(1055,80,1055,750,0,1);
+	LODOP.SET_PRINT_STYLEA(10,"ItemType",1);
+	LODOP.ADD_PRINT_HTM(135,80,650,900,$('#babyInfo').html()+document.getElementById('table-div').innerHTML);
+	LODOP.SET_PRINT_STYLEA(11,"ItemType",0);
+	LODOP.SET_PRINT_STYLEA(11,"HOrient",3);
+	LODOP.SET_PRINT_STYLEA(11,"VOrient",0);
+	LODOP.ADD_PRINT_LINE(20,78,1100,78,0,2);
+	LODOP.SET_PRINT_STYLEA(12,"ItemType",1);
+}
+function PREVIEW(){
+	CreatePrintPage();
+	LODOP.PREVIEW();
+}
+function PREVIEW2(){
+	var num=window.prompt('请输入需要续打的记录号，参考格式：3、5-6','');
+	if(!num)return;
+	var nums=num.split('-');
+	if(nums.length<2){
+		nums[0]=num;
+		nums[1]=num;
+	}
+	if(isNaN(nums[0])||isNaN(nums[1])){
+		alert('输入了非法的数字字符。');
+		return;
+	}
+	$('table.con').each(function(i){
+		if(i<(nums[0]-1)||i>(nums[1]-1)) {
+			$(this).addClass('white');
+			$(this).find('table').addClass('white');
+		}
+	});
+	LODOP.PRINT_INIT("病程记录打印任务");
+	LODOP.SET_PRINT_PAGESIZE(1,0,0,"A4");
+	LODOP.ADD_PRINT_HTM(135,80,650,900,document.getElementById('table-div').innerHTML);
+	LODOP.SET_PRINT_STYLEA(1,"ItemType",0);
+	LODOP.SET_PRINT_STYLEA(1,"HOrient",3);
+	LODOP.SET_PRINT_STYLEA(1,"VOrient",0);
+	LODOP.PREVIEW();
+	$('table.con').each(function(i){
+		if(i<(nums[0]-1)||i>(nums[1]-1)) {
+			$(this).removeClass('white');
+			$(this).find('table').removeClass('white');
+		}
+	});
+}
+function NewPage(){
+	window.open('print2.html?id='+id);
+}
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<button onclick="PREVIEW()">打印预览</button>
+<button onclick="PREVIEW2()">续打</button>
+<!-- <button onclick="NewPage()">术后强制分页打印</button>  -->
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="babyInfo"><link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<style type="text/css">
+			p{
+				margin:0;
+				padding:0;
+			}
+			table.con{
+				margin:0;
+				padding:0;
+				font-size:16px;
+				line-height:30px;
+			}
+			td{
+				font-size:16px;
+				line-height:30px;	
+			}
+			td.time{
+				width:140px;	
+			}
+			td.title{
+				text-align:center;
+				line-height:30px;
+				height:30px;
+			}
+			td.nbsp{
+				width:140px;
+			}
+			td.content{
+				line-height:30px;
+			}
+			td.docsign{
+				text-align:right;
+			}
+			td.docsign1{
+				width:120px;
+			}
+			td.docsign2{
+				width:140px;
+			}
+			td.line{
+				height:30px;
+				
+			}
+			div.line-div{
+				line-height:30px;
+				height:30px;
+				overflow:hidden;
+			}
+		</style></div>
+	<div id="table-div">
+	</div>
+	<div id="page-footer" style="border-top:none"></div>
+</div>
+</body>
+</html>

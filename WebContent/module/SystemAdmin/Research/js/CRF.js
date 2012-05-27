@@ -1,0 +1,106 @@
+function showCRFWin(_record){
+	var array=[];
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/admin/ResearchAdminAction.do',
+		params:{
+			method:'crf_findByRTId',
+			id:_record.data.id
+		},
+		sync:true,
+		success:function(_response){
+			var _res=Ext.util.JSON.decode(_response.responseText);
+			if(_res.success){
+				array=Ext.util.JSON.decode(_res.data);
+			}
+		}
+	});
+	new Ext.Window({
+		frame:true,
+		closable:false,
+		closeAction:'close',
+		width:300,
+		height:Ext.getBody().getSize().height*0.85,
+		layout:'fit',
+		buttonAlign:'center',
+		buttons:[
+			{
+				text:'保存',handler:function(){
+					var ids=this.ownerCt.items.get(0).getChecked('id');
+					Ext.Ajax.request({
+						url:App.App_Info.BasePath+'/admin/ResearchAdminAction.do',
+						params:{
+							method:'ctf_save',
+							crf:Ext.util.JSON.encode(ids),
+							id:_record.data.id
+						},
+						scope:this,
+						success:function(_response){
+							if(Ext.util.JSON.decode(_response.responseText).success){
+								alert('关联成功。');
+								this.ownerCt.close();
+							}else{
+								alert('关联失败。');
+							}
+						}
+					});
+				}
+			},{
+				text:'关闭',handler:function(){this.ownerCt.close();}
+			}
+		],
+		items:{
+			title:'请选择需要关联的CRF表',
+			xtype:'treepanel',
+			autoScroll:true,
+			containerScroll:true,
+			onlyLeafCheckable:true,
+			tbar:[
+				'-','<p style="line-height:24px">双击表名查看登记表详细定义</p>'
+			],
+			root:{
+				nodeType:'async',
+				text:'CRF',
+				draggable:false,
+				id:-1
+			},
+			loader:new Ext.tree.TreeLoader({
+				url:App.App_Info.BasePath+'/admin/ResearchAdminAction.do?method=crf_findAll',
+				baseAttrs: { uiProvider: Ext.ux.TreeCheckNodeUI }
+			}),
+			listeners:{
+				render:function(){
+					this.expandAll();
+					this.on('dblclick',function(node,e){
+						if(node.id!=-1){
+							Ext.Ajax.request({
+								url:App.App_Info.BasePath+'/common/CommonAction.do',
+								params:{
+									method:'GetIndependentDictionaryText',
+									code:'CRF_table',
+									value:node.id
+								},
+								success:function(_response){
+									if(_response.responseText){
+										window.open(App.App_Info.BasePath+_response.responseText.split('|')[1])
+									}
+								}
+							});
+						}
+					});
+					this.on('click',function(_node,_e){
+						if(array.indexOf(_node.id)!=-1){
+							_node.getUI().toggleCheck();
+						}
+					});
+					this.on('expandnode',function(node){
+						if (array.indexOf(node.id)!=-1) {
+							node.getUI().toggleCheck(true);
+						}else{
+							node.getUI().toggleCheck(false);
+						}
+					});
+				}
+			}
+		}
+	}).show();
+}

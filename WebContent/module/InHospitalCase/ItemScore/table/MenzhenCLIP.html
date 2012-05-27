@@ -1,0 +1,164 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('input').click(function(){
+			getClipScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return -1;
+	}
+	function getClipScore(){
+		var cpGrade = isRadioSelected(document.getElementsByName('cpGrade'));
+		var knubType = isRadioSelected(document.getElementsByName('knubType'));
+		var jtAlbumen = isRadioSelected(document.getElementsByName('jtAlbumen'));
+		var pvEmbolism = isRadioSelected(document.getElementsByName('pvEmbolism'));
+		if(cpGrade != -1){
+			$('input[name="cpGrade2"]').val(cpGrade);
+		}
+		if(knubType != -1){
+			$('input[name="knubType2"]').val(knubType);
+		}
+		if(jtAlbumen != -1){
+			$('input[name="jtAlbumen2"]').val(jtAlbumen);
+		}
+		if(pvEmbolism != -1){
+			$('input[name="pvEmbolism2"]').val(pvEmbolism);
+		}
+		if(cpGrade == -1 || knubType == -1 || jtAlbumen == -1 || pvEmbolism == -1){
+			$('input[name="totalScore"]').val('');
+			$('input[name="stage"]').val('');
+			return;
+		}
+		var totalScore = eval(cpGrade) + eval(knubType) + eval(jtAlbumen) + eval(pvEmbolism);
+		$('input[name="totalScore"]').val(totalScore);
+		if(totalScore == 0){
+			$('input[name="stage"]').val('早期');
+		}
+		if(totalScore >= 1 && totalScore <= 3){
+			$('input[name="stage"]').val('中期');
+		}
+		if(totalScore >= 4 && totalScore <= 6){
+			$('input[name="stage"]').val('晚期');
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="5" style="font-size:20px;color:red;height:30px" align="center"><B>意大利肿瘤计划（CLIP）分期系统</B></td></tr>
+		<tr align="center">
+			<td bgcolor="#D4D4D4" style="font-size:16px;" rowspan="2" width="140"><B>指</B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>标</B></td>
+			<td bgcolor="#D4D4D4" colspan="3" width="420"><B>分值</B></td>
+			<td bgcolor="#D4D4D4" rowspan="2" width="140"><B>得分</B></td>
+		</tr>
+		<tr align="center">
+			<td bgcolor="#D4D4D4" width="140"><B>0</B></td>
+			<td bgcolor="#D4D4D4" width="140"><B>1</B></td>
+			<td bgcolor="#D4D4D4" width="140"><B>2</B></td>
+			
+		</tr>
+		<tr align="center">
+			<td>Child-Pugh分级</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="0" /></div><div style="float:left;">A级</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="1" /></div><div style="float:left;">B级</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="2" /></div><div style="float:left;">C级</div></div>
+			</td>
+			<td><input type="text" name="cpGrade2" value="" style="width:100px;"/></td>
+		</tr>
+		<tr align="center">
+			<td bgcolor="#D4D4D4" >肿瘤形态</td>
+			<td bgcolor="#D4D4D4" >
+				<div><div style="float:left;"><input type="radio" name="knubType" value="0" /></div><div style="float:left;">单一且≤肝脏50%</div></div>
+			</td>
+			<td bgcolor="#D4D4D4" >
+				<div><div style="float:left;"><input type="radio" name="knubType" value="1" /></div><div style="float:left;">多发且≤肝脏50%</div></div>
+			</td>
+			<td bgcolor="#D4D4D4" >
+				<div><div style="float:left;"><input type="radio" name="knubType" value="2" /></div><div style="float:left;">巨块型＞肝脏50%</div></div>
+			</td>
+			<td bgcolor="#D4D4D4" ><input type="text" name="knubType2" value="" style="width:100px;"/></td>
+		</tr>
+		<tr align="center">
+			<td>甲胎蛋白</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="jtAlbumen" value="0" /></div><div style="float:left;">＜400</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="jtAlbumen" value="1" /></div><div style="float:left;">≥400</div></div>
+			</td>
+			<td>&nbsp;</td>
+			<td><input type="text" name="jtAlbumen2" value="" style="width:100px;"/></td>
+		</tr>
+		<tr align="center">
+			<td bgcolor="#D4D4D4" >门静脉栓塞</td>
+			<td bgcolor="#D4D4D4" >
+				<div><div style="float:left;"><input type="radio" name="pvEmbolism" value="0" /></div><div style="float:left;">无</div></div>
+			</td>
+			<td bgcolor="#D4D4D4" >
+				<div><div style="float:left;"><input type="radio" name="pvEmbolism" value="1" /></div><div style="float:left;">有</div></div>
+			</td>
+			<td bgcolor="#D4D4D4" >&nbsp;</td>
+			<td bgcolor="#D4D4D4" ><input type="text" name="pvEmbolism2" value="" style="width:100px;"/></td>
+		</tr>
+		<tr align="center">
+			<td colspan="4" align="center">总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;积&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分</td>
+			<td><input type="text" name="totalScore" value="" style="width:100px;"/></td>
+		</tr>
+		<!--  
+		<tr align="center">
+			<td colspan="4" align="center">分&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期</td>
+			<td><input type="text" name="stage" value="" style="width:100px;"/></td>
+		</tr>
+		-->
+    </table>
+</form>
+</body>
+</html>

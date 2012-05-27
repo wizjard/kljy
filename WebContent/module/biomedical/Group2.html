@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员组别选择窗口</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('input[type="checkbox"]').click(function(){
+		var checked=$(this).attr('checked');
+		$('input[type="checkbox"]').attr('checked',false);
+		$(this).attr('checked',checked);
+	});	
+});
+function OK(){
+	var checked=$('input[type="checkbox"][checked]');
+	if(!checked.val()){
+		alert('未选择分组');
+	}else{
+		window.returnValue={
+			name:checked.val(),
+			content:'',
+			cycle:6
+		};
+		window.close();
+	}
+}
+</script>
+</head>
+<body>
+<div style="text-align:right">
+	<input type="button" value="确定" onclick="OK()"/>
+	<input type="button" value="关闭" onclick="window.close()"/>
+</div>
+<ul>
+	<li><input type="checkbox" value="病毒性肝炎 甲型组"/>病毒性肝炎 甲型组</li>
+	<li><input type="checkbox" value="病毒性肝炎 乙型 急性组"/>病毒性肝炎 乙型 急性组</li>
+	<li><input type="checkbox" value="病毒性肝炎 乙型 慢性组"/>病毒性肝炎 乙型 慢性组
+		<ul>
+			<li><input type="checkbox" value="病毒性肝炎 乙型 慢性 小三阳组"/>小三阳组</li>
+			<li><input type="checkbox" value="病毒性肝炎 乙型 慢性 大三阳组"/>大三阳组</li>
+		</ul>
+	</li>
+	<li><input type="checkbox" value="病毒性肝炎 丙肝组"/>病毒性肝炎 丙肝组</li>
+	<li><input type="checkbox" value="肝硬化组"/>肝硬化组
+		<ul>
+			<li><input type="checkbox" value="乙型肝炎肝硬化组"/>乙型肝炎肝硬化组</li>
+			<li><input type="checkbox" value="丙型肝炎肝硬化组"/>丙型肝炎肝硬化组</li>
+		</ul>
+	</li>
+	<li><input type="checkbox" value="肝癌组"/>肝癌组</li>
+	<li><input type="checkbox" value="其它肝病组"/>其它肝病组</li>
+</ul>
+</body>
+</html>

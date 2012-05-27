@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+.guanggao3{width:428px; height:273px; background:#ffffff; padding:1px; border:#999999 1px solid; position:relative; margin:0px 0px 0px 0px;}
+.guanggao3 img{position:absolute; top:1px;}
+.guanggao3 ul{position:absolute; left:10px;top:255px; z-index:999;}
+.guanggao3 ul li{display:block; float:left;width:25px; height:13px; line-height:13px; font-size:11px; text-align:center; margin-right:6px; background:url(t.gif) no-repeat left top; color:#ffffff; cursor:pointer;}
+.guanggao3 ul li.cur{background:url(tHover.gif) no-repeat left top;}

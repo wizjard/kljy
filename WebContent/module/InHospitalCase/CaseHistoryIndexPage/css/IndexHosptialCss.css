@@ -1,0 +1,62 @@
+@CHARSET "UTF-8";
+
+table{
+	width:620px;
+	border:solid 1px #000;
+	font-size:13px;
+	line-height:24px;
+}
+
+td{
+	border-bottom:solid 1px #000;
+}
+
+.noTd{
+	border-bottom:none;
+}
+
+/*表头样式*/
+ .head{
+	border-bottom:0;
+	border-top:0;
+	border-left:0;
+	border-right:0;
+}
+
+input{
+	border:none;
+	border-bottom:solid 1px #000;
+	font-size:12px;
+	font-family:'宋体';
+}
+
+.put{
+	border-bottom:none;
+}
+
+.right{
+	border-right:0;
+}
+
+.out{
+	border:solid 1px #000;
+	border-top:0px;
+	border-bottom:none;
+	border-right:none;
+}
+
+/*--------------------------------------------继页-------------------------------------*/
+	.outFollow{
+		border-top:0px;
+		border-bottom:0px;
+		border-right:0px;
+		border:solid 1px #000;
+	}
+	
+	.incFollow{
+		border:solid 1px #000;
+		border-top:none;
+		border-bottom:none;
+		border-right:none;
+	}
+

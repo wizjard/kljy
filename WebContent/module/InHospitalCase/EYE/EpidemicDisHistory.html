@@ -1,0 +1,570 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>流行病史(肝病)</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../Liver/Js/validData.js"></script>
+<script type="text/javascript" src="../Liver/Js/validRadio.js"></script>
+<link type="text/css" rel="stylesheet" href="../Liver/Js/validCss.css"/>
+<script type="text/javascript">
+var PageCode='EMR-liver-Epidemic';
+var KID=null;
+var PID=null;
+//Radio事件字段
+var eventArray=['liverDisContactFlag',
+	'spreadFactorsFlag','otherInfectFlag','epiAreaLivingFlag','otherflag','transfusionBloodFlag'];
+ var valPrem =['liverDisContactFlag','hepatitisVaccineFlag','vocationFlag','spreadFactorsFlag',
+		 	   'transfusionBloodFlag','otherInfectFlag','otherVaccineFlag','otherVaccineFlag','epiAreaLivingFlag'];
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-Epidemic'),function(code){
+		$('*[name="'+code+'"]').data('options',this);
+	});
+	//checkbox初始化
+	$('.checkbox,*[name="spreadFactorsDesc"],*[name="liverDisContactDesc"]').each(function(){
+		if(this.name=='spreadFactorsDesc'){
+			toCheckboxEx({el:$(this),columns:2});
+		}else if(this.name=='liverDisContactDesc'){
+			toCheckboxEx2({el:$(this),columns:4});
+		}else
+			FormUtil.toCheckbox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Radio事件
+	$.each(eventArray,function(){
+		$('input[name="'+this+'"]').each(function(){
+			$(this).click(function(){
+				if($(this).val()==1){
+					$(this).parent().parent().next().show();
+				}else{
+					$(this).parent().parent().next().hide();
+				}
+			});
+		});
+	});
+	//弹出框
+	$('#dialog1').dialog({
+		title:'流行病史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeEpidemic();$(this).dialog("close");}
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'EpidemicDis_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+					$.each(eventArray,function(){
+						$('input[name="'+this+'"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					});
+					if($('*[name="liverDisFamilyDesc"]').val().length==0)
+						$('*[name="liverDisFamilyDesc"]').val('有输血及血制品史');
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function ComposeEpidemic(){
+	_compose=CollectionData();
+	var rstStr='';
+	var tempValue='';
+	tempValue=_compose.liverDisContactFlag;
+	if(tempValue==0){
+		rstStr+='否认肝炎接触史，';
+	}else if(tempValue==1){
+		tempValue=_compose.liverDisContactDesc;
+		rstStr+=tempValue.length>0?tempValue+'，':'有肝炎接触史，';
+	}
+	/*tempValue=_compose.liverDisFamilyFlag;
+	if(tempValue==0){
+		rstStr+='否认肝病家族史，';
+	}else if(tempValue==1){
+		tempValue=_compose.liverDisFamilyDesc;
+		rstStr+=tempValue.length>0?'有'+tempValue+'家族史，':'有肝病家族史，';
+	}*/
+	tempValue=_compose.hepatitisVaccineFlag;
+	if(tempValue==0){
+		rstStr+='否认乙肝疫苗接种史，';
+	}else if(tempValue==1){
+		rstStr+='有乙肝疫苗接种史，';
+	}
+	tempValue=_compose.vocationFlag;
+	if(tempValue==0){
+		rstStr+='否认职业暴露史，';
+	}else if(tempValue==1){
+		rstStr+='有职业暴露史，';
+	}
+	tempValue=_compose.spreadFactorsFlag;
+	if(tempValue==0){
+		rstStr+='否认可能的传播因素，';
+	}else if(tempValue==1){
+		tempValue=_compose.spreadFactorsDesc;
+		if(tempValue.length>0){
+			rstStr+=tempValue+'，'
+		}
+	}
+	tempValue=_compose.transfusionBloodFlag;
+	if(tempValue==0){
+		rstStr+='否认输血及血制品史，';
+	}else if(tempValue==1){
+		rstStr+=_compose.liverDisFamilyDesc.length>0?(_compose.liverDisFamilyDesc+'，'):'';
+	}
+	tempValue=_compose.otherInfectFlag;
+	if(tempValue==0){
+		rstStr+='否认肝病外其它传染病接触史，';
+	}else if(tempValue==1){
+		tempValue=_compose.otherInfectDesc;
+		rstStr+='有'+(tempValue.length>0?tempValue:'肝病外其它传染病')+'接触史，';
+	}
+	tempValue=_compose.otherVaccineFlag;
+	if(tempValue==0){
+		rstStr+='否认其它传染病预防接种史，';
+	}else if(tempValue==1){
+		rstStr+='有其它传染病预防接种史，';
+	}
+	tempValue=_compose.epiAreaLivingFlag;
+	if(tempValue==0){
+		rstStr+='否认疫区居住史，';
+	}else if(tempValue==1){
+		tempValue=_compose.epiAreaLivingTime+getRowValue('epiAreaLivingTimeID',_compose.epiAreaLivingTimeID)
+					+'前在'+_compose.epiAreaName
+					+'居住'+_compose.epiAreaLivingAllTime
+					+getRowValue('epiAreaLivingAllTimeID',_compose.epiAreaLivingAllTimeID);
+		rstStr+=tempValue+'，';
+	}
+	tempValue = _compose.otherflag;
+	if(tempValue==1){
+		rstStr += _compose.otherEpidemFlag + '，';
+	}
+	rstStr = rstStr;
+	if(rstStr.length>0){
+		rstStr=rstStr.substr(0,rstStr.length-1)+'。';
+	}
+	var _sum = $('textarea[name="epidemicDisDesc"]').val();
+	if(_sum.length > 0){
+		Ext.Msg.show({
+			title:'提示',
+			width:300,
+			msg:'是否替换原有的值？',	
+			buttons:{yes:'否',no:'是'},
+			fn: function(_btn){
+			   	if(_btn=='no'){
+			   		$('textarea[name="epidemicDisDesc"]').val(rstStr);
+				}
+		    },
+			icon:Ext.MessageBox.QUESTION
+		});
+	}else{
+		$('textarea[name="epidemicDisDesc"]').val(rstStr);
+	}
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function SaveData(){
+	var _values=CollectionData();
+
+	//if(validRad('div',valPrem)== false) return;
+
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'EpidemicDis_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+/*2011-2-23 allnef 修改 流行病史专用checkbox初始化函数*/
+function toCheckboxEx(cfg){
+	if(!cfg.el){
+			alert('需要初始化为Select的控件未定义。');
+			return;
+		}
+		var rel=cfg.el.attr('rel');
+		if(rel){
+			cfg.el.data('options',$('*[name="'+rel+'"]').data('options'));
+		}
+		if(!cfg.el.data('options')){
+			var _name=cfg.el.attr('id')||cfg.el.attr('name');
+			alert('[ '+_name+' ] 控件候选列表未定义。');
+			return;
+		}
+		cfg.values=cfg.el.data('options');
+		var _img=$('<img align="bottom" src="'+App.App_Info.BasePath+'/PUBLIC/images/sign.gif" style="cursor:pointer"/>');
+		_img.insertAfter(cfg.el);
+		_img.click(function(){
+			cfg.el=$(this).prev();
+			Text2CheckboxEx(cfg);
+		});	
+}
+function Text2CheckboxEx(cfg){
+	var config={
+		el:null,
+		values:null,
+		readOnly:false,
+		columns:3
+	}
+	if(cfg)
+		for(var key in cfg){
+			config[key]=cfg[key];
+		}
+	config.el.attr('readonly',config.readOnly);
+	if(config.readOnly)
+		config.el.blur();
+	if(config.el.attr('isInit')){
+		Text2Checkbox_showEx(config);
+	}else{
+		Text2Checkbox_initEx(config);
+		Text2Checkbox_showEx(config);
+	}
+}
+function Text2Checkbox_initEx(cfg){
+	var _id='Chk'+new Date().getTime();
+	$('<div id="'+_id+'" class="my-checkbox-div"></div>').appendTo(document.body);
+	var _html='<table width="100%" border=0 cellspacing=0 cellpadding=1>';;
+	_html+='<tr><td colspan="'+cfg.columns+'" align="right">&nbsp;</td></tr>';;
+	$.each(cfg.values,function(i){
+		if((i+1)%cfg.columns==1){
+			_html+='<tr><td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td>';
+		}else if((i+1)%cfg.columns==0){
+			_html+='<td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td></tr>';
+		}else{
+			_html+='<td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td>';
+		}
+	});
+	_html+='<tr><td colspan="'+cfg.columns+'"><span>自定义&nbsp;</span><input type="text" style="width:80%"/></td></tr>';
+	_html+='</table>';
+	$(_html).appendTo($('#'+_id));
+
+	$('<button class="btn_mouseout">确定</button>').css({
+		'margin-right':'5px'
+	}).click(function(){
+		var _text=[];
+		$('#'+_id).find('input[type="checkbox"]').each(function(){
+			if($(this).attr('checked')){
+				_text.push($(this).next('span').text());
+			}
+		});
+		var _sText=$('#'+_id).find('input[type="text"]').val();
+		if(_sText.length>0)	_text.push(_sText);
+		if(_text.join('、').length>0)
+			cfg.el.val('有'+_text.join('、'));
+		$('#'+_id).hide();
+	}).appendTo($('#'+_id).find('td').eq(0));
+	$('<button class="btn_mouseout">关闭</button>').css({
+		'margin-right':'5px'
+	}).click(function(){
+		$('#'+_id).hide();
+	}).appendTo($('#'+_id).find('td').eq(0));
+
+
+	cfg.el.attr('showId',_id);
+	cfg.el.attr('isInit',true);
+}
+function Text2Checkbox_showEx(cfg){
+	var offset=cfg.el.offset();
+	var width=cfg.el.outerWidth();
+	var height=cfg.el.outerHeight();
+	var _id=cfg.el.attr('showId');
+	if($('#'+_id).css('display')=='block'){
+		$('#'+_id).hide();
+	}else
+		$('#'+_id).css({left:offset.left+'px',top:(offset.top+height)+'px',width:(width-2)+'px',display:'block'});
+}
+/*2011-02-23 allnef 修改*/
+function toCheckboxEx2(cfg){
+	if(!cfg.el){
+			alert('需要初始化为Select的控件未定义。');
+			return;
+		}
+		var rel=cfg.el.attr('rel');
+		if(rel){
+			cfg.el.data('options',$('*[name="'+rel+'"]').data('options'));
+		}
+		if(!cfg.el.data('options')){
+			var _name=cfg.el.attr('id')||cfg.el.attr('name');
+			alert('[ '+_name+' ] 控件候选列表未定义。');
+			return;
+		}
+		cfg.values=cfg.el.data('options');
+		var _img=$('<img align="bottom" src="'+App.App_Info.BasePath+'/PUBLIC/images/sign.gif" style="cursor:pointer"/>');
+		_img.insertAfter(cfg.el);
+		_img.click(function(){
+			cfg.el=$(this).prev();
+			Text2CheckboxEx2(cfg);
+		});	
+}
+function Text2CheckboxEx2(cfg){
+	var config={
+		el:null,
+		values:null,
+		readOnly:false,
+		columns:3
+	}
+	if(cfg)
+		for(var key in cfg){
+			config[key]=cfg[key];
+		}
+	config.el.attr('readonly',config.readOnly);
+	if(config.readOnly)
+		config.el.blur();
+	if(config.el.attr('isInit')){
+		Text2Checkbox_showEx2(config);
+	}else{
+		Text2Checkbox_initEx2(config);
+		Text2Checkbox_showEx2(config);
+	}
+}
+function Text2Checkbox_initEx2(cfg){
+	var _id='Chk'+new Date().getTime();
+	$('<div id="'+_id+'" class="my-checkbox-div"></div>').appendTo(document.body);
+	var _html='<table width="100%" border=0 cellspacing=0 cellpadding=1>';;
+	_html+='<tr><td colspan="'+cfg.columns+'" align="right">&nbsp;</td></tr>';;
+	$.each(cfg.values,function(i){
+		if((i+1)%cfg.columns==1){
+			_html+='<tr><td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td>';
+		}else if((i+1)%cfg.columns==0){
+			_html+='<td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td></tr>';
+		}else{
+			_html+='<td><input type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span></td>';
+		}
+	});
+	_html+='<tr><td colspan="'+cfg.columns+'"><span>自定义&nbsp;</span><input type="text" style="width:80%"/></td></tr>';
+	_html+='</table>';
+	$(_html).appendTo($('#'+_id));
+
+	$('<button class="btn_mouseout">确定</button>').css({
+		'margin-right':'5px'
+	}).click(function(){
+		var _text=[];
+		$('#'+_id).find('input[type="checkbox"]').each(function(){
+			if($(this).attr('checked')){
+				_text.push($(this).next('span').text());
+			}
+		});
+		var _sText=$('#'+_id).find('input[type="text"]').val();
+		if(_sText.length>0)	_text.push(_sText);
+		if(_text.join('、').length>0){
+			cfg.el.val('有'+_text.join('、')+'接触史');
+		}
+		$('#'+_id).hide();
+	}).appendTo($('#'+_id).find('td').eq(0));
+	$('<button class="btn_mouseout">关闭</button>').css({
+		'margin-right':'5px'
+	}).click(function(){
+		$('#'+_id).hide();
+	}).appendTo($('#'+_id).find('td').eq(0));
+
+
+	cfg.el.attr('showId',_id);
+	cfg.el.attr('isInit',true);
+}
+function Text2Checkbox_showEx2(cfg){
+	var offset=cfg.el.offset();
+	var width=cfg.el.outerWidth();
+	var height=cfg.el.outerHeight();
+	var _id=cfg.el.attr('showId');
+	if($('#'+_id).css('display')=='block'){
+		$('#'+_id).hide();
+	}else
+		$('#'+_id).css({left:offset.left+'px',top:(offset.top+height)+'px',width:(width-2)+'px',display:'block'});
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">流行病史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="epidemicDisDesc" class="textarea" style="width:95%" ></textarea>
+		<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/>
+		 
+		</td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！</span></p>
+	<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="140"><span style="color:red">*&nbsp;</span>肝炎接触史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="liverDisContactFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="liverDisContactFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="liverDisContactFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<textarea class="textarea" name="liverDisContactDesc" style="width:90%"></textarea>
+				</br><font style="color:red">(注：如需要可在点选组合文字后补充内容，句末不加标点)</font>
+			</td>
+		</tr>
+		<!--tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>肝病家族史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="liverDisFamilyFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="liverDisFamilyFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="liverDisFamilyFlag"/><span>未说明</span>
+			</td>
+		</tr-->
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>乙肝疫苗接种史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="hepatitisVaccineFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="hepatitisVaccineFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="hepatitisVaccineFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>职业暴露史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="vocationFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="vocationFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="vocationFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>可能传播因素：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="spreadFactorsFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="spreadFactorsFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="spreadFactorsFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<textarea class="textarea" name="spreadFactorsDesc" style="width:90%"></textarea>
+				</br><font style="color:red">(注：如需要可在点选组合文字后补充内容，句末不加标点)</font>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>输血及血制品史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="transfusionBloodFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="transfusionBloodFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="transfusionBloodFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">具体说明：</td>
+			<td class="t2">
+				<textarea class="textarea" name="liverDisFamilyDesc" style="width:90%"></textarea>
+				</br><font style="color:red">(注:系统预置了组合文字,如不需要,请自行修改,句末不加标点)</font>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>其它传染病接触史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="otherInfectFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="otherInfectFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="otherInfectFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<textarea class="textarea" name="otherInfectDesc" style="width:90%"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*</span>其它传染病预防接种史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="otherVaccineFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="otherVaccineFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="otherVaccineFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>疫区居住史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="epiAreaLivingFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="epiAreaLivingFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="epiAreaLivingFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<p>居住时间：<input name="epiAreaLivingTime" type="text" class="text" style="width:40px"/><span><input class="radio dict-fld" type="radio" name="epiAreaLivingTimeID" checked/></span>&nbsp;&nbsp;<font color=red>前</font></p>
+				<p>疫区名称：<input name="epiAreaName" type="text" class="text" style="width:170px"/></p>
+				<p>居住时限：<input name="epiAreaLivingAllTime" type="text" class="text" style="width:40px"/><input rel="epiAreaLivingTimeID" class="radio dict-fld" type="radio" name="epiAreaLivingAllTimeID" checked/></p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其他流行史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="otherflag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="otherflag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="otherflag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>	
+			<td class="t2">
+				<textarea name="otherEpidemFlag" class="textarea" style="width:90%"></textarea>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

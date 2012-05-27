@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>出院记录打印</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../module/InHospitalCase/scripts/print.js"></script>
+	<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript">
+var LODOP=null;
+$(function(){
+	var kid = App.util.getHtmlParameters('id');
+	LODOP = document.getElementById("LODOP");
+	//CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+	singlePageTableInfo(kid,'出院记录','#page-header');
+	setValue({
+		method:'GetPrintData',
+		id:kid,
+		CaseType:99,
+		title:'出院记录'
+	});
+});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<!-- button onclick="PREVIEW('出院记录打印任务','出 院 记 录')">打印预览</button-->
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../../module/InHospitalCase/css/print.css"/>
+		<table id="基本信息" class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td1" width="90">&nbsp;</td>
+				<td class="td2" width="250">姓&nbsp;&nbsp;&nbsp;&nbsp;名：<span name="PatientName">&nbsp;</span></td>
+				<td class="td2" width="150">性&nbsp;&nbsp;&nbsp;&nbsp;别：<span name="Gender">&nbsp;</span></td>
+				<td class="td2" width="*">年龄：<span name="Age">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2" colspan=3>过&nbsp;敏&nbsp;史：<span name="allergyHistory">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2">入院科别：<span name="inHspWard">&nbsp;</span></td>
+				<td class="td2" colspan=2>出院科别：<span name="outHspWard">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2" colspan=2>住院时间：<span name="HspDate1">&nbsp;</span></td>
+				<td class="td2">共<span name="HspDate2">&nbsp;</span>天</td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2">X&nbsp;&nbsp;线&nbsp;号：<span name="xNo">&nbsp;</span></td>
+				<td class="td2" colspan=2>C&nbsp;&nbsp;T&nbsp;&nbsp;号：<span name="ctNo">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2">M&nbsp;R&nbsp;I&nbsp;号：<span name="mriNo">&nbsp;</span></td>
+				<td class="td2" colspan=2>病&nbsp;理&nbsp;号：<span name="blNo">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">出院诊断：</td>
+				<td class="td2" colspan=3 name="outIlls">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1"><p>入院情况：</p></td>
+				<td class="td2" colspan=3 name="inHspStatu">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1"><p>化验检查：</p></td>
+				<td class="td2" colspan=3 name="labExaminationResult">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1"><p>诊疗经过：</p></td>
+				<td class="td2" colspan=3 name="treatProcess">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1"><p>出院情况：</p></td>
+				<td class="td2" colspan=3 name="outHspStatu">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1"><p>出院医嘱：</p></td>
+				<td class="td2" colspan=3 name="outHspOrders">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2">住&nbsp;院&nbsp;&nbsp;医&nbsp;师：<span name="inhspDoctor">&nbsp;</span></td>
+				<td class="td2" colspan=2>主治医师：<span name="treatDoctor">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td2" colspan=3>(副)主任医师：<span name="directorDoctor">&nbsp;</span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

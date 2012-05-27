@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>中医症候积分</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+table{
+	background:#000;
+}
+tr{
+	background:#fff;
+}
+td{
+	font-size:14px;
+	line-height:22px;
+	padding-left:2px;
+	padding-right:2px;
+}
+p{
+	padding:0;
+	margin:0;
+	line-height:20px;
+	text-indent:1em;
+}
+</style>
+<script type="text/javascript">
+var kid=App.util.getHtmlParameters('kid');
+$(function(){
+	$('input[name="followupId"]').val(kid);
+	initPage();
+	setValue();
+});
+function initPage(){
+	var dict=FormUtil.getPageDictionary('Research-CRF-TCMSysptomScore');
+	var array=[];
+	for(var key in dict){
+		array.push(key);
+	}
+	array.sort();
+	var cname={};
+	$.ajax({
+		url:App.App_Info.BasePath+'/common/CommonAction.do',
+		data:{
+			method:'GetSelfQueryList',
+			sql:'select code,name from SYS_DICT_FldCode where moduleId=(select id from SYS_DICT_Modules where code=\'Research-CRF-TCMSysptomScore\')'
+		},
+		async:false,
+		dataType:'json',
+		success:function(data){
+			$.each(data,function(){
+				cname[this.code]=this.name;
+			});
+		}
+	});
+	var html='';
+	$.each(array,function(i){
+		html+='<tr>'+
+				'<td align="center" valign="top">'+(i+1)+'</td>'+
+				'<td valign="top">'+cname[this]+'</td>'+
+				'<td valign="top"><input type="checkbox" value="0" name="'+this+'"/><span>无</span></td>'+
+				'<td valign="top"><input type="checkbox" value="'+dict[this][0][0]+'" name="'+this+'"/><span>'+dict[this][0][1]+'</span></td>'+
+				'<td valign="top"><input type="checkbox" value="'+dict[this][1][0]+'" name="'+this+'"/><span>'+dict[this][1][1]+'</span></td>'+
+				'<td valign="top"><input type="checkbox" value="'+dict[this][2][0]+'" name="'+this+'"/><span>'+dict[this][2][1]+'</span></td>'+
+			'</tr>';
+	});
+	html+='<tr><td colspan="6" align="center">总得分：<span id="totalScore" style="color:red;font-weight:bold">0</span></td></tr>';
+	$('table tbody').append($(html));
+	$('input[type="checkbox"]').click(function(){
+		$('input[name="'+$(this).attr('name')+'"]').attr('checked',false);
+		$(this).attr('checked',true);
+		calScore();
+	});
+	$('tr').mouseover(function(){
+		$(this).css('background','#eee');
+	}).mouseout(function(){
+		$(this).css('background','#FFF');
+	});
+}
+function calScore(){
+	var _rst=0;
+	$('input[type="checkbox"][checked]').each(function(){
+		_rst+=parseInt($(this).attr('value'));
+	});
+	$('#totalScore').text(_rst);
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'TCMSysptomScore_findByFollowupId',
+			id:kid
+		},
+		function(data){
+			if(data.success){
+				var json=JSON.parse(data.data);
+				if(json){
+					$.each(json,function(key){
+						if(key=='id'||key=='followupId'){
+							$('input[name="'+key+'"]').val(json[key]);
+						}else{
+							$('input[name="'+key+'"]').each(function(){
+								if(this.value==json[key]){
+									$(this).attr('checked',true);
+									return false;
+								}
+							});
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var json={
+		id:$('input[name="id"]').val(),
+		followupId:$('input[name="followupId"]').val()
+	};
+	$('input[type="checkbox"][checked]').each(function(){
+		json[$(this).attr('name')]=$(this).val();
+	});
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'TCMSysptomScore_SaveOrUpdate',
+			data:JSON.stringify(json)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				$('input[name="id"]').val(JSON.parse(data.data)['id']);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+</head>
+<body>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="followupId" value=""/>
+<table width="700" border="0" cellpadding="0" cellspacing="1">
+	<tr>
+	    <td colspan="6">
+	    	<p style="font-weight:bold; font-size:26px;line-height:36px;text-align:center;letter-spacing:10px;text-indent:0;">中医症候积分</p>
+		</td>
+	</tr>
+	<tr align="center">
+		<td rowspan="2" width="30">序号</td>
+		<td rowspan="2" width="80">常见症状</td>
+		<td colspan="4" width="590">量化分数</td>
+	</tr>
+	<tr align="center">
+		<td>0</td>
+		<td>1</td>
+		<td>2</td>
+		<td>3</td>
+	</tr>
+</table>
+</body>
+</html>

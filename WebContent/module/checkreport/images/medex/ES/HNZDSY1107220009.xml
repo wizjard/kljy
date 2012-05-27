@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="248647" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ES" extension="HNZDSY1107220009" />
+    </patientIDInfo>
+    <patientName>LI YU LIN^^^^=李玉林^^^^</patientName>
+    <patientGender>1</patientGender>
+    <patientDOB>19570101</patientDOB>
+    <patientAge>54</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>
+      </streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ES" extension="HNZDSY1107220009" />
+    <clinicDiagnose>
+      <narrativeBlock>肝硬化</narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ES" extension="HNZDSY1107220009" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>聂巍</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>中毒性肝病科</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>主机三</depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ES" extension="HNZDSY1107220009" />
+    <deviceType>ES</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2011-7-22 11:08:41</examDate>
+    <bodyPart>电子胃镜检查</bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>HNZDSY1107220009</studyUID>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104418.703.0.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104639.162.1.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104723.796.2.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104812.406.3.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104829.390.4.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722104903.234.5.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105013.234.6.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105048.906.7.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105057.343.8.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105125.100.9.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105134.218.10.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105213.843.11.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105223.937.12.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105245.875.13.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105400.921.14.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105452.921.15.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105512.468.16.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105608.343.17.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105640.718.18.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105642.578.19.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105650.828.20.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105706.765.21.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105721.203.22.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105756.468.23.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105858.437.24.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722105921.640.25.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722110033.328.26.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722110046.125.27.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ES" extension="HNZDSY1107220009" />
+    <reportFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722110902.734.JPG</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>熊峰</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-7-22 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[食管黏膜欠光滑，未见蓝色静脉曲张。齿状线距门齿40cm，尚清晰。
+ 贲门通过顺利，胃底、胃体粘膜光滑。黏液池量少，略浑浊。胃窦黏膜红白相间，以白为主。幽门口欠圆，开放佳。
+十二指肠球腔变形，黏膜粗糙，可见一广基息肉，0.2*0.3cm大小，表面未见糜烂或出血。
+    ]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>阳性</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[十二指肠球腔息肉
+    ]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

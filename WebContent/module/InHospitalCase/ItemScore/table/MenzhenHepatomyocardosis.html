@@ -1,0 +1,180 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y"/>
+	<table width="700" cellspacing="0" cellpadding="2" border="1" bordercolordark="#ffffff" style="font-size:14px"> 
+		<tr><td colspan="5" style="font-size:20px;color:red;height:30px" align="center"><B>肝硬化心肌病诊断标准表</B></td></tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" width="40" height="25"><center><B>序号</B></center></td> 
+			<td bgcolor="#D4D4D4" width="500" colspan="2" align="center"><B>标准</B></td> 
+			<td bgcolor="#D4D4D4" width="80"><center><B>实际值</B></center></td> 
+			<td bgcolor="#D4D4D4" width="80" align="center"><B>判断</B></td> 
+		</tr> 
+		<tr> 
+			<td rowspan="3">1</td> 
+			<td width="200" rowspan="3">收缩功能障碍</td> 
+			<td width="285" >左心室缩短分数(FS)&lt;30%</td> 
+			<td width="95"><input type="text" name="lvs0" style="width:95px;">%</td> 
+			<td><div><div style="float:left;"><input type="radio" name="lvs" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="lvs" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td>左室后壁(LVPWA)&lt;10mm</td> 
+			<td><input type="text" name="lvpwa0" style="width: 95px;">mm</td> 
+			<td><div><div style="float:left;"><input type="radio" name="lvpwa" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="lvpwa" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td>室间隔(IVSA)&lt;4mm</td> 
+			<td><input type="text" name="ivsa0" style="width: 95px;">mm</td> 
+			<td><div><div style="float:left;"><input type="radio" name="ivsa" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ivsa" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" >2</td> 
+			<td bgcolor="#D4D4D4" colspan="2">静息状态下的射血分数(EF)&lt; 55%</td> 
+			<td bgcolor="#D4D4D4" ><input type="text" name="ef0" style="width:95px;">%</td> 
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="ef" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ef" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td rowspan="3">3</td> 
+			<td rowspan="3">舒张功能障碍</td> 
+			<td>E /A 比率&lt; 1或&gt;2：</td> 
+			<td><input type="text" name="eaRatio0" style="width:95px;"></td> 
+			<td><div><div style="float:left;"><input type="radio" name="eaRatio" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="eaRatio" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td style="color:blue;">减速时间延长&gt;200 ms</td> 
+			<td><input type="text" name="dtl0" style="width:95px;">ms</td> 
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="dtl" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="dtl" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td style="color:blue;">等容舒张时间延长&gt; 80 ms</td> 
+			<td><input type="text" name="irtl0" style="width:95px;">ms</td> 
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="irtl" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="irtl" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr>
+		<tr> 
+			<td bgcolor="#D4D4D4" >4</td> 
+			<td bgcolor="#D4D4D4" >左心房扩大</td> 
+			<td bgcolor="#D4D4D4" >左心房内径(LA)&gt;40mm</td> 
+			<td bgcolor="#D4D4D4" ><input type="text" name="laid0" style="width:95px;">mm</td> 
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="laid" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="laid" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td>5</td> 
+			<td colspan="2">心电图QT间期延长：男性&gt;0.45s，女性&gt;0.46s：</td> 
+			<td><input type="text" name="ecgl0" style="width:95px;">s</td> 
+			<td><div><div style="float:left;"><input type="radio" name="ecgl" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ecgl" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" >6</td> 
+			<td bgcolor="#D4D4D4"  colspan="3">心肌质量增加</td> 
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="myoqa" value="1"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="myoqa" value="0"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td style="color:blue;">7</td> 
+			<td colspan="3" style="color:blue;">B-型钠尿肽(BNP)和B-型钠尿肽前体(pro-BNP)升高</td> 
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="bnp" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="bnp" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" style="color:blue;">8</td> 
+			<td bgcolor="#D4D4D4" colspan="3" style="color:blue;">肌钙蛋白Ⅰ水平升高</td> 
+			<td bgcolor="#D4D4D4" style="color:blue;"><div><div style="float:left;"><input type="radio" name="teup" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="teup" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td style="color:blue;">9</td> 
+			<td colspan="3" style="color:blue;">电生理异常</td> 
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="epabn" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="epabn" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" style="color:blue;">10</td> 
+			<td bgcolor="#D4D4D4" colspan="3" style="color:blue;">变时性反应的异常</td> 
+			<td bgcolor="#D4D4D4" style="color:blue;"><div><div style="float:left;"><input type="radio" name="crabn" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="crabn" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td style="color:blue;">11</td> 
+			<td colspan="3" style="color:blue;">机电解偶联</td> 
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="mec" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="mec" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr> 
+			<td bgcolor="#D4D4D4" style="color:blue;">12</td> 
+			<td bgcolor="#D4D4D4" colspan="3" style="color:blue;">在运动、容量负荷增加及血管活性药物等应激情况下心输出量不能充分增加</td> 
+			<td bgcolor="#D4D4D4" style="color:blue;"><div><div style="float:left;"><input type="radio" name="unadd" value="1" onclick="checkOrNotCheck(this)"></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="unadd" value="0" onclick="checkOrNotCheck(this)"></div><div style="float:left;">否</div></div></td> 
+		</tr> 
+		<tr>
+			<td>结果</td>
+			<td colspan="3">请临床医生根据患者临床具体情况判定是否符合肝硬化心肌病诊断：</td>
+			<td><div><div style="float:left;"><input type="radio" name="ismyoc" value="1" /></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ismyoc" value="0" /></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="3">备注</td>
+			<td bgcolor="#D4D4D4" colspan="3">"左心房内径"说明：</td>
+			<td bgcolor="#D4D4D4" >&nbsp;</td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" colspan="3">1、一般人左心房内径超过35mm即为左心房扩大，若患者身材高大，心脏体积也会相应扩大，请临床医生根据患者体型对左心房内径是否增大做出判断</td>
+			<td bgcolor="#D4D4D4" >&nbsp;</td>
+		</tr>	
+		<tr>
+			<td bgcolor="#D4D4D4" colspan="3">2、一般患者采用M型测量左心室内径，如遇特殊患者，使用2D型测量四腔心，横径≥40mm和/或纵径≥50mm，即为左心房扩大</td>
+			<td bgcolor="#D4D4D4" >&nbsp;</td>
+		</tr>		
+    </table>
+</form>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>发热现病史</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../Js/feverCommon.js"></script>
+   <style type="text/css">
+	 .redstyle{color:red;}
+	 .blackstyle{color:black;}
+     input{
+		border:none;
+		font-size:14px;
+		font-family:'宋体';	
+		width:14px;
+	 }
+	</style>
+   	
+	<script type="text/javascript"> 
+		
+		//动态加载字典树信息
+		var url = App.App_Info.BasePath+'/KLJY/fever.do?method=getFeverMedicine';
+		var panel=new Ext.tree.TreePanel({
+			title:'',
+			autoScroll:true,
+			containerScroll:true,
+			height:630,
+			copyNode:null,					
+			loader: new Ext.tree.TreeLoader({dataUrl:url}),
+			root:{
+				nodeType:'async',
+				text:'现病史',
+				draggable:false,
+				itemName:'',
+				id:-1
+			},
+			useArrows:true,
+			rootVisible:false,
+			listeners:{
+				render:function(){
+					//渲染函数（全部展开）
+					this.expandAll();
+				},						
+				click:function(_node,_e){
+					itemName = _node.text;
+					if(_node.isLeaf()){
+						//点击节点触发事件
+						treeNodeClick(_node);
+					}
+				}
+			}
+		});
+		Ext.onReady(function(){
+			var sm=new Ext.grid.CheckboxSelectionModel({
+				singleSelect:true//单选
+			}); 
+			var cm=new Ext.grid.ColumnModel([	
+				new Ext.grid.RowNumberer(),//序列号自增长
+				sm,			
+				{header:'字段',dataIndex:'symptomItem',width:160}
+			]);
+			symptomInfo = Ext.data.Record.create([
+				{name:'serialNo'},
+				{name:'symptomItem'}
+			]);
+			store=new Ext.data.Store({
+				proxy:new Ext.data.MemoryProxy(),
+				reader:new Ext.data.ArrayReader({},symptomInfo)
+			});
+			
+			new Ext.Viewport({
+				layout:"border",
+				collapsed:true,
+				collapsible:true,		
+				items:[
+					{
+						region:"west",
+						width:180,
+						height:300,
+						title:"发热现病史字典树",
+						html:'<div style="width:240px;overflow:auto" id="div"></div>'						
+					},
+					{
+						region:"center",
+						width:100,
+						layout:"fit",
+						height:300,
+						title:"病人结构化发热现病史",
+						items:[
+						{
+							xtype:'panel',
+							tbar:[
+								{
+									xtype:'tbfill'
+								},
+								{
+									pressed:true,
+									text:'在列表中移除',
+									//移除函数
+									handler:function(){
+										removeFromList();
+									}
+								}
+							],
+								items:[
+									{
+										xtype: "grid",
+										id:"symptomItemList",	
+										autoScroll:true,									
+										sm:sm,
+										store:store,
+									    cm:cm,
+									    listeners:{
+											click:function(){
+													$('span').addClass('blackstyle');
+													var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+													if(rows.length > 0){
+														$('span[name="' + rows[0].data.serialNo +'"]').removeClass('blackstyle');
+														$('span[name="' + rows[0].data.serialNo +'"]').addClass('redstyle');		
+													}					
+											}		
+										}								
+									}
+								]
+						}
+						]
+						
+					},
+					{
+						region:"east",
+						width:550,
+						height:300,
+						title:"病人结构化组合内容",
+						tbar:[
+							{
+							xtype:'tbfill'
+							},{
+							pressed:true,
+							text:'预览',
+							handler:function(){
+								var finalResult = showFinalResult();
+								parent.setRetValue('', finalResult);
+							}
+							},{
+								pressed:true,
+								text:'确定',
+								handler:function(){		
+										setPreHistorySymptom();
+									if(saveOldOperations() == -1)return;
+									var finalResult = showFinalResult();
+									parent.setRetValue(oldOperations, finalResult);
+									
+									parent.content = finalResult;
+									parent.isSave = 'true';
+									parent.SaveData();
+									parent.destroyPerHis();
+									
+								}
+							},{
+								pressed:true,
+								text:'取消',
+								handler:function(){
+									parent.setRetValue('', parent.content);
+									parent.destroyPerHis();
+								}
+							}
+							
+						],
+						html:'<div id="sysmptomContext" style="overflow:auto;"></div>'+
+							'<textarea id="finalResult" style="display:none;" readonly></textarea>'
+					}
+				]
+			});
+			Ext.getCmp('symptomItemList').setHeight($(window).height()-50);
+			panel.render('div');
+			panel.setHeight($(window).height());
+			//alert("oldOperations:"+oldOperations);
+			if(oldOperations != ""){
+				setOldOperations();
+  			}
+  			
+  			var max = 0;
+  			for(var i = 0; i < store.getCount(); i++){
+  				var record = store.getAt(i);
+				if(record.get('serialNo') > record.get('serialNo')){
+					max = record.get('serialNo');
+				}else{
+					max = record.get('serialNo');
+				}
+			}
+  			addNo = max;
+		});
+		
+		//点击树节点时触发的事情
+		function treeNodeClick(_node){	
+			//本次发病		
+			itemName = _node.text;
+			if(_node.text == "主要症状（必填项）"){
+				var id=App.util.getHtmlParameters('KID');	
+				parent.hidePreHis();
+				parent.symptomInfoIfr('feverMedicineMainSystom.html',itemName);			
+			}
+			//发病情况
+			if(_node.text == "发病情况"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('incidence.html',itemName);
+			}
+			//重要阴性症状
+			if(_node.text == "重要阴性症状"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('negativeSystom.html',itemName);
+			}
+			//次要症状
+			if(_node.text == "次要症状"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('otherSystom.html',itemName);
+			}
+			//伴随症状
+			if(_node.text == "伴随症状"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('associatedSystom.html',itemName);
+			}
+			//诊疗经过
+			if(_node.text == "诊疗经过"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('afterTreatment.html',itemName);
+			}
+			//症状病情演变
+			if(_node.text == "症状病情演变"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('systomEvolution.html',itemName);
+				
+			}
+			//目前状况
+			if(_node.text == "目前状况"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('currentState.html',itemName);
+			}
+			//其它疾病情况
+			if(_node.text == "其它疾病情况"){
+				parent.hidePreHis();
+				parent.symptomInfoIfr('othersSystom.html',itemName);
+			}
+		}
+		
+		
+		
+	</script>
+  </head>
+  
+  <body>
+  
+   <div id="tag"></div>
+  </body>
+</html>

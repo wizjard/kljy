@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="222890" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ES" extension="HNZDSY1107270006" />
+    </patientIDInfo>
+    <patientName>LIU SHU QIN^^^^=刘书芹^^^^</patientName>
+    <patientGender>2</patientGender>
+    <patientDOB>19580101</patientDOB>
+    <patientAge>53</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>
+      </streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ES" extension="HNZDSY1107270006" />
+    <clinicDiagnose>
+      <narrativeBlock>肝硬化</narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ES" extension="HNZDSY1107270006" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>鲁俊锋</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>中毒性肝病科</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>主机一</depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ES" extension="HNZDSY1107270006" />
+    <deviceType>ES</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2011-7-27 10:00:04</examDate>
+    <bodyPart>食管静脉曲张硬化术</bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>HNZDSY1107270006</studyUID>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094225.796.0.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094234.515.1.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094245.171.2.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094306.390.4.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094316.375.5.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094331.765.6.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094340.593.7.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094702.718.8.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094719.187.9.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727094955.156.10.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727095057.625.11.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ES" extension="HNZDSY1107270006" />
+    <reportFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110727100013.468.JPG</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>王贞彪</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-7-27 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[    食管曲张静脉静脉治疗2周后复查：原曲张静脉较前明显减轻，上段食管静脉曲张基本变平，中下段为中度曲张，部分为重度曲张，原各硬化治疗部位未见溃疡形成。
+   于贲门口上方分别于12点、3点、6点食管曲张静脉内分别注入1%聚桂醇7-9ml，拔针后6点针眼有少许渗血，喷凝血酶反复观察未见活动性出血后撤镜。
+      
+        ]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>阳性</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[    食管静脉中-重度曲张
+    食管静脉曲张硬化治疗
+    
+    ]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

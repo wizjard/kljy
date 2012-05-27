@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>多选字典窗口</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var _sql=window.dialogArguments['sql'];
+Ext.onReady(function(){
+	layout();				 
+});
+function layout(){
+	new Ext.Panel({
+		id:'panel',
+		el:'dictCon',
+		frame:false,
+		width:300,
+		height:450,
+		layout:'fit',
+		autoScroll:true,
+		tbar:[
+			  '过滤:',{
+				  xtype:'textfield',
+				  id: 'PYFilter',
+				  width: 180,
+				  enableKeyEvents: true,
+				  listeners:{
+					  'keyup':function(_this){
+						  var _val=_this.getValue().trim();
+						  doFilter(_val);
+					  }
+				  }
+			  },'->',{
+				  text:'确定',pressed:true,handler:function(){
+					  doSelect();
+					  window.close();
+				  }
+			  },{
+				  xtype:'tbseparator'
+			  },{
+				  text:'清空',pressed:true,handler:function(){
+					  window.returnValue={
+							cls:true
+						};
+					  window.close();
+				  }
+			  }
+		  ],
+		listeners:{
+			'render':function(_this){
+				getServerData(_this);
+			}	
+		}
+	}).render();
+}
+	
+	function doSelect(){
+		var boxs = Ext.getCmp('panel').body.query('input');	
+		var _val='';
+		var _txt='';
+		for (var i = 0, len = boxs.length; i< len; i++) {
+			if (boxs[i].checked) {
+				_val += boxs[i].value+',';
+				_txt += boxs[i].nextSibling.innerText+',';
+			}
+		}
+		if(_val.length>0){
+			_val = _val.substr(0,_val.length-1);
+			_txt = _txt.substr(0,_txt.length-1);
+		}
+		window.returnValue={
+			text:_txt,
+			value:_val
+		};
+	}
+	
+	function doFilter(_val){
+		var eles = Ext.getCmp('panel').body.query('span');
+		for (var i = 0, len = eles.length; i < len; i++) {
+			var _spanTxt = eles[i].innerText;
+			var _spanPY = '';
+			if (_spanTxt != null && _spanTxt != '') {
+				_spanPY = getPy(_spanTxt);
+			}
+			if ((_spanTxt.indexOf(_val) != -1) || (_spanPY.indexOf(_val) != -1)) {
+				eles[i].parentNode.style.display = 'block';
+			}else {
+				eles[i].parentNode.style.display = 'none';
+			}
+		}
+	}
+	
+	function getPy(_str){
+		var rstValue='';
+		_str=_str.replaceAll(' ','');
+		var temp=_str.split('');
+		i=-1;
+		len=_str.length;
+		rst=_str.split('');
+		while(++i<len){
+			rstValue= rstValue + temp[i].charAt(0); 
+		}
+		return rstValue;
+	}
+
+	function getServerData(_panel){
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath + '/dict/comm.do',
+			params:{method:'GetDictCondidate',sql:_sql},
+			success:function(_response,_options){
+				var _datas=Ext.util.JSON.decode(_response.responseText);
+				layoutBody(_panel,_datas);
+			}
+		});
+	}
+
+	function layoutBody(_panel,_data){
+		var _div = document.createElement('div');
+		_div.style.cssText='font-size:12px';
+		for(var i=0,len=_data.length;i<len;i++){
+			_div.appendChild(createDictItemDom(_data[i][0],_data[i][1]));
+		}
+		_panel.body.appendChild(_div);
+	}
+	
+	function createDictItemDom(_val,_txt){
+		var _p=document.createElement('p');
+		var _checkbox=document.createElement('input');
+		_checkbox.setAttribute('name','dicttextfieldcheckbox');
+		_checkbox.setAttribute('type','checkbox');
+		_checkbox.setAttribute('value',_val);
+		_p.appendChild(_checkbox);
+		var _span=document.createElement('span');
+		var _txt=document.createTextNode(_txt);
+		_span.appendChild(_txt);
+		_p.appendChild(_span);
+		return _p;
+	}
+</script>
+</head>
+
+<body>
+<div id="dictCon" style="width:350px"></div>
+</body>
+</html>

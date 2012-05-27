@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户信息</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+$(function(){
+	FormUtil.toDateField({el:$('input[name="birthday"]')});
+	$('input[name="sex"]').data('options',FormUtil.getIndependentDictionaryList('gender'));
+	FormUtil.toCombobox({el:$('input[name="sex"]')});
+	FormUtil.initBtnCss();
+	$.each($('input[name="valid"]'),function(){
+		$(this).click(function(){
+			var _check=this;
+			$.each($('input[name="valid"]'),function(){
+				if(_check!=this)	this.checked=false;
+			});
+		});
+	});
+	var _id=App.util.getHtmlParameters('id');
+	if(_id&&_id>0){
+		SetFormValue(_id);
+	}else{
+		$('input[name="id"]').val(-1);
+		$('input[name="password"]').val('11111111');
+	}
+});
+function SetFormValue(_id){
+	$.post(
+		App.App_Info.BasePath+'/admin/UserAdminAction.do',
+		{
+			method:'findById',
+			id:_id
+		},
+		function(data){
+			if(data.success){
+				var _data=JSON.parse(data.data);
+				FormUtil.setFormValues('form',_data);
+				setBelongRoleValid(_data);
+			}else{
+				alert('从服务器获取数据失败。');
+			}
+		},
+		'json'
+	);
+}
+function setBelongRoleValid(_data){
+	if(_data['belong']&&_data['belong'].length>0){
+		$.ajax({
+			url:App.App_Info.BasePath+'/common/CommonAction.do',
+			data:{
+				method:'GetIndependentDictionaryText',
+				code:'parent_belong',
+				value:_data['belong']
+			},
+			dataType:'text',
+			success:function(_txt1){
+				$.ajax({
+					url:App.App_Info.BasePath+'/common/CommonAction.do',
+					data:{
+						method:'GetIndependentDictionaryText',
+						code:'belong',
+						value:_data['belong']
+					},
+					dataType:'text',
+					success:function(_txt2){
+						$('input[name="belongShow"]').val(_txt1+'->'+_txt2);
+					}
+				});
+			}
+		});
+	}
+	if (_data['role'] && _data['role'].length > 0) {
+		$.ajax({
+			url:App.App_Info.BasePath+'/common/CommonAction.do',
+			data:{
+				method:'GetIndependentDictionaryText',
+				code:'role',
+				value:_data['role']
+			},
+			dataType:'text',
+			success:function(_txt){
+				$('input[name="roleShow"]').val(_txt);
+			}
+		});
+	}
+	$.each($('input[name="valid"]'),function(){
+		if(_data['valid']==this.value){
+			this.checked=true;
+		}
+	});
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	if(_values.name.length==0){
+		alert('姓名不能为空。');
+		return;
+	}
+	if(_values.account.length==0){
+		alert('账号不能为空。');
+		return;
+	}
+	if(_values.valid.length==0){
+		alert('有效性不能为空。');
+		return;
+	}else{
+		_values.valid=_values.valid.replaceAll('<','').replaceAll('>','');
+	}
+	if(_values.belong.length==0){
+		alert('单位信息不能为空。');
+		return;
+	}
+	if(_values.role.length==0){
+		alert('角色信息不能为空。');
+		return;
+	}
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/admin/UserAdminAction.do',
+		{
+			method:'saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _data=JSON.parse(data.data);
+				$('input[name="id"]').val(_data['id']);
+				$('input[name="password"]').val(_data['password']);
+				$('input[name="createDate"]').val(_data['createDate']);
+				$('input[name="modifyDate"]').val(_data['modifyDate']);
+			}
+		},
+		'json'
+	);
+}
+function ShowBelongSelect(){
+	var returnObj=window.showModalDialog(
+		App.App_Info.BasePath+'/PUBLIC/Modaldialog/UserBelong.html',
+		 null,
+		'dialogWidth=302px;dialogHeight=424px');
+	if(returnObj){
+		$('input[name="belong"]').val(returnObj.value);
+		$('input[name="belongShow"]').val(returnObj.text);
+	}
+}
+function ShowRoleSelect(){
+	var returnObj=window.showModalDialog(
+		App.App_Info.BasePath+'/PUBLIC/Modaldialog/UserRole.html',
+		 null,
+		'dialogWidth=302px;dialogHeight=424px');
+	if(returnObj){
+		$('input[name="role"]').val(returnObj.value);
+		$('input[name="roleShow"]').val(returnObj.text);
+	}
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id"/>
+<input type="hidden" name="password"/>
+<input type="hidden" name="role"/>
+<input type="hidden" name="belong"/>
+<input type="hidden" name="createDate"/>
+<input type="hidden" name="modifyDate"/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">用户基本信息</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">姓名：</td>
+		<td class="t2" width="220"><input name="name" type="text" class="text"/></td>
+		<td class="t1" width="80">账号：</td>
+		<td class="t2"><input name="account" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">性别：</td>
+		<td class="t2"><input name="sex" type="text" class="select"/></td>
+		<td class="t1">出生日期：</td>
+		<td><input name="birthday" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">电话：</td>
+		<td class="t2"><input name="phoneNo" type="text" class="text"/></td>
+		<td class="t1">电子邮件：</td>
+		<td><input name="email" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">有效性：</td>
+		<td class="t2" colspan="3">
+				<input name="valid" type="checkbox" value="1"/>账号可用
+				<input name="valid" type="checkbox" value="0"/>账号不可用
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">备注信息：</td>
+		<td class="t2" colspan="3"><textarea name="selfMemo" class="textarea" rows=5 style="width:92%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">单位信息：</td>
+		<td class="t2" colspan="3"><input readonly="readonly" name="belongShow" type="text" class="text"/>
+		<input type="button" class="btn_mouseout" value="设置" style="margin-right:15px;" onclick="ShowBelongSelect()"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">角色信息：</td>
+		<td class="t2" colspan="3"><input readonly="readonly" name="roleShow" type="text" class="text"/>
+		<input type="button" class="btn_mouseout" value="设置" style="margin-right:15px;" onclick="ShowRoleSelect()"/></td>
+	</tr>
+	<tr>
+		<td class="t2" colspan="4">
+			<div style="text-align:center">
+				<input type="button" value="保存" class="btn_mouseout" onclick="SaveData()"/>
+				<input type="reset" value="重置" class="btn_mouseout" style="margin-left:2em"/>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

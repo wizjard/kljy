@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>院外会诊申请单</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			LODOP=document.getElementById("LODOP");
+			/*CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+			var r=new RepoertHeader();
+			r.basePath=App.App_Info.BasePath;
+			r.el=document.getElementById('page-header');
+			r.config.title='院外会诊申请单';
+			r.cid=KID;
+			r.create();*/
+			singlePageTableInfo(KID,'院外会诊申请单','#page-header');
+			setValue('ConsultationApplyPrint','ConsultationApplyAction','get_Main_Info','ConsultationApplyAction');
+		});
+	</script>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button onclick="PREVIEW('院外会诊申请单')">打印预览</button>
+	</div>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<table class="conTable" border="0"style="border-style:1px #000 solid black;border-bottom:0px;"cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="width:15%;border:1px #000 solid;border-right:none">
+				姓名：<span name="patientName"></span>
+			</td>
+			<td style="width:13%;border:1px #000 solid;border-left:none;border-right:none">
+				性别：<span name="gender"></span>
+			</td>
+			<td style="width:15%;border:1px #000 solid;border-left:0px;border-right:0px;">
+				年龄：<span name="age"></span>
+			</td>
+			<td colspan="2" style="width:20%;border:1px #000 solid;border-left:0px;">
+				病历号：<span name="patientCaseNum"></span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="5" style="border:1px solid black;border-top:none;">
+				科室及床号:<span name="department"></span><span name="bedNum"></span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="border:1px #000 solid;border-right:none;border-top:none">会诊级别：<input type="checkbox" name="consultationGrade1" value="常规"/>常规&nbsp;&nbsp;<input type="checkbox" name="consultationGrade2" value="急诊"/>急诊</td>
+			<td colspan="3" style="border:1px #000 solid;border-left:none;border-top:none">申请会诊时间：<span name="checkDate"></span></td>
+		</tr>
+		</table>
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-bottom:none;border-top:none" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td colspan="5"style="border-style:1px #000 solid;border-top:none;border-left:none;border-bottom:none">病历摘要(含主要症状、体征及检查)：</td>
+		</tr>
+		<tr>
+			<td class="td1" style="width:17%;border:none">&nbsp;</td>
+			<td colspan="4" width="*" style="border-style:1px #000 solid;border-top:none;border-left:none;border-bottom:none">
+				<span name="caseHistorySummary"></span>
+			</td>
+		</tr>
+		</table>
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-top:none;border-bottom:none" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td valign="top" style="width:17%;border:none">目前初步诊断:</td>
+			<td style="border-top:none;border-left:none;border-bottom:none"><span name="primaryDiagnosis"></span></td>
+		</tr>
+		</table >
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-top:none;" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td valign="top" style="width:20%;border:none">会诊理由及目的:</td>
+			<td style="border-top:none;border-left:none;border-bottom:none"><span name="consultationEnd"></span></td>
+		</tr>
+		</table>
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-top:0px;border-bottom:0px" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="border:1px #000 solid;border-left:0px;border-right:0px;border-bottom:none;border-top:none">拟请医院:<span name="applyHospital"></span></td>
+			
+			<td style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:none" colspan="4">拟请科室或专业:<span name="applyDepartment"></span><br/></td>
+		</tr>
+		<tr>
+			<td style="width:50%;border:none">拟请医师职称:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="applyJobTitle1" value="主任医师"/>主任医师</td>
+			<td style="width:25%;border:none"><input type="checkbox" name="applyJobTitle2" value="副主任医师"/>副主任医师</td>
+			<td style="border-top:none;border-left:none;border-bottom:none"><input type="checkbox" name="applyJobTitle3" value="主治医师"/>主治医师</td>
+		</tr>
+		<tr >
+			<td  colspan="3"style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px">点名专家:<span name="specifyExpert"></span></td>
+		</tr>
+		</table>
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-top:none;border-bottom:none" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="border:none">会诊方式:<td style="border:none"><input type="checkbox" name="consultationFashion1" value="请来我院"/>请来我院</td><td colspan="2"style="border-top:none;border-bottom:none;border-left:none"><input type="checkbox" name="consultationFashion2" value="病人前往"/>病人前往</td>
+		</tr>
+		<tr>
+			<td style="width:25%;border:none">患者承担费用:</td>
+			<td align="left"style="width:25%;border:none"><input  type="checkbox" name="patientConsultationCost" value="会诊费"/>会诊费</td>
+			<td align="left"style="width:25%;border:none"><input type="checkbox" name="patientTrafficCost" value="交通费"/>交通费</td>
+			<td style="border-top:none;border-left:none;border-bottom:none"><input type="checkbox" name="patientTravellingCost" value="差旅费"/>差旅费</td>
+		</tr>
+		<tr>
+			<td style="border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px">我院承担费用:</td>
+			<td align="left" style="width:10%;border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px"><input type="checkbox" name="hosptalConsultationCost" value="会诊费"/>会诊费</td>
+			<td style="border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px"><input type="checkbox" name="hosptalTrafficCost" value="交通费"/>交通费</td>
+			<td style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px"><input type="checkbox" name="hosptalTravellingCost" value="差旅费"/>差旅费</td>
+		</tr>
+		</table>
+		<table class="conTable" border="1"style="border-style:1px #000 solid;border-top:none;border-right:1px" bordercolor="black"cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="width:40%" style="border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px">患方签字:本人:<span name="patientSign"></span></td>
+			<td colspan="3"style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px">关系人(与患者则关系):<span name="familySign"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span name="relationship"></span>)</td>
+		</tr>
+		<tr>
+			<td align="center"style="width:30%;border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px">经治医师:<span name="treatDoctor"></span></td>
+			<td style="width:30%;border:1px #000 solid;border-right:0px;border-left:0px;border-bottom:0px;border-top:0px">上级医师：<span name="superiorDoctor"></span></td>
+			<td style="width30%;border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px">科主任：<span name="directorDoctor"></span></td>
+		</tr>				
+		<tr>
+			<td colspan="3"style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px">
+				<p align="right">医务部签字(盖章)：<span name="sickBaySign"></span></p>
+			</td>
+		</tr>
+		<p></p>
+		<tr>
+			<td colspan="3"style="border:1px #000 solid;border-left:0px;border-bottom:0px;border-top:0px">
+				<p align="right"><span name="issueDate"></span>&nbsp;&nbsp;发出</p>
+		</td>
+			<tr>
+		</tr>
+	</table>
+	<p></p>
+	<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+		<tr>
+			<td>地址：<span name="address"></span></td><td>邮编：<span name="postNum"></span></td>
+			</tr>
+			<tr>
+			<td>医务部联系电话：<span name="sickBayPhone"></span></td><td>传真号：<span name="faxNum"></span></td>
+			</tr>
+			<tr>
+			<td>科室联系电话：<span name="departmentPhone"></span></td><td>联系人：<span name="linkman"></span></td>
+		</tr>
+	</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

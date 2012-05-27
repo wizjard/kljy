@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>PresentHistoryX.html</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var elId=App.util.getHtmlParameters('elId');
+$(function(){
+	initPage();
+	pageAction();
+});
+function pageAction(){
+	$('textarea').focus(function(){
+		if($(this).val().length>0){
+			$(this).attr('disabled',false);
+		}else{
+			$(this).attr('disabled',true);
+		}
+	});
+	var winoption ="dialogHeight:"+ screen.height*0.7+"px;dialogWidth:620px;status:yes;scroll:yes;resizable:yes;center:yes";
+	$('#casesDescImg').click(function(){
+		var returnObject=window.showModalDialog('Cases.html',{
+			dict:$('*[name="id"]').data('dict'),
+			value:$('*[name="id"]').data('value')
+		},winoption);
+		if(returnObject){
+			$('*[name="id"]').data('value',$.extend($('*[name="id"]').data('value'),returnObject.value));
+			$('*[name="casesDesc"]').val(returnObject.text);
+			$('*[name="casesDesc"]').focus();
+		}
+	});
+	$('#mainSysptomDescImg').click(function(){
+		var returnObject=window.showModalDialog('MainSysptom.html',{
+			dict:$('*[name="id"]').data('dict'),
+			value:$('*[name="id"]').data('value')
+		},winoption);
+		if(returnObject){
+			$('*[name="id"]').data('value',$.extend($('*[name="id"]').data('value'),returnObject.value));
+			$('*[name="mainSysptomDesc"]').val(returnObject.text);
+			$('*[name="mainSysptomDesc"]').focus();
+		}
+	});
+	$('#sideSysptomDescImg').click(function(){
+		var returnObject=window.showModalDialog('SideSysptom.html',{
+			dict:$('*[name="id"]').data('dict'),
+			value:$('*[name="id"]').data('value')
+		},winoption);
+		if(returnObject){
+			$('*[name="id"]').data('value',$.extend($('*[name="id"]').data('value'),returnObject.value));
+			$('*[name="sideSysptomDesc"]').val(returnObject.text);
+			$('*[name="sideSysptomDesc"]').focus();
+		}
+	});
+	$('#treatmentDescImg').click(function(){
+		var returnObject=window.showModalDialog('Treat.html',{
+			dict:$('*[name="id"]').data('dict'),
+			value:$('*[name="id"]').data('value')
+		},"dialogHeight:"+ screen.height*0.7+"px;dialogWidth:750px;");
+		if(returnObject){
+			$('*[name="id"]').data('value',$.extend($('*[name="id"]').data('value'),returnObject.value));
+			$('*[name="treatmentDesc"]').val(returnObject.text);
+			$('*[name="treatmentDesc"]').focus();
+		}
+	});
+}
+function initPage(){
+	//初始化公共字典值
+	var dicts=FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-IllThis');
+	$('*[name="id"]').data('dict',dicts);
+	//赋值
+	var value=parent.getMyData(elId);
+	$('*[name="id"]').data('value',value);
+	if(value)
+		FormUtil.setFormValues('form',value);
+}
+function getMyData(){
+	return $.extend($('*[name="id"]').data('value'),FormUtil.getFormValues('form'));
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id"/>
+<table id="table-con" width="635" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">发病情况</td>
+	</tr>
+	<tr>
+		<td><textarea name="casesDesc" style="width:95%;height:40px"></textarea>
+		<img id="casesDescImg" src="../../../../PUBLIC/images/sign.gif" class="hand" onclick=""/></td>
+	</tr>
+	<tr>
+		<td class="title">主要症状</td>
+	</tr>
+	<tr>
+		<td><textarea name="mainSysptomDesc" style="width:95%;height:150px"></textarea>
+		<img id="mainSysptomDescImg" src="../../../../PUBLIC/images/sign.gif" class="hand" onclick=""/></td>
+	</tr>
+	<tr>
+		<td class="title">伴随症状</td>
+	</tr>
+	<tr>
+		<td><textarea name="sideSysptomDesc" style="width:95%;height:40px"></textarea>
+		<img id="sideSysptomDescImg" src="../../../../PUBLIC/images/sign.gif" class="hand" onclick=""/></td>
+	</tr>
+	<tr>
+		<td class="title">诊疗经过</td>
+	</tr>
+	<tr>
+		<td><textarea name="treatmentDesc" style="width:95%;height:60px"></textarea>
+		<img id="treatmentDescImg" src="../../../../PUBLIC/images/sign.gif" class="hand" onclick=""/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

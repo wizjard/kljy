@@ -1,0 +1,3748 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>主要症状</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('preHistory').contentWindow.dbclickedSpan;
+$(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		var jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('form',JSON.parse(spanContent));
+	}
+	$('input[type="radio"]').click(function(){
+		if($(this).val() == 1 && $(this).parent().parent().next().attr('class')=='hidden'){
+			$(this).parent().parent().next().show();
+		}
+		if($(this).val() == 0 && $(this).parent().parent().next().attr('class')=='hidden'){
+			$(this).parent().parent().next().hide();
+			$(this).parent().parent().next().find('input[type="text"]').each(function(){
+				$(this).val('');
+			});
+		}
+		$(parent.document.getElementById('symptomInfoIfr')).height(document.body.scrollHeight);
+	});
+	$('input[type="radio"]').filter(function(){
+		  return this.checked;
+	}).click();
+	$(parent.document.getElementById('symptomInfoIfr')).height(document.body.scrollHeight);
+});
+
+function initPage(){
+	var inputName = null;
+	$('img').click(function(){
+		inputName = $(this).prev().attr('name');
+		$('#'+$(this).prev().attr('name')+'Div').dialog({
+			title:'',
+			autoOpen:false,
+			closeOnEscape:true,
+			position:[200,mousePos.y],
+			height:350,
+			width:550,
+			resizable:false,
+			zIndex:99,
+			buttons:{
+				'关闭':function(){$(this).dialog("close");},
+				'确定':function(){ComposeDialog(inputName);$(this).dialog("close");}
+			}
+		});
+		FormUtil.showJqueryDialog($(this).prev().attr('name')+'Div');
+	});
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value = FormUtil.getFormValues('form');
+		var oldOperation = JSON.stringify(value);
+		var rst = "";
+		rst = compose(value);
+		if(rst.length > 0){
+			rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hidePreHis();parent.symptomInfoIfr('mainSysptom2.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+			var iframe = parent.document.getElementById('preHistory');
+			iframe.contentWindow.itemValue = rst;
+			if(iframe.contentWindow.dbclickedSpan){
+				iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+			}else{
+				iframe.contentWindow.setReturnValue();
+			}
+		}
+		backToPreIllWindow();
+	});
+}
+
+document.onmousedown = mouseMove;
+var mousePos = null;
+function mouseMove(ev){
+	ev = ev || window.event;
+	mousePos = mouseCoords(ev);
+}
+function mouseCoords(ev){
+	if(ev.PageX || ev.PageY){
+		return {x:ev.PageX,y:PageY};
+	}
+	return {
+		x:ev.clientX + document.body.scrollLeft - document.body.clientLeft,
+		y:ev.clientY + document.body.scrollTop - document.body.clientTop
+	}
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('preHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showPreHis();	
+}
+	
+function compose(value){
+	var rst = '';
+	var temp = '';
+	if(value.fare == 1){
+		rst+='发热、';
+		temp=value.fare_type;
+		rst+=temp.length>0?('呈'+temp+'、'):'';
+		temp=value.fare_tiwen;
+		if(temp&&temp.length>0){
+			if(temp.indexOf('不详')!=-1){
+				rst+=temp+value.fare_topt+'、';
+			}else{
+				rst+=temp+value.fare_topt+'℃、';
+			}
+		}
+		rst+=value.fare_performance.length>0?value.fare_performance+'、':'';
+		rst+=value.fare_side.length>0?('伴'+value.fare_side+'，'):'';	
+	}
+	if(value.weihan == 1){
+		rst+="胃寒，";
+	}
+	if(value.hanzhan == 1){
+		rst+="寒战，";
+		if(value.hanzhanContinue != ''){
+			rst+="持续"+value.hanzhanContinue+"，";
+		}
+	}
+	if(value.sweat == 1){
+		rst+="大汗，";
+	}
+	if(value.daohan == 1){
+		if(value.daohanShowTime != ''){
+			rst+=value.daohanShowTime+'，';
+		}else{
+			rst+="盗汗，";
+		}
+	}
+	if(value.fali == 1){
+		if(value.fali_detail != ""){
+			rst+=value.fali_detail+'，';
+		}else{
+			rst+="乏力，";
+		}
+	}
+	if(value.qsbs == 1){
+		if(value.qsbsState != ""){
+			rst+=value.qsbsState+'，';
+		}else{
+			rst+="全身不适，";
+		}
+	}
+	if(value.skinUnNormal == 1){
+		rst+="皮肤异常，";
+		if(value.skinParts != ""){
+			rst+=value.skinParts+'出现异常';
+		}
+		if(value.skinColor != ""){
+			rst+="皮肤颜色" + value.skinColor + "，";	
+		}
+		if(value.skinEruption == 1){
+			rst+="皮疹，";
+			rst+=value.skinEruPart!=""?value.skinEruPart+"，":"";
+			rst+=value.skinEruColor!=""?value.skinEruColor+"，":"";
+			rst+=value.skinEruSize!=""?value.skinEruSize+"，":"";
+			rst+=value.skinEruShape!=""?value.skinEruShape+"，":"";
+			rst+=value.skinEruYazhi&&value.skinEruYazhi!=""?"压之"+value.skinEruYazhi+"，":"";
+			rst+=value.skinEruInner&&value.skinEruInner!=""?"疹间皮肤"+value.skinEruInner+"，":"";
+			rst+=value.skinEruAcmp!=""?"伴随"+value.skinEruAcmp+"，":"";
+			rst+=value.skinEruOrder!=""?"出诊顺序"+value.skinEruOrder+"，":"";
+			rst+=value.skinEruRegular!=""?value.skinEruRegular+"，":"";
+		}
+	}
+	if(value.bisai == 1){
+		if(value.bisaiState1 != ""){
+			rst+=value.bisaiState1+"，"+value.bisaiState2+"，";
+		}else{
+			rst+="鼻塞"+value.bisaiState2+"，";
+		}
+	}
+	if(value.liuti == 1){
+		rst+="流涕，";
+		rst+=value.liutiState&&value.liutiState!=""?value.liutiState+"，":"";
+	}
+	if(value.liulei == 1){
+		rst+="流泪，";
+		rst+=value.liuleiState!=""?value.liuleiState+"，":"";
+	}
+	if(value.yanhou == 1){
+		rst+="咽部不适,";
+		rst+=value.yanhouState!=""?value.yanhouState+"，":"";
+	}
+	if(value.cough == 1){
+		rst+="咳嗽，";
+		rst+=value.coughState1!=""?value.coughState1+"，":"";
+		rst+=value.coughState2!=""?value.coughState2+"，":"";
+		rst+=value.coughDesc!=""?value.coughDesc+"，":"";
+		rst+=value.coughState!=""?value.coughState+"，":"";
+		rst+=value.coughVoice!=""?value.coughVoice+"，":"";
+		rst+=value.coughTime!=""?value.coughTime+"，":"";
+	}
+	if(value.expectoration == 1){
+		rst+="咳痰";
+		rst+=value.exprtRate!=""?value.exprtRate+"，":"";
+		if(value.exprtVolume!=""){
+			rst+="痰量"+value.exprtVolume+"，";
+			rst+=value.exprtVolumeDesc!=""?"量约"+value.exprtVolumeDesc+"毫升/日":"";	
+		}
+		rst+=value.exprtColor!=""?value.exprtColor+"，":"";
+		rst+=value.exprtDesc!=""?value.exprtDesc+"，":"";
+		rst+=value.exprtSmell!=""?value.exprtSmell+"，":"";
+		rst+=value.exprtState!=""?value.exprtState+"，":"";
+	}
+	if(value.cardiopalmus == 1){
+		rst+=value.cdpCause!=""?"因"+value.cdpCause+"出现心悸，":"心悸，";
+		rst+=value.cdpState!=""?value.cdpState+"，":"";
+		rst+=value.cdpRate!=""?value.cdpRate+"，":"";
+		if(value.cdpContinue != "" && value.cdpConUnit != ""){
+			rst+=value.cdpContinue+value.cdpConUnit+"，";
+		}
+	}
+	if(value.breathDiff == 1){
+		rst+=value.cdpCause!=""?"因"+value.breathCause+"呼吸困难，":"呼吸困难，";
+		rst+=value.breathState1!=""?value.breathState1+"，":"";
+		rst+=value.breathState2!=""?value.breathState2+"，":"";
+		rst+=value.breathState!=""?value.breathState+"，":"";
+		rst+=value.breathType!=""?value.breathType+"，":"";
+		rst+=value.breathTime!=""?value.breathTime+"，":"";
+		rst+=value.breathFactor1!=""?"多于"+value.breathFactor1+"明显，":"";
+		rst+=value.breathFactor2!=""?"于"+value.breathFactor2+"减轻，":"";
+		rst+=value.breathFactor3!=""?"与"+value.breathFactor3+"有明显关系，":"";
+	}
+	if(value.chestPain == 1){
+		rst+=value.chestCause!=""?"因"+value.chestCause+"出现胸痛，":"胸痛，";
+		rst+=value.checkState!=""?value.checkState+"，":"";
+		rst+=value.chestPos!=""?"出现在"+value.chestPos+"，":"";
+		rst+=value.chestCharacter!=""?value.chestCharacter+"，":"";
+		rst+=value.chestLoc&&value.chestLoc!=""?value.chestLoc+"，":"";
+		if(value.chestEmit&&value.chestEmit!=""){
+			rst+=value.chestEmit+"，";
+			rst+=value.chestEmitPos!=""?"位于"+value.chestEmitPos+"，":"";
+		}
+		rst+=value.chestDispChar!=""?value.chestDispChar+"，":"";
+		if(value.chestConTime != "" && value.chestConUnit != ""){
+			rst+=value.chestConTime+value.chestConUnit+"，";
+		}
+		rst+=value.chestDispFactor1!=""?value.chestDispFactor1+"加重，":"";
+		rst+=value.chestDispFactor2!=""?value.chestDispFactor2+"缓解，":"";
+	}
+	if(value.appetite == 1){
+		rst+="食欲减退，";
+		rst+=value.apptState!=""?value.apptState+"，":"";
+		rst+=value.aptPerformance!=""?value.aptPerformance+"，":"";
+		rst+=value.aptReduce!=""?"减少至正常食量的"+value.aptReduce+"。":"";
+	}
+	if(value.exin == 1){
+		rst+="恶心，";
+		rst+=value.exinState!=""?value.exinState+"，":"";
+	}
+	if(value.outu == 1){
+		rst+="呕吐，";
+		rst+=value.outu_shape!=""?value.outu_shape+"，":"";
+		rst+=value.outu_thing!=""?value.outu_thing+"，":"";
+		rst+=value.outu_countDay!=""?"每天"+value.outu_countDay+"次，":"";
+		rst+=value.outu_volumeDay!=""?"每次"+value.outu_volumeDay+"ml，":"";
+		rst+=value.outu_countTotal!=""?"总次数"+value.outu_countTotal+"次":"";
+		rst+=vale.outu_volumeTotal!=""?"总量"+value.outu_volumeTotal+"ml":"";
+	}
+	if(value.futong == 1){
+		rst+="腹痛，";
+		rst+=value.futong_cases!=""?"因"+value.futong_cases+"后出现，":"";
+		rst+=value.futong_position!=""?value.futong_position+"，":"";
+		rst+=value.futong_performance!=""?value.futong_performance+"，":"";
+		rst+=value.futong_degree&&value.futong_degree!=""?value.futong_degree+"，":"";
+		rst+=value.futong_rate!=""?value.futong_rate+"，":"";
+		rst+=vlaue.futong_position2&&vlaue.futong_position2!=""?value.futong_position2+"，":"";
+		rst+=value.futong_time!=""?value.futong_time+"后出现，":"";
+		if(value.futong_fangshe == 1){
+			rst+=value.futong_fangshe+"放射，";
+			rst+=value.futong_fangshe0!=""?"出现在"+value.futong_fangshe0+"，":"";
+		}
+		rst+=value.futong_change!=""?value.futong_change+"缓解，":"";
+	}
+	if(value.fuxie == 1){
+		rst+="腹泻，";
+		rst+=value.fuxie_liji==1?"伴里急后加重，":"";
+		rst+=value.fuxie_shape!=""?value.fuxie_shape+"，":"";
+		rst+=value.fuxie_countDay!=""?"每天"+value.fuxie_countDay+"次，":"";
+		rst+=value.fuxie_volumeDay!=""?"每次"+value.fuxie_volumeDay+"ml，":"";
+	}
+	if(value.dabian == 1){
+		rst+=value.dabian_huibai==1?value.dabian_huibai+"，":"";
+		rst+=value.dabian_xue==1?value.dabian_xue+"，":"";
+		rst+=value.dabian_color!=""?value.dabian_color+"，":"";
+		rst+=value.dabian_shape!=""?value.dabian_shape+"，":"";
+		rst+=value.dabian_countDay!=""?"每天"+value.dabian_countDay+"次，":"";
+		rst+=value.dabian_volumeDay!=""?"每次"+value.dabian_volumeDay+"ml，":"";
+		rst+=value.dabian_countTotal!=""?"总次数"+value.dabian_countTotal+"次，":"";
+		rst+=value.dabian_volumeTotal!=""?"总量"+value.dabian_volumeTotal+"ml，":"";
+		rst+=value.dabian_side!=""?"伴随"+value.dabian_side+"，":"";
+	}
+	if(value.niaopin == 1){
+		rst+="尿频，";
+		rst+=value.npState!=""?value.npState+"，":"";
+		rst+=value.npCause!=""?"因"+value.npCause+"后出现，":"";
+		if(value.npRatio !="" && value.npRatioUnit != ""){
+			rst+=value.npRatio+value.npRatioUnit+"，";
+		}
+	}
+	if(value.niaoji == 1){
+		rst+="尿急，";
+		rst+=value.njState!=""?value.njState+"，":"";
+	}
+	if(value.niaotong == 1){
+		rst+="尿痛，";
+		rst+=value.njState!=""?value.njState+"，":"";
+		rst+=value.ntTime&&value.ntTime!=""?value.ntTime+"出现，":"";
+		rst+=value.ntPos!=""?"位于"+value.ntPos+"，":"";
+	}
+	if(value.niaoye == 1){
+		rst+="尿液改变,";
+		rst+=value.niaoye_color!=""?value.niaoye_color+"，":"";
+		rst+=value.niaoye_qldegree&&value.niaoye_qldegree!=""?value.niaoye_qldegree+"，":"";
+		rst+=value.niaoye_volume!=""?value.niaoye_volume+"，":"";
+		rst+=value.niaoye_volumeTotal!=""?value.niaoye_volumeTotal+"，":"";
+	}
+	if(value.shuizhong == 1){
+		rst+="水肿，";
+		rst+=value.szCharacter&&value.szCharacter!=""?value.szCharacter+"，":"";
+		rst+=value.szPos!=""?"位于"+value.szPos+"，":"";
+		rst+=value.szSymmetry&&value.szSymmetry!=""?value.szSymmetry+"，":"";
+		rst+=value.njState!=""?value.njState+"，":"";
+		rst+=value.szFactor!=""?"多于"+value.szFactor1+"明显，":"";
+		rst+=value.szFactor2!=""?"于"+value.szFactor2+"减轻，":"";
+		rst+=value.szFactor3!=""?"与"+value.szFactor3+"有明显关系，":"";
+	}
+	if(value.headPain == 1){
+		rst+="头痛，";
+		rst+=value.hpCause!=""?"因"+value.hpCause+"后出现，":"";
+		rst+=value.hpRatio!=""?value.hpRatio+"，":"";
+		rst+=value.hpDegree!=""?value.hpDegree+"，":"";
+		rst+=value.hpPos!=""?"位于"+value.hpPos+"，":"";
+		rst+=value.hpCharacter!=""?""+value.hpCharacter+"，":"";
+		rst+=value.hpRegular1!=""?"多于"+value.hpRegular1+"明显，":"";
+		rst+=value.hpRegular2!=""?"于"+value.hpRegular2+"减轻，":"";
+		rst+=value.hpRegular3!=""?"与"+value.hpRegular3+"有明显关系，":"";
+		rst+=value.hpFactor1!=""?"多于"+value.hpFactor1+"加重，":"";
+		rst+=value.hpFactor2!=""?"于"+value.hpFactor2+"减轻，":"";
+	}
+	if(value.shenzhi == 1){
+		rst+="神智改变，";
+		rst+=value.szDegree!=""?value.szDegree+"，":"";
+		rst+=value.szAnswer!=""?value.szAnswer+"，":"";
+		rst+=value.szCharChange==1?"性格改变，":"";
+		rst+=value.szCharDetail!=""?value.szChardDetail+"，":"";
+		
+		rst+=value.szCharChange==1?"计算力障碍，":"";
+		rst+=value.szCacDetail!=""?value.szCacDetail+"，":"";
+		
+		rst+=value.szCharChange==1?"定向力障碍，":"";
+		rst+=value.szOrientDetail!=""?value.szOrientDetail+"，":"";
+		
+		if(value.szHallucination != ""  && value.shPerformance != ""){
+			rst+=value.shPerformance+"，";
+		}
+	}
+	if(value.xingwei == 1){
+		rst+="行为异常，";
+		rst+=value.xingwei_performance!=""?value.xingwei_performance+"，":"";
+	}
+	if(value.twitchConvulsion == 1){
+		rst+=value.twitch&&value.twitch!=""?value.twitch+"，":"";
+		rst+=value.convulsion&&value.convulsion!=""?value.convulsion+"，":"";
+		rst+=value.tcPos!=""?"位于"+value.tcPos+"，":"";
+		rst+=value.tcAccompany!=""?value.tcAccompany+"，":"";
+		if(value.tcTime == 0){
+			rst+="反复发作，";
+		}
+		if(value.tcTime == 1 && value.tcTimeContinue !== "" && value.tcTimeConUnit != ""){
+			rst+="持续约"+value.tcTimeContinue+value.tcTimeConUnit+"停止";
+		}
+	}
+	if(value.waistPain == 1){
+		rst+="腰痛，";
+		rst+=value.waistCause!=""?"因"+value.waistCause+"后出现，":"";
+		rst+=value.waistShow!=""?value.waistShow+"，":"";
+		rst+=value.waistState!=""?value.waistState+"，":"";
+		rst+=value.waistPos!=""?"位于"+value.waistPos+"，":"";
+		rst+=value.waistCharacter!=""?value.waistCharacter+"，":"";
+		rst+=value.waistPos2!=""?value.waistPos2+"，":"";
+		if(value.waistAccompany == 1){
+			rst+="有伴随症状，";
+			rst+=value.waistAcpShow!=""?"表现为"+value.waistAcpShow+"，":"";
+			rst+=value.waistFactor1!=""?value.waistFactor1+"加重，":"";
+			rst+=value.waistFactor2!=""?value.waistFactor2+"减轻，":"";
+		}
+	}
+	if(value.jointMusclePain == 1){
+		rst+="肌肉关节痛，";
+		rst+=value.jmCause!=""?"因"+value.jmCause+"后出现，":"";
+		rst+=value.jmShow!=""?value.jmShow+"，":"";
+		rst+=value.jmState!=""?value.jmState+"，":"";
+		rst+=value.jmPos!=""?"位于"+value.jmPos+"，":"";
+		rst+=value.jmCharacter!=""?value.jmCharacter+"，":"";
+		rst+=value.jmPos2!=""?value.jmPos2+"，":"";
+		if(value.jmAccompany == 1){
+			rst+="有伴随症状，";
+			rst+=value.jmAcpShow!=""?"表现为"+value.jmAcpShow+"，":"";
+			rst+=value.jmFactor1!=""?value.jmFactor1+"加重，":"";
+			rst+=value.jmFactor2!=""?value.jmFactor2+"减轻，":"";
+		}
+	}
+	return rst;
+}
+
+function isRadioSelected(radios) {
+	for (var i = 0; i < radios.length; i++) {
+		if (radios[i].checked == true) {
+			return $(radios[i]).val();
+		}
+	}
+	return -1;
+}
+function ComposeDialog(_inputName){
+	var str = "";
+	$('#'+_inputName+'Div').find('input[type="checkbox"]').each(function(){
+		if($(this).attr("checked")){
+			str += $(this).val() + '、';
+		}
+	});
+	$('#'+_inputName+'Div').find('input[type="text"]').each(function(){
+		if($(this).val() != ""){
+			str += $(this).val() + '、';
+		}
+	});
+	if(str != ""){
+		$('input[name="'+_inputName+'"]').val(str.substr(0, str.length - 1));
+	}else{
+		$('input[name="'+_inputName+'"]').val('');
+	}
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+</head>
+<body>
+<div id="toolbar" style="text-align:right;width:800px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<form>
+<table id="table-con" width="800" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="100" align="right">发热</td>
+		<td class="t2" width="700">
+			<input name="fare" type="radio" value="1"/>有<input name="fare" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">热型：</td>
+					<td colspan="3">
+						<input name="fare_type" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">体温：</td>
+					<td width="180">
+						<input name="fare_tiwen" type="radio" value="0"/>体温不详
+						<input name="fare_tiwen" type="radio" value="1"/>最高体温
+					</td>
+					<td class="t3">&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">&nbsp;</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3">最高体温：</td>
+								<td width="180"><input name="fare_topt" type="text" style="width:114"/>℃</td>
+								<td class="t3">&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">发作特点：</td>
+					<td colspan="3">
+						<input name="fare_performance" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">伴随症状：</td>
+					<td colspan="3">
+						<input name="fare_side" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">胃寒</td>
+		<td class="t2" width="700">
+			<input name="weihan" type="radio" value="1"/>有<input name="weihan" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">寒战</td>
+		<td class="t2" width="700">
+			<input name="hanzhan" type="radio" value="1"/>有<input name="hanzhan" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">持续时间：</td>
+					<td colspan="3">
+						<select name="hanzhanContinue" style="width:200px;">
+							<option value=""></option>
+							<option value="1~5分钟">1~5分钟</option>
+							<option value="5~10分钟">5~10分钟</option>
+							<option value=">10分钟">&gt;10分钟</option>
+							<option value="时间不详">时间不详</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">大汗</td>
+		<td class="t2" width="700">
+			<input name="sweat" type="radio" value="1"/>有<input name="sweat" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">盗汗</td>
+		<td class="t2" width="700">
+			<input name="daohan" type="radio" value="1"/>有<input name="daohan" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">出现时间：</td>
+					<td colspan="3">
+						<input name="daohanShowTime" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"  align="right">乏力</td>
+		<td class="t2" >
+			<input name="fali" type="radio" value="1"/>有<input name="fali" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<select name="fali_detail" style="width:200px;">
+				<option value=""></option>
+				<option value="乏力">乏力</option>
+				<option value="肢体稍倦，可坚持轻体力工作">肢体稍倦，可坚持轻体力工作</option>
+				<option value="四肢乏力，勉强坚持日常活动">四肢乏力，勉强坚持日常活动</option>
+				<option value="全身无力，不能坚持日常活动">全身无力，不能坚持日常活动</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"  align="right">全身不适</td>
+		<td class="t2" >
+			<input name="qsbs" type="radio" value="1"/>有<input name="qsbs" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<select name="qsbsState" style="width:200px;">
+				<option value=""></option>
+				<option value="时有全身不适">时有全身不适</option>
+				<option value="偶有全身不适">偶有全身不适</option>
+				<option value="持续全身不适">持续全身不适</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"  align="right">皮肤异常</td>
+		<td class="t2" >
+			<input name="skinUnNormal" type="radio" value="1"/>有<input name="skinUnNormal" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">异常部位：</td>
+					<td colspan="3">
+						<input name="skinParts" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">皮肤颜色：</td>
+					<td colspan="3">
+						<input name="skinColor" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">皮疹：</td>
+					<td colspan="3">
+						<input name="skinEruption" type="radio" value="1"/>有<input name="skinEruption" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">&nbsp;</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3" width="70">部位：</td>
+								<td colspan="3">
+									<input name="skinEruPart" type="text" style="width:90%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">颜色：</td>
+								<td colspan="3">
+									<input name="skinEruColor" type="text" style="width:90%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">大小：</td>
+								<td colspan="3">
+									<input name="skinEruSize" type="text" style="width:90%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">形态：</td>
+								<td colspan="3">
+									<input name="skinEruShape" type="text" style="width:90%"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">压之：</td>
+								<td colspan="3">
+									<input name="skinEruYazhi" type="radio" value="0" />褪色
+									<input name="skinEruYazhi" type="radio" value="1" />不褪色
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">疹间皮肤：</td>
+								<td colspan="3">
+									<input name="skinEruInner" type="radio" value="0" />正常
+									<input name="skinEruInner" type="radio" value="1" />充血
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">伴随：</td>
+								<td colspan="3">
+									<input name="skinEruAcmp" type="text" style="width:90%"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">出诊顺序：</td>
+								<td colspan="3">
+									<input name="skinEruOrder" type="text" style="width:90%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t3" width="70">规律：</td>
+								<td colspan="3">
+									<input name="skinEruRegular" type="text" style="width:90%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">其他：</td>
+					<td colspan="3">
+						<input name="skinOther" type="text" style="width:90%"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">鼻塞</td>
+		<td class="t2" width="700">
+			<input name="bisai" type="radio" value="1"/>有<input name="bisai" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="bisaiState1" style="width:100px;">
+							<option value=""></option>
+							<option value="偶有鼻塞">偶有鼻塞</option>
+							<option value="时有鼻塞">时有鼻塞</option>
+							<option value=">持续鼻塞">持续鼻塞</option>
+						</select>
+						<select name="bisaiState2" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+							<option value="鼻音声重">鼻音声重</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">流涕</td>
+		<td class="t2" width="700">
+			<input name="liuti" type="radio" value="1"/>有<input name="liuti" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<input name="liutiState" type="radio" value="1"/>稀薄状<input name="liutiState" type="radio" value="0"/>粘稠状
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">流泪</td>
+		<td class="t2" width="700">
+			<input name="liulei" type="radio" value="1"/>有<input name="liulei" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="liuleiState" style="width:100px;">
+							<option value=""></option>
+							<option value="偶有">偶有</option>
+							<option value="时有">时有</option>
+							<option value="持续">持续</option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">咽部不适</td>
+		<td class="t2" width="700">
+			<input name="yanhou" type="radio" value="1"/>有<input name="yanhou" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">描述：</td>
+					<td colspan="3">
+						<input name="yanhouState" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">咳嗽</td>
+		<td class="t2" width="700">
+			<input name="cough" type="radio" value="1"/>有<input name="cough" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">发作特点：</td>
+					<td colspan="3">
+						<select name="coughState1" style="width:100px;">
+							<option value=""></option>
+							<option value="频繁">频繁</option>
+							<option value="间断">间断</option>
+							<option value="偶尔">偶尔</option>
+						</select>
+						<select name="coughState2" style="width:100px;">
+							<option value=""></option>
+							<option value="阵发性">阵发性</option>
+							<option value="突发性">突发性</option>
+							<option value="发作性">发作性</option>
+							<option value="长期慢性">长期慢性</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">性质：</td>
+					<td colspan="3">
+						<select name="coughDesc" style="width:100px;">
+							<option value=""></option>
+							<option value="干咳">干咳</option>
+							<option value="刺激性干咳">刺激性干咳</option>
+							<option value="咳嗽">咳嗽</option>
+							<option value="痉挛性咳嗽">痉挛性咳嗽</option>
+							<option value="咳后鸡鸣样吸气声">咳后鸡鸣样吸气声</option>
+							<option value="犬吠样咳嗽">犬吠样咳嗽</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="coughState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">音色：</td>
+					<td colspan="3">
+						<select name="coughVoice" style="width:100px;">
+							<option value=""></option>
+							<option value="声音嘶哑">声音嘶哑</option>
+							<option value="呈鸡鸣样">呈鸡鸣样</option>
+							<option value="呈金属音">呈金属音</option>
+							<option value="声音低微">声音低微</option>
+							<option value="声音无力">声音无力</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">发作时间：</td>
+					<td colspan="3">
+						<select name="coughTime" style="width:100px;">
+							<option value=""></option>
+							<option value="全天发作">全天发作</option>
+							<option value="晨起为重">晨起为重</option>
+							<option value="夜间为重">夜间为重</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">咳痰</td>
+		<td class="t2" width="700">
+			<input name="expectoration" type="radio" value="1"/>有<input name="expectoration" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">频度：</td>
+					<td colspan="3">
+						<select name="exprtRate" style="width:100px;">
+							<option value=""></option>
+							<option value="频繁">频繁</option>
+							<option value="间断">间断</option>
+							<option value="偶尔">偶尔</option>
+							<option value="阵发性">阵发性</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">痰量：</td>
+					<td colspan="3">
+						<select name="exprtVolume" style="width:100px;">
+							<option value=""></option>
+							<option value="少量">少量</option>
+							<option value="中等量">中等量</option>
+							<option value="大量">大量</option>
+						</select>
+						量约<input name="exprtVolumeDesc" type="text" style="width:100px;"/>毫升/日
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">颜色：</td>
+					<td colspan="3">
+						<input name="exprtColor" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">性质：</td>
+					<td colspan="3">
+						<input name="exprtDesc" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">气味异常：</td>
+					<td colspan="3">
+						<select name="exprtSmell" style="width:100px;">
+							<option value=""></option>
+							<option value="无气味异常">无气味异常</option>
+							<option value="有气味异常">有气味异常</option>
+							<option value="恶臭">恶臭</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">咳出情况：</td>
+					<td colspan="3">
+						<select name="exprtState" style="width:100px;">
+							<option value=""></option>
+							<option value="易咳出">易咳出</option>
+							<option value="不易咳出">不易咳出</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">心悸</td>
+		<td class="t2" width="700">
+			<input name="cardiopalmus" type="radio" value="1"/>有<input name="cardiopalmus" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">诱因：</td>
+					<td colspan="3">
+						<input name="cdpCause" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="cdpState" style="width:100px;">
+							<option value=""></option>
+							<option value="稍有">稍有</option>
+							<option value="明显">明显</option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">频度：</td>
+					<td colspan="3">
+						<select name="cdpRate" style="width:100px;">
+							<option value=""></option>
+							<option value="偶有">偶有</option>
+							<option value="经常">经常</option>
+							<option value="持续">持续</option>
+						</select>
+						发作约持续
+						<input name="cdpContinue" type="text" style="width:100px;" />
+						<select name="cdpConUnit" style="width:100px;">
+							<option value=""></option>
+							<option value="秒">秒</option>
+							<option value="分钟">分钟</option>
+							<option value="小时">小时</option>
+							<option value="天">天</option>
+							<option value="周">周</option>
+							<option value="月">月</option>
+							<option value="年">年</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">呼吸困难</td>
+		<td class="t2" width="700">
+			<input name="breathDiff" type="radio" value="1"/>有<input name="breathDiff" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">诱因：</td>
+					<td colspan="3">
+						<input name="breathCause" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">发作特点：</td>
+					<td colspan="3">
+						<select name="breathState1" style="width:100px;">
+							<option value=""></option>
+							<option value="偶有">偶有</option>
+							<option value="时有">时有</option>
+							<option value="持续">持续</option>
+						</select>
+						<select name="breathState2" style="width:100px;">
+							<option value=""></option>
+							<option value="急性">急性</option>
+							<option value="慢性">慢性</option>
+							<option value="反复发作性">反复发作性</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="breathState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">类型：</td>
+					<td colspan="3">
+						<select name="breathType" style="width:100px;">
+							<option value=""></option>
+							<option value="吸气性">吸气性</option>
+							<option value="呼气性">呼气性</option>
+							<option value="混合性">混合性</option>
+							<option value="端坐呼吸">端坐呼吸</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">发作时间：</td>
+					<td colspan="3">
+						<select name="breathTime" style="width:100px;">
+							<option value=""></option>
+							<option value="全天发作">全天发作</option>
+							<option value="晨起发作">晨起发作</option>
+							<option value="夜间发作">夜间发作</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">加重、缓解</br>因素：</td>
+					<td colspan="3">
+						多于
+						<select name="breathFactor1" style="width:100px;">
+							<option value=""></option>
+							<option value="活动时">活动时</option>
+							<option value="活动后">活动后</option>
+							<option value="休息">休息</option>
+							<option value="卧位">卧位</option>
+							<option value="坐位">坐位</option>
+							<option value="立位">立位</option>
+							<option value="半坐位">半坐位</option>
+							<option value="睡眠中">睡眠中</option>
+						</select>
+						明显,
+						于
+						<select name="breathFactor2" style="width:100px;">
+							<option value=""></option>
+							<option value="活动时">活动时</option>
+							<option value="活动后">活动后</option>
+							<option value="休息">休息</option>
+							<option value="卧位">卧位</option>
+							<option value="坐位">坐位</option>
+							<option value="立位">立位</option>
+							<option value="半坐位">半坐位</option>
+							<option value="睡眠中">睡眠中</option>
+						</select>
+						减轻,
+						与
+						<select name="breathFactor3" style="width:100px;">
+							<option value=""></option>
+							<option value="活动时">活动时</option>
+							<option value="活动后">活动后</option>
+							<option value="休息">休息</option>
+							<option value="卧位">卧位</option>
+							<option value="坐位">坐位</option>
+							<option value="立位">立位</option>
+							<option value="半坐位">半坐位</option>
+							<option value="睡眠中">睡眠中</option>
+						</select>
+						有明显关系
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">胸痛</td>
+		<td class="t2" width="700">
+			<input name="chestPain" type="radio" value="1"/>有<input name="chestPain" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">诱因：</td>
+					<td colspan="3">
+						<input name="chestCause" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="checkState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+							<option value="剧痛">剧痛</option>
+							<option value="时轻时重">时轻时重</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">部位：</td>
+					<td colspan="3">
+						<input name="chestPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">性质：</td>
+					<td colspan="3">
+						<input name="chestCharacter" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">位置：</td>
+					<td colspan="3">
+						<input name="chestLoc" type="radio" value="0"/>固定
+						<input name="chestLoc" type="radio" value="1"/>不固定				
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">放射：</td>
+					<td colspan="3">
+						<input name="chestEmit" type="radio" value="1"/>有
+						<input name="chestEmit" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t3"></td>
+					<td colspan="3">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3">放射部位:</td>
+								<td colspan="3">
+									<input name="chestEmitPos" type="text"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">发作特点：</td>
+					<td colspan="3">
+						<input name="chestDispChar" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">持续时间：</td>
+					<td colspan="3">
+						<input name="chestConTime" type="text"/>
+						<select name="chestConUnit" style="width:100px;">
+							<option value=""></option>
+							<option value="秒">秒</option>
+							<option value="分钟">分钟</option>
+							<option value="小时">小时</option>
+							<option value="天">天</option>
+							<option value="周">周</option>
+							<option value="月">月</option>
+							<option value="年">年</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">加重、缓解</br>因素：</td>
+					<td colspan="3">
+						<input name="chestDispFactor1" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>加重,
+						<input name="chestDispFactor2" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>缓解,
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">食欲减退</td>
+		<td class="t2" width="700">
+			<input name="appetite" type="radio" value="1"/>有<input name="appetite" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">程度：</td>
+					<td colspan="3">
+						<select name="apptState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">食少表现：</td>
+					<td>
+						<select name="aptPerformance" style="width:100px;">
+							<option value=""></option>
+							<option value="">未进食</option>
+							<option value="">略有减少</option>
+							<option value="">进少许流食</option>
+						</select>
+					</td>
+					<td class="t3">减少至正常食量的：</td>
+					<td>
+						<select name="aptReduce" style="width:100px;">
+							<option value=""></option>
+							<option value="1/2">1/2</option>
+							<option value="1/3">1/3</option>
+							<option value="1/4">1/4</option>
+							<option value="2/3">2/3</option>
+							<option value="3/4">3/4</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">恶心</td>
+		<td class="t2" width="700">
+			<input name="exin" type="radio" value="1"/>有<input name="exin" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="exinState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">呕吐</td>
+		<td class="t2">
+			<input name="outu" type="radio" value="1"/>有<input name="outu" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="80%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">呕吐性状：</td>
+					<td width="80">
+						<select name="outu_shape" style="width:120px;">
+							<option value=""></option>
+							<option value="呈喷射状">呈喷射状</option>
+							<option value="呈非喷射状">呈非喷射状</option>
+						</select>
+					</td>
+					<td class="t3">呕吐物：</td>
+					<td>
+						<select name="outu_thing" style="width:120px;">
+							<option value=""></option>
+							<option value="淘米水样内容">淘米水样内容</option>
+							<option value="胃内容物">胃内容物</option>
+							<option value="咖啡色内容物">咖啡色内容物</option>
+							<option value="咖啡色内容物伴血样快">咖啡色内容物伴血样快</option>
+							<option value="暗红色内容物">暗红色内容物</option>
+							<option value="暗红色内容物伴血样快">暗红色内容物伴血样快</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="outu_countDay" type="text"/></td>
+					<td class="t3">每次量(ml)：</td>
+					<td><input name="outu_volumeDay" type="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">总次数：</td>
+					<td><input name="outu_countTotal" type="text"/></td>
+					<td class="t3">总量(ml)：</td>
+					<td><input name="outu_volumeTotal" type="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"  align="right">腹痛</td>
+		<td class="t2">
+			<input name="futong" type="radio" value="1"/>有<input name="futong" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">诱因：</td>
+					<td>
+						<input name="futong_cases" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td>
+						<input name="futong_position" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性质：</td>
+					<td>
+						<input name="futong_performance" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">程度：</td>
+					<td>
+						<input name="futong_degree" type="radio" value="剧痛"/>剧痛
+						<input name="futong_degree" type="radio" value="中度"/>中度
+						<input name="futong_degree" type="radio" value="轻度"/>轻度
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">发病状态：</td>
+					<td>
+						<input name="futong_rate" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">位置：</td>
+					<td>
+						<input name="futong_position2" type="radio" value="固定"/>固定
+						<input name="futong_position2" type="radio" value="不固定"/>不固定
+						<input name="futong_position2" type="radio" value="游走"/>游走
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">出现时间：</td>
+					<td>
+						<input name="futong_time" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">放射：</td>
+					<td>
+						<input name="futong_fangshe" type="radio" value="1"/>有
+						<input name="futong_fangshe" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t3">部位：</td>
+					<td><input name="futong_fangshe0" type="text" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">缓解因素：</td>
+					<td>
+						<input name="futong_change" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" align="right">腹泻</td>
+		<td class="t2">
+			<input name="fuxie" type="radio" value="1"/>有<input name="fuxie" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">伴里急后</br>加重：</td>
+					<td colspan="3">
+						<input name="fuxie_liji" type="radio" value="1"/>有<input name="fuxie_liji" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性状：</td>
+					<td colspan="3">
+						<input name="fuxie_shape" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="fuxie_countDay" type="text"/></td>
+					<td class="t3" width="70">每次量(ml)：</td>
+					<td><input name="fuxie_volumeDay" type="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr align="right">
+		<td class="t1">大便改变</td>
+		<td class="t2">
+			<input name="dabian" type="radio" value="1"/>有<input name="dabian" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">灰白便：</td>
+					<td>
+						<input name="dabian_huibai" type="radio" value="1"/>有<input name="dabian_huibai" type="radio" value="0"/>无
+					</td>
+					<td class="t3" width="70">便血：</td>
+					<td>
+						<input name="dabian_xue" type="radio" value="1"/>有<input name="dabian_xue" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">颜色：</td>
+					<td>
+						<select name="dabian_color" style="width:120px;">
+							<option value=""></option>
+							<option value="黄褐色">黄褐色</option>
+							<option value="暗黄色">暗黄色</option>
+							<option value="鲜红色">鲜红色</option>
+							<option value="柏油样">柏油样</option>
+							<option value="暗红色果酱样">暗红色果酱样</option>
+							<option value="洗肉水样">洗肉水样</option>
+							<option value="黑便">黑便</option>
+							<option value="灰白便">灰白便</option>
+						</select>
+					</td>
+					<td class="t3">性状：</td>
+					<td>
+						<select name="dabian_shape" style="width:120px;">
+							<option value=""></option>
+							<option value="成形软便">成形软便</option>
+							<option value="不成形软便">不成形软便</option>
+							<option value="稀便">稀便</option>
+							<option value="溏便">溏便</option>
+							<option value="粘液便">粘液便</option>
+							<option value="脓血便">脓血便</option>
+							<option value="粘液脓血便">粘液脓血便</option>
+							<option value="干燥大便">干燥大便</option>
+							<option value="团块样大便">团块样大便</option>
+							<option value="细条样大便">细条样大便</option>
+							<option value="扁片样大便">扁片样大便</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="dabian_countDay" type="text"/></td>
+					<td class="t3">每次量(ml)：</td>
+					<td><input name="dabian_volumeDay" type="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">总次数：</td>
+					<td><input name="dabian_countTotal" type="text"/></td>
+					<td class="t3">总量(ml)：</td>
+					<td><input name="dabian_volumeTotal" type="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">伴随：</td>
+					<td colspan="5">
+						<input name="dabian_side" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">尿频</td>
+		<td class="t2" width="700">
+			<input name="niaopin" type="radio" value="1"/>有<input name="niaopin" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">程度：</td>
+					<td colspan="3">
+						<select name="npState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">诱因：</td>
+					<td>
+						<input name="npCause" type="text" style="width:150px;"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+					<td class="t3">频率：</td>
+					<td>
+						<input name="npRatio" type="text" style="width:20px;"/>
+						<select name="npRatioUnit" style="width:100px;">
+							<option value=""></option>
+							<option value="次/天">次/天</option>
+							<option value="次数不详">次数不详</option>
+							<option value="次数较前增多">次数较前增多</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">尿急</td>
+		<td class="t2" width="700">
+			<input name="niaoji" type="radio" value="1"/>有<input name="niaoji" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="njState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">尿痛</td>
+		<td class="t2" width="700">
+			<input name="niaotong" type="radio" value="1"/>有<input name="niaotong" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="njState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">时间：</td>
+					<td colspan="3">
+						<input name="ntTime" type="radio" value="排尿时"/>排尿时
+						<input name="ntTime" type="radio" value="排尿完"/>排尿完
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">部位：</td>
+					<td colspan="3">
+						<input name="ntPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr align="right">
+		<td class="t1">尿液改变</td>
+		<td class="t2">
+			<input name="niaoye" type="radio" value="1"/>有<input name="niaoye" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">尿色：</td>
+					<td colspan="3">
+						<input name="niaoye_color" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">清亮程度：</td>
+					<td colspan="3">
+						<input name="niaoye_qldegree" type="radio" value="清亮"/>清亮
+						<input name="niaoye_qldegree" type="radio" value="浑浊"/>浑浊
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">尿量变化：</td>
+					<td width="150">
+						<select name="niaoye_volume" style="width:120px;">
+							<option value=""></option>
+							<option value="尿量无变化">尿量无变化</option>
+							<option value="多尿">多尿</option>
+							<option value="少尿">少尿</option>
+							<option value="无尿">无尿</option>
+							<option value="尿量减少">尿量减少</option>
+						</select>
+					</td>
+					<td class="t3" width="70">总量(ml/天)：</td>
+					<td><input name="niaoye_volumeTotal" type="text" class="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">水肿</td>
+		<td class="t2" width="700">
+			<input name="shuizhong" type="radio" value="1"/>有<input name="shuizhong" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">起病：</td>
+					<td colspan="3">
+						<input name="szCharacter" type="radio" value="急性"/>急性
+						<input name="szCharacter" type="radio" value="慢性"/>慢性
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td colspan="3">
+						<input name="szPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">是否对称：</td>
+					<td colspan="3">
+						<input name="szSymmetry" type="radio" value="对称"/>对称
+						<input name="szSymmetry" type="radio" value="不对称"/>不对称
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="njState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">出现规律,加重缓解因素：</td>
+					<td colspan="3">
+						多于
+						<select name="szFactor1" style="width:100px;">
+							<option value=""></option>
+							<option value="晨起">晨起</option>
+							<option value="下午">下午</option>
+							<option value="夜间">夜间</option>
+							<option value="晨起">晨起</option>
+							<option value="行走活动后">行走活动后</option>
+							<option value="休息后">休息后</option>
+							<option value="抬高下肢后">抬高下肢后</option>
+							<option value="月经周期">月经周期</option>
+							<option value="立位">立位</option>
+							<option value="卧位">卧位</option>
+						</select>
+						明显,
+						于
+						<select name="szFactor2" style="width:100px;">
+							<option value=""></option>
+							<option value="晨起">晨起</option>
+							<option value="下午">下午</option>
+							<option value="夜间">夜间</option>
+							<option value="晨起">晨起</option>
+							<option value="行走活动后">行走活动后</option>
+							<option value="休息后">休息后</option>
+							<option value="抬高下肢后">抬高下肢后</option>
+							<option value="月经周期">月经周期</option>
+							<option value="立位">立位</option>
+							<option value="卧位">卧位</option>
+						</select>
+						减轻,
+						与
+						<select name="szFactor3" style="width:100px;">
+							<option value=""></option>
+							<option value="晨起">晨起</option>
+							<option value="下午">下午</option>
+							<option value="夜间">夜间</option>
+							<option value="晨起">晨起</option>
+							<option value="行走活动后">行走活动后</option>
+							<option value="休息后">休息后</option>
+							<option value="抬高下肢后">抬高下肢后</option>
+							<option value="月经周期">月经周期</option>
+							<option value="立位">立位</option>
+							<option value="卧位">卧位</option>
+						</select>
+						有明显关系
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">头痛</td>
+		<td class="t2" width="700">
+			<input name="headPain" type="radio" value="1"/>有<input name="headPain" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="15%">诱因：</td>
+					<td width="85%">
+						<input name="hpCause" type="text" style="width:80%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">频度：</td>
+					<td>
+						<input name="hpRatio" type="text" style="width:80%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">程度：</td>
+					<td>
+						<input name="hpDegree" type="text" style="width:80%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td>
+						<input name="hpPos" type="text" style="width:80%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性质：</td>
+					<td>
+						<input name="hpCharacter" type="text" style="width:80%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">出现规律:</td>
+					<td class="t4">
+						多于
+						<select name="hpRegular1" style="width:120px;">
+							<option value=''></option>
+							<option value="清晨">清晨</option>
+							<option value="上午">上午</option>
+							<option value="下午">下午</option>
+							<option value="晚间">晚间</option>
+							<option value="月经期">月经期</option>				
+							<option value="0">自定义</option>
+						</select>明显,于
+						<select name="hpRegular2" style="width:120px;">
+							<option value=''></option>
+							<option value="清晨">清晨</option>
+							<option value="上午">上午</option>
+							<option value="下午">下午</option>
+							<option value="晚间">晚间</option>
+							<option value="月经期">月经期</option>				
+							<option value="0">自定义</option>
+						</select>减轻,与
+						<select name="hpRegular3" style="width:120px;">
+							<option value=''></option>
+							<option value="清晨">清晨</option>
+							<option value="上午">上午</option>
+							<option value="下午">下午</option>
+							<option value="晚间">晚间</option>
+							<option value="月经期">月经期</option>				
+							<option value="0">自定义</option>
+						</select>有/无明显关系。					
+					</td>
+				</tr>		
+				<tr>
+					<td class="t3">加重、缓解</br>因素:</td>
+					<td class="t4">
+						多于
+						<select name="hpFactor1" style="width:120px;">
+							<option value=''></option>
+							<option value="咳嗽">咳嗽</option>
+							<option value="打喷嚏">打喷嚏</option>
+							<option value="摇头">摇头</option>
+							<option value="俯身">俯身</option>
+							<option value="直立位">直立位</option>
+							<option value="颈部运动后">颈部运动后</option>
+							<option value="活动按摩后">活动按摩后</option>
+							<option value="0">自定义</option>
+						</select>加重,于
+						<select name="hpFactor2" style="width:120px;">
+							<option value=''></option>
+							<option value="咳嗽">咳嗽</option>
+							<option value="打喷嚏">打喷嚏</option>
+							<option value="摇头">摇头</option>
+							<option value="俯身">俯身</option>
+							<option value="直立位">直立位</option>
+							<option value="颈部运动后">颈部运动后</option>
+							<option value="活动按摩后">活动按摩后</option>
+							<option value="0">自定义</option>
+						</select>减轻		
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="t1">神志改变</td>
+		<td class="t2">
+			<input name="shenzhi" type="radio" value="1"/>有<input name="shenzhi" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td>
+						<input name="szDegree" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">对答情况：</td>
+					<td>
+						<input name="szAnswer" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性格改变：</td>
+					<td>
+						<input name="szCharChange" type="radio" value="1"/>有<input name="szCharChange" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">具体描述</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<input name="szCharDetail" type="text" style="width:90%"/>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">计算力障碍：</td>
+					<td>
+						<input name="szCacluation" type="radio" value="1"/>有<input name="szCacluation" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">具体描述</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<input name="szCacDetail" type="text" style="width:90%"/>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">定向力障碍：</td>
+					<td>
+						<input name="szOrientation" type="radio" value="1"/>有<input name="szOrientation" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">具体描述</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<input name="szOrientDetail" type="text" style="width:90%"/>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">幻觉：</td>
+					<td>
+						<input name="szHallucination" type="radio" value="1"/>有<input name="szHallucination" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">具体描述</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<input name="shPerformance" type="text" style="width:90%"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">行为异常</td>
+		<td class="t2">
+			<input name="xingwei" type="radio" value="1"/>有<input name="xingwei" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">表现：</td>
+					<td>
+						<input name="xingwei_performance" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">抽搐及惊厥</td>
+		<td class="t2">
+			<input name="twitchConvulsion" type="radio" value="1"/>有<input name="twitchConvulsion" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">&nbsp;</td>
+					<td>
+						<input name="twitch" type="checkbox" value="1"/>抽搐
+						<input name="convulsion" type="checkbox" value="0"/>惊厥
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">部位：</td>
+					<td>
+						<input name="tcPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">伴随症状：</td>
+					<td>
+						<input name="tcAccompany" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">发作时间：</td>
+					<td>
+						<input name="tcTime" type="radio" value="0"/>反复发作
+						<input name="tcTime" type="radio" value="1"/>持续
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">&nbsp;</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3" width="70">&nbsp;</td>
+								<td>
+									持续约<input name="tcTimeContinue" type="text" style="width:90%"/>
+									<select name="tcTimeConUnit" style="width:120px;">
+										<option value=""></option>
+										<option value="秒">秒</option>
+										<option value="分钟">分钟</option>
+										<option value="小时">小时</option>
+										<option value="天">天</option>
+										<option value="月">月</option>								
+									</select>
+									停止
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">腰痛</td>
+		<td class="t2">
+			<input name="waistPain" type="radio" value="1"/>有<input name="waistPain" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">诱因：</td>
+					<td colspan="3">
+						<input name="waistCause" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">发作状态：</td>
+					<td colspan="3">
+						<input name="waistShow" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="waistState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+							<option value="剧烈">剧烈</option>
+							<option value="时轻时重">时轻时重</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td colspan="3">
+						<input name="waistPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性质：</td>
+					<td colspan="3">
+						<input name="waistCharacter" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">位置：</td>
+					<td colspan="3">
+						<input name="waistPos2" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">伴随症状：</td>
+					<td colspan="3">
+						<input name="waistAccompany" type="radio" value="1"/>有
+						<input name="waistAccompany" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">&nbsp;</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3" width="70">表现：</td>
+								<td>
+									<input name="waistAcpShow" type="text" style="width:90%"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">加重、缓解</br>因素：</td>
+					<td colspan="3">
+						<select name="waistFactor1" style="width:100px;">
+							<option value=""></option>
+							<option value="活动">活动</option>
+							<option value="休息">休息</option>
+							<option value="晨起">晨起</option>
+							<option value="夜间">夜间</option>
+							<option value="平卧">平卧</option>
+							<option value="敲打扣击">敲打扣击</option>
+							<option value="咳嗽、喷嚏">咳嗽、喷嚏</option>
+							<option value="弯腰">弯腰</option>
+							<option value="劳累">劳累</option>
+							<option value="潮湿阴冷">潮湿阴冷</option>
+							<option value="月经期">月经期</option>
+							<option value="傍晚">傍晚</option>
+							<option value="物理治疗后">物理治疗后</option>
+							<option value="0">自定义</option>
+						</select>加重,
+						<select id="waistFactor2">
+							<option value=""></option>
+							<option value="活动">活动</option>
+							<option value="休息">休息</option>
+							<option value="晨起">晨起</option>
+							<option value="夜间">夜间</option>
+							<option value="平卧">平卧</option>
+							<option value="敲打扣击">敲打扣击</option>
+							<option value="咳嗽、喷嚏">咳嗽、喷嚏</option>
+							<option value="弯腰">弯腰</option>
+							<option value="劳累">劳累</option>
+							<option value="潮湿阴冷">潮湿阴冷</option>
+							<option value="月经期">月经期</option>
+							<option value="傍晚">傍晚</option>
+							<option value="物理治疗后">物理治疗后</option>
+							<option value="0">自定义</option>
+						</select>减轻
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">肌肉关节痛</td>
+		<td class="t2">
+			<input name="jointMusclePain" type="radio" value="1"/>有<input name="jointMusclePain" type="radio" value="0"/>无
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">诱因：</td>
+					<td colspan="3">
+						<input name="jmCause" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">发作状态：</td>
+					<td colspan="3">
+						<input name="jmShow" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">程度：</td>
+					<td colspan="3">
+						<select name="jmState" style="width:100px;">
+							<option value=""></option>
+							<option value="轻度">轻度</option>
+							<option value="中度">中度</option>
+							<option value="重度">重度</option>
+							<option value="剧烈">剧烈</option>
+							<option value="时轻时重">时轻时重</option>
+							<option value="减轻">减轻</option>
+							<option value="加重">加重</option>
+							<option value="逐渐减轻">逐渐减轻</option>
+							<option value="逐渐加重">逐渐加重</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td colspan="3">
+						<input name="jmPos" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">性质：</td>
+					<td colspan="3">
+						<input name="jmCharacter" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">位置：</td>
+					<td colspan="3">
+						<input name="jmPos2" type="text" style="width:90%"/>
+						<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">伴随症状：</td>
+					<td colspan="3">
+						<input name="jmAccompany" type="radio" value="1"/>有
+						<input name="jmAccompany" type="radio" value="0"/>无
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t2">&nbsp;</td>
+					<td class="t2">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="t3" width="70">表现：</td>
+								<td>
+									<input name="jmAcpShow" type="text" style="width:90%"/>
+									<img src="../../../../PUBLIC/images/sign.gif" class="hand"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t3">加重、缓解</br>因素：</td>
+					<td colspan="3">
+						<select name="jmFactor1" style="width:100px;">
+							<option value=""></option>
+							<option value="活动">活动</option>
+							<option value="休息">休息</option>
+							<option value="晨起">晨起</option>
+							<option value="夜间">夜间</option>
+							<option value="平卧">平卧</option>
+							<option value="敲打扣击">敲打扣击</option>
+							<option value="咳嗽、喷嚏">咳嗽、喷嚏</option>
+							<option value="弯腰">弯腰</option>
+							<option value="劳累">劳累</option>
+							<option value="潮湿阴冷">潮湿阴冷</option>
+							<option value="月经期">月经期</option>
+							<option value="傍晚">傍晚</option>
+							<option value="物理治疗后">物理治疗后</option>
+							<option value="0">自定义</option>
+						</select>加重,
+						<select id="jmFactor2">
+							<option value=""></option>
+							<option value="活动">活动</option>
+							<option value="休息">休息</option>
+							<option value="晨起">晨起</option>
+							<option value="夜间">夜间</option>
+							<option value="平卧">平卧</option>
+							<option value="敲打扣击">敲打扣击</option>
+							<option value="咳嗽、喷嚏">咳嗽、喷嚏</option>
+							<option value="弯腰">弯腰</option>
+							<option value="劳累">劳累</option>
+							<option value="潮湿阴冷">潮湿阴冷</option>
+							<option value="月经期">月经期</option>
+							<option value="傍晚">傍晚</option>
+							<option value="物理治疗后">物理治疗后</option>
+							<option value="0">自定义</option>
+						</select>减轻
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+<div style="display:none;">
+	<div id="fare_typeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="稽留热"/>稽留热</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="弛张热"/>弛张热</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="间歇热"/>间歇热</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="回归热"/>回归热</td>
+				<td><input name="" type="checkbox" value="不规则发热"/>不规则发热</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="fare_performanceDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间断发热"/>间断发热</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="无规律"/>无规律</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="持续性发热"/>持续性发热</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="午后低热"/>午后低热</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="fare_sideDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="畏寒"/>畏寒</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="寒战"/>寒战</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="盗汗"/>盗汗</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="头痛"/>头痛</td>
+				<td><input name="" type="checkbox" value="鼻塞"/>鼻塞</td>
+				<td><input name="" type="checkbox" value="流涕"/>流涕</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="咽痛"/>咽痛</td>
+				<td><input name="" type="checkbox" value="咳嗽"/>咳嗽</td>
+				<td><input name="" type="checkbox" value="咳痰"/>咳痰</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="腹痛腹泻"/>腹痛腹泻</td>
+				<td><input name="" type="checkbox" value="尿频"/>尿频</td>
+				<td><input name="" type="checkbox" value="尿急"/>尿急</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="尿痛"/>尿痛</td>
+				<td><input name="" type="checkbox" value="腰痛"/>腰痛</td>
+				<td><input name="" type="checkbox" value="皮疹"/>皮疹</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="肌肉关节痛"/>肌肉关节痛</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="daohanShowTimeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="白天盗汗"/>白天盗汗</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="夜间盗汗"/>夜间盗汗</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="入睡时盗汗"/>入睡时盗汗</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="skinPartsDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="眼眶"/>眼眶</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="颜面"/>颜面</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="颈部"/>颈部</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="胸部"/>胸部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="背部"/>背部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="肢端"/>肢端</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="四肢"/>四肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左上肢"/>左上肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左下肢"/>左下肢</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="右上肢"/>右上肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右下肢"/>右下肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="全身"/>全身</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="skinColorDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="苍白"/>苍白</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="发红"/>发红</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="skinEruShapeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="充血性斑疹"/>充血性斑疹</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="丘疹"/>丘疹</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="环形红斑"/>环形红斑</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="游走性红斑"/>游走性红斑</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="疱疹"/>疱疹</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="脓疱疹"/>脓疱疹</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="瘀点瘀斑"/>瘀点瘀斑</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="出血点"/>出血点</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="水疱"/>水疱</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="溃疡"/>溃疡</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="结痂"/>结痂</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="skinEruAcmpDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="疼痛"/>疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="瘙痒"/>瘙痒</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="麻木"/>麻木</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="蚁行感"/>蚁行感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="脱屑"/>脱屑</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="脱皮"/>脱皮</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搔抓痕"/>搔抓痕</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="yanhouStateDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="咽干"/>咽干</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="咽痒"/>咽痒</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="咽痛"/>咽痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="咽部烧灼感"/>咽部烧灼感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="喉痛"/>喉痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="喉痒"/>喉痒</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="声音嘶哑"/>声音嘶哑</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="失声"/>失声</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="exprtColorDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="黄色"/>黄色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="白色"/>白色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="无色透明"/>无色透明</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="粉红色"/>粉红色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="血色"/>血色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="红色"/>红色</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="棕红色"/>棕红色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="巧克力样"/>巧克力样</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绿色"/>绿色</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="黄绿色"/>黄绿色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="翠绿色"/>翠绿色</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="铁锈色"/>铁锈色</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="exprtDescDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="稀薄痰"/>稀薄痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="粘液痰"/>粘液痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="泡沫痰"/>泡沫痰</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="浆液痰"/>浆液痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="粘液脓痰"/>粘液脓痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="脓性痰"/>脓性痰</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="胶冻样痰"/>胶冻样痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="烂桃样痰"/>烂桃样痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="果酱样痰"/>果酱样痰</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="血脓混合痰"/>血脓混合痰</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="粘稠，牵拉成丝"/>粘稠，牵拉成丝</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="可分层"/>可分层</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="不分层"/>不分层</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="cdpCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="劳累"/>劳累</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="生气"/>生气</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="运动"/>运动</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="受凉"/>受凉</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧张"/>紧张</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="焦虑"/>焦虑</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="注意力集中"/>注意力集中</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="情绪激动"/>情绪激动</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="饮酒"/>饮酒</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="喝茶"/>喝茶</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="breathCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="劳累"/>劳累</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="生气"/>生气</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="运动"/>运动</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="受凉"/>受凉</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="吸入异物"/>吸入异物</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="接触"/>接触</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="外伤"/>外伤</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="劳累"/>劳累</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="精神紧张时"/>精神紧张时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="精神紧张时后"/>精神紧张时后</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="深吸气时"/>深吸气时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="深吸气时后"/>深吸气时后</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="局部压迫时"/>局部压迫时</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="体力劳动"/>体力劳动</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="情绪激动时"/>情绪激动时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="饱食"/>饱食</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="情绪激动后"/>情绪激动后</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="受凉后"/>受凉后</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="饮酒"/>饮酒</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="咳嗽后"/>咳嗽后</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="吸烟"/>吸烟</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="胸骨后"/>胸骨后</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="胸壁表浅部位"/>胸壁表浅部位</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左前胸"/>左前胸</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="左侧胸部"/>左侧胸部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右侧胸部"/>右侧胸部</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestCharacterDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="刺痛"/>刺痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="撕裂痛"/>撕裂痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="隐痛"/>隐痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="钝痛"/>钝痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="刀割样疼痛"/>刀割样疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="针刺样疼痛"/>针刺样疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="胀痛"/>胀痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="烧灼痛"/>烧灼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="压迫痛"/>压迫痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧缩性痛"/>紧缩性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞榨样痛"/>绞榨样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="闷痛"/>闷痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="酸痛"/>酸痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="锐痛"/>锐痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="锥痛"/>锥痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="钻顶样痛"/>钻顶样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧缩性痛"/>紧缩性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="压迫痛"/>压迫痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="串痛"/>串痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="转移性疼痛"/>转移性疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性痛"/>搏动性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样痛"/>电击样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样痛"/>钳夹样痛</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestEmitPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="心前区"/>心前区</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左肩程度"/>左肩程度</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右肩"/>右肩</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="左臂内侧"/>左臂内侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="手指"/>手指</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="颈"/>颈</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="咽"/>咽</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="下颌部"/>下颌部</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestDispCharDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="急性"/>急性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="慢性"/>慢性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="持续性"/>持续性</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="阵发性"/>阵发性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="偶尔"/>偶尔</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="反复发作"/>反复发作</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间断发作"/>间断发作</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐加重"/>逐渐加重</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐减轻"/>逐渐减轻</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="加剧"/>加剧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="减轻"/>减轻</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="突然出现"/>突然出现</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestConUnitDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="秒"/>秒</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="分钟"/>分钟</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="小时"/>小时</td>
+				<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="天"/>天</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="周"/>周</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="月"/>月</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="年"/>年</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestDispFactor1Div" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="深呼吸时"/>深呼吸时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="呼气"/>呼气</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="屏气"/>屏气</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="局部压迫"/>局部压迫</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="打喷嚏"/>打喷嚏</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="强烈胸廓活动"/>强烈胸廓活动</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="静止休息"/>静止休息</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="运动"/>运动</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="体味改变"/>体味改变</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="chestDispFactor2Div" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="深呼吸时"/>深呼吸时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="呼气"/>呼气</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="屏气"/>屏气</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="局部压迫"/>局部压迫</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="打喷嚏"/>打喷嚏</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="强烈胸廓活动"/>强烈胸廓活动</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="静止休息"/>静止休息</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="运动"/>运动</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="体味改变"/>体味改变</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_casesDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"></td>
+				<td style="width:200px;"></td>
+				<td style="width:200px;"></td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="进食油腻食物"/>进食油腻食物</td>
+				<td><input name="" type="checkbox" value="酗酒"/>酗酒</td>
+				<td><input name="" type="checkbox" value="暴饮暴食"/>暴饮暴食</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="腹部手术后"/>腹部手术后</td>
+				<td><input name="" type="checkbox" value="腹部受暴力作用"/>腹部受暴力作用</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_positionDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="全腹"/>全腹</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="上腹"/>上腹</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="下腹"/>下腹</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="中上腹"/>中上腹</td>
+				<td><input name="" type="checkbox" value="中下腹"/>中下腹</td>
+				<td><input name="" type="checkbox" value="左上腹"/>左上腹</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="左下腹"/>左下腹</td>
+				<td><input name="" type="checkbox" value="右上腹"/>右上腹</td>
+				<td><input name="" type="checkbox" value="右下腹"/>右下腹</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="右肋骨"/>右肋骨</td>
+				<td><input name="" type="checkbox" value="左肋骨"/>左肋骨</td>
+				<td><input name="" type="checkbox" value="脐部"/>脐部</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_performanceDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="刀割样疼痛"/>刀割样疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="针刺样疼痛"/>针刺样疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="胀痛"/>胀痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="隐痛"/>隐痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="刺痛"/>刺痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="转移样疼痛"/>转移样疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="灼烧样痛"/>灼烧样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钝痛"/>钝痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="串痛"/>串痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="钻顶样疼痛"/>钻顶样疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞痛"/>绞痛</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_rateDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="偶有"/>偶有</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="间断性"/>间断性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="阵发性"/>阵发性</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="持续性"/>持续性</td>
+				<td><input name="" type="checkbox" value="逐渐加剧"/>逐渐加剧</td>
+				<td><input name="" type="checkbox" value="逐渐减轻"/>逐渐减轻</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="加剧"/>加剧</td>
+				<td><input name="" type="checkbox" value="减轻"/>减轻</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_timeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="夜间"/>夜间</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="饥饿时"/>饥饿时</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="进食后"/>进食后</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="饱食后"/>饱食后</td>
+				<td><input name="" type="checkbox" value="运动后"/>运动后</td>
+				<td><input name="" type="checkbox" value="左侧卧位"/>左侧卧位</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="右侧卧位"/>右侧卧位</td>
+				<td><input name="" type="checkbox" value="膝胸位"/>膝胸位</td>
+				<td><input name="" type="checkbox" value="俯卧位"/>俯卧位</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="仰卧位"/>仰卧位</td>
+				<td><input name="" type="checkbox" value="前倾位"/>前倾位</td>
+				<td><input name="" type="checkbox" value="躯体前屈"/>躯体前驱</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="直立位"/>直立位</td>
+				<td><input name="" type="checkbox" value="排便时"/>排便时</td>
+				<td><input name="" type="checkbox" value="排便前"/>排便前</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="排便后"/>排便后</td>
+				<td><input name="" type="checkbox" value="按压时"/>按压时</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="futong_changeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="左侧卧位"/>左侧卧位</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右侧卧位"/>右侧卧位</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="膝胸位"/>膝胸位</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="仰卧位"/>仰卧位</td>
+				<td><input name="" type="checkbox" value="俯卧位"/>俯卧位</td>
+				<td><input name="" type="checkbox" value="前倾位"/>前倾位</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="躯体前屈"/>躯体前屈</td>
+				<td><input name="" type="checkbox" value="直立位"/>直立位</td>
+				<td><input name="" type="checkbox" value="进食后"/>进食后</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="排便后"/>排便后</td>
+				<td><input name="" type="checkbox" value="按压局部"/>按压局部</td>
+				<td><input name="" type="checkbox" value="呕吐后"/>呕吐后</br></td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="空腹时"/>空腹时</td>
+				<td><input name="" type="checkbox" value="睡眠时"/>睡眠时</td>
+				<td><input name="" type="checkbox" value="热敷后"/>热敷后</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="服用止痛药物后"/>服用止痛药物后</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="fuxie_shapeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="大便不成形"/>大便不成形</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="黄稀便"/>黄稀便</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="水样便"/>水样便</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="米泔样便"/>米泔样便</td>
+				<td><input name="" type="checkbox" value="蛋花汤样便"/>蛋花汤样便</td>
+				<td><input name="" type="checkbox" value="未消化食物"/>未消化食物</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="脓血便"/>脓血便</td>
+				<td><input name="" type="checkbox" value="粘液便"/>粘液便</td>
+				<td><input name="" type="checkbox" value="粘液脓血便"/>粘液脓血便</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="果酱样便"/>果酱样便</td>
+				<td><input name="" type="checkbox" value="脂肪泻"/>脂肪泻</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="dabian_sideDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="头晕"/>头晕</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="心悸"/>心悸</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="黑朦"/>黑朦</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="口渴"/>口渴</td>
+				<td><input name="" type="checkbox" value="喜食冷饮"/>喜食冷饮</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="npCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="劳累"/>劳累</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="受凉"/>受凉</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="月经期"/>月经期</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="接受导尿、尿路器械检查或流产术"/>接受导尿、尿路器械检查或流产术</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="ntPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="耻骨上区"/>耻骨上区</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="尿道内"/>尿道内</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="尿道口"/>尿道口</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="会阴部"/>会阴部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="腹股沟"/>腹股沟</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="睾丸"/>睾丸</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="niaoye_colorDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="尿色正常"/>尿色正常</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="淡黄色尿"/>淡黄色尿</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="深黄色尿"/>深黄色尿</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="淡茶色尿"/>淡茶色尿</td>
+				<td><input name="" type="checkbox" value="浓茶色尿"/>浓茶色尿</td>
+				<td><input name="" type="checkbox" value="酱油色尿"/酱油色尿></td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="洗肉水样色尿"/>洗肉水样色尿</td>
+				<td><input name="" type="checkbox" value="鲜红色尿"/>鲜红色尿</td>
+				<td><input name="" type="checkbox" value="暗红色尿"/>暗红色尿</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="咖啡色尿"/>咖啡色尿</td>
+				<td><input name="" type="checkbox" value="间断血尿"/>间断血尿</td>
+				<td><input name="" type="checkbox" value="全程血尿"/>全程血尿</td>
+			</tr>
+			<tr>
+				<td><input name="" type="checkbox" value="奶白色尿"/>奶白色尿</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="szPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="左侧"/>左侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右侧"/>右侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="双侧"/>双侧</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="上肢"/>上肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="手"/>手</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="前臂"/>前臂</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="下肢"/>下肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="踝部"/>踝部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="小腿"/>小腿</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="大腿"/>大腿</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="腰骶部"/>腰骶部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="眼睑"/>眼睑</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="颜面部"/>颜面部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="身体下垂部位"/>身体下垂部位</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="全身"/>全身</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="hpCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="精神紧张"/>精神紧张</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="劳累"/>劳累</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="受凉"/>受凉</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="生气"/>生气</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="hpRatioDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间歇性"/>间歇性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="持续性"/>持续性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="频繁"/>频繁</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="偶尔"/>偶尔</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="hpDegreeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="轻度"/>轻度</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="中度"/>中度</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="重度"/>重度</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="剧烈"/>剧烈</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="时轻时重"/>时轻时重</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="hpPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="单侧"/>单侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="双侧"/>双侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="前额"/>前额</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="枕部"/>枕部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="颞部"/>颞部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="局部"/>局部</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="弥散"/>弥散</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="hpCharacterDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性"/>搏动性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样"/>电击样</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="刺痛"/>刺痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="重压感"/>重压感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样"/>钳夹样</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="隐痛"/>隐痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钝痛"/>钝痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="胀痛"/>胀痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="酸痛"/>酸痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="烧灼样痛"/>烧灼样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="针刺样疼痛"/>针刺样疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="刀割样痛"/>刀割样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="撕裂痛"/>撕裂痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="锐痛"/>锐痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="锥痛"/>锥痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钻顶样痛"/>钻顶样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞痛"/>绞痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞榨样痛"/>绞榨样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧缩性痛"/>紧缩性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="压迫痛"/>压迫痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="串痛"/>串痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="转移性疼痛"/>转移性疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性痛"/>搏动性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样痛"/>电击样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样痛"/>钳夹样痛</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="szDegreeDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="神志清楚"/>神志清楚</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="神志欠清"/>神志欠清</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="神志不清"/>神志不清</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="嗜睡"/>嗜睡</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="意识模糊"/>意识模糊</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="昏睡"/>昏睡</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="昏迷"/>昏迷</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="言语杂乱"/>言语杂乱</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="躁动不安"/>躁动不安</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="szAnswerDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="呼之不应"/>呼之不应</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="呼之能应"/>呼之能应</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="回答切题"/>回答切题</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="答非所问"/>答非所问</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="Div" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value=""/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value=""/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value=""/></td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="shPerformanceDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="幻视"/>幻视</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="幻听"/>幻听</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="xingwei_performanceDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="反复动作"/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value="随地便溺"/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value="自言自语"/></td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="tcPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="全身"/>全身</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="局限"/>局限</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="角"/>角</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="眼睑"/>眼睑</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="手足"/>手足</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="上肢"/>上肢</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="下肢"/>下肢</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左"/>左</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右"/>右</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="双"/>双</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="对称"/>对称</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="不对称"/>不对称</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="tcAccompanyDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="意识模糊"/>意识模糊</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="意识丧失"/>意识丧失</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="呼吸暂停"/>呼吸暂停</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="尿便失控"/>尿便失控</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="外伤"/>外伤</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="搬重物"/>搬重物</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="潮湿"/>潮湿</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="寒冷"/>寒冷</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="扭伤"/>扭伤</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="过度活动"/>过度活动</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistShowDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="急性"/>急性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="慢性"/>慢性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="持续性"/>持续性</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="阵发性"/>阵发性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="偶尔"/>偶尔</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="反复发作"/>反复发作</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间断发作"/>间断发作</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐加重"/>逐渐加重</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐减轻"/>逐渐减轻</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="加剧"/>加剧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="减轻"/>减轻</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="突然出现"/>突然出现</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="腰部"/>腰部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="背部"/>背部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="骶部"/>骶部</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="腰骶部"/>腰骶部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="腰背部"/>腰背部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="左侧"/>左侧</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="右侧"/>右侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="双侧"/>双侧</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistCharacterDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性"/>搏动性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样"/>电击样</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="刺痛"/>刺痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="重压感"/>重压感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样"/>钳夹样</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="隐痛"/>隐痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钝痛"/>钝痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="胀痛"/>胀痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="酸痛"/>酸痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="烧灼样痛"/>烧灼样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="针刺样疼痛"/>针刺样疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="刀割样痛"/>刀割样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="撕裂痛	"/>撕裂痛	</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="锐痛"/>锐痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="锥痛"/>锥痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钻顶样痛"/>钻顶样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞痛"/>绞痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞榨样痛"/>绞榨样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧缩性痛"/>紧缩性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="压迫痛"/>压迫痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="串痛"/>串痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="转移性疼痛"/>转移性疼痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性痛"/>搏动性痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样痛"/>电击样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样痛"/>钳夹样痛</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistPos2Div" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="固定"/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value="不固定"/></td>
+				<td style="width:200px;"><input name="" type="checkbox" value="对称"/></td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="不对称"/>不对称</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="waistAcpShowDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="活动障碍"/>活动障碍</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="感觉障碍"/>感觉障碍</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="僵直"/>僵直</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间歇跛行"/>间歇跛行</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="压痛"/>压痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="扣痛"/>扣痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="排尿困难"/>排尿困难</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="下腹坠胀感"/>下腹坠胀感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="痛经"/>痛经</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="白带过多"/>白带过多</td>
+				<td style="width:200px;">&nbsp;</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmCauseDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="外伤"/>外伤</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="搬重物"/>搬重物</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="潮湿"/>潮湿</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="寒冷"/>寒冷</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="扭伤"/>扭伤</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="过度活动"/>过度活动</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmShowDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="急性"/>急性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="慢性"/>慢性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="持续性"/>持续性</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="阵发性"/>阵发性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="偶尔"/>偶尔</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="反复发作"/>反复发作</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="间断发作"/>间断发作</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐加重"/>逐渐加重</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="逐渐减轻"/>逐渐减轻</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="加剧"/>加剧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="减轻"/>减轻</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="突然出现"/>突然出现</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmPosDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="左侧"/>左侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="右侧"/>右侧</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="双侧"/>双侧</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="对称"/>对称</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="不对称"/>不对称</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="全身关节"/>全身关节</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="四肢大关节"/>四肢大关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="小关节"/>小关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="肩关节"/>肩关节</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="肘关节"/>肘关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="腕关节"/>腕关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="掌指关节"/>掌指关节</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="髋关节"/>髋关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="膝关节"/>膝关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="踝关节"/>踝关节</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="趾关节"/>趾关节</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="脊柱"/>脊柱</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="颈部"/>颈部</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="胸部"/>胸部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="腰部"/>腰部</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="骶部"/>骶部</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmCharacterDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性"/>搏动性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样"/>电击样</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="刺痛"/>刺痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="重压感"/>重压感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样"/>钳夹样</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="隐痛"/>隐痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钝痛"/>钝痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="胀痛"/>胀痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="酸痛"/>酸痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="烧灼样痛"/>烧灼样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="针刺样疼痛"/>针刺样疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="刀割样痛"/>刀割样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="撕裂痛	"/>撕裂痛	</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="锐痛"/>锐痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="锥痛"/>锥痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钻顶样痛"/>钻顶样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞痛"/>绞痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="绞榨样痛"/>绞榨样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧缩性痛"/>紧缩性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="紧箍感"/>紧箍感</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="压迫痛"/>压迫痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="串痛"/>串痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="转移性疼痛"/>转移性疼痛</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="搏动性痛"/>搏动性痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="电击样痛"/>电击样痛</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="钳夹样痛"/>钳夹样痛</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmPos2Div" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="固定"/>固定</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="不固定"/>不固定</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="对称"/>对称</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="不对称"/>不对称</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="游走性"/>游走性</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="描述不清"/>描述不清</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+	<div id="jmAcpShowDiv" style="width:600px;">
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="肿胀"/>肿胀</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="红肿"/>红肿</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="灼热"/>灼热</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="活动障碍"/>活动障碍</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="僵直"/>僵直</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="关节畸形"/>关节畸形</td>
+			</tr>
+			<tr>
+				<td style="width:200px;"><input name="" type="checkbox" value="感觉异常"/>感觉异常</td>
+				<td style="width:200px;"><input name="" type="checkbox" value="跛行"/>跛行</td>
+				<td style="width:200px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="3">自定义：<input name="" type="text" value="" style="width:100px;"/></td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div id="composeInfo" style="display:none;"></div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+
+		* 说明
+		
+		     	更新评分表
+		     	
+		     	  * 前台：
+		     	  
+		     	  	  * 新增目录结构：InHospitalCase/ItemScore下的所有文件。
+		     	  	  
+		     	  	  * 修改InHospitalCase/CaseList.html页面中APACHEII函数连接地址。
+		     	  	  
+		     	  * 后台：
+		     	  
+		     	      * 新增目录结构：InHospitalCase/pitemScore下所有的文件。
+		     	      
+		     	      * 修改	hibernate.cfg.xml配置文件，新增评分表实体配置。
+		     	      
+		     	      *　新建数据库表：ItemScore_Tree，ItemScore_APACHEII，ItemScore_LCdegree，ItemScore_PHI
+		     	      
+		     	      				　ItemScore_TS，ItemScore_LFunction。  
+		     	      
+		     	      *　修改struts-config.xml配置文件：
+		     	      	
+		     	      		<action 
+							  	  path="/KLJY/ItemScore/TreeAction" 
+								  parameter="method"
+								  type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.TreeAction"
+								  validate="false" 
+								  scope="request"/>	
+							
+							  <action 
+							      path="/KLJY/fever" 
+							      parameter="method"
+								  type="com.juncsoft.KLJY.InHospitalCase.pitemScore.fever.action.FeverAction"
+								  validate="false" 
+								  scope="request"/>  	 
+								  
+								<action 
+									  parameter="method" 
+									  path="/InHospitalCase/PresentHistoryAction" 
+									  type="com.juncsoft.KLJY.InHospitalCase.Liver.PresentHistory.PresentHistoryAction" 
+									  validate="false" 
+									  scope="request"/> 
+						  		<!-- 危重病人综合评价 -->
+						  		<action 
+						  			path="/KLJY/apache"
+						  			parameter="method"
+						  			type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.ApacheiiAction"
+						  			validate="false" 
+									scope="request"/>
+									
+						  		<!-- 肝癌进展程度评估 -->
+						  		<action 
+						  			path="/KLJY/lcde"
+						  			type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.LcdeGreeAction"
+						  			parameter="method"
+						  			validate="false" 
+									scope="request"/>
+						  	
+						  		<!-- 肝病功能评估 -->
+						  		<action
+						  			path="/KLJY/comm"
+						  			type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.CommonAction"
+						  		 	parameter="method"
+						  			validate="false" 
+									scope="request"/>
+								
+								<!-- 急诊中心急重病人综合评价(内) -->
+								<action 
+									path="/KLJY/phi"
+									type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.PhiAction"
+									parameter="method"
+						  			validate="false" 
+									scope="request"/>
+								<!-- 急诊中心急重病人综合评价(外) -->
+								<action 
+									path="/KLJY/ts"
+									type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.TsAction"
+									parameter="method"
+						  			validate="false" 
+									scope="request"/>

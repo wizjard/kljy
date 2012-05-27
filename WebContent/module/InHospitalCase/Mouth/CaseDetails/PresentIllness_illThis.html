@@ -1,0 +1,1267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>现病史-本次发病(口腔科)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<style type="text/css">
+td.title{
+	font-size:12px;
+	letter-spacing:2px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	$('#id').data('data',window.dialogArguments);
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-Mouth-PresentIllnessHistory-IllThis'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		if(this.name=='waishang_ot_w'){
+			FormUtil.toCheckbox({el:$(this),columns:1});
+		}else
+			FormUtil.toCheckbox({el:$(this),columns:4});
+		
+	});
+	//Checkbox事件(显示隐藏详细、排序)
+	$('input[type="checkbox"]').each(function(){
+		var $next=$(this).parent().parent().next();
+		if($next.attr('class')=='hidden'){
+			$(this).click(function(){
+				if(this.checked){
+					$next.show();
+				}else{
+					$next.hide();
+				}
+			});
+		}
+	});
+	//体重事件
+	$('input[name="bodyWeight"]').click(function(){
+		var _val=$(this).val();
+		if(_val==1){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('增加');
+		}else if(_val==2){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('减轻');
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+}
+function setValue(){
+	var json=$('#id').data('data')['illThis'];
+	if(!json)	return;
+	FormUtil.setFormValues('form',json);
+	$('input[type="checkbox"]').each(function(){
+		var $next=$(this).parent().parent().next();
+		var _val=json[this.name];
+		if($next.attr('class')=='hidden'&&_val==1){
+			$next.show();
+		}
+		if(_val==1){
+			$(this).attr('checked',true);
+		}
+	});
+	$('input[name="bodyWeight"]').each(function(){
+		if(this.checked){
+			$(this).click();
+		}
+	});
+}
+function okClick(){
+	var json=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			json[this.name]=1;
+		}else{
+			json[this.name]=0;
+		}
+	});
+	var data=$('#id').data('data');
+	$.extend(data.illThis,json);
+	window.returnValue={
+		values:data,
+		compose:Compose(json)
+	};
+	window.close();
+}
+function Compose(json){
+	var rst='';
+	//时间诱因
+	var tempValue=json.time+'';
+	rst+=tempValue.length>0?(tempValue+getRowValue('timeUnit',json.timeUnit)+'前'):'';
+	tempValue=json.causes;
+	if(tempValue.length>0){
+		if(tempValue=='无明显诱因'||tempValue=='体检时'){
+		}else{
+			tempValue=tempValue+'后';
+		}
+		rst+=tempValue+'发病。';
+	}
+	//部位
+	tempValue=json.place_position+json.place_hemianbu;
+	rst+=tempValue.length>0?(tempValue+'，'):'';
+	rst+=json.place_kouqiang.length>0?(json.place_kouqiang+'，'):'';
+	rst+=json.place_gu.length>0?(json.place_gu+'，'):'';
+	rst+=json.place_jingbu.length>0?(json.place_jingbu+'，'):'';
+	rst+=json.place_other.length>0?(json.place_other+'，'):'';
+	//主要症状
+	rst+=MainSysptomCompose(json);
+	//目前状况
+	rst+='\n    '+ComposeCurrentStatu(json);
+	return '    '+rst;
+}
+function MainSysptomCompose(json){
+	var total='';
+	var  rst='';
+	if(json.zhongliu==1){
+		if(json.zhongliu_zhw==1){
+			rst+='肿物，大小约'+json.zhongliu_zhw_size+'cm，质地'+getRowValue('zhongliu_zhw_zhidi',json.zhongliu_zhw_zhidi)+
+				 '，边界'+getRowValue('zhongliu_zhw_bianjie',json.zhongliu_zhw_bianjie)+'，活动度'+getRowValue('zhongliu_zhw_huodongdu',json.zhongliu_zhw_huodongdu)+'，';
+		}
+		if(json.zhongliu_zhzh==1){
+			rst+='肿胀，';
+		}else{
+			rst+='无肿胀，';
+		}
+		if(json.zhongliu_tt==1){
+			if(json.zhongliu_tt_tt.length>0){
+				rst+=json.zhongliu_tt_tt+'，';
+			}
+			if((json.zhongliu_tt_fz+'').length>0){
+				rst+=getRowValue('zhongliu_tt_fz',json.zhongliu_tt_fz)+'，'
+			}
+			if((json.zhongliu_tt_yb+'').length>0){
+				rst+=getRowValue('zhongliu_tt_yb',json.zhongliu_tt_yb)+'，'
+			}
+		}else{
+			rst+='无疼痛，';
+		}
+		if(json.zhongliu_mm==1){
+			rst+='麻木，';
+		}else{
+			rst+='无麻木，';
+		}
+		if(json.zhongliu_mt==1){
+			rst+='面瘫，';
+		}else{
+			rst+='无面瘫，';
+		}
+		if(json.zhongliu_zhk==1){
+			rst+=getRowValue('zhongliu_zhk_chengdu',json.zhongliu_zhk_chengdu)+'张口受限，';
+		}else{
+			rst+='无张口受限，';
+		}
+		if(json.zhongliu_pk==1){
+			rst+='破溃，';
+		}else{
+			rst+='无破溃，';
+		}
+		if(json.zhongliu_chx==1){
+			rst+='出血；';
+		}else{
+			rst+='无出血；';
+		}
+		total+='肿瘤：'+rst;
+	}else{
+		//rst+='无肿胀，无疼痛，无麻木，无面瘫，无张口受限，无破溃，无出血；';
+	}
+	
+	rst='';
+	if(json.waishang==1){
+		if(json.waishang_gzh==1){
+			rst+=json.waishang_gzh_leix+'骨折，';
+		}else{
+			rst+='无骨折，';
+		}
+		if(json.waishang_zhk==1){
+			rst+=getRowValue('zhongliu_zhk_chengdu',json.waishang_zhk_chengdu)+'张口受限，';
+		}else{
+			rst+='无张口受限，';
+		}
+		if(json.waishang_mb==1){
+			rst+='面部不对称，';
+		}
+		if(json.waishang_chx==1){
+			rst+='出血，';
+		}else{
+			rst+='无出血，';
+		}
+		if(json.waishang_ty==1){
+			rst+='头晕，';
+		}else{
+			rst+='无头晕，';
+		}
+		if(json.waishang_ex==1){
+			rst+='头晕，';
+		}else{
+			rst+='无头晕，';
+		}
+		if(json.waishang_ot==1){
+			rst+=getRowValue('waishang_ot_xzh',json.waishang_ot_xzh)+'，';
+			if((json.waishang_ot_per+'').length>0){
+				rst+='每天次数'+json.waishang_ot_per+'次，';
+			}
+			if((json.waishang_ot_perVol+'').length>0){
+				rst+='每次量'+json.waishang_ot_perVol+'ml，';
+			}
+			if((json.waishang_ot_tol+'').length>0){
+				rst+='总次数'+json.waishang_ot_tol+'次，';
+			}
+			if((json.waishang_ot_tolVol+'').length>0){
+				rst+='总量'+json.waishang_ot_tolVol+'ml，';
+			}
+			if(json.waishang_ot_w.length>0){
+				rst+='呕吐物为'+json.waishang_ot_w+'，';
+			}
+		}else{
+			rst+='呕吐，';
+		}
+		if(rst.length>0){
+			rst=rst.substr(0,rst.length-1)+'；';
+		}
+		total+='外伤：'+rst;
+	}else{
+		//rst+='无骨折，无张口受限，无出血，无头晕，无恶心，无呕吐；';
+	}
+	
+	rst='';
+	if(json.yanzheng==1){
+		if(json.yanzheng_zhzh==1){
+			rst+=getRowValue('yanzheng_zhzh_chd',json.yanzheng_zhzh)+'肿胀，';
+		}else{
+			rst+='无肿胀，';
+		}
+		if(json.yanzheng_tt==1){
+			if(json.yanzheng_tt.length>0){
+				rst+=json.yanzheng_tt+'，';
+			}
+			if((json.yanzheng_tt_fz+'').length>0){
+				rst+=getRowValue('zhongliu_tt_fz',json.yanzheng_tt_fz)+'，'
+			}
+			if((json.yanzheng_tt_yb+'').length>0){
+				rst+=getRowValue('zhongliu_tt_yb',json.yanzheng_tt_yb)+'，'
+			}
+		}else{
+			rst+='无疼痛，';
+		}
+		if(json.yanzheng_ph==1){
+			rst+='皮肤发红，';
+		}else{
+			rst+='无皮肤发红，';
+		}
+		if(json.yanzheng_ps==1){
+			rst+='皮温升高，';
+		}else{
+			rst+='无皮温升高，';
+		}
+		if(json.yanzheng_hn==1){
+			rst+='化脓，';
+		}else{
+			rst+='无化脓，';
+		}
+		if(json.yanzheng_kl==1){
+			rst+='溃烂，';
+		}else{
+			rst+='无溃烂，';
+		}
+		if(json.yanzheng_zhk==1){
+			rst+=getRowValue('zhongliu_zhk_chengdu',json.yanzheng_zhk_chengdu)+'张口受限，';
+		}else{
+			rst+='无张口受限，';
+		}
+		if(json.yanzheng_ty==1){
+			rst+='吞咽疼痛，';
+		}else{
+			rst+='无吞咽疼痛，';
+		}
+		if(json.yanzheng_kch==1){
+			rst+='口臭，';
+		}else{
+			rst+='无口臭，';
+		}
+		total+='炎症：'+rst;
+	}else{
+		//rst+='无肿胀，无疼痛，无皮肤发红，无皮温升高，无化脓，无溃烂，无张口受限，无吞咽疼痛，无口臭；';
+	}
+	
+	rst='';
+	if(json.nmych==1){
+		if(json.nmych_ps==1){
+			rst+=getRowValue('nmych_ps_xt',json.nmych_ps_xt)+'破损，';
+			if(getRowValue('nmych_ps_xt',json.nmych_ps_xt)=='规则'){
+				if((json.nmych_ps_xt1+'').length>0){
+					rst+='长度约'+json.nmych_ps_xt1+'cm，';
+				}
+			}else{
+				if((json.nmych_ps_xt2+'').length>0){
+					rst+='面积约'+json.nmych_ps_xt2+'平方厘米，';
+				}
+			}
+			rst+='深度达'+getRowValue('nmych_ps_sd',json.nmych_ps_sd)+'，';
+			rst+='边缘'+getRowValue('nmych_ps_by',json.nmych_ps_by)+'，';
+			rst+=getRowValue('nmych_ps_wr',json.nmych_ps_wr)+'污染，';
+		}else{
+			rst+='无破损，';
+		}
+		if(json.nmych_hzg==1){
+			rst+='红肿，';
+		}else{
+			rst+='无红肿，';
+		}
+		if(json.nmych_chx==1){
+			rst+='充血，';
+		}else{
+			rst+='无充血，';
+		}
+		if(json.nmych_ky==1){
+			rst+='溃疡，';
+		}else{
+			rst+='无溃疡，';
+		}
+		if(json.nmych_ml==1){
+			rst+='糜烂，';
+		}else{
+			rst+='无糜烂，';
+		}
+		if(json.nmych_hx==1){
+			rst+='黑线，';
+		}else{
+			rst+='无黑线，';
+		}
+		if(json.nmych_cx==1){
+			rst+='出血；';
+		}else{
+			rst+='无出血；';
+		}
+		total+='粘膜、牙龈、唇：'+rst;
+	}else{
+		//rst+='无破损，无红肿，无充血，无溃疡，无糜烂，无溃烂，无黑线，无出血；';
+	}
+	
+	rst='';
+	if(json.she==1){
+		if(json.she_hzh==1){
+			rst+='红肿，';
+		}else{
+			rst+='无红肿，';
+		}
+		if(json.she_zhd==1){
+			rst+='肿大，';
+		}else{
+			rst+='无肿大，';
+		}
+		if(json.she_chx==1){
+			rst+='出血，';
+		}else{
+			rst+='无出血，';
+		}
+		if(json.she_ky==1){
+			rst+='溃疡，';
+		}else{
+			rst+='无溃疡，';
+		}
+		if(json.she_ml==1){
+			rst+='糜烂，';
+		}else{
+			rst+='无糜烂，';
+		}
+		if(json.she_yd==1){
+			rst+='运动障碍，';
+		}else{
+			rst+='无运动障碍，';
+		}
+		if(json.she_shsh==1){
+			rst+='伸舌偏斜，';
+		}else{
+			rst+='无伸舌偏斜，';
+		}
+		if(json.she_tg==1){
+			rst+='抬高，';
+		}else{
+			rst+='无抬高，';
+		}
+		if(json.she_wj==1){
+			rst+='味觉异常；';
+		}else{
+			rst+='无味觉异常；';
+		}
+		total+='舌：'+rst;
+	}else{
+		//rst+='无红肿，无肿大，无出血，无溃疡，无糜烂，无运动障碍，无伸舌偏斜，无抬高，无味觉异常；';
+	}
+	
+	rst='';
+	if(json.ya==1){
+		if(json.ya_sd==1){
+			rst+=getRowValue('ya_sd_chd',json.ya_sd_chd)+'松动，';
+		}else{
+			rst+='无松动，';
+		}
+		if(json.ya_yw==1){
+			rst+=getRowValue('ya_yw_fx',json.ya_yw_fx)+'移位，';
+		}else{
+			rst+='无移位，';
+		}
+		if(json.ya_shch==1){
+			rst+='伸长，';
+		}else{
+			rst+='无伸长，';
+		}
+		if(json.ya_zhd==1){
+			rst+=getRowValue('ya_zhd_lx',json.ya_zhd_lx)+'折断，';
+		}else{
+			rst+='无折断，';
+		}
+		if(json.ya_tl==1){
+			rst+=getRowValue('ya_tl_lx',json.ya_tl_lx)+'脱落，';
+		}else{
+			rst+='无脱落，';
+		}
+		if(json.ya_zsh==1){
+			rst+=getRowValue('ya_zsh_lx',json.ya_zsh_lx)+'阻生，';
+		}else{
+			rst+='无阻生，';
+		}
+		if(json.ya_mf==1){
+			rst+='埋伏，';
+		}else{
+			rst+='无埋伏，';
+		}
+		if(json.ya_dsh==1){
+			rst+='多生，';
+		}else{
+			rst+='无多生，';
+		}
+		if(json.ya_cg==1){
+			rst+='残根，';
+		}else{
+			rst+='无残根，';
+		}
+		if(json.ya_jx==1){
+			rst+='畸形，';
+		}else{
+			rst+='无畸形，';
+		}
+		if(json.ya_kh==1){
+			rst+='开颌，';
+		}else{
+			rst+='无开颌，';
+		}
+		if(json.ya_fh==1){
+			rst+='反颌；';
+		}else{
+			rst+='无反颌；';
+		}
+		total+='牙：'+rst;
+	}else{
+		//rst+='无松动，无移位，无伸长，无折断，无脱落，无阻生，无埋伏，无多生，无残根，无畸形，无开颌，无反颌；';
+	}
+	
+	rst='';
+	if(json.xianxian==1){
+		if(json.xianxian_tt==1){
+			if(json.xianxian_tt_tt.length>0){
+				rst+=json.xianxian_tt_tt+'，';
+			}
+			if((json.xianxian_tt_fz+'').length>0){
+				rst+=getRowValue('zhongliu_tt_fz',json.xianxian_tt_fz)+'，'
+			}
+			if((json.xianxian_tt_yb+'').length>0){
+				rst+=getRowValue('zhongliu_tt_yb',json.xianxian_tt_yb)+'，'
+			}
+		}else{
+			rst+='无疼痛，';
+		}
+		if(json.xianxian_zhd==1){
+			rst+='肿大，';
+		}else{
+			rst+='无肿大，';
+		}
+		if(json.xianxian_zhzh==1){
+			rst+='肿胀，';
+		}else{
+			rst+='无肿胀，';
+		}
+		if(json.xianxian_yt==1){
+			rst+='压痛，';
+		}else{
+			rst+='无压痛，';
+		}
+		rst+='导口管'+getRowValue('xianxian_dgk',json.xianxian_dgk)+'，';
+		rst+='唾液'+getRowValue('xianxian_ty',json.xianxian_ty)+'，';
+		if(json.xianxian_gz==1){
+			rst+='干燥；';
+		}else{
+			rst+='无干燥；';
+		}
+		total+='涎腺：'+rst;
+	}else{
+		//rst+='无疼痛，无肿大，无肿胀，无压痛，导口管正常，唾液正常，无干燥；';
+	}
+	
+	rst='';
+	if(json.niexia==1){
+		if(json.xianxian_tt==1){
+			if(json.niexia_tt.length>0){
+				rst+=json.niexia_tt_tt+'，';
+			}
+			if((json.niexia_tt_fz+'').length>0){
+				rst+=getRowValue('zhongliu_tt_fz',json.niexia_tt_fz)+'，'
+			}
+			if((json.niexia_tt_yb+'').length>0){
+				rst+=getRowValue('zhongliu_tt_yb',json.niexia_tt_yb)+'，'
+			}
+		}else{
+			rst+='无疼痛，';
+		}
+		if(json.niexia_yt==1){
+			rst+='压痛，';
+		}else{
+			rst+='无压痛，';
+		}
+		if(json.niexia_zhk==1){
+			rst+='张口困难，';
+		}else{
+			rst+='无张口困难，';
+		}
+		if(json.niexia_bk==1){
+			rst+='闭口受阻，';
+		}else{
+			rst+='无闭口受阻，';
+		}
+		if(json.niexia_tx==1){
+			rst+=getRowValue('niexia_tx_time',json.niexia_tx_time)+'弹响；';
+		}else{
+			rst+='无弹响；';
+		}
+		total+='颞下颌关节：'+rst;
+	}else{
+		//rst+='无疼痛，无压痛，无张口困难，无闭口受阻，无弹响；';
+	}
+	
+	rst='';
+	if(json.linbajie==1){
+		if(json.linbajie_zhd==1){
+			if((json.linbajie_zhd_shl+'').length>0){
+				rst+='肿大淋巴结'+json.linbajie_zhd_shl+'个，';
+			}
+			if((json.linbajie_zhd_zhj+'').length>0){
+				rst+='直径'+json.linbajie_zhd_zhj+'cm，';
+			}
+			rst+='质地'+getRowValue('linbajie_zhd_zhd',json.linbajie_zhd_zhd)+'，';
+			rst+='活动度'+getRowValue('linbajie_zhd_hd',json.linbajie_zhd_hd)+'，';
+			rst+='基地'+getRowValue('linbajie_zhd_jd',json.linbajie_zhd_jd)+'，';
+		}else{
+			rst+='无肿大，';
+		}
+		if(json.linbajie_tt==1){
+			if(json.linbajie_tt.length>0){
+				rst+=json.linbajie_tt_tt+'，';
+			}
+			if((json.linbajie_tt_fz+'').length>0){
+				rst+=getRowValue('zhongliu_tt_fz',json.linbajie_tt_fz)+'，'
+			}
+			if((json.linbajie_tt_yb+'').length>0){
+				rst+=getRowValue('zhongliu_tt_yb',json.linbajie_tt_yb)+'，'
+			}
+		}else{
+			rst+='无疼痛，';
+		}
+		total+='淋巴结：'+rst.substr(0,rst.length-1)+'；';
+	}else{
+		//rst+='无肿大，无疼痛；';
+	}
+	
+	rst='';
+	if(json.erbi==1){
+		if(json.erbi_yx==1){
+			rst+='溢血，';
+		}else{
+			rst+='无溢血，';
+		}
+		if(json.erbi_yn==1){
+			rst+='溢脓，';
+		}else{
+			rst+='无溢脓，';
+		}
+		if(json.erbi_jx==1){
+			rst+='畸形；';
+		}else{
+			rst+='无畸形；';
+		}
+		total+='耳、鼻：'+rst;
+	}else{
+		//rst+='无溢血，无溢脓，无畸形；';
+	}
+	
+	rst='';
+	if(json.yanqiu==1){
+		if(json.yanqiu_tch==1){
+			rst+='突出，';
+		}else{
+			rst+='无突出，';
+		}
+		if(json.yanqiu_fl==1){
+			rst+='分离，';
+		}else{
+			rst+='无分离，';
+		}
+		if(json.yanqiu_xsh==1){
+			rst+=getRowValue('yanqiu_xsh_lx',json.yanqiu_xsh_lx)+'，';
+		}else{
+			rst+='无斜视，';
+		}
+		if(json.yanqiu_fsh==1){
+			rst+='复视；';
+		}else{
+			rst+='无复视；';
+		}
+		total+='眼球：'+rst;
+	}else{
+		//rst+='无突出，无分离，无斜视，无复视；';
+	}
+	if(total.length>0){
+		total=total.substr(0,total.length-1)+'。';
+	}
+	return total;
+}
+function ComposeCurrentStatu(json){
+	var rst='';
+	var tempValue='';
+	rst+='患者自发病以来，';
+	rst+='精神'+getRowValue('spiritStatu',json.spiritStatu)+'，';
+	tempValue=json.positiveSysptom;
+	tempValue=tempValue.length>0?('无'+tempValue+'，'):'';
+	rst+=tempValue;
+	rst+='食量'+getRowValue('eatVolume',json.eatVolume)+'，';
+	rst+='睡眠'+getRowValue('sleep',json.sleep)+'，';
+	rst+='小便'+getRowValue('piss',json.piss)+'，';
+	rst+='大便'+getRowValue('excrement',json.excrement)+'，';
+	tempValue=getRowValue('bodyWeight',json.bodyWeight);
+	if(tempValue=='无变化'){
+		rst+='体重无变化，';
+	}else if(tempValue=='增加'){
+		tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'增加'+json.bodyWeight_kg+'Kg，';
+		rst+='体重'+tempValue;
+	}else if(tempValue=='减轻'){
+		tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'减轻'+json.bodyWeight_kg+'Kg，';
+		rst+='体重'+tempValue;
+	}
+	rst=rst.substr(0,rst.length-1)+'。';
+	return rst;
+}
+function ShowSideSys(){
+	var returnValue=window.showModalDialog('PresentIllness_side.html',$('#id').data('data').illThis,'dialogWidth:620px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		$('textarea[name="sideSysptomDesc"]').html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.illThis=returnValue.values;
+		$('#id').data('data',_data);
+	}
+}
+function ShowTreat(){
+	var returnValue=window.showModalDialog('PresentIllness_treat.html',$('#id').data('data').treats,'dialogWidth:620px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		$('textarea[name="treatmentDesc"]').html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.treats=returnValue.values;
+		$('#id').data('data',_data);
+	}
+}
+</script>
+</head>
+<body>
+<div id="toolbar" style="text-align:right;width:600px">
+	<button class="btn" id="ok-btn" onclick="okClick()">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form style="margin:0;padding:0">
+<input type="hidden" id="id" name="id" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=6 class="title">时间诱因</td>
+	</tr>
+	<tr><td class="t1" width="80">时间：</td>
+		<td class="t2" colspan="5">
+			<input name="time" type="text" class="text" style="width:40px" />
+			<input name="timeUnit" type="radio" class="radio dict-fld" checked="checked" />
+		</td>
+	</tr>
+	<tr><td class="t1">病因症状：</td>
+		<td class="t2" colspan="5"><input name="causes" type="text" class="checkbox" style="width:90%" /></td>
+	</tr>
+	<tr>
+		<td colspan=6 class="title">部位</td>
+	</tr>
+	<tr>
+		<td class="t1">位置：</td><td><input type="text" class="checkbox" name="place_position" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">颌面部：</td><td><input type="text" class="checkbox" name="place_hemianbu" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">口腔：</td><td><input type="text" class="checkbox" name="place_kouqiang" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">骨：</td><td><input type="text" class="checkbox" name="place_gu" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">颈部：</td><td><input type="text" class="checkbox" name="place_jingbu" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td><td><textarea class="textarea" name="place_other" style="width:90%"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan=6 class="title">主要症状</td>
+	</tr>
+	<tr>
+		<td class="t1">肿瘤：</td><td class="t2" colspan="5"><input name="zhongliu" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿物：</td><td class="t2"><input name="zhongliu_zhw" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:1em">大小：<input type="text" name="zhongliu_zhw_size" class="text" style="width:40px"/>cm</p>
+						<p style="padding-left:1em">质地：<input type="radio" name="zhongliu_zhw_zhidi" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:1em">边界：<input type="radio" name="zhongliu_zhw_bianjie" class="radio dict-fld" checked="checked"/></p>
+						<p>活动度：<input type="radio" name="zhongliu_zhw_huodongdu" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">肿胀：</td><td class="t2"><input name="zhongliu_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="zhongliu_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" name="zhongliu_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" name="zhongliu_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" name="zhongliu_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">麻木：</td><td class="t2"><input name="zhongliu_mm" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">面瘫：</td><td class="t2"><input name="zhongliu_mt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="zhongliu_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" name="zhongliu_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">破溃：</td><td class="t2"><input name="zhongliu_pk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="zhongliu_chx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">外伤：</td><td class="t2" colspan="5"><input name="waishang" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">骨折：</td><td class="t2"><input name="waishang_gzh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>骨折类型：<input type="text" name="waishang_gzh_leix" class="checkbox" style="width:75%"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="waishang_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" rel="zhongliu_zhk_chengdu" name="waishang_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">面部不对称：</td><td class="t2"><input name="waishang_mb" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="waishang_chx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">头晕：</td><td class="t2"><input name="waishang_ty" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">恶心：</td><td class="t2"><input name="waishang_ex" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">呕吐：</td><td class="t2"><input name="waishang_ot" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>呕吐性状：<input type="radio" name="waishang_ot_xzh" class="radio dict-fld" checked="checked"/></p>
+						<p>每天次数：<input type="text" name="waishang_ot_per" class="text" style="width:40px"/>次，每次量：<input type="text" name="waishang_ot_perVol" class="text" style="width:40px"/>ml</p>
+						<p>总的次数：<input type="text" name="waishang_ot_tol" class="text" style="width:40px"/>次，总的量：<input type="text" name="waishang_ot_tolVol" class="text" style="width:40px"/>ml</p>
+						<p>呕吐物：<input type="text" name="waishang_ot_w" class="checkbox" style="width:75%"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">炎症：</td><td class="t2" colspan="5"><input name="yanzheng" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿胀：</td><td class="t2"><input name="yanzheng_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>程度：<input type="radio" name="yanzheng_zhzh_chd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="yanzheng_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="yanzheng_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="yanzheng_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="yanzheng_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">皮肤发红：</td><td class="t2"><input name="yanzheng_ph" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">皮温升高：</td><td class="t2"><input name="yanzheng_ps" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">化脓：</td><td class="t2"><input name="yanzheng_hn" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溃烂：</td><td class="t2"><input name="yanzheng_kl" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="yanzheng_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" rel="zhongliu_zhk_chengdu" name="yanzheng_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">吞咽疼痛：</td><td class="t2"><input name="yanzheng_ty" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">口臭：</td><td class="t2"><input name="yanzheng_kch" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">粘膜,牙龈,唇：</td><td class="t2" colspan="5"><input name="nmych" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">破损：</td><td class="t2"><input name="nmych_ps" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:2em">形态：<input type="radio" name="nmych_ps_xt" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:2em">长度：<input type="text" name="nmych_ps_xt1" style="width:40px"/>cm&nbsp;&nbsp;或&nbsp;&nbsp;面积：<input type="text" name="nmych_ps_xt2" style="width:40px"/>cm<sup>2</sup></p>
+						<p style="padding-left:2em">深度：<input type="radio" name="nmych_ps_sd" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:2em">边缘：<input type="radio" name="nmych_ps_by" class="radio dict-fld" checked="checked"/></p>
+						<p>污染程度：<input type="radio" rel="yanzheng_zhzh_chd" name="nmych_ps_wr" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">红肿：</td><td class="t2"><input name="nmych_hzg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">充血：</td><td class="t2"><input name="nmych_chx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">溃疡：</td><td class="t2"><input name="nmych_ky" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">糜烂：</td><td class="t2"><input name="nmych_ml" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">黑线：</td><td class="t2"><input name="nmych_hx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">出血：</td><td class="t2"><input name="nmych_cx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">舌：</td><td class="t2" colspan="5"><input name="she" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">红肿：</td><td class="t2"><input name="she_hzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">肿大：</td><td class="t2"><input name="she_zhd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="she_chx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溃疡：</td><td class="t2"><input name="she_ky" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">糜烂：</td><td class="t2"><input name="she_ml" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">运动障碍：</td><td class="t2"><input name="she_yd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">伸舌偏斜：</td><td class="t2"><input name="she_shsh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">抬高：</td><td class="t2"><input name="she_tg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">味觉异常：</td><td class="t2"><input name="she_wj" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">牙：</td><td class="t2" colspan="5"><input name="ya" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">松动：</td><td class="t2"><input name="ya_sd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>程度：<input type="radio" name="ya_sd_chd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">移位：</td><td class="t2"><input name="ya_yw" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>方向：<input type="radio" name="ya_yw_fx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">伸长：</td><td class="t2"><input name="ya_shch" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">折断：</td><td class="t2"><input name="ya_zhd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_zhd_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">脱落：</td><td class="t2"><input name="ya_tl" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_tl_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">阻生：</td><td class="t2"><input name="ya_zsh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_zsh_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">埋伏：</td><td class="t2"><input name="ya_mf" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">多生：</td><td class="t2"><input name="ya_dsh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">残根：</td><td class="t2"><input name="ya_cg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">畸形：</td><td class="t2"><input name="ya_jx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">开颌：</td><td class="t2"><input name="ya_kh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">反颌：</td><td class="t2"><input name="ya_fh" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">涎腺：</td><td class="t2" colspan="5"><input name="xianxian" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">疼痛：</td><td class="t2"><input name="xianxian_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="xianxian_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="xianxian_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="xianxian_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">肿大：</td><td class="t2"><input name="xianxian_zhd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">肿胀：</td><td class="t2"><input name="xianxian_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">压痛：</td><td class="t2"><input name="xianxian_yt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">导管口：</td><td class="t2"><input type="radio" name="xianxian_dgk" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">唾液：</td><td class="t2"><input type="radio" name="xianxian_ty" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">干燥：</td><td class="t2"><input name="xianxian_gz" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">颞下颌关节：</td><td class="t2" colspan="5"><input name="niexia" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">疼痛：</td><td class="t2"><input name="niexia_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="niexia_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="niexia_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="niexia_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">压痛：</td><td class="t2"><input name="niexia_yt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口困难：</td><td class="t2"><input name="niexia_zhk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">闭口受阻：</td><td class="t2"><input name="niexia_bk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">弹响：</td><td class="t2"><input name="niexia_tx" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>出现时间：<input type="radio" name="niexia_tx_time" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">淋巴结：</td><td class="t2" colspan="5"><input name="linbajie" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿大：</td><td class="t2"><input name="linbajie_zhd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:1em">数量：<input type="text" name="linbajie_zhd_shl" style="width:40px"/>个</p>
+						<p style="padding-left:1em">直径：<input type="text" name="linbajie_zhd_zhj" style="width:40px"/>cm</p>
+						<p style="padding-left:1em">质地：<input type="radio" name="linbajie_zhd_zhd" class="radio dict-fld" checked="checked"/></p>
+						<p>活动度：<input type="radio" name="linbajie_zhd_hd" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:1em">基地：<input type="radio" name="linbajie_zhd_jd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="linbajie_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="linbajie_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="linbajie_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="linbajie_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">耳,鼻：</td><td class="t2" colspan="5"><input name="erbi" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">溢血：</td><td class="t2"><input name="erbi_yx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溢脓：</td><td class="t2"><input name="erbi_yn" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">畸形：</td><td class="t2"><input name="erbi_jx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">眼球：</td><td class="t2" colspan="5"><input name="yanqiu" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">突出：</td><td class="t2"><input name="yanqiu_tch" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">分离：</td><td class="t2"><input name="yanqiu_fl" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">斜视：</td><td class="t2"><input name="yanqiu_xsh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="yanqiu_xsh_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">复视：</td><td class="t2"><input name="yanqiu_fsh" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=6 class="title">伴随症状</td>
+	</tr>
+	<tr>
+		<td colspan="6"><textarea name="sideSysptomDesc" class="textarea" style="height:100px;width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowSideSys()"/></td>
+	</tr>
+	<tr>
+		<td colspan=6 class="title">诊疗经过</td>
+	</tr>
+	<tr>
+		<td colspan="6"><textarea name="treatmentDesc" class="textarea" style="height:100px;width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowTreat()"/></td>
+	</tr>
+	<tr>
+		<td colspan=6 class="title">目前状况</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">精神状态：</td>
+		<td class="t2" colspan="5"><input name="spiritStatu" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr>
+		<td class="t1">重要阴性症状</td>
+		<td class="t2" colspan="5"><input name="positiveSysptom" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">食量：</td>
+		<td class="t2" colspan="5"><input name="eatVolume" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr>
+		<td class="t1">睡眠：</td>
+		<td class="t2" colspan="5"><input name="sleep" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr>
+		<td class="t1">小便：</td>
+		<td class="t2" colspan="5"><input name="piss" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr>
+		<td class="t1">大便：</td>
+		<td class="t2" colspan="5"><input rel="piss" name="excrement" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr>
+		<td class="t1">体重：</td>
+		<td class="t2" colspan="5"><input name="bodyWeight" type="radio" class="radio dict-fld" checked="checked"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<p>体重<input name="bodyWeight_time" type="text" class="text" style="width:40px"/><input name="bodyWeight_timeUnit" type="radio" class="radio dict-fld" checked="checked"/></p>
+			<p><span id="bodyWeight-span">增加</span><input name="bodyWeight_kg" type="text" class="text" style="width:40px"/>Kg</p>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

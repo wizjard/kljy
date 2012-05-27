@@ -1,0 +1,124 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			childPushScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y"/>
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="5" style="font-size:20px;color:red;height:30px" align="center"><B>肝肺综合征诊断标准</B></td></tr>
+		<tr>
+			<td bgcolor="#D4D4D4" width="40" height="25"><B>序号</B></td>
+			<td bgcolor="#D4D4D4" colspan="2" align="center" width="430"><B>标准</B></td>
+			<td bgcolor="#D4D4D4" align="center" width="130"><B>实际值</B></td>
+			<td bgcolor="#D4D4D4" align="center" width="130"><B>判断</B></td>
+		</tr>
+		<tr>
+			<td >1</td>
+			<td colspan="3">有肝病史：</td>
+			<td ><div><div style="float:left;"><input type="radio" name="hepatosisHis" value="1" /></div><div style="float:left;">有</div><div style="float:left;"><input type="radio" name="hepatosisHis" value="0" /></div><div style="float:left;">无</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="2">2</td>
+			<td bgcolor="#D4D4D4" rowspan="2" width="100">低氧血症：</td>
+			<td bgcolor="#D4D4D4" width="360">动脉血氧分压(PaO<sub><small>2</small></sub>)：</td>
+			<td bgcolor="#D4D4D4" ><input type="text" name="pao2" width="100" style="width:80px;" />mmHg</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="isPao2" value="1" /></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="isPao2" value="0" /></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >肺泡-动脉血氧分压差(AaDO<sub><small>2</small></sub>)：</td>
+			<td bgcolor="#D4D4D4" ><input type="text" name="aado2" style="width:80px;" />mmHg</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="isAado2" value="1" /></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="isAado2" value="0" /></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td rowspan="2" style="color:blue;">3</td>
+			<td rowspan="2" style="color:blue;">肺血管扩张：</td>
+			<td colspan="2" style="color:blue;">对比超声心动描记术(微泡造影)</td>
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="ce" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">阳性</div><div style="float:left;"><input type="radio" name="ce" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">阴性</div></div></td>
+		</tr>
+		<tr>
+			<td style="color:blue;">
+				<div style="float:left;">核素扫描：</div>
+				<div style="float:left;"><sup>99m</sup>TC巨聚白蛋白（<sup>99m</sup>TC-MAA）</br>肺灌注扫描显示肺灌注比例：</div>
+			</td>
+			<td><input type="text" name="maa" style="width:80px;" />%</td>
+			<td style="color:blue;"><div><div style="float:left;"><input type="radio" name="isMaa" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="isMaa" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr style="height:30px">
+			<td bgcolor="#D4D4D4" rowspan="2">结果</td>
+			<td bgcolor="#D4D4D4" colspan="3">请临床医生根据患者临床具体情况判定是否符合肝肺综合征诊断：</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="result" value="1" /></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="result" value="0" /></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr style="height:30px">
+			<td bgcolor="#D4D4D4" colspan="4"><div><div style="float:left;">肝肺综合征分级：</div><div style="float:left;"><input type="radio" name="grade" value="1" /></div><div style="float:left;">轻度</div><div style="float:left;"><input type="radio" name="grade" value="2" /></div><div style="float:left;">中度</div><div style="float:left;"><input type="radio" name="grade" value="3" /></div><div style="float:left;">重度</div><div style="float:left;"><input type="radio" name="grade" value="4" /></div><div style="float:left;">极重度</div></div></td>
+		</tr>
+		<tr>
+			<td colspan="5">附：当患者出现以下症状时，临床应考虑是否有肝肺综合征的可能。
+				呼吸困难与发绀（进行性呼吸困难是最常见的肺部症状，直立性缺氧是最重要的特征性表现）
+			</td>
+			
+		</tr>
+		
+		
+    </table>
+</form>
+</body>
+</html>

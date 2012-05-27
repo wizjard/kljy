@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>康乐家园-用户注册</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+.text{
+	width:40%
+}
+.select{
+	width:40%
+}
+a:hover{
+	color:red;
+	text-decoration:none;
+}
+a:link,a:visited{
+	color:blue;
+	text-decoration:underline;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	init();
+});
+function init(){
+	//初始化日期选择框
+	FormUtil.toDateField({el:$('input[name="birthday"]')});
+	//初始化性别选择框
+	FormUtil.toCombobox({el:$('input[name="sex"]'),values:FormUtil.getIndependentDictionaryList('gender')});
+	//初始化按钮
+	FormUtil.initBtnCss();
+	//try focus to name
+	$('input[name="name"]').focus();
+}
+function changeAuthImg(){
+	$('#AuthImg').attr('src','../../auth.gif?width=60&height=20&timestampe='+(new Date()).getTime()+Math.random());
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('#userForm');
+	_values.name=_values.name.trim();
+	if(_values.name.length==0){
+		alert('姓名必须填写。');
+		return;
+	}
+	_values.account=_values.account.trim();
+	if(!checkAccount())
+		return;
+	_values.password=_values.password.trim();
+	_values.password2=_values.password2.trim();
+	if(_values.password.length==0){
+		alert('密码必须填写。');
+		return;
+	}
+	if(_values.password.length<8||_values.password.length>16){
+		alert('密码必须在8~16位之间。');
+		return;
+	}
+	if(_values.password.length!=_values.password2.length){
+		alert('两次输入密码不一致。');
+		return;
+	}
+	_values.phoneNo=_values.phoneNo.trim();
+	if(_values.phoneNo.length==0){
+		alert('请输入您的电话号码，方便我们验证您的账号。');
+		return;
+	}
+	_values.authNo=_values.authNo.trim();
+	if(_values.authNo.length==0){
+		alert('请输入验证码。');
+		return;
+	}
+	var _data=JSON.stringify(_values);
+	$.post(App.App_Info.BasePath+'/user.do',{method:'register',data:_data},function(data){
+		if(data.success){
+			alert(data.msg);
+			alert('请牢记您的用户名与密码，我们会尽快验证您的账号并与您联系。');
+			location.reload();
+		}else{
+			alert(data.msg);
+			changeAuthImg();
+		}
+	},'json');
+}
+function checkAccount(){
+	var _val=$('input[name="account"]').val().trim();
+	if(_val.length==0){
+		alert('账号必须填写。');
+		return false;
+	}
+	var _return=false;
+	$.ajax({
+		url:App.App_Info.BasePath+'/user.do?timestampe='+(new Date()).getTime()+Math.random(),
+		data:{
+			method:'checkAccountIsUsed',
+			account:_val
+		},
+		async:false,
+		dataType:'json',
+		success:function(_data){
+			if(_data.success){
+				if(_data.data=='true'){
+					_return=true;
+				}else{
+					alert('账号已占用，请选择其它账号。');
+					_return=false;
+				}
+			}else{
+				alert('验证失败。');
+				_return=false;
+			}
+		}
+	});
+	return _return;
+}
+</script>
+</head>
+<body>
+<form id="userForm">
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=2 class="title">康乐家园-用户注册</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">姓名：</td>
+		<td class="t2" width="520"><input name="name" type="text" class="text"/>
+		<label>(<span style="color:red">*</span>必填)</label>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">账号：</td>
+		<td class="t2"><input name="account" type="text" class="text"/>
+		<label>(<span style="color:red">*</span>必填)</label>
+		<a href="#" onclick="if(checkAccount())alert('恭喜您，账号可以使用。');">验证账号可用性</a>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">密码：</td>
+		<td class="t2"><input name="password" type="password" class="text"/>
+		<label>(<span style="color:red">*</span>必填——8~16位的字母与数字组成)</label>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">重复密码：</td>
+		<td class="t2"><input name="password2" type="password" class="text"/>
+		<label>(<span style="color:red">*</span>必填)</label>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">性别：</td>
+		<td class="t2"><input name="sex" type="text" class="select"/></td>
+	</tr>
+	<tr>
+		<td class="t1">出生日期：</td>
+		<td class="t2"><input name="birthday" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">电话：</td>
+		<td class="t2"><input name="phoneNo" type="text" class="text"/>
+		<label>(<span style="color:red">*</span>必填)</label>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">电子邮件：</td>
+		<td class="t2"><input name="email" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">备注信息：</td>
+		<td class="t2"><textarea name="selfMemo" class="textarea" rows=5 style="width:92%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">验证码：</td>
+		<td class="t2"><input name="authNo" type="text" class="text"/>
+		<img id="AuthImg" align="absmiddle" src="../../auth.gif?width=60&height=20"/>
+		<a href="#" onclick="changeAuthImg()">看不清？</a>
+		</td>
+	</tr>
+	<tr>
+		<td class="t2" colspan="2">
+			<div style="text-align:center">
+				<input type="button" value="注册" class="btn_mouseout" onclick="SaveData()"/>
+				<input type="reset" value="重填" class="btn_mouseout" style="margin-left:2em"/>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

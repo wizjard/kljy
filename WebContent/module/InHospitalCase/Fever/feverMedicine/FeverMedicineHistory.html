@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>发热中医现病史</title>
+	
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+	    <script type="text/javascript">
+		    var KID=App.util.getHtmlParameters('KID');
+			var PID=null;
+			var content = '';
+			var isSave = "false";
+			Ext.onReady(function(){
+				KID=App.util.getHtmlParameters('KID');
+				PID=App.util.getHtmlParameters('PID');
+				$('*[name="caseId"]').val(KID);
+				initPage();
+			});
+			//页面初始化
+			function initPage(){
+				var response=null;
+				var data=null;
+				Ext.Ajax.request({
+					url:App.App_Info.BasePath+'/KLJY/fever.do',
+					params:{
+						method:'findFeverMedicineContents',
+						KID:KID
+					},
+					success:function(_reponse){
+						response=Ext.decode(_reponse.responseText);
+						if(response.success){
+							if(!response.data){
+								data={
+									id:-1,
+									caseId:KID
+								};
+							}
+							data=Ext.decode(response.data);		
+							FormUtil.setFormValues('form',data);		
+						}
+					}
+						
+				});
+				
+				
+			}
+			//存放入库数据的数组
+			var indexArray = [];
+		   function showPreHis(){
+				hideSymptomInfoIfr();
+				$('#FerverHistory').width(900);
+				$('#FerverHistory').height(650);
+			}
+		    function ferverHistory(){
+				hideSymptomInfoIfr();
+				initPage();
+				var id=App.util.getHtmlParameters('KID');
+				$('#FerverHistory').width(900);//设置宽度
+				$('#FerverHistory').height(650);//设置高度
+				$('#FerverHistory').attr('src', 'ferverMedicineHistoryInfo.html?KID='+id);
+			}
+			function hideSymptomInfoIfr(){
+				$('#symptomInfoIfr').width(0);
+				$('#symptomInfoIfr').height(0);
+				$('#symptomInfoIfr').attr('src', '');
+			}
+			function setRetValue(retoldOperations, retContent){
+				if(retoldOperations){
+					$('#oldOperations').val(retoldOperations);
+				}
+				if(retContent){
+					$('#content').val(retContent);
+				}
+			}
+			function getOldOperations(){
+				return $('#oldOperations').val();	
+			}
+			function destroyPerHis(){
+				$('#FerverHistory').width(0);
+				$('#FerverHistory').height(0);
+				$('#FerverHistory').attr('src', '');
+			}
+			function hidePreHis(){
+				$('#FerverHistory').width(0);
+				$('#FerverHistory').height(0);
+			}
+			function symptomInfoIfr(sysptomPage, nodeText){
+				$('#symptomInfoIfr').width(900);
+				$('#symptomInfoIfr').height(650);
+				
+				$('#symptomInfoIfr').attr('src', sysptomPage + '?nodeText=' + nodeText+'&KID='+KID);
+			}	
+			function SaveData(){
+				if(isSave == "false"){
+					alert("无数据需要保存");
+					return;
+				}
+				var id=$('*[name="id"]').val();
+				Ext.Ajax.request({
+					url:App.App_Info.BasePath+'/KLJY/fever.do',
+					params:{
+						method:'saveFeverMedicineIllness',
+						data:JSON.stringify(indexArray),
+						content:$('#content').val(),
+						KID:KID,
+						oldOperations:getOldOperations(),
+						id:id
+					},
+					success:function(_reponse){
+						var res=Ext.decode(_reponse.responseText);
+						if(res.success){
+							alert('保存成功。');
+						}else{
+							alert('保存失败。');
+						}
+					}
+				});
+				
+			}
+	    </script>
+    
+  </head>
+  
+  <body>
+  <form>
+  <input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value="-1"/>
+<input type="hidden" id="oldOperations" name="oldOperations" />
+ 
+  <table  width="920" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+	  
+	  <tr>
+	  	<td class="title">
+	  	发热中医现病史
+	  	</td>
+	  </tr>
+	 </table>
+	 <div id="feverContent">
+	  	<textarea id="content" name="content" class="textarea" style="width:820px;" ></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ferverHistory()"/>
+	 </div>
+		<iframe name="FerverHistory" id="FerverHistory" src="ferverHistoryInfo.html" width="0" height="0"></iframe>
+		<iframe name="symptomInfoIfr" id="symptomInfoIfr" src="" width="0" height="0"></iframe>
+		</form>
+  </body>
+</html>

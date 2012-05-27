@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>上传图片</title>
+<script type="text/javascript" src="script/pictureUpload.js"></script>
+</head>
+<body onload ="PicUploadSupport.getFilePath()">
+
+	<form name="uploadForm" method="post" id="uploadForm" enctype="multipart/form-data" action="script/upload.jsp?uploadType=picture">
+		<input name="imgFile" type="file" style="width:220px;" id="imgFile"/><input type="submit" value="上传" onclick="PicUploadSupport.checkName()"/>
+		<div id="first" style="display:none">
+		<img src="" style="width:320px;max-height:200px"/>
+		</div>
+	</form>
+	
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>诊疗经过</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+$(function(){
+	initPage();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-Treat'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	
+	$('*[name="treatProcessFlag"]').click(function(){
+		if(this.value==4||this.value==5 || this.value== 6){
+			$('#detailTable').show();
+		}else{
+			$('#detailTable').hide();
+		}
+		var preStr={
+			a0:'未诊治',
+			a1:'未到医院诊治',
+			a2:'具体诊治情况不详',
+			a3:'自行服药治疗',
+			a4:'到我院就诊',
+			a6:'到当地医院就诊',
+			a5:'到外院就诊',
+			a9:''
+		};
+		var txt=$('*[name="treatProcessDesc"]');
+		var checkVal=function(val){
+			var rst=false;
+			for(var key in preStr){
+				if(preStr[key]==val){
+					rst=true;
+					break;
+				}
+			}
+			return rst;
+		}
+		if(this.value!=9){
+			if(checkVal(txt.val())){
+				txt.val(preStr['a'+this.value]);
+			}	
+		}else{
+			txt.val('');
+		}
+	});
+	$('*[name="diagRstFlag"]').click(function(){
+		if(this.value==1){
+			$(this).parent().parent().next().next().hide();
+			$(this).parent().parent().next().show();
+			if($('input[name="diagRst"]').val() == ""){
+				$('input[name="diagRst"]').val("诊断为");
+			}
+		}else if(this.value==3){
+			$(this).parent().parent().next().next().show();
+			$(this).parent().parent().next().hide();
+		}else{
+			$(this).parent().parent().next().next().hide();
+			$(this).parent().parent().next().hide();
+		}
+	});
+	
+	$('tr[name="zhiliaomiaoshu"]').hide();
+	$('tr[name="zhiliaojieguo"]').hide();
+	$('*[name="treatFlag"]').click(function(){
+		$('tr[name="zhiliaomiaoshu"]').show
+		$('tr[name="zhiliaojieguo"]').show();
+		if(this.value==0||this.value==1){
+		//	$(this).parent().parent().next().hide();
+		//	$(this).parent().parent().next().next().hide();
+			$("#treatRstImg").hide();
+			$("#treatImg").hide();
+		}else{
+			$(this).parent().parent().next().show();
+			$(this).parent().parent().next().next().show();
+			$('#treatRstImg').show();
+			$("#treatImg").show();
+		}
+		if(this.value==0){
+			if($('textarea[name="treat"]').val() == "" || $('textarea[name="treat"]').val().search("自行服用") != -1 || $('textarea[name="treat"]').val().search("给予") != -1|| $('textarea[name="treat"]').val().search("具体治疗不详") != -1){
+				$('textarea[name="treat"]').val("未行治疗");
+			}
+		}
+		if(this.value==2 || this.value==6){
+			$("#treatRstImg").hide();
+			$("#treatImg").hide();
+			if(this.value==2 && ($('textarea[name="treat"]').val() == "" ||$('textarea[name="treat"]').val().search("给予") != -1 ||$('textarea[name="treat"]').val().search("未行治疗") != -1|| $('textarea[name="treat"]').val().search("具体治疗不详") != -1)){
+				$('textarea[name="treat"]').val("自行服用");
+			}
+		}
+		if(this.value==3 || this.value==4 || this.value==5){
+			if($('textarea[name="treat"]').val() == "" || $('textarea[name="treat"]').val().search("自行服用") != -1||$('textarea[name="treat"]').val().search("未行治疗") != -1|| $('textarea[name="treat"]').val().search("具体治疗不详") != -1){
+				$('textarea[name="treat"]').val("给予");
+			}
+		}
+		if(this.value==1){
+			if($('textarea[name="treat"]').val() == "" || $('textarea[name="treat"]').val().search("自行服用") != -1||$('textarea[name="treat"]').val().search("未行治疗") != -1|| $('textarea[name="treat"]').val().search("给予") != -1){
+				$('textarea[name="treat"]').val("具体治疗不详");
+			}
+		}
+		if(this.value==6){
+			if($('textarea[name="treat"]').val() == "" || $('textarea[name="treat"]').val().search("自行服用") != -1||$('textarea[name="treat"]').val().search("未行治疗") != -1|| $('textarea[name="treat"]').val().search("给予") != -1){
+				$('textarea[name="treat"]').val("");
+			}
+		}
+	});
+	$('#treatDlg').dialog({
+		title:'治疗调查表',
+		autoOpen:false,
+		resizable:false,
+		width:750,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){
+				var rst='';
+				$('#treatDlg tr').filter(function(i){
+					return i>0;
+				}).each(function(){
+					var temp='';
+					temp=$(this).find('*[name="content2"]').val()+$(this).find('*[name="content1"]').val();
+					rst+=temp.length>0?(temp+'，'):'';
+					temp=$(this).find('*[name="content3"]').val();
+					rst+=temp.length>0?(temp+'，'):'';
+				});
+				rst=rst.length>0?(rst.substr(0,rst.length-1)+''):'';
+			//	$('*[name="treat"]').val(rst);
+				$('*[name="treat"]').val($('*[name="treat"]').val() + rst);
+				$(this).dialog("close");
+			},
+			'增加记录':function(){addGridRow({id:-1,gridType:'a'});}
+		}
+	});
+	$('#treatRstDlg').dialog({
+		title:'治疗结果',
+		autoOpen:false,
+		resizable:false,
+		width:750,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){
+				var rst='';
+				$('#treatRstDlg tr').filter(function(i){
+					return i>0;
+				}).each(function(){
+					var temp='';
+					if($(this).find('*[name="content1"]').val()){
+						temp += $(this).find('*[name="content1"]').val();
+					}
+					if($(this).find('*[name="content2"]').val()){
+						temp += $(this).find('*[name="content2"]').val() + '，';
+					}
+					if($(this).find('*[name="content3"]').val()){
+						temp += $(this).find('*[name="content3"]').val() + '，';
+					}
+					rst+=temp;
+				});
+				rst=rst.length>0?(rst.substr(0,rst.length-1)+''):'';
+				$('*[name="treatRst"]').val(rst);
+				$(this).dialog("close");
+			},
+			'增加记录':function(){addGridRow({id:-1,gridType:'b'});}
+		}
+	});
+	$('#treatImg').click(function(){
+		$('#treatDlg').dialog('open');
+	});
+	$('#treatRstImg').click(function(){
+		$('#treatRstDlg').dialog('open');
+	});
+	//raido显示隐藏事件
+	$('*[name="checkRstFlag"]').each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			tr.show();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(this.value==0){
+				if($('textarea[name="checkRst"]').val() == "" || ($('textarea[name="checkRst"]').val().search("检查结果不详") != -1 || $('textarea[name="checkRst"]').val().search("检查结果：") != -1)){
+					$('textarea[name="checkRst"]').val("未行检查");
+				}
+			}
+			if(this.value==2){
+				if($('textarea[name="checkRst"]').val() == "" || ($('textarea[name="checkRst"]').val().search("未行检查") != -1 || $('textarea[name="checkRst"]').val().search("检查结果：") != -1)){
+					$('textarea[name="checkRst"]').val("检查结果不详");
+				}
+			}
+			if(this.value==1){
+				if($('textarea[name="checkRst"]').val() == "" || ($('textarea[name="checkRst"]').val().search("检查结果不详") != -1 || $('textarea[name="checkRst"]').val().search("未行检查") != -1)){
+					$('textarea[name="checkRst"]').val("检查结果：");
+				}
+			}
+		});
+	});
+	//赋值
+	if(window.dialogArguments&&window.dialogArguments.value){
+		FormUtil.setFormValues('form',window.dialogArguments.value);
+		$('input[type="radio"][checked]').click();
+		if(window.dialogArguments.value.grids)
+			$.each(window.dialogArguments.value.grids,function(){
+				addGridRow(this);
+			});
+	}
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value=FormUtil.getFormValues('form');
+		var grids=[];
+		$('#treatDlg tr,#treatRstDlg tr').filter(function(){
+			return $(this).find('td').size()>0;
+		}).each(function(){
+			grids.push({
+				id:$(this).find('*[name="id"]').val(),
+				gridType:$(this).find('*[name="gridType"]').val(),
+				content1:$(this).find('*[name="content1"]').val(),
+				content2:$(this).find('*[name="content2"]').val(),
+				content3:$(this).find('*[name="content3"]').val(),
+				orderNo:$(this).find('*[name="orderNo"]').val()
+			});
+		});
+		value.grids=grids;
+		var text=Compose(value);
+		if(text == -1) return;
+		window.returnValue={
+			value:value,
+			text:text
+		};
+		window.close();
+	});
+}
+function addGridRow(v){
+	var value={
+		id:-1,
+		gridType:'',
+		content1:'',
+		content2:'',
+		content3:'',
+		orderNo:0
+	};
+	if(v)
+		$.extend(value,v);
+	var row='<tr align="center">'+
+				'<td valign="top"><input type="text" name="orderNo" value="{orderNo}" style="width:80%;"/></td>'+
+				'<td valign="top"><input type="text" name="content1" value="{content1}" style="width:80%;"/>'+(value.gridType=='a'?'<img gridType="'+value.gridType+'" onclick="showTreatDict(this)" src="../../../../PUBLIC/images/sign.gif" class="hand"/>':'')+'</td>'+
+				'<td valign="top"><input type="text" name="content2" value="{content2}" style="width:80%;"/><img gridType="'+value.gridType+'" onclick="showTreatDict(this)" src="../../../../PUBLIC/images/sign.gif" class="hand"/></td>'+
+				'<td valign="top"><textarea name="content3" style="width:95%;height:30px;">{content3}</textarea></td>'+
+				'<td valign="top"><a href="#">删除</a><input type="hidden" name="id" value="{id}"/><input type="hidden" name="gridType" value="{gridType}"/></td>'+
+			'</tr>';
+	var table=null;
+	if(value.gridType=='a'){
+		table=$('#treatDlg table');
+	}else if(value.gridType=='b'){
+		table=$('#treatRstDlg table');
+	}
+	if(value.orderNo==0)
+		value.orderNo=table.find('tr').size();
+	row=row.replace('{id}',value.id).replace('{orderNo}',value.orderNo).replace('{gridType}',value.gridType).replace('{content1}',value.content1).replace('{content2}',value.content2).replace('{content3}',value.content3);
+	row=$(row);
+	row.find('a').click(function(){
+		if(!confirm('确定要删除此记录？'))return;
+		var id=$(this).parent().find('*[name="id"]').val();
+		var tr=$(this).parent().parent();
+		if(id==-1){
+			tr.remove();
+		}else{
+			$.post(
+				App.App_Info.BasePath+'/InHospitalCase/PresentHistoryAction.do',
+				{
+					method:'deleteTreatGrid',
+					id:id
+				},
+				function(data){
+					if(data.success){
+						tr.remove();
+					}else{
+						alert('服务器删除数据失败。');
+					}
+				},
+				'json'
+			);
+		}
+	});
+	row.appendTo(table);
+}
+function showTreatDict(_img){
+	var _type=$(_img).attr('gridType');
+	var _input=$(_img).prev();
+	var _inputName=_input.attr('name');
+	var _dictFldName='';
+	if(_type=='a'&&_inputName=='content1'){
+		_dictFldName='zlffzd';
+	}else if(_type=='a'&&_inputName=='content2'){
+		_dictFldName='ymffzd';
+	}else if(_type=='b'&&_inputName=='content2'){
+		_dictFldName='lczgzd';
+	}
+	var _returnObj=window.showModalDialog(App.App_Info.BasePath+'/PUBLIC/Modaldialog/DictSelect.html',{
+		sql:'select fldCodeId as svalue,text as stext from SYS_DICT_Item where fldCodeId=(select id from SYS_DICT_FldCode where code=\''+_dictFldName+'\' and moduleId=(select id from SYS_DICT_Modules where code=\'EMR-liver-PresentIllnessHistory-Treat\'))'
+	},'dialogWidth=400px;dialogHeight=300px');
+	if(_returnObj){
+		_input.val(_returnObj.text);
+	}
+}
+function Compose(value){
+	var rst='';
+	var temp=getRowValue('treatProcessFlag',value.treatProcessFlag);
+	if(temp.length==0)
+		return '';
+	if(temp=='未诊治'||temp=='未到医院诊治'||temp=='具体诊治情况不详'||temp=='自行服药治疗'){
+		if(value.treatProcessDesc == ""){
+			
+		}else{
+			rst=value.treatProcessDesc+'。';
+		}
+	}else if(temp=='其它'){
+		if(value.treatProcessDesc != ""){
+			rst=value.treatProcessDesc+'。';
+		}
+	}else if(temp=='我院就诊'||temp=='外院就诊' || temp=="当地医院就诊"){
+		/*var timeValues = '';
+		timeValues = value.treatTime.length>0?value.treatTime:'';
+		temp = getRowValue('treatTimeUnit',value.treatTimeUnit);
+		timeValues += temp.length>0 ? temp : '';
+		temp = getRowValue('treatTimeUnitSuffix',value.treatTimeUnitSuffix);
+		timeValues += temp.length > 0 ? temp : '';
+		rst += timeValues.length > 0 ? timeValues : '';
+		var t = getRowValue('treatProcessFlag',value.treatProcessFlag);
+		
+		if(t=='我院就诊'){
+			if($('input[name="treatFn"]').val() != ""){
+				rst += '于我院';
+			}
+		}
+		temp=getRowValue('treatFn',value.treatFn);
+			if(temp!='其它'){
+				if(t=='外院就诊' || t=="当地医院就诊"){
+					if(value.inspectionUnit.length == "" && temp == ""){
+						if(rst != ""){
+							rst = rst + '，';
+						}
+					}
+					if(value.inspectionUnit.length != "" && temp == ""){
+						rst += '于' + value.inspectionUnit + "就诊,";
+					}
+					if(value.inspectionUnit.length == "" && temp != ""){
+						rst += temp + '，';
+					}
+					if(value.inspectionUnit.length != "" && temp != ""){
+						rst += '于' + value.inspectionUnit + temp + '，';
+					}
+				}else{
+					if(temp != ""){
+						rst+= temp + '，';
+					}else{
+						rst+= "就诊，";
+					}
+				}
+			}else{
+				rst+=value.treatFn0 + '就诊' +'，';
+			}
+		*/
+		if(value.treatProcessDesc != ""){
+			rst=value.treatProcessDesc+'。';
+		}
+		temp=value.checkRstFlag?value.checkRstFlag:'';
+		if(temp==0){
+		}else if(temp==2){
+			rst+='检查结果不详，';
+		}else if(temp==1){
+			if(value.checkRst == "" || value.checkRst == "检查结果："){
+				alert('"检查结果"为必填项');
+				return -1;
+			}
+			rst+=value.checkRst+'，';
+		}
+		temp=getRowValue('diagRstFlag',value.diagRstFlag);
+		if(temp=='有明确诊断'){
+			if(value.diagRst == ""){
+				alert('"诊断为"为必填项');
+				return -1;
+			}
+			rst+=value.diagRst+'，';
+		}else if(temp=='其它'){
+			if(value.diagRst == ""){
+				alert('"诊断为"为必填项');
+				return -1;
+			}
+			rst+=value.diagRst0+'，';
+		}else{
+			rst+=temp.length>0?(temp+'，'):'';
+		}
+		temp=getRowValue('treatFlag',value.treatFlag);
+		if(temp.length>0){
+			if(temp=='其它'){
+				rst+=value.treat.length>0?(value.treat+'，'):'';
+			}else if(temp=='未行治疗'){
+				rst+=value.treat + '，';
+			}else if(temp=='具体治疗不详'){
+				rst+=value.treat + '，';
+			}else if(temp=='自行服药治疗'){
+				if(value.treat == ""){
+					alert('"治疗描述"为必填项');
+					return -1;
+				}
+				rst+='自行服用'+value.treat+'，';
+			}else if(temp=='门诊治疗'||temp=='急诊治疗'||temp=='住院治疗'){
+				if(value.treat == "" || value.treat == "给予"){
+					alert('"治疗描述"为必填项');
+					return -1;
+				}
+				rst+=value.treat+'，';
+			}
+		}
+		rst+=value.treatRst.length>0?(value.treatRst+'，'):'';
+		rst=rst.length>0?(rst.substr(0,rst.length-1)+'。'):'';
+	}
+	return rst;
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+textarea{
+	width:95%;
+	height:40px;
+}
+input.text{
+	width:95%;
+}
+</style>
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:740px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form>
+<table width="740" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t2" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1" width="70">诊疗经过：</td>
+		<td width="*"><input type="radio" name="treatProcessFlag" class="radio dict-fld"/></td>
+	</tr>
+</table>
+<table id="memoTable" width="740" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="70">具体说明：</td>
+		<td width="*"><textarea name="treatProcessDesc" class="textarea"></textarea></br><font style="color:red">(注：系统预置了组合文字，如不需要，请自行修改，句末不加标点)</font></td>
+	</tr>
+</table>
+	<!-- 新增检查单位 
+<table id="unit" width="740" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="display:none">
+	<tr>
+		<td class="t1" width="70px;">检查单位：</td>
+		<td class="t2" width="*"><input type="text" class="text" name="inspectionUnit" style="width:31%" /></td>
+	</tr>
+</table>-->
+	
+<table id="detailTable" width="740" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="display:none">
+	<!--tr>
+		<td class="t1" width="70">就诊时间：</td>
+		<td class="t2" width="*"><input name="treatTime" type="text" class="text" style="width:80px"/>
+					   <input name="treatTimeUnit" type="text" class="select" style="width:60px"/>
+					   <input name="treatTimeUnitSuffix" type="text" class="select" style="width:60px"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">就诊方式：</td>
+		<td width="t2"><input type="text" name="treatFn" class="select"/><br/><input type="text" name="treatFn0" class="text hidden"/></td>
+	</tr-->
+	<tr>
+		<td class="t1">检查结果：</td>
+		<td width="t2"><input type="radio" name="checkRstFlag" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">结果：</td>
+		<td width="t2"><textarea  class="textarea" name="checkRst"></textarea></br><font style="color:red">(注：系统预置了组合文字，如不需要，请自行修改，句末不加标点)</font></td>
+	</tr>
+	<tr>
+		<td class="t1">诊断结果：</td>
+		<td width="t2"><input type="radio" name="diagRstFlag" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1"></td>
+		<td width="t2"><input type="text" name="diagRst" class="text"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">其它诊断：</td>
+		<td width="t2"><input type="text" name="diagRst0" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">治疗情况：</td>
+		<td width="t2"><input type="radio" name="treatFlag" class="radio dict-fld"/></td>
+	</tr>
+	<tr name="zhiliaomiaoshu">
+		<td class="t1">治疗描述：</td>
+		<td width="t2"><textarea  class="textarea" name="treat"></textarea><img id="treatImg" src="../../../../PUBLIC/images/sign.gif" class="hand hidden"/></br><font style="color:red">(注：系统预置了组合文字，如不需要，请自行修改，句末不加标点)</font></td>
+	</tr>
+	<tr name="zhiliaojieguo">
+		<td class="t1">治疗结果：</td>
+		<td width="t2"><textarea  class="textarea" name="treatRst"></textarea><img id="treatRstImg" src="../../../../PUBLIC/images/sign.gif" class="hand"/></td>
+	</tr>
+</table>
+</form>
+<div id="treatDlg">
+	<table align="center" width="100%" border=0 cellpadding=0 cellspacing=0 class="datagrid">
+		<tr>
+			<th width="35">序号</th>
+			<th width="150">治疗方法</th>
+			<th width="100">药物／方法名称</th>
+			<th width="*">具体剂量、给药途径、用法、疗程等描述</th>
+			<th width="35">操作</th>
+		</tr>
+	</table>
+</div>
+<div id="treatRstDlg">
+	<table align="center" width="100%" border=0 cellpadding=0 cellspacing=0 class="datagrid">
+		<tr>
+			<th width="35">序号</th>
+			<th width="150">症状名称/病情</th>
+			<th width="110">临床转归</th>
+			<th width="*">补充说明</th>
+			<th width="35">操作</th>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

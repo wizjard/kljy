@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="248605" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ES" extension="HNZDSY1107220014" />
+    </patientIDInfo>
+    <patientName>HOU CHUN ZHEN^^^^=侯春珍^^^^</patientName>
+    <patientGender>1</patientGender>
+    <patientDOB>19570101</patientDOB>
+    <patientAge>54</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>
+      </streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ES" extension="HNZDSY1107220014" />
+    <clinicDiagnose>
+      <narrativeBlock>HCC</narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ES" extension="HNZDSY1107220014" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>马军伟</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>肝病消化中心一科门诊</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>主机二</depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ES" extension="HNZDSY1107220014" />
+    <deviceType>ES</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2011-7-22 11:21:26</examDate>
+    <bodyPart>电子胃镜检查</bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>HNZDSY1107220014</studyUID>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111348.609.0.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111402.781.1.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111407.578.2.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111410.984.3.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111426.453.4.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111442.296.5.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111447.906.6.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111451.453.7.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111504.750.8.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111509.875.9.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111540.968.10.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111554.115.11.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111613.203.12.jpg</imageFileName>
+    <imageFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111618.265.13.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ES" extension="HNZDSY1107220014" />
+    <reportFileName>DATA\1.2.826.0.1.3680043.2.377.1.4.1.30101.20110722111918.484.JPG</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>张世斌</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-7-22 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[    食管粘膜不光滑，颗粒感明显，齿状线清晰；胃底粘膜充血、点状出血；粘液池清亮，量中；胃体粘膜蛇皮样改变；胃窦粘膜疣状改变，伴糜烂、充血，溃疡形成；幽门口圆，开启佳；十二指肠球腔可见溃疡。]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>阳性</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[    反流性食管炎
+    胃溃疡
+    十二指肠溃疡（H1期）]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

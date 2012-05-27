@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+var kid=App.util.getHtmlParameters('kid');
+$(function(){
+	initPage('LiverFunc_findById');	
+});
+	
+function before_init(){
+	var rh=new RepoertHeader();
+	rh.basePath=App.App_Info.BasePath;
+	rh.el=$('#header').get(0);
+	rh.cid=kid;
+	rh.config.title='肝功能评分';
+	rh.create();
+}
+function initPage_callback(json){
+	json.title='肝功能评分('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'LiverFunc_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'肝功能评分'
+	}
+}
+function isValid(data){
+//	if(data.time.length==0){
+//		alert('记录时间不能为空。');
+//		return false;
+//	}
+	return true;
+}
+
+</script>
+</head>
+<body>
+<div id="header" style="width:700px"></div>
+<div><iframe src="Child-Pugh.html" style="width:700px;height:130px;"></iframe></div>
+<div><iframe src="MELD.html" style="width:700px;100px;"></iframe></div>	
+</body>
+</html>

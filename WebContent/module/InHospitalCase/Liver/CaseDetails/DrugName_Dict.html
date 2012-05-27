@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>药物名称字典</title>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/ext-2.3.0/ux/CheckboxTree/TreeCheckNodeUI-min.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css" />
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript"
+	src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+	var dictName = null;
+	var treeNodes=null;
+	Ext.onReady(function() {
+		dictName = window.dialogArguments.name;
+		if(dictName=='drugName'){
+			drugName();			
+		}else if(dictName=='zhiliaoxiaoguo'){
+			zhiliaoxiaoguo();
+		}
+	});
+	//药品名称字典树
+	drugName = function() {
+		//App.App_Info.BasePath + '/InHospitalCase/LiverCaseAction.do',
+		new Ext.Viewport({
+					id:'drugLayout',
+					layout : 'border',
+					items : [ {
+								region:'north',
+								height:0,
+								bbar:new Ext.Toolbar({
+									items:['过滤',{
+											id:'searchText',
+											xtype:'textfield',
+											name:'searchDrug',
+											emptyText:'请输入过滤条件'
+										},{
+											id:'searchButton',
+											text:'查询'
+										},{
+											id:'flushButton',
+											text:'返回全部',
+											handler:function(){
+													Ext.getCmp('drugTree').show();
+													Ext.getCmp('searchDrugTree').hide();
+											}
+										}]
+								})
+						},{
+						region : 'center',
+						autoScroll : true,
+						containerScroll : true,
+						items:[{
+							xtype : 'treepanel',
+							id:'drugTree',
+							border:false,
+							autoScroll : true,
+							containerScroll : true,
+							//dataUrl : App.App_Info.BasePath + '/InHospitalCase/LiverCaseAction.do?method=getDrugName_Dict',
+							dataUrl : App.App_Info.BasePath + '/module/InHospitalCase/Liver/Js/DrugName.json',
+							root : {
+								text : '药物字典',
+								xtype : 'async',
+								draggable : false,
+								id : '-1'
+							},
+							listeners : {
+								render : function() {
+								this.root.expand();
+								this.on('click',function(_node) {
+									if (_node.leaf) {
+										var returnVal = {};
+										returnVal.defaultUsage = _node.attributes.useFunction;
+										returnVal.drugName = _node.text;
+										returnText(returnVal);
+									}
+								});
+							}
+						}
+					},{
+						xtype:'treepanel',
+						id:'searchDrugTree',
+						border:false,
+						dataUrl:App.App_Info.BasePath + '/InHospitalCase/LiverCaseAction.do?method=searchDrug',
+						root:{
+							text:'查询结果',
+							xtype:'async',
+							draggable:false
+							},
+							listeners:{
+								render:function(){
+									this.hide();
+									this.on('click',function(_node){
+										if (_node.leaf) {
+											var returnVal = {};
+											returnVal.defaultUsage = _node.attributes.useFunction;
+											returnVal.drugName = _node.text;
+											returnText(returnVal);
+										}
+									});
+									Ext.getCmp('searchButton').on('click',function(){
+										var root=Ext.getCmp('searchDrugTree').getRootNode();
+										var tree=Ext.getCmp('searchDrugTree');
+										var term = Ext.getCmp('searchText').getValue();
+										if(term==""){
+											Ext.Msg.alert('提示消息','请输入查询条件');
+											return;
+										}
+										Ext.getCmp('drugTree').hide();
+										tree.show();
+										tree.getLoader().baseParams={term:term};
+										tree.getLoader().load(root,function(){
+											tree.expandAll();
+										});
+									});
+								}
+						}
+					}]
+				}]
+			});
+	}
+//治疗效果字典树
+zhiliaoxiaoguo = function(){
+				new Ext.Viewport({
+					layout:'border',
+					items : [ {
+						region : 'center',
+						xtype : 'treepanel',
+						tbar :['->',{
+							text:'确定',
+							handler:function(){
+								var value = "";
+								 Ext.each(Ext.getCmp('TreatResultDict').getChecked(),function(i){
+									value += this.parentNode.text+this.text+'、'
+								});
+								 if (value.length > 0) {
+										value = value.substr(0, value.length - 1)+'，';
+									}
+								 returnText(value)
+							}}],
+						id : 'TreatResultDict',
+						autoScroll : true,
+						containerScroll : true,
+						onlyLeafCheckable : true,
+						root : {
+							text : '症状转归',
+							xtype : 'async',
+							draggable : false,
+							id : '-1'
+						},
+						loader : new Ext.tree.TreeLoader({
+									url : App.App_Info.BasePath + '/InHospitalCase/LiverCaseAction.do?method=getTreatResult_Dict',
+									baseAttrs : {uiProvider : Ext.ux.TreeCheckNodeUI}
+						})
+					} ]
+				});
+	}
+	//页面返回值
+	function returnText(value) {
+		window.returnValue = value;
+		window.close();
+	}
+</script>
+</head>
+<body>
+
+</body>
+</html>

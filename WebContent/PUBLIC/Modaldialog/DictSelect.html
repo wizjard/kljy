@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>&nbsp;</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/prototype/chineseascii_pack.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/prototype/prototype.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+/**
+	var config={
+		title:'字典选择窗口',
+		sigleSel:true,
+		sql:'select top 20 id as svalue,name as stext from t_User;',
+		url:App.App_Info.BasePath+'/common/CommonAction.do'
+	};
+ */
+Ext.onReady(function(){
+	LayoutPage(window.dialogArguments);
+});
+function LayoutPage(cfg){
+	var config={
+		title:'字典选择窗口',
+		sigleSel:true,
+		sql:'select top 20 id as svalue,name as stext from t_User;',
+		url:App.App_Info.BasePath+'/common/CommonAction.do'
+	};
+	if(cfg)
+		Ext.apply(config,cfg);
+	if(!config.params){
+		config.params={
+			method:'GetSelfQueryList',
+			sql:config.sql
+		};
+	}
+	new Ext.Viewport({
+		layout:'fit',
+		items:new Ext.Panel({
+			id:'panel',
+			autoScroll:true,
+			title:config.title,
+			bodyStyle:'padding:3px',
+			tbar:[
+				{
+					xtype:'textfield',
+					width:200,
+					emptyText:'输入汉字或拼音首字母过滤',
+					enableKeyEvents:true,
+					listeners:{
+						keyup:function(){
+							doFilter(this.getValue());
+						}
+					}
+				},'->',{
+					text:'取消选择',handler:function(){
+						Ext.each(Ext.getCmp('panel').body.query('input'),function(){
+							this.checked=false;
+						});
+					}
+				},'-',{
+					text:'确定',handler:function(){
+						var value='';
+						var text='';
+						Ext.each(Ext.getCmp('panel').body.query('p'),function(){
+							var checkbox=Ext.get(this).query('input')[0];
+							if(checkbox.checked){
+								value+=checkbox.value+'、';
+								text+=this.innerText+'、';
+							}
+						});
+						if(value.length>0&&text.length>0){
+							value=value.substr(0,value.length-1);
+							text=text.substr(0,text.length-1);
+						}
+						window.returnValue={
+							value:value,
+							text:text
+						};
+						window.close();
+					}
+				},'-',{
+					text:'关闭',handler:function(){
+						window.close();
+					}
+				}
+			],
+			listeners:{
+				render:function(){
+					var tpl='<p class="pitem" onmouseout="this.className=\'pitem\'" onmouseover="this.className=\'pitem-over\'"><input '+(config.sigleSel?'onclick="CheckboxOnClick(this)"':'')+' type="checkbox" value="{value}">{text}</p>';
+					Ext.Ajax.request({
+						url:config.url,
+						params:config.params,
+						scope:this,
+						success:function(_response){
+							var html='';
+							Ext.each(Ext.decode(_response.responseText),function(){
+								html+=tpl.replace('{value}',this.svalue).replace('{text}',this.stext);
+							});
+							this.body.dom.innerHTML=html;
+						}
+					});
+				}
+			}
+		})
+	});
+}
+function doFilter(_val){
+	_val=_val.toLowerCase();
+	Ext.each(Ext.getCmp('panel').body.query('p'),function(){
+		var _spanTxt=this.innerText;
+		var _spanPY='';
+		if(_spanTxt&&_spanTxt.length>0){
+			_spanPY=getPY(_spanTxt);
+		}
+		Ext.get(this).setVisibilityMode(Ext.Element.DISPLAY);
+		if ((_spanTxt.indexOf(_val) >= 0) || (_spanPY.indexOf(_val) >= 0)) {
+			Ext.get(this).show();
+		}else{
+			Ext.get(this).hide();
+		}
+	});
+}
+function CheckboxOnClick(_this){
+	var checked=_this.checked;
+	Ext.each(Ext.getCmp('panel').body.query('input'),function(){
+		this.checked=false;
+	});
+	if(checked){
+		_this.checked=true;
+	}else{
+		_this.checked=false;
+	}
+}
+function getPY(_str){
+	var rstValue='';
+	_str=_str.replaceAll(' ','');
+	var temp=_str.split(''),
+	i=-1,
+	len=_str.length,
+	rst=_str.split('');
+	while(++i<len){
+		temp[i]=(temp[i].charCodeAt()<1000||temp[i].charCodeAt()>60000)?temp[i]:lookUpWord(temp[i]);
+		rstValue=rstValue+temp[i].charAt(0); 
+	}
+	return rstValue;
+}
+</script>
+<style type="text/css">
+.pitem{
+	padding:0;
+	margin:0;
+	font-size:10pt;
+	line-height:12pt;
+	cursor:default;
+	border:solid 1px #FFF;
+	background:#FFF;
+}
+.pitem-over{
+	padding:0;
+	margin:0;
+	font-size:10pt;
+	line-height:11pt;
+	cursor:default;
+	border:solid 1px blue;
+	background:#d6e9f1;
+}
+</style>
+</head>
+<body>
+</body>
+</html>

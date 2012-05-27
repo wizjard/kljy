@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			LODOP=document.getElementById("LODOP");
+			/*CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+			var r=new RepoertHeader();
+			r.basePath=App.App_Info.BasePath;
+			r.el=document.getElementById('page-header');
+			r.config.title='病理标本检查申请单';
+			r.cid=KID;
+			r.create();*/
+			singlePageTableInfo(KID,'病理标本检查申请单','#page-header');
+			setValue('SpecimenCheckApplyPrint','SpecimenCheckApplyAction','get_Main_Info','SpecimenCheckApplyAction');
+		});
+	</script>
+<title>病理标本检查申请单</title>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button onclick="PREVIEW('病理标本检查申请单')">打印预览</button>
+	</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<table class="conTable" border=0 style="border:1px solid black"cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="500">收到日期：<span name="acceptDate"></span></td>
+				<td >病理号：<span name="pathologyNum"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0  style="border:1px solid black;border-top:none" cellpadding=0 cellspacing=0>
+			<tr>
+				<td style="border-right:0px">姓名：<span name="patientName"></span></td><td style="border-left:0px">籍贯：<span name="nativePlace"></span></td>
+				<td>职业：<span name="career"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none" cellpadding=0 cellspacing=0>
+			<tr>
+				<td>年龄:<span name="age"></span></td>
+				<td>性别：<span name="gender"></span></td>
+				<td>病区:<span name="sickBay"></span></td>
+				<td>病房：<span name="ward"></span></td>
+				<td>病历号：<span name="patientCaseNum"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none;border-bottom:none"cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td1" valign="top" style="width:25%;boder-right:0px">病历摘要与临床所见：</td><td style="border-left:0px" colspan="4"><span name="clinicSummary"></span></td>
+			</tr>
+			</table>
+			
+			<table class="conTable" border=0 style="border:1px solid black;border-top:none;border-bottom:none" cellpadding=0 cellspacing=0>
+			<tr>
+				<td valign="top" class="td1" style="width:14%;border:1px solid black;border-top:none;border-right:none;border-left:none">手术所见：</td>
+				<td style="border:1px solid black;border-left:none;border-right:none;border-top:none"colspan="4"><span name="operationFindings"></span></td>
+			</tr>
+			</table>
+			<table class="conTable" border=0 style="border:1px solid black;border-top:none;border-bottom:none"cellpadding=0 cellspacing=0>
+			<tr>
+				<td colspan="3" >如系肿瘤请填下列各项：</td>
+				</tr>
+			<tr>
+				<td>肿瘤生长时间：<span name="cancerGrowTime"></span></td>
+				<td style="border-left:0px"colspan="2"valign="bottom">肿瘤大小：<span name="cancerSize"></span><br/>
+			<tr>
+				<tr>
+					<td style="border-top:0px"colspan="5">
+						肿瘤位置：<span name="cancerPosition"></span><br/>
+					</td>
+				</tr>
+				<tr>
+					<td style="border-top:0px">
+						有无转移行瘤：<span name="cancerShift"></span>
+					</td>
+					<td style="border-top:0px;border-left:0px"colspan="4">
+						在何处：<span name="shiftPosition"></span>
+					</td >
+				</tr>
+			<tr>
+				<td colspan="5" style="border:1px solid black;border-bottom:none;border-right:none;border-left:none">
+					如系子宫内膜请填下列各项：
+				</td>
+			</tr>
+			<tr>
+				<td style="width:50%;border-top:0px">月经历：<span name="mensesCalender"></span></td>
+				<td style="border-top:0px;border-left:0px" colspan="4">初潮：<span name="menarche"></span></td>
+			</tr>
+					<tr>
+						<td style="border-top:0px;border-left:0px" >月经量：<span name="mensesQuantity"></span></td>
+						<td colspan="4" style="border-top:0px;border-left:0px">周期及持续时间：<span name="periodPersistTime"></span></td>
+					</tr>
+					<tr>
+						<td colspan="2" style="width:40%;border-top:0px;">末次月经：<span name="lastMenstrual"></span></td>
+						<td colspan="3" style="border-top:0px;border-left:0px">出血量：<span name="hemorrhageQuantity"></span></tr>
+					<tr>
+						<td style="border-top:0px"colspan="5">曾否施行人工周期治疗：<span name="laborTreat"></span></td>
+					</tr>
+					<tr>
+						<td style="border-top:0px" colspan="2">时间：<span name="laborTreatDate"></span></td>
+						<td style="border-top:0px;border-left:0px" colspan="3">剂量：<span name="dose"></span></td>
+					</tr>
+					<tr>
+						<td colspan="5" >标本采取时间：<span name="collectionDate"></span></td>
+					</tr>
+			<tr>
+				<td colspan="5" style="border:1px solid black;border-left:none;border-right:none">标本来源：<span name="specimenSource"></span>&nbsp;&nbsp;&nbsp;固定液：<span name="stationaryLiquid"></span></td>
+			</tr>
+			<tr>
+				<td colspan="5">取材部位：<span name="biopsyPart"></span></td></tr>
+			<tr>
+				<td colspan="2" style="width:30%;border:1px solid black;border-left:none;border-right:none">以前曾做过病理检查：<span name="everCheck"></span></td>
+				<td colspan="3" style="width:70%;border:1px solid black;border-left:none;border-right:none">其病理标本检查号为：<span name="specimenCheckNum"></span></td>
+			</tr>
+			</table>
+			<table class="conTable" border=0  style="border:1px solid black;border-top:none" cellpadding=0 cellspacing=0>
+			<tr>
+				<td valign="top" style="width:14%;border-top:none">临床诊断：</td>
+				<td style="border-left:none;border-top:none"><span name="clinicalDiagnosis"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="300">送检医师：<span name="doctorName"></span></td>
+				<td>送检日期：<span name="checkDate"></span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

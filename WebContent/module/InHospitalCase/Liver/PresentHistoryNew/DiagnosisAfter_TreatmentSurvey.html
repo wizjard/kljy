@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>治疗调查</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script>
+		Ext.onReady(function(){
+			
+			
+		});
+		
+		function CreateColumnModel(){
+			var cm = new Ext.grid.ColumnModel([
+				{header:'编号',dataIndex:'id'},
+				{header:'时间',dataIndex:'checkTime',editor:new Ext.form.TextField()}
+			]);
+		}
+		
+		function initEditorGridePanel(){
+			var panel = new Ext.grid.EditorGridPanel({
+				renderTo:'gride'
+			});
+			
+		}
+	</script>
+</head>
+<body>
+	<div id="gride"></div>
+</body>
+</html>

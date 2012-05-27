@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员用户信息显示页面</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="autoscroll.css">
+<style type="text/css">
+body{
+	margin:0;
+}
+#topDiv{
+	position:relative;
+	background:url(topBk2.jpg) left center no-repeat;
+	height:110px;
+	border:none;
+}
+#userInfoDiv{
+	position:absolute;
+	right:80px;
+	width:370px;
+	top:10px;
+}
+#opeDiv{
+	text-align:left;
+	position:absolute;
+	width:70px;
+	right:0;
+	top:10px;
+}
+td.t1 {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: right;
+	padding-bottom: 1px;
+	color:#03488b;
+	font-weight:bold;
+	line-height:18px;
+}
+td.t2 {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: left;
+	padding-bottom: 1px;
+	border-bottom:solid #669 1px;
+	color:red;
+}
+ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+li{
+	font-size:12px;
+	line-height:20px;
+	color:blue;
+	text-decoration:underline;
+	cursor:pointer;
+}
+</style>
+<script type="text/javascript">
+var _date=null;
+$(function(){
+	_date=$('#date');
+	setTimeField();
+	setUserInfo();
+	init();
+	setTimeout(hearlthAndConsulting,500);
+});
+function setTimeField(){
+	_date.html(Ext.util.Format.date(new Date(),"Y-m-d H:i"));
+	setTimeout(setTimeField,1000*10);
+}
+function setUserInfo(){
+	$.post(
+		App.App_Info.BasePath+'/module/biomedical/member.do',
+		{
+			method:'getLoginMemberInfo'
+		},function(data){
+			if(!data)	return;
+			top.Member=data;
+			$('#name').html(data['name']);
+			$('#account').html(data['account']);
+			$('#deptment').html(data['deptName']+data['grounpName']);
+		},'json');
+}
+function cancelLogin(){
+	if(window.confirm("您确定要退出系统吗？")){
+		$.post(
+			App.App_Info.BasePath+'/module/biomedical/member.do',
+			{
+				method:'cancelLogin'
+			},function(data){
+				if(data.success){
+					alert('成功退出系统。');
+					App.util.getRootWin().close();
+					//.location.href=App.App_Info.BasePath+'/module/biomedical/member/loginMember.jsp';
+				}else{
+					alert('退出登录失败。');
+				}
+			},'json');
+	}
+}
+function addToFav(){
+	var _url=document.location.href.replace('/PUBLIC/CommonPage/top.html','');
+	window.external.addFavorite(_url,'中医药治疗慢性乙型肝炎临床科研基地');
+}
+
+
+function updatePassword(){
+	App.util.addNewMainTab('/module/member/MemberChangePassword.html','用户自服务');
+}
+</script>
+</head>
+<body>
+<div id="topDiv">
+	<div id="userInfoDiv">
+		<table  border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td class="t1" width="230">姓&nbsp;名：</td>
+				<td class="t2" width="140" id="name">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">账&nbsp;号：</td>
+				<td class="t2" id="account">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">时&nbsp;间：</td>
+				<td class="t2" id="date">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">责任科室：</td>
+				<td class="t2" id="deptment">&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="opeDiv">
+		<ul>
+			<li onclick="cancelLogin()">退出登录</li>
+			<li onclick="addToFav()">加入收藏</li>
+			<li onclick="updatePassword()">修改密码</li>
+		</ul>
+	</div>
+	<div style="position:absolute;padding-top:72px;padding-left:200px">
+			<div style="position:absolute;padding-top:3px;padding-left:400px" class="d1" id="div1" onmouseover="clearInterval(timer)" onmouseout="timer=setInterval(mar,50)">
+			    <div class="scroll" id="scroll">
+			    	<div class="div2" id="div2">
+			    		<ul>
+			    			 <li>
+			       		 		<div id="innerCon" style="width:530px"></div>
+			       			 </li>
+			       			 
+			       		 </ul>
+			       	</div>
+			       	<div id="div3" class="div2"></div>
+			    </div>
+			</div>
+	</div>
+</div>
+<script type="text/javascript">
+ var s,s2,s3,s4,timer;
+ function init(){
+ 	//innerContent();
+ 	s = getid("div1");
+ 	s2 = getid("div2");
+ 	s3 = getid("div3");
+ 	s4 = getid("scroll");
+ 	s4.style.width = (s2.offsetWidth*2+100)+"px";
+ 	s3.innerHTML = s2.innerHTML;
+ 	timer = setInterval(mar,50);
+ }
+ 
+ function mar(){
+ 	if(s2.offsetWidth<=s.scrollLeft){
+ 		s.scrollLeft -=s2.offsetWidth;
+ 	}else{
+ 		s.scrollLeft++;
+ 	}
+ }
+ 
+ function getid(id){
+ 	return document.getElementById(id);
+ }
+ 
+ function openPatientConsult(){
+ 	App.util.addNewMainTab('/module/patientanddoctoroperator/patientLogin.html','医生回复');
+ }
+ 
+ function openHealthRecord(){
+ 	App.util.addNewMainTab('/module/patientanddoctoroperator/myHealthRecord.html','网上查房');
+ }
+ 
+ //咨询记录
+ function opensearchRecord(_content){
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath+'/PatientConsultingAction.do?method=findCountPatientConsultingByPatient&timestamp='+new Date().getTime(),
+			params:{
+				patientId:top.Member.patientId
+			},
+			sync:true,
+			success:function(response){
+				var res = Ext.util.JSON.decode(response.responseText);
+				if(res.success){
+					var data = Ext.util.JSON.decode(res.data);
+					if(Math.abs(data) >0){
+						_content += "<a href='###' onclick='openPatientConsult()'><B>"+top.Member.name+"会员您好，医生已回复您的咨询,请查看&nbsp;&nbsp;</B></a>";
+					}else{
+						_content +="";
+					}
+				}
+			}
+		});
+		return _content;
+		//setTimeout(openWindowShow,1000*10);
+ }
+
+//查房记录
+ function searchHearlthRecord(_content){
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath+'/PatientHealthRecordAction.do?method=findCountPatientHealthRecordByPatient&timestamp='+new Date().getTime(),
+			params:{
+				patientId:top.Member.patientId
+			},
+			sync:true,
+			success:function(response){
+				var res = Ext.util.JSON.decode(response.responseText);
+				if(res.success){
+					var data = Ext.util.JSON.decode(res.data);
+					if(Math.abs(data) >0){
+						_content += "<a href='###' onclick='openHealthRecord()'><B>"+top.Member.name+"会员您好，您有未查看的医生查房记录,请查看&nbsp;&nbsp;</B></a>";
+					}else{
+						_content += "";
+					}
+				}
+			}
+		});
+		return _content;
+		//setTimeout(openWindowShow,1000*10);
+ }
+ 
+ var innerContent = "";
+
+ function hearlthAndConsulting(){
+ 	innerContent = "";
+ 	innerContent+=opensearchRecord(innerContent)+searchHearlthRecord(innerContent);
+ 	document.getElementById("innerCon").innerHTML = innerContent;
+ 	setTimeout(hearlthAndConsulting,10000);
+ }
+</script>
+</body>
+</html>

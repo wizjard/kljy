@@ -1,0 +1,492 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>次要阳性症状</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('preHistory').contentWindow.dbclickedSpan;
+$(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('form',JSON.parse(spanContent));
+		showOrHide(JSON.parse(spanContent));
+	}
+});
+		
+function showOrHide(json){
+	for(name in json){
+		if(json[name] == 1 || json[name] == 2 || json[name] == 3){
+			$('input[name="' + name + '"]').parent().parent().next().removeClass("hidden");
+		}else{
+			if($('input[name="' + name + '"]').parent().parent().next().find('input[type="text"]')){
+				$('input[name="' + name + '"]').parent().parent().next().find('input[type="text"]').val('');
+			}
+			if($('input[name="' + name + '"]').parent().parent().next().find('textarea')){
+				$('input[name="' + name + '"]').parent().parent().next().find('textarea').val('');
+			}
+			if($('input[name="' + name + '"]').parent().parent().next().find('input[type="select"]')){
+				$('input[name="' + name + '"]').parent().parent().next().find('input[type="select"]').val('');
+			}
+		}
+	}	
+}		
+		
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionaryNew('EMR-liver-PresentIllnessHistory-Positive'),function(code){
+		$('*[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==0){
+				tr.hide();
+			}else{
+				tr.show();
+			}
+		});
+	});
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value=FormUtil.getFormValues('form');
+		var oldOperation = JSON.stringify(value);
+		var rst=Compose(value);
+		var jqObj = $('<div>' + rst + '</div>');
+		jqObj.find('input:last').val('。');
+		rst = jqObj.html();
+		
+		if(rst.length > 0){
+			rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hidePreHis();parent.symptomInfoIfr('otherPositiveSysptom.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+			var iframe = parent.document.getElementById('preHistory');
+			iframe.contentWindow.itemValue = rst;
+			if(iframe.contentWindow.dbclickedSpan){
+				iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+			}else{
+				iframe.contentWindow.setReturnValue();
+			}
+		}
+		backToPreIllWindow();
+	});
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('preHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showPreHis();	
+}
+	
+function Compose(value){
+	var rst='';
+	var temp='';
+	var leftInputItem = '';
+	var rightInputItem = '';
+	
+	leftInputItem = '<input name="lrpQsbs" type="text" value="" />';
+	rightInputItem = '<input name="lrpQsbs" type="text" value="，" />';
+	if($('input[name="lrpQsbs"]').size() > 0){
+		$('input[name="lrpQsbs"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrpQsbs"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.pqsbs&&value.pqsbs==1){
+		rst+=leftInputItem + '全身不适' + rightInputItem;
+	}
+	
+	leftInputItem = '<input name="lrpPfsy" type="text" value="" />';
+	rightInputItem = '<input name="lrpPfsy" type="text" value="，" />';
+	if($('input[name="lrpPfsy"]').size() > 0){
+		$('input[name="lrpPfsy"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrpPfsy"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.ppfsy&&value.ppfsy==1){
+		temp=value.ppfsy_posi+getRowValue('ppfsy_degree',value.ppfsy_degree);
+		rst+=leftInputItem + temp+'皮肤瘙痒' + rightInputItem;
+	}
+	
+	leftInputItem = '<input name="lrpPfsy" type="text" value="有" />';
+	rightInputItem = '<input name="lrpPfsy" type="text" value="，" />';
+	var leftInputItem2 = '<input name="lrpPfsy2" type="text" value="" />';
+	var rightInputItem2 = '<input name="lrpPfsy2" type="text" value="，" />';
+	if($('input[name="lrpPfsy"]').size() > 0){
+		$('input[name="lrpPfsy"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrpPfsy"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if($('input[name="lrpPfsy2"]').size() > 0){
+		$('input[name="lrpPfsy2"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem2 = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrpPfsy2"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem2 = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.ppqqk&&value.ppqqk!=0){
+		rst+=value.ppqqk==1?(leftInputItem + '排气' + rightInputItem):(leftInputItem2 + '排气'+getRowValue('ppqqk',value.ppqqk)+ rightInputItem2);
+	}
+	
+	if(value.pfbbk&&value.pfbbk==1){
+		rightInputItem = '<input name="lrpFbbk" type="text" value="，" />';
+		if($('input[name="lrpFbbk"]').size() > 0){
+			$('input[name="lrpFbbk"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		temp=value.pfbbk_posi.length>0?(value.pfbbk_posi+'有包块' + rightInputItem):'腹部包块' + rightInputItem;
+		
+		var rightInputItem_size = '<input name="lrsize" type="text" value="，" />';
+		if($('input[name="lrsize"]').size() > 0){
+			$('input[name="lrsize"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem_size = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		temp+=value.pfbbk_size.length>0?(value.pfbbk_size+rightInputItem_size):'';
+		rst+=temp;
+		
+		var rightInputItem_yd = '<input name="lryd" type="text" value="，" />';
+		if($('input[name="lryd"]').size() > 0){
+			$('input[name="lryd"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem_yd = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		temp=getRowValue('pfbbk_yd',value.pfbbk_yd);
+		if(temp=='是'){
+			rst+='可移动' + rightInputItem_yd;
+		}else if(temp=='否'){
+			rst+='不可移动' + rightInputItem_yd;
+		}
+		
+		var rightInputItem_zhd = '<input name="lrzhd" type="text" value="，" />';
+		if($('input[name="lrzhd"]').size() > 0){
+			$('input[name="lrzhd"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem_zhd = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(value.pfbbk_zhd){
+			rst+=value.pfbbk_zhd.length>0?('质地'+getRowValue('pfbbk_zhd',value.pfbbk_zhd)+rightInputItem_zhd):'';
+		}
+	
+		var rightInputItem_yt = '<input name="lryt" type="text" value="，" />';
+		if($('input[name="lryt"]').size() > 0){
+			$('input[name="lryt"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem_yt = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(value.pfbbk_yt){
+			rst+=getRowValue('pfbbk_yt',value.pfbbk_yt)+'压痛' + rightInputItem_yt;
+		}
+	
+		var rightInputItem_zhl = '<input name="lrzhl" type="text" value="，" />';
+		if($('input[name="lrzhl"]').size() > 0){
+			$('input[name="lrzhl"]').eq(0).wrap("<div id='wrap'></div>");
+			rightInputItem_zhl = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(value.pfbbk_zhl){
+			if(value.pfbbk_zhl==0){
+				rst+='与周围无粘连' + rightInputItem_zhl;
+			}else if(value.pfbbk_zhl==1){
+				rst+='与周围有粘连' + rightInputItem_zhl;
+			}
+		}
+	}
+	
+	rightInputItem = '<input name="lrpGqbs" type="text" value="，" />';
+	if($('input[name="lrpGqbs"]').size() > 0){
+		$('input[name="lrpGqbs"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.pgqbs&&value.pgqbs==1){
+		rst+='肝区不适' + rightInputItem;
+	}
+	
+	rightInputItem = '<input name="lrpPqbs" type="text" value="，" />';
+	if($('input[name="lrpPqbs"]').size() > 0){
+		$('input[name="lrpPqbs"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.ppqbs&&value.ppqbs==1){
+		rst+='脾区不适' + rightInputItem;
+	}
+	
+	rightInputItem = '<input name="lrpTykn" type="text" value="，" />';
+	var rightInputItem_lrpTykn = '<input name="lrpTykn" type="text" value="，" />';
+	if($('input[name="lrpTykn"]').size() > 0){
+		$('input[name="lrpTykn"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+		$('input[name="lrpTykn"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem_lrpTykn = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.ptykn&&(value.ptykn==1||value.ptykn==2||value.ptykn==3)){
+		rst+=getRowValue('ptykn',value.ptykn)+'吞咽困难' + rightInputItem;
+		rst+=value.ptykn_degree.length>0?(value.ptykn_degree+rightInputItem_lrpTykn):'';
+	}
+	
+	rightInputItem = '<input name="lrpChx" type="text" value="，" />';
+	if($('input[name="lrpChx"]').size() > 0){
+		$('input[name="lrpChx"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	
+	
+	rightInputItem = '<input name="lrpchx" type="text" value="" />';
+	var rightInputItem_lrpchx = '<input name="lrpchx" type="text" value="，" />';
+	if($('input[name="lrpchx"]').size() > 0){
+		$('input[name="lrpchx"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+		$('input[name="lrpchx"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem_lrpchx = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}	
+	if(value.pchx&&value.pchx==1){
+		rst+=rightInputItem;
+		rst+=value.pchx_desc.length>0?(value.pchx_desc+rightInputItem_lrpchx):'';
+	}
+	rightInputItem = '<input name="lrpXggb" type="text" value="，" />';
+	var rightInputItem_lrpXggb = '<input name="lrpXggb" type="text" value="，" />';
+	if($('input[name="lrpXggb"]').size() > 0){
+		$('input[name="lrpXggb"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+		$('input[name="lrpXggb"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem_lrpXggb = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}	
+	if(value.pxggb&&value.pxggb==1){
+		rst+='性格改变' + rightInputItem;
+		rst+=value.pxggb_desc.length>0?(value.pxggb_desc+rightInputItem_lrpXggb):'';
+	}
+	
+	rightInputItem = '<input name="lrpXwyc" type="text" value="，" />';
+	var rightInputItem_lrpXwyc = '<input name="lrpXwyc" type="text" value="，" />';
+	if($('input[name="lrpXwyc"]').size() > 0){
+		$('input[name="lrpXwyc"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+		$('input[name="lrpXwyc"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem_lrpXwyc = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}	
+	if(value.pxwyc&&value.pxwyc==1){
+		rst+='行为异常' + rightInputItem;
+		rst+=value.pxwyc_desc.length>0?(value.pxwyc_desc+rightInputItem_lrpXwyc):'';
+	}
+	
+	rightInputItem = '<input name="lrpHj" type="text" value="，" />';
+	var rightInputItem_lrpHj = '<input name="lrpHj" type="text" value="，" />';
+	if($('input[name="lrpHj"]').size() > 0){
+		$('input[name="lrpHj"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+		$('input[name="lrpHj"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem_lrpHj = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}	
+	if(value.phj&&value.phj==1){
+		rst+='有幻觉' + rightInputItem;
+		rst+=value.phj_desc.length>0?(value.phj_desc+rightInputItem_lrpHj):'';
+	}
+	
+	rightInputItem = '<input name="lrpJsl" type="text" value="，" />';
+	if($('input[name="lrpJsl"]').size() > 0){
+		$('input[name="lrpJsl"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.pjsl&&value.pjsl==1){
+		rst+='计算力障碍' + rightInputItem;
+	}
+	
+	rightInputItem = '<input name="lrpDxl" type="text" value="，" />';
+	if($('input[name="lrpDxl"]').size() > 0){
+		$('input[name="lrpDxl"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.pdxl&&value.pdxl==1){
+		rst+='定向力障碍' + rightInputItem;
+	}
+	
+	rightInputItem = '<input name="lrotherPosit" type="text" value="，" />';
+	if($('input[name="lrotherPosit"]').size() > 0){
+		$('input[name="lrotherPosit"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	temp = value.otherPosit;	
+	if(temp.length> 0){
+		rst += temp + rightInputItem;
+	}
+	return rst;
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:820px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<form>
+<table id="table-con" width="820" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="80">全身不适：</td>
+		<td class="t2" width="740"><input name="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">皮肤瘙痒：</td>
+		<td class="t2"><input name="ppfsy" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">部位：<input name="ppfsy_posi" type="text" class="checkbox" style="width:35%"/>
+						程度：<input name="ppfsy_degree" type="text" class="select" style="width:35%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">排气情况：</td>
+		<td class="t2"><input name="ppqqk" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">腹部包块：</td>
+		<td class="t2"><input name="pfbbk" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border=0 cellpadding=0 cellspacing=0>
+				<tr>
+					<td width="10%" class="t1">位置：</td><td width="40%"><input type="text" name="pfbbk_posi" class="text"/></td>
+					<td width="15%" class="t1">大小：</td><td><input type="text" name="pfbbk_size" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t1">移动：</td><td><input type="radio" name="pfbbk_yd" class="radio dict-fld"/></td>
+					<td class="t1">质地：</td><td><input type="radio" name="pfbbk_zhd" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t1">压痛：</td><td><input type="radio" name="pfbbk_yt" class="radio dict-fld"/></td>
+					<td class="t1">与周围粘连：</td><td><input type="radio" name="pfbbk_zhl" rel="pqsbs" class="radio dict-fld"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">肝区不适：</td>
+		<td class="t2"><input name="pgqbs" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">脾区不适：</td>
+		<td class="t2"><input name="ppqbs" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">吞咽困难：</td>
+		<td class="t2"><input name="ptykn" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">描述：</td>
+		<td class="t2"><textarea name="ptykn_degree" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">出血：</td>
+		<td class="t2"><input name="pchx" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">描述：</td>
+		<td class="t2"><textarea name="pchx_desc" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">性格改变：</td>
+		<td class="t2"><input name="pxggb" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">描述：</td>
+		<td class="t2"><textarea name="pxggb_desc" class="textarea"></textarea></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">行为异常：</td>
+		<td class="t2"><input name="pxwyc" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">描述：</td>
+		<td class="t2"><textarea name="pxwyc_desc" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">幻觉：</td>
+		<td class="t2"><input name="phj" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">描述：</td>
+		<td class="t2"><textarea name="phj_desc" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">计算力障碍：</td>
+		<td class="t2"><input name="pjsl" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">定向力障碍：</td>
+		<td class="t2"><input name="pdxl" rel="pqsbs" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其他：</td>
+		<td class="t2">
+			<input type="text" name="otherPosit" class="text" />
+		</td>
+	</tr>
+</table>
+</form>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

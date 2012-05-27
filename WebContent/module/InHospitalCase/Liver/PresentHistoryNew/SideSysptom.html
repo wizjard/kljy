@@ -1,0 +1,239 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>伴随症状</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	initPage();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-SideSysptom'),function(code){
+		$('textarea[name="'+code+'"]').data('options',this);
+	});
+	//Checkbox
+	$('textarea.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this),columns:4});
+	});
+	//事件
+	$('input[type="checkbox"]').click(function(){
+		if(this.checked){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//赋值
+	if(window.dialogArguments&&window.dialogArguments.value){
+		FormUtil.setFormValues('form',window.dialogArguments.value);
+		$('input[type="checkbox"]').each(function(){
+			if(window.dialogArguments.value[this.name]==1){
+				$(this).attr('checked',true);
+				$(this).parent().parent().next().show();
+			}
+		});
+	}
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value=FormUtil.getFormValues('form');
+		$('input[type="checkbox"]').each(function(){
+			value[this.name]=this.checked?1:0;
+		});
+		var text=Compose(value);
+		window.returnValue={
+			value:value,
+			text:text
+		};
+		window.close();
+	});
+}
+function Compose(_compose){
+	var rst='';
+	var _flag='';
+	_flag=_compose.side_xiaohua;
+	if (_flag == 0) {
+		
+	}else if(_flag==1){
+		tempValue=_compose.side_xiaohua0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_xunhuan;
+	if(_flag==0){
+		//rst+='无胸痛、胸闷、心悸，';
+	}else if(_flag==1){
+		tempValue=_compose.side_xunhuan0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_huxi;
+	if(_flag==0){
+		//rst+='无咳嗽、咳痰、咯血、呼吸困难，';
+	}else if(_flag==1){
+		tempValue=_compose.side_huxi0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_miniao;
+	if(_flag==0){
+		//rst+='无尿频、尿急、尿痛，无排尿困难，';
+	}else if(_flag==1){
+		tempValue=_compose.side_miniao0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_xueye;
+	if(_flag==0){
+		//rst+='无皮肤粘膜瘀点、瘀斑及出血，';
+	}else if(_flag==1){
+		tempValue=_compose.side_xueye0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_nei;
+	if(_flag==0){
+		
+	}else if(_flag==1){
+		tempValue=_compose.side_nei0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_shenjing;
+	if(_flag==0){
+		//rst+='无头昏、头痛、意识障碍，';
+	}else if(_flag==1){
+		tempValue=_compose.side_shenjing0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_jirou;
+	if(_flag==0){
+		//rst+='无关节肿痛，';
+	}else if(_flag==1){
+		tempValue=_compose.side_jirou0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	//==========================================
+	_flag = _compose.side_fengshi;
+	if(_flag==0){
+	}else{
+		tempValue = _compose.side_fengshi0;
+		rst += tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	_flag=_compose.side_qita;
+	if(_flag==0){
+		
+	}else if(_flag==1){
+		tempValue=_compose.side_qita0;
+		rst+=tempValue.length>0?'伴'+tempValue+'，':'';
+	}
+	return rst.length>0?rst.substr(0,rst.length-1)+'。':'';
+}
+</script>
+<style type="text/css">
+textarea{
+	width:95%;
+	height:40px;
+}
+</style>
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:600px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form>
+<table id="table-con" width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="110">消化系统：</td>
+		<td class="t2"><input name="side_xiaohua" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_xiaohua0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">循环系统：</td>
+		<td class="t2"><input name="side_xunhuan" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_xunhuan0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">呼吸系统：</td>
+		<td class="t2"><input name="side_huxi" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_huxi0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">泌尿生殖系统：</td>
+		<td class="t2"><input name="side_miniao" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_miniao0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">血液系统：</td>
+		<td class="t2"><input name="side_xueye" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_xueye0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">内分泌及代谢系统：</td>
+		<td class="t2"><input name="side_nei" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_nei0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">神经系统：</td>
+		<td class="t2"><input name="side_shenjing" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_shenjing0" class="checkbox"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">肌肉骨骼系统：</td>
+		<td class="t2"><input name="side_jirou" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_jirou0" class="checkbox"></textarea></td>
+	</tr>
+	
+	<tr>
+		<td class="t1">风湿免疫系统：</td>
+		<td class="t2"><input name="side_fengshi" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_fengshi0" class="checkbox"></textarea></td>
+	</tr>
+	
+	<tr>
+		<td class="t1">其它症状：</td>
+		<td class="t2"><input name="side_qita" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="side_qita0" class="checkbox"></textarea></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

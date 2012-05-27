@@ -1,0 +1,1306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>肝癌进展程度评估</title>
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			childPushScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+</script>
+<style type="text/css">
+	.check_mark{
+		font-size:14px;
+		color:#800040;
+	}
+	.textarea{
+		width:90.5%;
+	}
+</style>
+</head>
+<body>
+	<form id="form">
+		<input type="hidden" name="lcDegreeId" id="lcDegreeId" value="-1"/>
+		<input type="hidden" name="patientID" id="patientID" value="-1"/>
+		<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		  <tr>
+		    <td valign="top">
+		    	<fieldset style="width:690px;">
+		    		<legend></legend>
+			        <table width="650px;" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			          <tr>
+			              <td width="175" class="t1">评估日期：</td>
+			              <td width="150" class="t2">
+			            	 <INPUT id="opeDate" style="WIDTH:120px;" name="opeDate">
+		              	  </td>
+			              <td width="175" class="t1">米兰标准：</td>
+			              <td class="t2" width="150"><input name="miLAN" type="text" id="miLAN" style="width:120px"/></td>
+		          	  </tr>
+			          <tr>
+			            <td class="t1">UCSF标准：</td>
+			            <td class="t2"><input name="ucsf" type="text" id="ucsf" style="width:120px"/></td>
+			            <td class="t1">巴塞罗那（BCLC）肝癌分期：</td>
+			            <td class="t2"><input name="bclc" type="text" id="bclc" style="width:120px"/></td>
+			          </tr>
+		        	</table>
+		        </fieldset>
+		        <fieldset style="width:690px;">
+		        	<legend><p class="check_mark"><span>影像学超声检查</span></p></legend>
+		        	<span style="font-size:13px;">肿瘤位置</span>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">肝左叶：</td>
+		        			<td class="t2" width="150">
+		        				<select name='llobe' id='llobe'  style='width:120;' >
+						        	<option value='-1' ></option>
+						            <option value='1' >有</option>
+						            <option value='0' >无</option>
+		            			</select>
+		        			</td>
+		        			<td class="t1" width="175">肝右叶：</td>
+		        			<td class="t2" width="150">
+		        				<select name='rlobe'  id='rlobe'  style='width:120;' >
+			              			<option value='-1' ></option>
+			              			<option value='1' >有</option>
+			              			<option value='0' >无</option>
+		            			</select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">肝尾叶：</td>
+		        			<td class="t2">
+		        				<select name='caud'  id='caud'  style='width:120;' >
+		              				<option value='-1' ></option>
+		              				<option value='1' >有</option>
+		              				<option value='0' >无</option>
+		            			</select>
+		        			</td>
+		        			<td class="t1">&nbsp;</td>
+		        			<td class="t2">&nbsp;</td>
+		        		</tr>
+		        	</table>
+		        	<span style="font-size:13px;">节段</span>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">I：</td>
+		        			<td class="t2" width="150">
+		        				<select name='seg1'  id='seg1'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        			<td class="t1" width="175">II：</td>
+		        			<td class="t2" width="150">
+		        				<select name='seg2'  id='seg2'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">III：</td>
+		        			<td class="t2">
+		        				<select name='seg3'  id='seg3'  style='width:120;' >
+					                <option value='-1' ></option>
+					                <option value='1' >有</option>
+					                <option value='0' >无</option>
+					            </select>
+		        			</td>
+		        			<td class="t1">IV：</td>
+		        			<td class="t2">
+		        				<select name='seg4'  id='seg4'  style='width:120;' >
+							        <option value='-1' ></option>
+							        <option value='1' >有</option>
+							        <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">V：</td>
+		        			<td class="t2">
+		        				<select name='seg5' id='seg5' style='width:120;' >
+							       <option value='-1' ></option>
+							       <option value='1' >有</option>
+							       <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        			<td class="t1">VI：</td>
+		        			<td class="t2">
+		        				<select name='seg6'  id='seg6'  style='width:120;' >
+						            <option value='-1' ></option>
+						            <option value='1' >有</option>
+						            <option value='0' >无</option>
+						        </select>
+		        		    </td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">VII：</td>
+		        			<td class="t2">
+		        				<select name='seg7'  id='seg7'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        			<td class="t1">VIII：</td>
+		        			<td class="t2">
+		        				<select name='seg8'  id='seg8'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        	</table>
+		        	<span style="font-size:13">最大肿瘤</span>
+			        <table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			         	<tr>
+		        			<td class="t1" width="175">长度：</td>
+		        			<td class="t2" width="150">
+		        				<input name='lolt' type='text' id='lolt'  style='width:120;' value='' />
+		        			</td>
+		        			<td class="t1" width="175">宽度：</td>
+		        			<td class="t2" width="150">
+		        				<input name='wolt' type='text' id='wolt'  style='width:120;' value='' />
+		        			</td>
+		        		</tr>
+		        	</table>
+		        	<span style="font-size:13px">第二大肿瘤</span>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">长度：</td>
+		        			<td class="t2" width="150">
+		        				<input name='lost' type='text' id='lost'  style='width:120;' value='' />
+		        			</td>
+		        			<td class="t1" width="175">宽度：</td>
+		        			<td class="t2" width="150">
+		        				<input name='wost' type='text' id='wost'  style='width:120;' value='' />
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">肿瘤形态：</td>
+		        			<td class="t2">
+		        				<select name='tmorp'  id='tmorp'  style='width:120;' >
+							        <option value='-1' ></option>
+							        <option value='1' >弥散型</option>
+							        <option value='2' >边界不清</option>
+							        <option value='3' >边界清晰</option>
+		            			</select>
+		        			</td>
+		        			<td class="t1">腹水：</td>
+		        			<td class="t2">
+		        				<select name='ascit1'  id='ascit1'  style='width:120;' >
+							       <option value='-1' ></option>
+							       <option value='1' >有</option>
+							       <option value='0' >无</option>
+		            			</select>
+		        			</td>
+		        		</tr>
+		        	</table>
+		        	<span style="font-size:13px;">门静脉浸润</span>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">肝内门静脉：</td>
+		        			<td class="t2" width="150">
+		        				<select name='intra'  id='intra'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        			<td class="t1" width="175">门静脉右支：</td>
+		        			<td class="t2" width="150">
+		        				<select name='uright'  id='uright'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">门静脉左支：</td>
+		        			<td class="t2">
+		        				<select name='uleft'  id='uleft'  style='width:120;' >
+		              			   <option value='-1' ></option>
+		              			   <option value='1' >有</option>
+		              			   <option value='0' >无</option>
+		            			</select>
+		        			</td>
+		        			<td class="t1">门静脉主干：</td>
+		        			<td class="t2">
+		        				<select name='umain'  id='umain'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">肝静脉浸润：</td>
+		        			<td class="t2">
+		        				 <select name='hvein'  id='hvein'  style='width:120;' >
+						            <option value='-1' ></option>
+						            <option value='1' >有</option>
+						            <option value='0' >无</option>
+						         </select>
+		        			</td>
+		        			<td class="t1">下腔静脉浸润：</td>
+		        			<td class="t2">
+		        				<select name='ivci'  id='ivci'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">胆管扩张：</td>
+		        			<td class="t2">
+		        				<select name='biled'  id='biled'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        			<td class="t1">超声检查：</td>
+		        			<td class="t2">
+		        				<select name='usgi'  id='usgi'  style='width:120;' >
+						           <option value='-1' ></option>
+						           <option value='1' >有</option>
+						           <option value='0' >无</option>
+						        </select>
+		        			</td>
+		        		</tr>
+			        </table>
+		          </fieldset>
+		          <fieldset style="width:690px;">
+		        		<legend ><p class="check_mark">影像学CT扫描</p></legend>
+		        		<span style="font-size:13px;">肿瘤位置</span>
+		 				<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肝左叶：</td>
+		        				<td class="t2" width="150">
+		        					<select name='llobe1'  id='llobe1'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1" width="175">肝右叶：</td>
+		        				<td class="t2" width="150">
+		        					<select name='rlobe1'  id='rlobe1'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肝尾叶：</td>
+		        				<td class="t2">
+		        					<select name='caud1'  id='caud1'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+		        		</table>
+		        		<span style="font-size:13px;">最大肿瘤</span>
+		        		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">长度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='lolt1' type='text' id='lolt1'  style='width:120;' value='' />
+		        				</td>
+		        				<td class="t1" width="175">宽度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='wolt1' type='text' id='wolt1'  style='width:120;' value='' />
+		        				</td>
+		        			</tr>
+			         	</table>
+			         	<span style="font-size:13px;">第二大肿瘤</span>
+			         	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			         		<tr>
+		        				<td class="t1" width="175">长度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='lost1' type='text' id='lost1'  style='width:120;' value='' />
+		        				</td>
+		        				<td class="t1" width="175">宽度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='wost1' type='text' id='wost1'  style='width:120;' value='' />
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肿瘤形态：</td>
+		        				<td class="t2">
+		        					<select name='tmorp1'  id='tmorp1'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >弥散型</option>
+						                <option value='2' >边界不清</option>
+						                <option value='3' >边界清晰</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">小肝癌碘化油造影：</td>
+		        				<td class="t2">
+		        					<select name='lipiod'  id='lipiod'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >均质</option>
+						                <option value='2' >片状</option>
+						                <option value='3' >点状</option>
+						            </select>
+		        				</td>
+		        			</tr>
+			         	</table>         
+		          		<span style="font-size:13px;">侵犯门静脉</span>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">下腔静脉浸润：</td>
+		        				<td class="t2" width="150">
+		        					<select name='ctivc'  id='ctivc'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1" width="175">侵犯肝静脉：</td>
+		        				<td class="t2" width="150">
+		        					<select name='cthvein'  id='cthvein'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">门静脉左支：</td>
+		        				<td class="t2">
+		        					<select name='ctleft'  id='ctleft'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">门静脉右支：</td>
+		        				<td class="t2">
+		        					<select name='ctright'  id='ctright'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">门静脉主干：</td>
+		        				<td class="t2">
+		        					<select name='ctmain'  id='ctmain'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">淋巴结转移：</td>
+		        				<td class="t2">
+		        					 <select name='lympha'  id='lympha'  style='width:120;' >
+						                 <option value='-1' ></option>
+						                 <option value='1' >有</option>
+						                 <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肺部转移：</td>
+		        				<td class="t2">
+		        					<select name='ctlung'  id='ctlung'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">盆腔转移：</td>
+		        				<td class="t2">
+		        					<select name='ctpelv'  id='ctpelv'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+			         	</table>
+		         		<span style="font-size:13px;">CT容量测量</span>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">全肝容量：</td>
+		        				<td class="t2" width="150">
+		        					<input name='tlv' type='text' id='tlv'  style='width:120;' value='' />
+		        				</td>
+		        				<td class="t1" width="175">剩余肝容量：</td>
+		        				<td class="t2" width="150">
+		        					<input name='lrv' type='text' id='lrv'  style='width:120;' value='' />
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">CT扫描：</td>
+		        				<td class="t2">
+		        					<select name='cti'  id='cti'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+			         	</table>
+		      	  </fieldset>
+		      	  <fieldset style="width:690px;">
+		        		<legend><p class="check_mark">影像学MRI扫描</p></legend>
+		       			<span style="font-size:13px;">肿瘤位置</span>
+		       			<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肝左叶：</td>
+		        				<td class="t2" width="150">
+		        					<select name='llobe3'  id='llobe3'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1" width="175">肝右叶：</td>
+		        				<td class="t2" width="150">
+		        					<select name='rlobe3'  id='rlobe3'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肝尾叶：</td>
+		        				<td class="t2">
+		        					<select name='caud3'  id='caud3'  style='width:120; height:20' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+			         	</table>
+		       			<span style="font-size:13px;">最大肿瘤</span>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">长度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='lolt3' type='text' id='lolt3'  style='width:120;' value='' />
+		        				</td>
+		        				<td class="t1" width="175">宽度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='wolt3' type='text' id='wolt3'  style='width:120;' value='' />
+		        				</td>
+		        			</tr>
+			         	</table>
+		   				<span style="font-size:13px;">第二大肿瘤</span>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">长度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='lost3' type='text' id='lost3'  style='width:120;' value='' />
+		        				</td>
+		        				<td class="t1" width="175">宽度：</td>
+		        				<td class="t2" width="150">
+		        					<input name='wost3' type='text' id='wost3'  style='width:120;' value='' />
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肿瘤形态：</td>
+		        				<td class="t2">
+		        					<select name='tmorp3'  id='tmorp3'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >弥散型</option>
+						                <option value='2' >边界不清</option>
+						                <option value='3' >边界清晰</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+			         	</table>
+		         		<span style="font-size:13px;">门静脉浸润</span>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">门静脉左支：</td>
+		        				<td class="t2" width="150">
+		        					<select name='mleet'  id='mleet'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1" width="175">门静脉右支：</td>
+		        				<td class="t2" width="150">
+		        					<select name='mright'  id='mright'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">门静脉主干：</td>
+		        				<td class="t2">
+		        					<select name='mmain'  id='mmain'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">肝静脉浸润：</td>
+		        				<td class="t2">
+		        					<select name='mhvein'  id='mhvein'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">下腔静脉浸润：</td>
+		        				<td class="t2">
+		        					<select name='mriivc'  id='mriivc'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">淋巴结转移：</td>
+		        				<td class="t2">
+		        					<select name='mlympha'  id='mlympha'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肺部转移：</td>
+		        				<td class="t2">
+		        					<select name='mrilung'  id='mrilung'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">盆腔转移：</td>
+		        				<td class="t2">
+		        					<select name='mripelv'  id='mripelv'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">MRI扫描：</td>
+		        				<td class="t2">
+		        					<select name='mri1'  id='mri1'  style='width:120;' >
+						                <option value='-1' ></option>
+						                <option value='1' >有</option>
+						                <option value='0' >无</option>
+						            </select>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+			         	</table>
+		         </fieldset>
+		      	 <fieldset style="width:690px;">
+		        	<LEGEND><p class="check_mark">肝癌病理</p></LEGEND>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">病理号：</td>
+		        			<td class="t2" width="150">
+		        				<INPUT id=pathno style="WIDTH: 120px;" name=pathno>
+		        			</td>
+		        			<td class="t1" width="175">&nbsp;</td>
+		        			<td class="t2" width="150">&nbsp;</td>
+		        		</tr>
+			        </table>
+		        	<span style="font-size:13px;">肿瘤病理描述</span>
+		        	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肿瘤结节数目：</td>
+		        				<td class="t2" width="150">
+		        					<INPUT id=notn style="WIDTH:120px;" name=notn>
+		        				</td>
+		        				<td class="t1" width="175">最大肿瘤宽度：</td>
+		        				<td class="t2" width="150">
+		        					 <INPUT id=sltw style="WIDTH:120px;"  name="sltw">
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">最大肿瘤长度：</td>
+		        				<td class="t2">
+		        					<INPUT id=sltl style="WIDTH: 120px; HEIGHT: 20px" name="sltl">
+		        				</td>
+		        				<td class="t1">肿瘤直径总和：</td>
+		        				<td class="t2">
+		        					<INPUT id=diasum style="WIDTH: 120px; HEIGHT: 20px"  name=diasum>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">Edmondson评级：</td>
+		        				<td class="t2">
+		        					<SELECT id=edmon style="WIDTH:120px;" name="edmon">
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=0>I级</OPTION>
+		              					<OPTION value=1>I-II级</OPTION>
+							            <OPTION value=2>II级</OPTION>
+							            <OPTION value=3>II-III级</OPTION>
+							            <OPTION value=4>III级</OPTION>
+							            <OPTION value=5>III-IV级</OPTION>
+		              					<OPTION value=6>IV级</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">新Edmondson评级：</td>
+		        				<td class="t2">
+		        					<SELECT id=enw_edmo style="WIDTH:150px;" name=enw_edmo>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>edmon(0-2) - 高分化度</OPTION>
+		              					<OPTION value=2>edmon(3) – 中分化度</OPTION>
+		              					<OPTION value=3>edmon(4) – 低分化度</OPTION>
+		              					<OPTION value=4>edmon(5-6) – 未分化</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">P&nbsp;S&nbsp;T&nbsp;：</td>
+		        				<td class="t2">
+		        					<SELECT id=pst style="WIDTH: 120px;" name=pst>
+						                <OPTION value="-1" selected></OPTION>
+						                <OPTION value="0">0</OPTION>
+						                <OPTION value="1">1</OPTION>
+						                <OPTION value="2">2</OPTION>
+						                <OPTION value="3">3</OPTION>
+						                <OPTION value="4">4</OPTION>
+						            </SELECT>
+		        				</td>
+		        				<td class="t1">侵犯静脉：</td>
+		        				<td class="t2">
+		        					<SELECT id=venini style="WIDTH:120px;" name=venini>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肉眼所见肿瘤外观：</td>
+		        				<td class="t2">
+		        					<SELECT id=eggel style="WIDTH: 120px;" name=eggel>
+						                <OPTION value=-1 selected></OPTION>
+						                <OPTION value=1>巨块型</OPTION>
+						                <OPTION value=2>结节型</OPTION>
+						                <OPTION value=3>弥漫型</OPTION>
+						            </SELECT>
+		        				</td>
+		        				<td class="t1">包囊：</td>
+		        				<td class="t2">
+		        					<SELECT id=encap style="WIDTH:120px;" name=encap>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">微卫星灶：</td>
+		        				<td class="t2">
+		        					<SELECT id=microsat style="WIDTH:120px;" name=microsat>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">侵犯包膜：</td>
+		        				<td class="t2">
+		        					<SELECT id=capinv style="WIDTH: 120px;" name=capinv>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肝门淋巴结节：</td>
+		        				<td class="t2">
+		        					<SELECT id=lnihr style="WIDTH:120px;" name=lnihr>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=0>不存在</OPTION>
+		              					<OPTION value=1>活跃</OPTION>
+		              					<OPTION value=2>转移</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">腹腔淋巴结节：</td>
+		        				<td class="t2">
+		        					<SELECT id=lnic style="WIDTH:120px;" name=lnic>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=0>不存在</OPTION>
+		              					<OPTION value=1>活跃</OPTION>
+		              					<OPTION value=2>转移</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肝脏非癌部：</td>
+		        				<td class="t2">
+		        					<SELECT id=ntl style="WIDTH:120px;" name=ntl>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=0>没有硬化(接近正常)</OPTION>
+		              					<OPTION value=1>慢性肝炎</OPTION>
+		              					<OPTION value=2>硬化</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">侵犯肝脏：</td>
+		        				<td class="t2">
+		        					<SELECT id=l_inv style="WIDTH:120px;" name=l_inv>
+			              				<OPTION value=-1 selected></OPTION>
+			              				<OPTION value=1>有</OPTION>
+			              				<OPTION value=0>无</OPTION>
+			            			</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">切除物乙肝核心抗原HBcAg：</td>
+		        				<td class="t2">
+		        					<SELECT id=imhbcag style="WIDTH:120px;" name=imhbcag>
+				              			<OPTION value=-1 selected></OPTION>
+				              			<OPTION value=1>阳性</OPTION>
+				              			<OPTION value=0>阴性</OPTION>
+			            			</SELECT>
+		        				</td>
+		        				<td class="t1">切除物的乙肝表面抗原HBsAg：</td>
+		        				<td class="t2">
+		        					<SELECT id=imhbsag style="WIDTH:120px;" name=imhbsag>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>阳性</OPTION>
+		              					<OPTION value=0>阴性</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+			        </table>
+		        	<SPAN style="font-size:13px;">侵犯静脉情况</SPAN>
+		          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肝内分枝：</td>
+		        				<td class="t2" width="150">
+		        					 <SELECT id=intrab style="WIDTH: 120px;" name=intrab>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				 </SELECT>
+		        				</td>
+		        				<td class="t1" width="175">右或左分枝：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=rightb style="WIDTH: 120px;" name=rightb>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">门静脉主干：</td>
+		        				<td class="t2">
+		        					<SELECT id=mpv style="WIDTH: 120px;" name=mpv>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">肝静脉：</td>
+		        				<td class="t2">
+		        					<SELECT id=mhv style="WIDTH: 120px;" name=mhv>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">下腔静脉：</td>
+		        				<td class="t2">
+		        					<SELECT id=ivc style="WIDTH: 120px;"  name=ivc>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+			        </table>
+		         	<SPAN style="font-size:13px;">病理学检查确诊的侵犯</SPAN>
+		          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">横隔膜：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=diaph style="WIDTH: 120px;" name=diaph>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1" width="175">十二指肠：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=duode style="WIDTH: 120px;" name=duode>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">胃：</td>
+		        				<td class="t2">
+		        					<select id=stoma style="WIDTH: 120px;" name=stoma>
+		              					<option value=-1 selected></option>
+		              					<option value=1>有</option>
+		              					<option value=0>无</option>
+		            				</select>
+		        				</td>
+		        				<td class="t1">肾上腺：</td>
+		        				<td class="t2">
+		        					<SELECT id=adrmn style="WIDTH: 120px;" name=adrmn>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肾：</td>
+		        				<td class="t2">
+		        					<SELECT id=kidney style="WIDTH: 120px;" name=kidney>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">脾：</td>
+		        				<td class="t2">
+		        					<SELECT id=spleen style="WIDTH: 120px;" name=spleen>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">结肠：</td>
+		        				<td class="t2">
+		        					<SELECT id=colon style="WIDTH: 120px;" name=colon>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1" valign="top">其它：</td>
+		        				<td class="t2" colspan="3">
+		        					<TEXTAREA id=other6 class="textarea" name=other6 ></TEXTAREA>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">远处转移位置：</td>
+		        				<td class="t2">
+		        					<SELECT id=second style="WIDTH:120px;" name=second>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=12>无</OPTION>
+		              					<OPTION value=1>肾上腺</OPTION>
+		              					<OPTION value=2>骨</OPTION>
+		              					<OPTION value=3>脑</OPTION>
+		              					<OPTION value=4>结肠</OPTION>
+		              					<OPTION value=5>肾</OPTION>
+		              					<OPTION value=6>肺</OPTION>
+		              					<OPTION value=7>网膜</OPTION>
+		              					<OPTION value=8>腹膜</OPTION>
+		              					<OPTION value=9>脾</OPTION>
+		              					<OPTION value=10>胃</OPTION>
+		              					<OPTION value=11>其它</OPTION>
+		           	 				 </SELECT>
+		        				</td>
+		        				<td class="t1">&nbsp;</td>
+		        				<td class="t2">&nbsp;</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1" valign="top">其它：</td>
+		        				<td class="t2" colspan="3">
+		        					<TEXTAREA id=secondo class="textarea" name=secondo ></TEXTAREA>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">TNM肝细胞肝癌分期：</td>
+		        				<td class="t2">
+		        					<SELECT id=tstage style="WIDTH: 120px;" name=tstage>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>第I期</OPTION>
+		              					<OPTION value=2>第II期</OPTION>
+		              					<OPTION value=3>第IIIA期</OPTION>
+		              					<OPTION value=4>第IIIB期</OPTION>
+		              					<OPTION value=5>第IIIC期</OPTION>
+		              					<OPTION value=6>第IV期</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">肝细胞肝癌Okuda分期：</td>
+		        				<td class="t2">
+		        					<SELECT id=okuda style="WIDTH:120px;" name=okuda>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>stage I第I期</OPTION>
+		              					<OPTION value=2>stageII第II期</OPTION>
+		              					<OPTION value=3>stage III第III期</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+			        </table>
+		         	<SPAN style="font-size:13px;">补充</SPAN>
+		         	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175" valign="top">病理补充：</td>
+		        				<td class="t2" colspan="3" width="475">
+		        					<TEXTAREA id=pathother class="textarea" name=pathother ></TEXTAREA>
+		        				</td>
+		        			</tr>
+		        	</table>
+		        </fieldset>
+		      	<fieldset style="width:690px;">
+		        	<LEGEND align=top><p class="check_mark">肝癌复发</p></LEGEND>
+		       		<SPAN style="font-size:13px;">肝内复发的治疗</SPAN>
+		       		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">酒精注射：</td>
+		        			<td class="t2" width="150">
+		        				<SELECT id=alinj1 style="WIDTH: 120px;" name=alinj1>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1" width="175">肝动脉栓塞化疗：</td>
+		        			<td class="t2" width="150">
+		        				<SELECT id=toce3 style="WIDTH: 120px;" name=toce3>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">再次切除：</td>
+		        			<td class="t2">
+		        				<SELECT id=rresect style="WIDTH: 120px;" name=rresect>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1">再次肝移植：</td>
+		        			<td class="t2">
+		        				<SELECT id=ltransp style="WIDTH: 120px;" name=ltransp>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">全身化疗：</td>
+		        			<td class="t2">
+		        				<SELECT id=sysche style="WIDTH: 120px;" name=sysche>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1">泰莫西芬：</td>
+		        			<td class="t2">
+		        				<SELECT id=tmx1 style="WIDTH: 120px;" name=tmx1>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">希罗达：</td>
+		        			<td class="t2">
+		        				<SELECT id=xeloda style="WIDTH: 120px;" name=xeloda>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1">射频消融术：</td>
+		        			<td class="t2">
+		        				<SELECT id=rfat style="WIDTH: 120px;" name=rfat>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">其它：</td>
+		        			<td class="t2" colspan="3">
+		        				<SELECT id=other12 style="WIDTH:120px;" name=other12>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1" valign="top">其它：</td>
+		        			<td class="t2" colspan="3">
+		        				<TEXTAREA id=other120 class="textarea" name=other120 ></TEXTAREA>
+		        			</td>
+		        		</tr>
+			        </table>
+		       		<SPAN style="font-size:13px;">腹腔内肝外复发治疗</SPAN>
+		       		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">切除：</td>
+		        			<td class="t2" width="150">
+		        				<SELECT id=excis style="WIDTH: 120px;" name=excis>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1" width="175">全身化疗：</td>
+		        			<td class="t2" width="150">
+		        				 <SELECT id=sysche1 style="WIDTH:120px;" name=sysche1>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">泰莫西芬：</td>
+		        			<td class="t2">
+		        				<SELECT id=eitmx style="WIDTH:120px;" name=eitmx>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1">其它：</td>
+		        			<td class="t2">
+		        				<SELECT id=other13 style="WIDTH:120px;" name=other13>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1" valign="top">其它</td>
+		        			<td class="t2" colspan="3">
+		        				<TEXTAREA id=other130 class="textarea" name=other130 ></TEXTAREA>
+		        			</td>
+		        		</tr>
+			         </table>
+		 			<SPAN style="font-size:13px;">肺部复发的治疗</SPAN>
+		          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        		<tr>
+		        			<td class="t1" width="175">切除：</td>
+		        			<td class="t2" width="150">
+		        				<SELECT id=excis1 style="WIDTH: 120px;" name=excis1>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1" width="175">全身化疗：</td>
+		        			<td class="t2" width="150">
+		        				 <SELECT id=sysch2 style="WIDTH: 120px;" name=sysch2>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1">泰莫西芬：</td>
+		        			<td class="t2">
+		        				<SELECT id=prtmx style="WIDTH:120px;" name=prtmx>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        			<td class="t1">其它：</td>
+		        			<td class="t2">
+		        				<SELECT id=other14 style="WIDTH:120px;" name=other14>
+		              				<OPTION value=-1 selected></OPTION>
+		              				<OPTION value=1>有</OPTION>
+		              				<OPTION value=0>无</OPTION>
+		            			</SELECT>
+		        			</td>
+		        		</tr>
+		        		<tr>
+		        			<td class="t1" valign="top">其它：</td>
+		        			<td class="t2" colspan="6">
+		        				<TEXTAREA id=other140 class="textarea" name=other140 ></TEXTAREA>
+		        			</td>
+		        		</tr>
+			         </table>
+		          	 <SPAN style="font-size:13px;">其它复发的治疗</SPAN>
+		             <table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肿瘤位置：</td>
+		        				<td class="t2" width="150">
+		        					<INPUT id=tlor style="WIDTH:120px;" name=tlor>
+		        				</td>
+		        				<td class="t1" width="175">放疗：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=rt style="WIDTH:120px;" name=rt>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">切除：</td>
+		        				<td class="t2">
+		        					<SELECT id=excis2 style="WIDTH: 120px;" name=excis2>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">化疗：</td>
+		        				<td class="t2">
+		        					<SELECT id=chemo style="WIDTH:120px;" name=chemo>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">其它：</td>
+		        				<td class="t2" colspan="3">
+		        					<select id=other15 style="WIDTH:120px;" name=other15>
+		              					<option value=-1 selected></option>
+		              					<option value=1>有</option>
+		              					<option value=0>无</option>
+		            				</select>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1" valign="top">其它：</td>
+		        				<td class="t2" colspan="3">
+		        					<TEXTAREA id=other150 class="textarea" name=other150 ></TEXTAREA>
+		        				</td>
+		        			</tr>
+			         	</table>
+		       			<SPAN style="font-size:13px;">复发部位</SPAN>
+		          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		        			<tr>
+		        				<td class="t1" width="175">肝：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=rliver style="WIDTH: 120px;" name=rliver>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>	
+		        				</td>
+		        				<td class="t1" width="175">胸：</td>
+		        				<td class="t2" width="150">
+		        					<SELECT id=rthorax style="WIDTH:120px;" name=rthorax>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">脑：</td>
+		        				<td class="t2">
+		        					<SELECT class=input id=rbrain style="WIDTH: 120px;" name=rbrain>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        				<td class="t1">骨：</td>
+		        				<td class="t2">
+		        					<SELECT class=input id=rbone style="WIDTH: 120px; HEIGHT: 20px" name=rbone>
+		              					<OPTION value=-1 selected></OPTION>
+		              					<OPTION value=1>有</OPTION>
+		              					<OPTION value=0>无</OPTION>
+		            				</SELECT>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1" valign="top">其他部位：</td>
+		        				<td class="t2" colspan="3">
+		        					<TEXTAREA id=rother class="textarea" name=rother ></TEXTAREA>
+		        				</td>
+		        			</tr>
+		        			<tr>
+		        				<td class="t1">肝癌复发首次发现日期：</td>
+		        				<td class="t2"><INPUT id=recurda style="WIDTH:120px;" name=recurda></td>
+		        				<td class="t1">&nbsp;&nbsp;</td>
+		        				<td class="t2">&nbsp;&nbsp;</td>
+		        			</tr>
+			         	</table>
+		      		</fieldset>
+		      </td>
+		  </tr>
+		</table>
+	</form>
+</body>
+</html>

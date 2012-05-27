@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>主诉(眼科)</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../Liver/Js/validData.js"></script>
+<script type="text/javascript" src="../Liver/Js/validRadio.js"></script>
+<script type="text/javascript" src="../Liver/Js/validText.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-ChiefComplaint';
+var KID=null;
+var PID=null;
+var dict = null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-ChiefComplaint'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="dataGetDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	//下拉框初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//弹出框
+	$('#dialog1').dialog({
+		title:'主诉',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:400,
+		width:600,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeCC();},
+			'增加症状':function(){addNewSysptom();}
+		}
+	});
+}
+function addNewSysptom(){
+	var _newNode=$('#sysptom-fldset').clone(true).removeAttr('style');
+	_newNode.find('input.select').removeAttr('isInit').removeAttr('showId');
+	_newNode.insertBefore($('#evolution-fldset'));
+	return _newNode;
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'ChiefComplaint_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#evolution-fldset',_json);
+					if(_json.sysptoms&&_json.sysptoms.length==0){
+						addNewSysptom();
+					}
+					$.each(_json.sysptoms,function(i){
+						var _fldset=addNewSysptom();
+						_fldset.find('input[name="id"]').val(this['id']);
+						_fldset.find('input[name="sysptom"]').val(this['sysptom']);
+						_fldset.find('input[name="accompanyingSysptom"]').val(this['accompanyingSysptom']);
+						_fldset.find('input[name="sysptomTime"]').val(this['sysptomTime']);
+						_fldset.find('input[name="sysptomTimeUnit"]').attr('inputValue',this['sysptomTimeUnit']);
+						_fldset.find('input[name="sysptomTimeUnit"]').val(getRowValue('sysptomTimeUnit',this['sysptomTimeUnit']))
+					});
+				}else{
+					addNewSysptom();
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function ComposeCC(){
+	var json=CollectionData();
+	var array=[];
+	$.each(json.sysptoms,function(){
+		var _temp='';
+		if(this['sysptom'].length>0){
+			_temp+=this['sysptom'];
+			if(this['accompanyingSysptom'].length>0){
+				_temp+='伴'+this['accompanyingSysptom'];
+			}
+//			if(this['sysptomTime']>0){
+				_temp+=this['sysptomTime']+getRowValue('sysptomTimeUnit',this['sysptomTimeUnit']);
+//			}
+		}
+		if(_temp.length>0){
+			array.push(_temp);
+		}
+	});
+	var _text=array.join('，');
+	_text=_text.length>0?_text+'，':'';
+	var _evol=getRowValue('evolution',json['evolution']);
+	var _evolAcc=json['evolAccompanyingSysptoms'];
+	if(_evolAcc.length>0){
+		_evolAcc='伴'+_evolAcc;
+	}
+	if(json['evolASTime']>0){
+		_evolAcc+=json['evolASTime']+getRowValue('evolASTimeUnit',json['evolASTimeUnit']);
+	}else{
+		if(getRowValue('evolASTimeUnit',json['evolASTimeUnit'])=='半天'){
+			_evolAcc+='半天';
+		}
+	}
+	
+	if((_evol+_evolAcc).length>0)
+		_text+=_evol+_evolAcc+'，';
+	_text =_text;
+	if(_text.length>0)
+		_text=_text.substr(0,_text.length-1)+'。';
+	
+	var _sum = $('textarea[name="ccContent"]').val();
+	if(_sum.length > 0){
+		Ext.Msg.show({
+			title:'提示',
+			width:300,
+			msg:'是否替换原有的值？',	
+			buttons:{yes:'否',no:'是'},
+			fn: function(_btn){
+			   if(_btn=='no'){
+			   		$('textarea[name="ccContent"]').val(_text);
+			   	}
+			},icon:Ext.MessageBox.QUESTION
+		});
+	}else {
+		$('textarea[name="ccContent"]').val(_text);
+	}
+	$('#dialog1').dialog("close");
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#evolution-fldset'));
+	var sysptoms=[];
+	$('#dialog1 fieldset').each(function(){
+		if(this.id!='evolution-fldset')
+			sysptoms.push({
+				id:$(this).find('input[name="id"]').val(),
+				sysptom:$(this).find('input[name="sysptom"]').val(),
+				accompanyingSysptom:$(this).find('input[name="accompanyingSysptom"]').val(),
+				sysptomTime:$(this).find('input[name="sysptomTime"]').val(),
+				sysptomTimeUnit:$(this).find('input[name="sysptomTimeUnit"]').attr('inputValue')
+			});
+	});
+	FormUtil.apply(json,{sysptoms:sysptoms});
+	return json;
+}
+function delSysptom(_btn){
+	if(!confirm('确定要删除此项记录？'))	return;
+	var _fld=$(_btn).parents('fieldset.model-fldset');
+	var _id=_fld.find('input[name="id"]').val();
+	if(_id&&_id>0){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+			{
+				method:'ChiefComplaint_deleteSysptom',
+				id:_id
+			},
+			function(data){
+				if(data.success){
+					_fld.remove();
+				}else{
+					alert('删除失败。');
+				}
+			},
+			'json'
+		);
+	}else{
+		_fld.remove();
+	}
+}
+function SaveData(){
+	var _values=CollectionData();
+	//if(!ValidForm(_values))	return;
+	var tePrem= ['sysptomTime','sysptom','sysptomTimeUnit'];
+	//if(validChiefCom(tePrem,_values.sysptoms)== false) return false;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'ChiefComplaint_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+				$('#dialog1 fieldset').each(function(i){
+					if(this.id!='evolution-fldset')
+						$(this).find('input[name="id"]').val(_json.sysptoms[i].id);
+				});
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(_values){
+	var result=true;
+	$.each(_values.sysptoms,function(index){
+		var data=this;
+		var keyFlag=false;
+		$.each(this,function(key){
+			if(data[key].length==0){
+				alert(index+'='+key);
+				keyFlag=true;
+				return false;
+			}
+		});
+		if(keyFlag){
+			result=false;
+			return false;
+		}
+	});
+	return result;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">主诉</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100"><font color="red">*&nbsp;</font>病史采集日期：</td>
+		<td class="t2" width="190"><input name="dataGetDate" type="text" class="text"/></td>
+		<td class="t2" colspan="2" width="290"><p><span style="color:red;font-size:12px;"/>带（*）为必填项或必选项！</span></p></td>
+	</tr>
+	<tr>
+		<td class="t1" width="100"><font color="red">*&nbsp;</font>叙述者：</td>
+		<td class="t2" width="190"><input name="narrator" type="text" class="select"/><br/><input name="narrator0" type="text" class="text input-hidden"/></td>
+		<td class="t1" width="100"><font color="red">*&nbsp;</font>可靠性：</td>
+		<td class="t2" width="190"><input name="reliability" type="text" class="select"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top"><font color="red">*&nbsp;</font>主诉：</td>
+		<td class="t2" colspan="3" valign="top"><textarea name="ccContent" class="textarea" style="width:92%" ></textarea>
+		</td>
+		<!-- 
+		<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/>
+		 -->
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<fieldset class="model-fldset" id="evolution-fldset">
+		<legend>症状演变</legend>
+		<table align="center" width="550" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="70">症状演变：</td>
+				<td class="t2"><input name="evolution" type="text" class="select" style="width:50%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">伴随症状：</td>
+				<td class="t2"><input rel="accompanyingSysptom" name="evolAccompanyingSysptoms" type="text" class="checkbox" style="width:85%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">持续时间：</td>
+				<td class="t2"><input name="evolASTime" type="text" class="text" style="width:10%"/><input rel="sysptomTimeUnit" class="radio dict-fld" type="radio" name="evolASTimeUnit"/></td>
+			</tr>
+		</table>
+	</fieldset>
+</div>
+<fieldset id="sysptom-fldset" class="model-fldset" style="display:none">
+	<legend>主要症状(<span class="del" onclick="delSysptom(this)">删除</span>)</legend>
+	<input type="hidden" name="id"/>
+	<table align="center" width="550" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="70"><font color="red">*&nbsp;</font>眼别：</td>
+			<td class="t2"><input type="radio" name="yb_sy" value="双眼">双眼&nbsp;&nbsp;<input type="radio" name="yb_sy" value="左眼">左眼&nbsp;&nbsp;<input type="radio" name="yb_sy" value="右眼">右眼</td>
+		</tr>
+		<tr>
+			<td class="t1" width="70"><font color="red">*&nbsp;</font>发作性质：</td>
+			<td class="t2"><input name="sysptom" type="text" class="checkbox" style="width:85%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" width="70"><font color="red">*&nbsp;</font>疼痛性质：</td>
+			<td class="t2"><input name="sysptom" type="text" class="checkbox" style="width:85%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" width="70"><font color="red">*&nbsp;</font>主要症状：</td>
+			<td class="t2"><input name="sysptom" type="text" class="checkbox" style="width:85%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">伴随症状：</td>
+			<td class="t2"><input name="accompanyingSysptom" type="text" class="checkbox" style="width:85%"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><font color="red">*&nbsp;</font>持续时间：</td>
+			<td class="t2"><input name="sysptomTime" type="text" class="text" style="width:10%"/>
+			<input class="select" type="text" name="sysptomTimeUnit" style="width:50px"/></td>
+		</tr>
+	</table>
+</fieldset>
+</body>
+</html>

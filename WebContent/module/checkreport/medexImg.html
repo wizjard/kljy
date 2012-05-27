@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>放射医学影像检查结果</title>
+ <script type="text/javascript" src="../../PUBLIC/Scripts/common.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js">
+        </script>
+		
+</head>
+<body>
+	<img id="img" ></img>
+	<script type="text/javascript">
+var img = document.getElementById("img");
+var args = getQueryStringArgs();
+img.src="../../medex/"+args["item"]+"/"+args["file"];
+			
+function getQueryStringArgs(){
+	var qs = (location.search.length)>0 ? location.search.substring(1) : "";
+	var args = {};
+	var items = qs.split("&");
+	var item = null, name = null, value = null;
+	for(var i=0; i<items.length; i=i+1){
+		item = items[i].split("=");
+		name = decodeURIComponent(item[0]);
+		value = decodeURIComponent(item[1]);
+		args[name] = value;
+	}
+	return args;
+}
+		</script>
+</body>
+</html>

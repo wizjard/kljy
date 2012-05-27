@@ -1,0 +1,724 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>肝病功能评估</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select[flag="cp"]').change(function(){
+			childPushScore();
+		});
+		$('select[flag="meld"]').change(function(){
+			meldScore();
+		});
+		$('input[flag="meld"]').change(function(){
+			meldScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function childPushScore(){
+		var totalScore = 0;
+		var hepaticEp = $('#hepaticEp').val();
+		if(hepaticEp.substr(hepaticEp.length-1) == "-" || hepaticEp.substr(0,hepaticEp.length-1) == "+"){
+			hepaticEp = hepaticEp.substr(0,hepaticEp.length-1);
+		}
+		
+		if(hepaticEp != "" && $('#ascites').val() != "" && $('#cpBilirubin').val() != "" && $('#albumin').val() != "" && $('#prothrombinTime').val() != ""){
+			totalScore = totalScore + eval(hepaticEp) 
+						+ eval($('#ascites').val()) 
+						+ eval($('#cpBilirubin').val()) 
+						+ eval($('#albumin').val()) 
+						+ eval($('#prothrombinTime').val());
+			$('#totalScore').val(totalScore);
+			if(totalScore >= 5 && totalScore <= 6){
+				$('#scoreGrade').val('A级');
+			}else if(totalScore >= 7 && totalScore <= 9){
+				$('#scoreGrade').val('B级');
+			}else if(totalScore >= 10 && totalScore <= 15){
+				$('#scoreGrade').val('C级');
+			}else{
+				$('#scoreGrade').val('');
+			}
+		}
+	}
+	
+	function meldScore(){
+		var creatinine=document.getElementById('creatinine').value;
+		if(creatinine.length==0) return;
+		creatinine = creatinine/88.4;
+		
+		var meldBilirubin=document.getElementById('meldBilirubin').value;
+		if(meldBilirubin.length==0) return;
+		meldBilirubin = meldBilirubin/17.1;
+		
+		var meldInr=document.getElementById('meldInr').value;
+		if(meldInr.length==0) return;
+		
+		var etiology=document.getElementById('etiology').value;
+		if(etiology.length==0) return;
+		if(etiology.substr(etiology.length-1) == "-" || etiology.substr(etiology.length-1) == "+"){
+			etiology = etiology.substr(0, etiology.length-1);
+		}
+		var rst1=9.6*(Math.log(eval(creatinine))/Math.log(Math.E));
+		var rst2=3.8*(Math.log(eval(meldBilirubin))/Math.log(Math.E));
+		var rst3=11.2*(Math.log(eval(meldInr))/Math.log(Math.E));
+		var rst4=6.4*eval(etiology);
+		var rst=rst1+rst2+rst3+rst4;
+		rst=Math.floor(rst);
+		document.getElementById('meldResult').value=rst;
+	}
+	
+	function setBmi(){
+		var bmi = -1;
+		if($('input[name="weight"]').val() != "" && $('input[name="height"]').val() != ""){
+			var height = eval($('input[name="height"]').val()) * eval($('input[name="height"]').val());
+			bmi = eval($('input[name="weight"]').val())/height;
+		}
+		
+		$('input[name="yingyangBmi"]').val(bmi.toFixed(2));
+	}
+	
+	function showNutritionScreening(){
+		var firstNutriScrValue=window.showModalDialog('firstNutriScr.html','','dialogWidth=450px;dialogHeight=250px');
+		if(firstNutriScrValue && firstNutriScrValue.flag==1){
+			var secondNutriScrValue=window.showModalDialog('secondNutriScr.html?caseId='+caseId,'','dialogWidth=750px;dialogHeight=450px');
+			if(secondNutriScrValue){
+				var nrs = parseInt(secondNutriScrValue.nrs);
+				if(nrs > 3 || nrs == 3){
+					$('input[name="yingyangNrs"]').val('NRS评分:'+secondNutriScrValue.nrs+'分（患者处于营养风险，开始制定营养治疗计划）');
+				}else if(nrs < 3){
+					$('input[name="yingyangNrs"]').val('NRS评分:'+secondNutriScrValue.nrs+'分（目前无营养风险，每周复查营养风险筛查）');
+				}
+			}
+		}else if(firstNutriScrValue && firstNutriScrValue.flag==2){
+			$('input[name="yingyangNrs"]').val('目前无营养风险，每周复查营养风险筛查');
+		}else{
+			$('input[name="yingyangNrs"]').val('');
+		}
+	}	
+function setFormValues(_sp,_values){
+	//textarea赋值
+	$.each($(_sp+' textarea'),function(){
+		var _val=_values[this.id||this.name];
+		$(this).val(_val?_val:'');
+	});
+	var _prxName='';
+	$.each($(_sp+' input'),function(){
+		//提取input类型
+		var _inputType=this.type;
+		if(_inputType=='button'||_inputType=='submit'||_inputType=='reset')
+			return;
+		//提取class类型
+		var _class=this.className;
+		//处理重名字段
+		var _name=this.id||this.name;
+		if(_prxName==_name){
+			return true;
+		}else{
+			_prxName=_name;
+		}
+		var _val=_values[_name]+'';
+		if(_val=='undefined'||_val=='null'){
+			_val='';
+		}
+		if(_inputType=='radio'){//Radio字段
+			if((_val+'').length>0)
+				$('input[name="'+_name+'"]').each(function(){
+					if(this.value==_val){
+						this.checked=true;
+						return false;
+					}
+				});
+		}else if(_inputType=='checkbox'){
+			if(_val.length>0){
+				$(this).attr("checked",true);//2011-06-08修改////////////////////////////////////////
+			}
+		}else if(_inputType=='text'){
+			if (_class == 'select') {
+				var _input=$(this);
+				$.each($(this).data('options'),function(){
+					if(this[0]==_val){
+						_input.attr('inputValue',_val);
+						_input.val(this[1]);
+						if(this[1]=='其他'||this[1]=='其它')
+							$('input[name="'+_name+'0"]').show();
+					}
+				});
+			}else{
+				$(this).val(_val);
+			}
+		}else{
+			$(this).val(_val);
+		}
+	});
+	
+	//新增内容
+	$.each($(_sp+' select'),function(){
+		var _val=_values[this.id||this.name];
+		$(this).attr("value",_val);
+	});
+	
+	$.each($(_sp+' span'),function(){
+		var _val=_values[this.name];
+		$(this).text(_val);
+	});
+}
+function getFormValues(_sp){
+	var _values={};
+	var _prxName='';
+	$.each($(_sp+' input'),function(){
+		//提取input类型
+		var _inputType=this.type;
+		if(_inputType=='button'||_inputType=='submit'||_inputType=='reset')
+			return;
+		//提取class类型
+		var _class=this.className;
+		//处理重名字段
+		var _name=this.id||this.name;
+		if(_prxName==_name){
+			return true;
+		}else{
+			_prxName=_name;
+		}
+		if(_inputType=='radio'){//Radio字段
+			$(_sp+' input[name="'+_name+'"]').each(function(){
+				if(this.checked){
+					_values[_name]=this.value;
+					return false;
+				}
+			});
+		}else if(_inputType=='checkbox'){//Checkbox字段
+			var _temp='';
+			$.each($(_sp+' input[name="'+_name+'"][checked]'),function(){
+				_temp+='<'+$(this).val()+'>';
+			});
+			_values[_name]=_temp;
+		}else if(_inputType=='text'){//text字段
+			if (_class == 'select') {
+				if(($(this).val()+'').length==0)
+					_values[_name]='';
+				else
+					_values[_name] = $(this).attr('inputValue');
+			}else 
+				_values[_name] = $(this).val();
+		}else{//其它字段
+			_values[_name]=$(this).val();
+		}
+	});
+	$.each($(_sp+' textarea'),function(){
+		_values[this.id||this.name]=$(this).val();
+	});
+	$.each($(_sp+' select'),function(){
+		_values[this.id||this.name]=$(this).attr("value");
+	});
+	return _values;
+}
+</script>
+<style type="text/css">
+	input{
+		border:none;
+		border-bottom:solid 1px #000;
+		font-size:12px;
+	}
+</style>
+</head>
+<body>
+<form id="form">
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+			<tr>
+				<td rowspan="9" width="100" style="font-size:14px;"><b>肝功能评估</b></td>
+				<td colspan="4" align="center"><b>Child-Pugh评分</b></td>
+			</tr>
+			<tr>
+				<td width="210" align="right">肝性脑病(期)：</td>
+				<td width="140">
+					<select name="hepaticEp" id="hepaticEp" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="2-">1</option>
+						  <option value="2+">2</option>
+						  <option value="3">3</option>
+						  <option value="3">4</option>
+					</select>
+				</td>
+				<td width="210" align="right">腹水：</td>
+				<td width="140">
+					<select name="ascites" id="ascites" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="2">轻度</option>
+						  <option value="3">中重度</option>
+					</select>
+				</td>
+			</tr>
+		    <tr>
+				<td align="right">胆红素(μmol/L)：</td>
+				<td>
+					<select name="cpBilirubin" id="cpBilirubin" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">&lt;34.2</option>
+						  <option value="2">34.2-51.3</option>
+						  <option value="3">&gt;51.3</option>
+					</select>
+				</td>
+				<td align="right">白蛋白(g/L)：</td>
+				<td>
+					<select name="albumin" id="albumin" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="3">&lt;28</option>
+						  <option value="2">28-35</option>
+						  <option value="1">&gt;35</option>
+					</select>
+				</td>
+		    </tr>
+			<tr>
+				<td align="right">凝血酶原时间较正常延长(秒)：</td>
+				<td>
+					<select name="prothrombinTime" id="prothrombinTime" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">&lt;4</option>
+						  <option value="2">4-6</option>
+						  <option value="3">&gt;6</option>
+					</select>
+				</td>
+				<td align="right">Child-Pugh总积分：</td>
+				<td>
+					<input name="totalScore" type="text" id="totalScore" style="width:90%;" readonly/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Child-Pugh分级：</td>
+				<td>
+					<input name="scoreGrade" type="text" id="scoreGrade" style="width:90%;" readonly/>
+				</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			
+			<tr><td colspan="4" align="center"> <b>MELD评分</b></td></tr>
+		    <tr>
+		        <td align="right">肌酐：</td>
+		        <td>
+		        	<input name="creatinine" type="text" id="creatinine" style="width:65%;" flag="meld"/>&nbsp;μmol/L
+		        </td>
+				<td align="right">胆红素：</td>
+				<td>
+				     <input name="meldBilirubin" type="text" id="meldBilirubin" style="width:65%;"" flag="meld"/>&nbsp;μmol/L
+				</td>
+		     </tr>
+		     <tr>
+		        <td align="right">INR：</td>
+		        <td>
+		             <input name="meldInr" type="text" id="meldInr" style="width:70%;" flag="meld"/>
+		        </td>
+		        <td align="right">病因：</td>
+				<td>
+					<select name="etiology" id="etiology" style="width:70%;" flag="meld">
+						<option value=""></option>
+						<option value="0-">胆汁淤积性</option>
+						<option value="0+">酒精性肝硬化</option>
+						<option value="1">其它</option>
+					</select>
+				</td>
+		     </tr>
+			 <tr>
+				 <td align="right">结果：</td>
+				 <td>
+				      <input name="meldResult" type="text" id="meldResult" style="width:70%;" readOnly/>
+				 </td>
+				 <td>&nbsp;</td>
+				 <td>&nbsp;</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="4" style="font-size:14px;"><b>心功能评估</b></td>
+				<td colspan="2">心电图</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xindian" style="width:70%"/></td>
+							<td><input type="checkbox" name="xindian0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">24小时动态心电图</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="dongXindian" style="width:70%"/></td>
+							<td><input type="checkbox" name="dongXindian0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">超声心动检查</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="csXindong" style="width:70%"/></td>
+							<td><input type="checkbox" name="csXindong0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">心功能分级（美国NYHA分级）</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="ntha" style="width:70%"/></td>
+							<td><input type="checkbox" name="ntha0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="6" style="font-size:14px;"><b>肺功能评估</b></td>
+				<td colspan="2">胸部X线</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="chestX" style="width:70%"/></td>
+							<td><input type="checkbox" name="chestX0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">胸部CT</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="chestCT" style="width:70%"/></td>
+							<td><input type="checkbox" name="chestCT0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">肺功能检查</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="chestCheck" style="width:70%"/></td>
+							<td><input type="checkbox" name="chestCheck0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血氧分压</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xyFengya" style="width:70%"/>mmHg</td>
+							<td><input type="checkbox" name="xyFengya0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血二氧化碳分压</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xeFengya" style="width:70%"/>mmHg</td>
+							<td><input type="checkbox" name="xeFengya0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血氧饱和度</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xyBaohe" style="width:70%"/>%</td>
+							<td><input type="checkbox" name="xyBaohe0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="6" style="font-size:14px;"><b>肾功能评估</b></td>
+				<td colspan="2">尿量</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="niaovolum" style="width:70%"/>ml/日</td>
+							<td><input type="checkbox" name="niaovolum0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">24小时尿蛋白</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="radio" name="ndanbai" value="阳性" style="border-bottom:0;"/>阳性<input type="text" name="ndanbaiYDesc" value="" style="width:40px;"/>g/24h&nbsp;&nbsp;&nbsp;
+								<input type="radio" name="ndanbai" value="阴性" style="border-bottom:0;"/>阴性</td>
+							<td><input type="checkbox" name="ndanbai0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血尿素氮</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xueniaoN" style="width:70%"/>mmol/L</td>
+							<td><input type="checkbox" name="xueniaoN0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血肌酐</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xuejigan" style="width:70%"/>μmol/L</td>
+							<td><input type="checkbox" name="xuejigan0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">内生肌酐清除率（Ccr）</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="ccr" style="width:70%"/>ml/min</td>
+							<td><input type="checkbox" name="ccr0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">肾脏超声</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="szChaosheng" style="width:70%"/></td>
+							<td><input type="checkbox" name="szChaosheng0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="4" style="font-size:14px;"><b>凝血功能评估</b></td>
+				<td colspan="2">PLT</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="ningxueFunc" style="width:70%"/>×10<sup>9</sup>/L</td>
+							<td><input type="checkbox" name="ningxueFunc0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">PTA</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="pta" style="width:70%"/>%</td>
+							<td><input type="checkbox" name="pta0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">INR</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="inr" style="width:70%"/></td>
+							<td><input type="checkbox" name="inr0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">DIC</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="radio" name="dic" value="有" style="border-bottom:0;"/>有&nbsp;
+								<input type="radio" name="dic" value="无" style="border-bottom:0;"/>无&nbsp;
+								<input type="radio" name="dic" value="无法判断" style="border-bottom:0;"/>无法判断</td>
+							<td><input type="checkbox" name="dic0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="3" style="font-size:14px;"><b>胃肠道功能 评价</b></td>
+				<td colspan="2">胃镜</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="weijing" style="width:70%"/></td>
+							<td><input type="checkbox" name="weijing0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">胃电图</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="weidiantu" style="width:70%"/></td>
+							<td><input type="checkbox" name="weidiantu0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血乳酸</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xuerusuan" style="width:70%"/>mmol/L</td>
+							<td><input type="checkbox" name="xuerusuan0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<td rowspan="2" style="font-size:14px;"><b>神经系统</b></td>
+				<td colspan="2">肝性脊髓病</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="radio" name="gxjisui" value="有" style="border-bottom:0;"/>有&nbsp;
+								<input type="radio" name="gxjisui" value="无" style="border-bottom:0;"/>无&nbsp;
+								<input type="radio" name="gxjisui" value="无法判断" style="border-bottom:0;"/>无法判断</td>
+							<td><input type="checkbox" name="gxjisui0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">头颅CT</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="headCT" style="width:70%"/></td>
+							<td><input type="checkbox" name="headCT0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="5" style="font-size:14px;"><b>营养状态评估</b></td>
+				<td colspan="2">
+					BMI(体重：<input type="text" name="weight" style="width:50;" onchange="setBmi()" />kg，
+						身高：<input type="text" name="height" style="width:50;" onchange="setBmi()" />m
+					)
+				</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="yingyangBmi" style="width:70%"/></td>
+							<td><input type="checkbox" name="yingyangBmi0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">营养风险筛查</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="yingyangNrs" style="width:70%" readOnly/><input type="button" value="营养筛查" onclick="showNutritionScreening()" style="border-bottom:none;"/></td>
+							<td><input type="checkbox" name="yingyangNrs0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血清白蛋白</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xqbdb" style="width:70%"/>g/L</td>
+							<td><input type="checkbox" name="xqbdb0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">血清前白蛋白</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="xqqbdb" style="width:70%"/>mg/L</td>
+							<td><input type="checkbox" name="xqqbdb0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">淋巴细胞计数</td>
+				<td colspan="2">
+					<table width="100%" border="0" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+						<tr>
+							<td width="250"><input type="text" name="lbxbjs" style="width:70%"/>×10<sup>9</sup>/L</td>
+							<td><input type="checkbox" name="lbxbjs0" value="未查" style="border-bottom:none;"/>未查</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td style="font-size:14px;"><b>其他器官评价结果</b></td>
+				<td colspan="4"><input type="text" name="otherOrgan" style="width:70%"/></td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

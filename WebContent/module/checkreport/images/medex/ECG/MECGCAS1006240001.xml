@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="InHospital" extension="232772" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="ECG" extension="MECGCAS1006240001" />
+    </patientIDInfo>
+    <patientName>NIU GUI RONG^^^^=牛桂荣^^^^</patientName>
+    <patientGender>2</patientGender>
+    <patientDOB>19261105</patientDOB>
+    <patientAge>83</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>丰台区嘉园一里1号-2003</streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="ECG" extension="MECGCAS1006240001" />
+    <clinicDiagnose>
+      <narrativeBlock>
+      </narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="ECG" extension="MECGCAS1006240001" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>史勤生</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>肿瘤肝胆微创介入二中心</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>
+      </depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="ECG" extension="MECGCAS1006240001" />
+    <deviceType>ECG</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>2010-6-24 10:26:00</examDate>
+    <bodyPart>
+    </bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>曹爽</doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>MECGCAS1006240001</studyUID>
+    <imageFileName>DATA\MECGCAS1006240001.EC0</imageFileName>
+    <imageFileName>DATA\MECGCAS1006240001.ECG</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="ECG" extension="MECGCAS1006240001" />
+    <reportFileName>DATA\MECGCAS1006240001_1.jpg</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>张海霞</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>张海霞</doctorName>
+    </authenticatorInfo>
+    <reportDate>2010-6-24 10:34:57</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[PⅠ、Ⅱ直立，PavR倒置，P波、P－R间期、QRS波、ST-T无异常改变。
+]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>不确定</isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[窦房结内游走性心律
+左室肥厚伴ST-T改变
+QTC间期延长
+异常心电图
+]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

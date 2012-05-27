@@ -1,0 +1,119 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>首次营养筛查</title>
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript">
+	var caseId=App.util.getHtmlParameters('caseId');
+	$(function(){
+		$('input[name="nutritionScore0"]').click(function(){
+			$('input[name="nutritionScore"]').val($(this).val());
+			setNRS();
+		});
+		$('input[name="illnessScore0"]').click(function(){
+			$('input[name="illnessScore"]').val($(this).val());
+			setNRS();
+		});
+		getPatAge();
+	});
+	function setNRS(){
+		var patAge = $('input[name="patAge"]').val();
+		if(patAge != ""){}{
+			patAge = parseInt(patAge.substr(0,patAge.length-1));
+		}
+		if($('input[name="nutritionScore"]').val() != "" && $('input[name="illnessScore"]').val() != ""){
+			var totalScore="";
+			if(patAge > 70){
+				totalScore = parseInt($('input[name="nutritionScore"]').val()) + parseInt($('input[name="illnessScore"]').val()) + 1;
+			}else{
+				totalScore = parseInt($('input[name="nutritionScore"]').val()) + parseInt($('input[name="illnessScore"]').val());
+			}
+			$('input[name="totalScore"]').val(totalScore);
+		}
+	}
+	function getPatAge(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+			{
+				method:'findById',
+				id:caseId
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					$('input[name="patAge"]').val(json.age);
+				}
+			},'json'
+		);
+	}
+	function ok(){
+		var nrs=0;
+		nrs=$('input[name="totalScore"]').val();
+		window.returnValue={
+			nrs:nrs
+		};
+		window.close();
+	}
+</script>
+</head>
+<body>
+<form id="form">
+	<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+			<tr align="right">
+				<td colspan="3">
+					<input type="button" onclick="ok()" value="确定"/>
+					<input type="button" onclick="window.close();" value="取消"/>
+				</td>
+			</tr>
+			<tr>
+				<td width="50">序号</td>
+				<td width="325">营养状态受损评分</td>
+				<td width="325">疾病严重程度评分</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td><input name="nutritionScore0" type="radio" value="0" />正常营养状态</td>
+				<td><input name="illnessScore0" type="radio" value="0" />正常营养需要量</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><input name="nutritionScore0" type="radio" value="1" />3个月内体重丢失&gt;5%或食物摄入比正常需要量低25%到50%</td>
+				<td><input name="illnessScore0" type="radio" value="1" />需要量轻度提高：髋关节骨折，慢性疾病有急性并发症者：肝硬化，COPD，血液透析，糖尿病，一般肿瘤患者</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><input name="nutritionScore0" type="radio" value="2" />一般情况差或2个月内体重丢失&gt;5%或食物摄入比正常需要量低50%到75%</td>
+				<td><input name="illnessScore0" type="radio" value="2" />需要量中度增加：腹部大手术，卒中，重度肺炎，血液恶性肿瘤</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><input name="nutritionScore0" type="radio" value="3" />BMI&lt;18.5且一般情况差或1个月内体重丢失&gt;5%（或3个月体重下降15%）或者前一周食物摄入比正常需要量低75%到100%</td>
+				<td><input name="illnessScore0" type="radio" value="3" />需要量明显增加：颅脑损伤，骨髓移植，大于APACHE10分的ICU患者</td>
+			</tr>
+			<tr>
+				<td>分值</td>
+				<td><input name="nutritionScore" type="text" style="border:none;border-bottom:solid 1px #000;"/></td>
+				<td><input name="illnessScore" type="text" style="border:none;border-bottom:solid 1px #000;"/></td>
+			</tr>
+			<tr>
+				<td>患者年龄</td>
+				<td colspan="2"><input name="patAge" type="text" style="border:none;border-bottom:solid 1px #000;"/></td>
+			</tr>
+			<tr>
+				<td>总分</td>
+				<td colspan="2"><input name="totalScore" type="text" style="border:none;border-bottom:solid 1px #000;"/></td>
+			</tr>
+			<tr>
+				<td>说明</td>
+				<td colspan="2">
+					1、年龄超过70岁者总分加1分，</br>
+					2、NRS2002总评分计算方法为3项评分相加，即疾病严重程度评分+营养状态受损评分+年龄评分
+				</td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

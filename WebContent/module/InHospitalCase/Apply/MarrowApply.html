@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>骨髓检查申请单</title>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+.text{
+	width:50px;
+	height:16px;
+	text-align:center;
+}
+</style>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+var PageCode='EMR-liver-Diagnosis';
+	$(function(){
+		KID=App.util.getHtmlParameters('kid');
+		PID=App.util.getHtmlParameters('pid');
+		$('input[name="patientId"]').val(PID);
+		$('input[name="historyCaseId"]').val(KID);
+		$('input[name="id"]').val(App.util.getHtmlParameters('this'))
+		
+		initPage();
+	});
+function initPage(){
+	//引入标题
+	registrationPageHead(KID,'骨髓检查申请单','#header');
+	var _input=$('input');
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	//医生字典选择
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="doctorName"]')
+		});
+		//科室字典
+		$.ajax({
+		url:App.App_Info.BasePath+'/common/CommonAction.do',
+		data:{
+			method:'QueryMyBelongs',
+			timestamp:new Date().getTime()
+		},
+		async:false,
+		dataType:'json',
+		success:function(_data){
+			var _fld=$('input[name="patientArea"]');
+			_fld.data('options',_data);
+			FormUtil.toCombobox({el:_fld});
+		}
+	});
+		
+		var id =$('input[name="id"]').val();
+		if(id==-1){
+			setMainMessage();
+			return;
+		}else{
+			setValue(id);
+		}
+}
+//查询基本信息到页面
+function setMainMessage(){
+	$.post(
+		App.App_Info.BasePath+'/MarrowApplyAction.do',
+		{
+			method:'get_Main_Message',
+			pid:PID,
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+			}
+		},
+		'json'
+	)
+}
+//从marrow_apply表中查询数据显示在页面
+function setValue(id){
+	$.post(
+		App.App_Info.BasePath+'/MarrowApplyAction.do',
+		{
+			method:'get_Patient_Message',
+			id:id,
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('textarea[name="clinicalShow"]').val(json.clinicalShow);
+				$('textarea[name="clinicalDiagnosis"]').val(json.clinicalDiagnosis);
+				$('textarea[name="checkEnd"]').val(json.checkEnd);
+				setMainMessage();
+				FormUtil.valueTool.setComboValue($('input[name="patientArea"]'),json.patientArea);
+			}
+		},
+		'json'
+	)
+}
+//删除一条信息
+function deleteData(){
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	var id = $('input[name="id"]').val();
+	if(id == -1){
+		alert("请保存后再删除！");
+		return;
+	}
+	var yn = confirm("是否确实删除？");
+	if(!yn){
+		return;
+	}
+	$.post(
+		App.App_Info.BasePath+'/MarrowApplyAction.do',
+		{
+			method:'delete_Patient_Message',
+			id:id,
+			kid:KID,
+			pid:PID,
+			data:data
+		}
+	)
+	parent.location.reload();
+	
+}
+
+function SaveData(){
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	var id = $('input[name="id"]').val();
+	$.post(
+			App.App_Info.BasePath+'/MarrowApplyAction.do',
+			{
+				method:'saveOrUpdate',
+				kid:KID,
+				id:id,
+				data:data
+			},
+			function(data){
+				if(data.success){
+					var json = JSON.parse(data.data)
+					$('input[name="id"]').val(json.id);
+					alert("保存成功");
+				}else{
+					alert("保存失败");
+				}
+				parent.createIndex();
+			},	
+			'json'
+		)
+}
+
+function print(){
+	var checkdate = $('input[name="checkDate"]').val();
+	var doctorname =$('input[name="doctorName"]').val();
+	if(doctorname == null || doctorname == ""){
+		alert("请先填写医师项并保存");
+		return;
+	}
+	if(checkdate == null || checkdate == ""){
+		alert("请先填写日期项并保存");
+		return;
+	}
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/Apply/print/MarrowApplyPrint.html?id='+id+'&&'+'kid='+KID);
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="patientId"/>
+<input type="hidden" name="historyCaseId"/>
+	<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">患者姓名：</td>
+			<td class="t2" width="210"><input type="text" name="patientName" readonly="readonly"/></td>
+			<td class="t1" width="90">&nbsp;</td>
+			<td class="t2" width="210">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1">性别：</td>
+			<td class="t2"><input type="text" name="patientSex" readonly="readonly"/></td>
+			<td class="t1">年龄：</td>
+			<td class="t2"><input type="text" name="patientAge" readonly="readonly"/></td>
+		</tr>
+		<tr>
+			<td class="t1">病区：</td>
+			<td class="t2"><input type="text" name="patientArea" class="select" style="width:73%"/></td>
+			<td class="t1">病历号：</td>
+			<td class="t2"><input type="text" name="patientNum" /></td>
+		</tr>
+		<tr>
+			<td class="t1" width="90">检查号：</td>
+			<td class="t2"><input type="text" name="checkNum" /></td>
+			<td class="t1" width="90">实验室编号：</td>
+			<td class="t2"><input type="text" name="labNum" /></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top" width="90">临床表现：</td>
+			<td class="t2" colspan="3" width="510">
+				<textarea name="clinicalShow" class="textarea" style="width:98%"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top" width="90">临床诊断：</td>
+			<td class="t2" colspan="3" width="510">
+				<textarea name="clinicalDiagnosis" class="textarea" style="width:98%"></textarea>
+			</td>
+		</tr>
+	</table>
+	<table class="tb2" width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" style="text-align:left" colspan="8">末梢血象结果：</td>
+		</tr>
+		<tr style="text-align:center">
+			<td width="100" rowspan="2" colspan="2" class="t1">白细胞：</td>
+			<td width="83" class="t1" style="text-align:center">WBC</td>
+			<td width="83" class="t1" style="text-align:center">LYM</td>
+			<td width="83" class="t1" style="text-align:center">MON</td>
+			<td width="83" class="t1" style="text-align:center">NEU</td>
+			<td width="83" class="t1" style="text-align:center">EOS</td>
+			<td width="83" class="t1" style="text-align:center">BAS</td>
+		</tr>
+		<tr style="text-align:center">
+			<td><input class="text" type="text" name="WBC"/></td>
+			<td><input class="text" type="text" name="LYM"/></td>
+			<td><input class="text" type="text" name="MON"/></td>
+			<td><input class="text" type="text" name="NEU"/></td>
+			<td><input class="text" type="text" name="EOS"/></td>
+			<td><input class="text" type="text" name="BAS"/></td>
+		</tr>
+		<tr style="text-align:center">
+			<td rowspan="4" colspan="2" class="t1">红细胞：</td>
+			<td class="t1" style="text-align:center">HGB</td>
+			<td class="t1" style="text-align:center">RBC</td>
+			<td class="t1" style="text-align:center">HCT</td>
+			<td class="t1" style="text-align:center">MCV</td>
+			<td class="t1" style="text-align:center">MCH</td>
+			<td class="t1" style="text-align:center">MCHC</td>
+		</tr>
+		<tr style="text-align:center">
+			<td ><input class="text" type="text" name="HGB"/></td>
+			<td ><input class="text" type="text" name="RBC"/></td>
+			<td ><input class="text" type="text" name="HCT"/></td>
+			<td ><input class="text" type="text" name="MCV"/></td>
+			<td ><input class="text" type="text" name="MCH"/></td>
+			<td ><input class="text" type="text" name="MCHC"/></td>
+		</tr>
+		<tr style="text-align:center">
+			<td class="t1" style="text-align:center">RDW</td>
+			<td class="t1" style="text-align:center">Ret</td>
+			<td class="t1" style="text-align:center">LIC</td>
+			<td class="t1" style="text-align:center"><input class="text" type="text" name="redName"/></td>
+			<td class="t1"colspan="2" style="text-align:center">其他</td>
+		</tr>
+		<tr style="text-align:center">
+			<td ><input class="text" type="text" name="RDW"/></td>
+			<td ><input class="text" type="text" name="ret"/></td>
+			<td ><input class="text" type="text" name="LIC"/></td>
+			<td ><input class="text" type="text" name="redValue"/></td>
+			<td colspan="2" align="center"><input class="t2" type="text" name="redOther"/></td>
+		</tr>
+		<tr style="text-align:center">
+			<td class="t1" rowspan="2" colspan="2">血小板：</td>
+			<td class="t1" style="text-align:center">PLT</td>
+			<td class="t1" style="text-align:center">MPV</td>
+			<td class="t1" style="text-align:center">PDW</td>
+			<td class="t1" style="text-align:center">PVT</td>
+			<td class="t1" colspan="2" style="text-align:center">其他</td>
+		</tr>
+		<tr style="text-align:center">
+			<td ><input class="text" type="text" name="PLT"/></td>
+			<td ><input class="text" type="text" name="MPV"/></td>
+			<td ><input class="text" type="text" name="PDW"/></td>
+			<td ><input class="text" type="text" name="PVT"/></td>
+			<td colspan="2" align="center"><input class="t2" type="text" name="plateletOther"/></td>
+		</tr>
+		<tr>
+			<td width="100" class="t1" valign="top" colspan="2">骨髓检查目的：</td>
+			<td width="500" class="t2" colspan="6"><textarea name="checkEnd" class="textarea" style="width:98%"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"colspan="2" >送检标本：</td>
+			<td class="t1">血片</td>
+			<td colspan="2"><input style="width:35%" type="text" name="bloodSliceNum"/><span style="font-size:12px">&nbsp;&nbsp;张</span></td>
+			<td class="t1">骨髓片</td>
+			<td colspan="3"><input style="width:32%" type="text" name="marrowSliceNum"/><span style="font-size:12px">&nbsp;&nbsp;张</span></td>
+		</tr>
+		<tr>
+			<td class="t1"colspan="2">送检日期：</td>
+			<td class="t2"colspan="2"><input type="text" name="checkDate" /></td>
+			<td class="t1">送检医师：</td>
+			<td class="t2"colspan="3"><input type="text" name="doctorName" /></td>
+		</tr>
+	</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			childPushScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="N"/>
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		    <tr><td colspan="4" style="font-size:20px;color:red;height:30px" align="center"><B>肝肾综合征诊断标准</B></td></tr>
+			<tr>
+				<td bgcolor="#D4D4D4" width="50" align="center" height="25" ><B>序号</B></td>
+				<td bgcolor="#D4D4D4" width="450" align="center"><B>标准</B></td>
+				<td bgcolor="#D4D4D4" width="150" align="center"><B>判断</B></td>
+			</tr>
+			<tr>
+				<td align="center">1</td>
+				<td >肝硬化腹水</td>
+				<td ><div><div style="float:left;"><input type="radio" name="gyhfs" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="gyhfs" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4"  align="center">2</td>
+				<td bgcolor="#D4D4D4" >血肌酐＞1.5mg/dl (133 µmol/L)</td>
+				<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="xjs" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="xjs" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td align="center">3</td>
+				<td >无休克</td>
+				<td ><div><div style="float:left;"><input type="radio" name="wxk" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="wxk" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" align="center">4</td>
+				<td bgcolor="#D4D4D4" >无低血容量，定义为至少停用2天利尿剂（假如使用利尿剂）并且白蛋白1g/kg/天直到最大100g/天扩容后，肾功能无持续性改善（血肌酐＜133µmol/L）</td>
+				<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="wdxrl" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="wdxrl" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td align="center">5</td>
+				<td >目前或近期无肾毒性药物使用史</td>
+				<td ><div><div style="float:left;"><input type="radio" name="wsdywsy" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="wsdywsy" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" align="center">6</td>
+				<td bgcolor="#D4D4D4" >无肾实质疾病，定义为蛋白尿＜500mg/天，无镜下血尿（每高倍镜视野＜50个红细胞）和肾脏超声正常</td>
+				<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="wssj" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="wssj" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td rowspan="2" align="center">结果</td>
+				<td >请临床医生根据患者临床具体情况判定是否符合肝肾综合征诊断：</td>
+				<td ><div><div style="float:left;"><input type="radio" name="result" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="result" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			</tr>
+			<tr>
+				<td > 肝肾综合征分型：</td>
+				<td ><div><div style="float:left;"><input type="radio" name="gszf" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">Ⅰ型</div><div style="float:left;"><input type="radio" name="gszf" value="2" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">Ⅱ型</div></div></td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

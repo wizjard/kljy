@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>健康教育</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-ui-1.7.2.custom.min.js"></script>
+
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/JQuery/ui-lightness/jquery-ui-1.7.2.custom.css"/>
+<link rel="stylesheet" type="text/css" href="images/skin.css" />
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link rel="Shortcut Icon" href="images/favicon.ico" />
+
+
+<style type="text/css">
+body{
+	margin:0;
+	padding:0;
+	font-size:12px;
+	width:983px;
+}
+.col-left {
+    width: 220px;
+    position:absolute;
+    left:10px;
+    top:10px;
+}
+.res-block {
+    padding-top:5px;
+    background:transparent url(../images/block-top.gif) no-repeat;
+    width:210px;
+    margin-bottom:15px;
+}
+.res-block-inner {
+    padding:6px 11px;
+    background:transparent url(../images/block-bottom.gif) no-repeat left bottom;
+}
+.res-block h3 {
+	padding:0;
+	margin:0;
+    font: bold 12px tahoma,arial,sans-serif;
+    color:#555;
+    margin-bottom:8px;
+}
+.res-block ul {
+    list-style-type: disc;
+	margin-top:0;
+    margin-left:15px;
+    font: normal 12px tahoma,arial,sans-serif;
+    color:#555;
+}
+.res-block ul li {
+    margin:0 0 5px 3px;
+}
+A:link,A:visited{
+	text-decoration:none;
+	color:#000000;
+}
+A:hover{
+	text-decoration:underline;
+	color:#ff0000;
+}
+.win-con{
+	border:solid 1px #80B2D7;
+	padding:2px;
+	margin:2px;
+}
+.win-con div.win-head{
+	font-family: tahoma,arial,verdana,sans-serif;
+    font-size: 11px;
+    font-size-adjust: none;
+    font-stretch: normal;
+	background:#C5DBEC;
+	border:solid 1px #C5DBEC;
+	height:22px;
+	font-weight:bold;
+	font-style:normal;
+	color: #15428B;
+	
+}
+.win-con div.win-head a{
+	float:right;
+	margin-top:-20px;
+	padding-right:5px;
+	text-decoration:underline;
+}
+.win-con div.win-head span.win-title{
+	line-height:22px;
+	font-weight:bold;
+	color: #15428B;
+    font-family: tahoma,arial,verdana,sans-serif;
+    font-size: 11px;
+    font-size-adjust: none;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+	margin-left:5px;
+}
+.win-con div.win-content{
+	margin:0 0;
+}
+.win-con div.win-content UL{
+	padding:0;
+	margin:0;
+	padding-left:10px;
+	margin-left:10px;
+	list-style:decimal-leading-zero;
+}
+.win-con div.win-content LI{
+	padding:0;
+	margin:0;
+	line-height:20px;
+	font-size:12px;
+}
+</style>
+</head>
+<body>
+
+<div class="win-con" style="width:433px; height:300px;overflow:hidden;">
+	<div class="win-head">
+		<span class="win-title">图片新闻</span>
+	</div>
+	<div style="overflow:hidden;" id="topAdvan" class="guanggao3">
+		<ul></ul>
+       <script type="text/javascript">
+       		Ext.onReady(function(){
+       			Ext.Ajax.request({
+       				url:App.App_Info.BasePath+'/admin/picture.do?method=selectAllPictureName',
+	       			params:{
+	       				typeName:'生物医学信息中心图片'
+	       			},
+	       			success:function(response){
+	       				document.getElementById('topAdvan').innerHTML+=response.responseText;
+	       				slide("#topAdvan");
+	       			}
+       			});
+       		});
+       </script>
+	</div>
+</div>
+
+<div class="win-con" style="width:550px;height:600px;margin-left:445px;overflow:hidden;margin-top:-308px">
+	<div class="win-content" id="panel" style="color:#576E9E;font-size:12px;font-weight:bold;">	
+		<script type="text/javascript">
+			Ext.onReady(function(){
+				Ext.QuickTips.init();
+				
+				function GetNotice(){
+					var cm=new Ext.grid.ColumnModel([
+						new Ext.grid.RowNumberer(),
+						{header:'活动标题',dataIndex:'noticeNam',width:425,renderer:function(value,meta,record){
+							return '<a target="_blank" href="customerMessageShow.html?id='+record.get('id')+'">'+value+'</a>';
+						}},
+						{header:'发布日期',dataIndex:'noticeTim',renderer:renderDate('Y-m-d h:i'),width:98}
+					]);
+					var ds=new Ext.data.Store({
+							proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/notice.do'}),
+							reader:new Ext.data.JsonReader({root:'root',totalProperty:'total'},
+								[
+									{name:'id'},
+									{name:'noticeNam'},
+									{name:'noticeContent'},
+									{name:'noticeTim'}
+								]
+							)
+						});
+					ds.baseParams={method:'queryAll'};
+					ds.load({params:{start:0,limit:20,typeName:"生物医学信息中心会员活动"}});
+					
+					var _grid = new Ext.grid.GridPanel({
+						id:'list-grid',
+						border:false,
+						cm:cm,
+						ds:ds,
+						tbar:[
+							{
+								xtype:'tbseparator'
+							},{
+								text:'&nbsp;刷新&nbsp;',
+								tooltip:'刷新当前列表',
+								handler:function(){
+									Ext.getCmp('list-grid').getStore().reload();
+								}
+							}
+							 
+							],
+						bbar:new Ext.PagingToolbar({
+				            pageSize: 20,
+				            store: ds,
+				            displayInfo: true,
+				            displayMsg: '显示第<font color="red"> {0} </font>条' +
+				            '到<font color="red"> {1} </font>条记录，' +
+				            '一共<font color="red"> {2} </font>条',
+				            emptyMsg: "没有记录"
+				        })
+					})
+					function renderDate(format) {
+					    return function(v) {
+					        var JsonDateValue;
+					        if (Ext.isEmpty(v))
+					            return '';
+					        else if (Ext.isEmpty(v.time))
+					            JsonDateValue = new Date(v);
+					        else
+					            JsonDateValue = new Date(v.time);
+					        return JsonDateValue.format(format || 'Y-m-d H:i:s');
+					    };
+					};					
+					return _grid;
+				}
+				
+				new Ext.Panel({
+					xtype:'grid',
+					title:"会员活动",
+					width:550,
+					height:600,
+					layout:'fit',
+					items:GetNotice()
+				}).render('panel');	
+			});
+			
+		</script>	
+	</div>
+</div>
+
+<div class="win-con" style="width:433px;overflow:hidden;height:290px;margin-top:-298px">
+	<div class="win-content" id="panelyx" style="color:#576E9E;font-size:12px;font-weight:bold;">	
+		<script type="text/javascript">
+			Ext.onReady(function(){
+				Ext.QuickTips.init();
+				
+				function GetNotice(){
+					var cm=new Ext.grid.ColumnModel([
+						new Ext.grid.RowNumberer(),
+						{header:'标题名称',dataIndex:'noticeNam',width:308,renderer:function(value,meta,record){
+							return '<a target="_blank" href="customerMessageShow.html?id='+record.get('id')+'">'+value+'</a>';}
+						},
+						{header:'发布日期',dataIndex:'noticeTim',renderer:renderDate('Y-m-d h:i'),width:98}
+					]);
+					var ds=new Ext.data.Store({
+							proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/notice.do'}),
+							reader:new Ext.data.JsonReader({root:'root',totalProperty:'total'},
+								[
+									{name:'id'},
+									{name:'noticeNam'},
+									{name:'noticeContent'},
+									{name:'noticeTim'}
+								]
+							)
+						});
+					ds.baseParams={method:'queryAll'};
+					ds.load({params:{start:0,limit:20,typeName:"生物医学信息中心健康教育"}});
+					
+					var _grid = new Ext.grid.GridPanel({
+						id:'list-grid',
+						border:false,
+						cm:cm,
+						ds:ds,
+						tbar:[
+							{
+								xtype:'tbseparator'
+							},{
+								text:'&nbsp;刷新&nbsp;',
+								tooltip:'刷新当前列表',
+								handler:function(){
+									Ext.getCmp('list-grid').getStore().reload();
+								}
+							}
+							 
+							],
+						bbar:new Ext.PagingToolbar({
+				            pageSize: 20,
+				            store: ds,
+				            displayInfo: true,
+				            displayMsg: '显示第<font color="red"> {0} </font>条' +
+				            '到<font color="red"> {1} </font>条记录，' +
+				            '一共<font color="red"> {2} </font>条',
+				            emptyMsg: "没有记录"
+				        })
+					})
+					function renderDate(format) {
+					    return function(v) {
+					        var JsonDateValue;
+					        if (Ext.isEmpty(v))
+					            return '';
+					        else if (Ext.isEmpty(v.time))
+					            JsonDateValue = new Date(v);
+					        else
+					            JsonDateValue = new Date(v.time);
+					        return JsonDateValue.format(format || 'Y-m-d H:i:s');
+					    };
+					};
+					
+					return _grid;
+				}
+				
+				new Ext.Panel({
+					xtype:'grid',
+					title:"健康教育",
+					width:433,
+					height:290,
+					layout:'fit',
+					items:GetNotice()
+				}).render('panelyx');	
+			});
+			
+		</script>	
+	</div>
+</div>
+
+</body>
+<script type="text/javascript" src="scripts/slide.js"></script>
+</html>

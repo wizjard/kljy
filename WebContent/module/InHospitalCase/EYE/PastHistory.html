@@ -1,0 +1,1191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>既往史(肝病)</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-PastHistory';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PastHistory'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//下拉框初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//<增加>事件
+	$('button').click(addNewDis);
+	$('*[name="otherFlag"],*[name="allergySym"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//=================================================10-07=====================================================
+	$('*[name="allergy_flag"],*[name="infect_flag"],*[name="noInfect_flag"],*[name="outerHurt_flag"],*[name="surgery_flag"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().find('div.con').show();
+		}else{
+			$(this).parent().parent().find('div.con').hide();
+		}
+	});
+	//2011-02-09修改
+	$('*[name="outerHurt_flag"]').click(function(){
+		if($(this).val()==1){
+			$('input[name="hurtName"]').each(function(){
+				if($(this).val() == ""){
+					$(this).val("发生");
+				}
+			});
+		}
+	});
+	$('*[name="surgery_flag"]').click(function(){
+		if($(this).val()==1){
+			$('input[name="surgeryName"]').each(function(){
+				if($(this).val() == ""){
+					$(this).val("行");
+				}
+			});
+			$('input[name="surgeryCause"]').each(function(){
+				if($(this).val() == ""){
+					$(this).val("因");
+				}
+			});
+		}
+	});
+	/*============================10-07 新增高血压单击事件=====================================*/
+	$('*[name="blood"],*[name="diabetes"],*[name="heart"],*[name="noInfect_other"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().parent().find('div.other').show();
+		}else{
+			$(this).parent().parent().parent().find('div.other').hide();
+		}
+	});
+	
+	//=============================================09-20======================================
+	$('input[name="useDrug"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="其他"){
+				$("#bloodHide").show();
+			}else if($(this).val()=="规律用药"){
+				$("#bloodHide").show();
+			}else if($(this).val()=="未规律用药"){
+				$("#bloodHide").show();
+			}else{
+				$("#bloodHide").hide();
+				$('input[name="otherText"]').val("");
+			}
+		});
+	});
+	
+	$('input[name="duseDrug"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="其他"){
+				$("#diabetesHide").show();
+			}else if($(this).val()=="规律用药"){
+				$("#diabetesHide").show();
+			}else if($(this).val()=="未规律用药"){
+				$("#diabetesHide").show();
+			}else{
+				$("#diabetesHide").hide();
+				$('input[name="dotherText"]').val("");
+			}
+		});
+	});
+	
+	$('input[name="huseDrug"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="其他"){
+				$("#heartHide").show();
+			}else if($(this).val()=="规律用药"){
+				$("#heartHide").show();
+			}else if($(this).val()=="未规律用药"){
+				$("#heartHide").show();
+			}else{
+				$("#heartHide").hide();
+				$('input[name="hotherText"]').val("");
+			}
+		});
+	});
+	//================================================================================
+	//弹出框
+	$('#dialog1').dialog({
+		title:'既往史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:400,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){Compose();}
+		}
+	});
+}
+function Compose(){
+	var json=CollectionData();
+	var rst='';
+	//基本
+	var temp=getRowValue('bloodType',json.bloodType);
+	if (temp == '') {
+	
+	}else if (temp == '不详') {
+		rst += 'ABO血型不详，';
+	}else{
+		rst+=temp+'型血，';
+	}
+	temp=getRowValue('rhType',json.rhType);
+	if (temp == '') {
+	
+	}else if (temp == '不详') {
+		rst += 'Rh血型不详，';
+	}else{
+		rst+='Rh'+temp+'，';
+	}
+	if(json.normalHealth)
+		rst+='平素健康状况'+getRowValue('normalHealth',json.normalHealth)+'，';
+	rst = rst.length > 0 ? rst.substring(0, rst.length-1) + '。' : '';
+	var  st = '';		
+	//传染性疾病
+	if (json.infect_flag) {
+		if (json.infect_flag == 1) {
+			$.each(json.infects, function(){
+				st += this.happenTime + getRowValue('infectTimeUnit', this.infectTimeUnit) + '患' + this.disName + '，' + (this.outCome.length>0?(this.outCome + '，'):'');
+			});
+		}
+		else 
+			if (json.infect_flag == 0) 
+				st += '否认传染性疾病史，';
+		rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';		
+	}
+	//非传染性疾病
+	if (json.noInfect_flag == 0) {
+		rst += "否认高血压、心脏病、糖尿病及其他非传染性疾病史。";
+	}
+	if (json.noInfect_flag == 1) {
+		//=====================================10-07================================
+		if(json.blood){
+			st = '';
+			if(json.blood==1){
+				if(json.byear && json.byear != "" && $('input[name="bloodYear"]').val()){
+					st+='高血压病史'+json.byear + $('input[name="bloodYear"]').val() + '，';
+				}else{
+					st+='有高血压史' + '，';
+				}
+				if(json.bloodHeight && json.bloodHeight != ""){
+					st+='血压最高达'+json.bloodHeight+'mmHg，';
+				}
+				
+				if(json.useDrug=="其他"){
+					if(json.otherText && json.otherText != ""){
+						st +=json.otherText+'，';
+					}
+				}else{
+					if(json.useDrug && json.useDrug != ""){
+						st+=json.useDrug+'，';
+					}
+					if(json.otherText && json.otherText != ""){
+						st +=json.otherText+'，';
+					}
+				}
+				if(json.bloodBefor != "" && json.bloodAfter != ""){
+					st +='平时血压波动在'+json.bloodBefor+'/'+json.bloodAfter+'mmHg左右，'
+				}
+			}else if(json.blood==0){
+				st +='否认高血压病史，';
+			}
+			rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+		}
+	
+		if(json.diabetes){
+			st = '';
+			if(json.diabetes==1){
+				if(json.dyear && $('input[name="diabetesYear"]').val()){
+					st +='糖尿病病史'+json.dyear+$('input[name="diabetesYear"]').val() + '，' 
+				}else{
+					st +='有糖尿病病史';
+				}
+				var temp = json.limosisDiabetes;
+				st += temp.length > 0 ? '空腹血糖最高达' + temp + 'mmol/l，' : '';
+				temp = json.eatDiabetes;
+				st += temp.length > 0 ? '血糖最高达' + temp + 'mmol/l(餐后2小时)，'	: ''; 
+				if(json.duseDrug=="其他"){
+					if(json.dotherText != ""){
+						st+=json.dotherText+'，';
+					}
+				}else{
+					if(json.duseDrug && json.duseDrug != ""){
+						st+=json.duseDrug+'，';
+					}
+					if(json.dotherText && json.dotherText != ""){
+						st +=json.dotherText+'，';
+					}
+				}
+				if(json.peacetimeBefor != "" && json.peacetimeAfter != ""){
+					st+='平时空腹血糖波动在'+json.peacetimeBefor+'-'+json.peacetimeAfter+'mmol/l左右，'
+				}
+				if(json.eatBefor != "" && json.eatAfter != ""){
+					st+='餐后2小时血糖波动在'+json.eatBefor+'-'+json.eatAfter+'mmol/l左右，'
+				}
+			}else if(json.diabetes==0){
+				st +='否认糖尿病病史，';
+			}
+			rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+		}
+		if(json.heart){
+			st = '';
+			if(json.heart==1){
+				if(json.heartDiagnose != ""){
+					st +=json.heartDiagnose + "，";
+				}
+				if(json.hyear && $('input[name="heartYear"]').val() != ""){
+					if(json.heartDiagnose != ""){
+						st = st.substr(0, st.length - 1) + json.hyear+$('input[name="heartYear"]').val()+'，';
+					}else{
+						st += json.hyear+$('input[name="heartYear"]').val()+'，';
+					}
+				}
+				if(json.huseDrug=="其他"){
+					if(json.hotherText != ""){
+						st+=json.hotherText+'，';
+					}
+				}else{
+					if(json.huseDrug && json.huseDrug != ""){
+						st+=json.huseDrug+'，';
+					}
+					if(json.hotherText && json.hotherText != ""){
+						st +=json.hotherText+'，';
+					}
+				}
+				if(json.nowThing != ""){
+					st +=json.nowThing+'，'
+				}
+				if(st == ""){
+					st = "有心脏病史，";
+				}
+			}
+			if(json.heart==0){
+				st+='否认心脏病史，';
+			}
+			rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+		}
+		st = '';
+		if (json.noInfect_flag == 1){ 
+			if($('input[name="noInfect_other"]:checked').val() == 1){
+				$.each(json.noInfects, function(){
+					st += this.disName + this.happenTime + getRowValue('noInfectTimeUnit', this.noInfectTimeUnit) + '，' + this.currentStatu + '，';
+				});
+			}
+			if($('input[name="noInfect_other"]:checked').val() == 0){
+				st +='否认其它非传染性疾病史，';
+			}
+		}
+		rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	}
+	//外伤史
+	st = '';
+	if(json.outerHurt_flag)
+		if(json.outerHurt_flag==1)
+			$.each(json.outerHurts,function(){
+				st +=this.hurtTime+getRowValue('outerHurtTimeUnit',this.outerHurtTimeUnit);
+				//2011-02-09修改
+				if(this.hurtName != "" && this.hurtName != "发生"){
+					st += this.hurtName+'，';
+				}
+				if(this.currentStatu != ""){
+					st += this.currentStatu + '，';
+				}
+			});
+		else if(json.outerHurt_flag)
+			st +='否认外伤史，';
+	rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	//手术史
+	st = '';
+	if(json.surgery_flag)
+		if(json.surgery_flag==1)
+			$.each(json.surgerys,function(){
+				st +=this.surgeryTime+getRowValue('surgeryTimeUnit',this.surgeryTimeUnit);
+				if(this.surgeryCause != "" && this.surgeryCause != "因"){
+					st += this.surgeryCause;	
+				}
+				//2011-02-09修改
+				if(this.surgeryName != "" && this.surgeryName != "行"){
+					st += this.surgeryName+'手术，';	
+				}
+				if(this.surgeryDesc != ""){
+					st += this.surgeryDesc + '，';
+				}
+			});
+		else if(json.surgery_flag)
+			st +='否认手术史，';
+	rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	//性病史
+	st = '';
+	if(json.sexDis_flag)
+		if(json.sexDis_flag==1)
+			st+='有性病史，';
+		else if(json.sexDis_flag)
+			st+='否认性病史，';
+	rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	//过敏史
+	st = '';
+	if(json.allergy_flag)
+		if(json.allergy_flag==1){
+			if(json.allergySource.length>0){
+				st +='对'+json.allergySource+'，';
+			}
+			if(json.allergySym==1){
+				st += json.allergyDesc + '，';
+			}else{
+				st +='过敏症状及严重性不详，';
+			}
+			//st +=json.allergyDesc;
+		}else if(json.allergy_flag)
+			st+='否认过敏史，';
+	rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	//其它
+	st = '';
+	if(json.otherFlag&&json.otherFlag==1){
+		if(json.otherPasttFlag != ""){
+			st +=json.otherPasttFlag+'，';
+		}
+	}
+	rst += st.length > 0 ? st.substring(0, st.length-1) + '。' : '';
+	rst = rst;
+	if (rst.length > 0) {
+		rst = rst.substr(0, rst.length - 1) + '。';
+	}
+	var _sum = $('textarea[name="pastHistoryDesc"]').val();
+	if(_sum.length > 0){
+		Ext.Msg.show({
+			title:'提示',
+			width:300,
+			msg:'是否替换原有的值？',	
+			buttons:{yes:'否',no:'是'},
+			fn: function(_btn){
+			   	if(_btn=='no'){
+			   		$('textarea[name="pastHistoryDesc"]').val(rst);
+				}
+		    },
+			icon:Ext.MessageBox.QUESTION
+		});
+	}else {
+		$('textarea[name="pastHistoryDesc"]').val(rst);
+	}
+	$('#dialog1').dialog("close");
+}
+function addNewDis(){
+	var _table=$(this).parent().parent().parent();
+	var _newTable=_table.clone(true);
+	_newTable.find('input').val("");
+	_newTable.find('textarea').val("");
+	_newTable.find('input.select').removeAttr('isInit').removeAttr('showId');
+	_newTable.appendTo(_table.parent());
+	var _btn=_newTable.find('button');
+	_btn.text('删除');
+	_btn.unbind('click');
+	_btn.click(delDis);
+	//2011-02-09修改
+	$('input[name="surgeryName"]').each(function(){
+		if($(this).val() == ""){
+			$(this).val('行');
+		}
+	});
+	$('input[name="surgeryCause"]').each(function(){
+		if($(this).val() == ""){
+			$(this).val('因');
+		}
+	});
+	$('input[name="hurtName"]').each(function(){
+		if($(this).val() == ""){
+			$(this).val('发生');
+		}
+	});
+}
+function delDis(){
+	if(!confirm('确定要删除此项记录？'))	return;
+	var _table=$(this).parent().parent().parent();
+	var _id=_table.find('input[name="id"]');
+	var _val=_id.val();
+	if(_val&&_val>0){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+			{
+				method:'PastHistory_delete',
+				id:_val,
+				flag:_id.attr('flag')
+			},
+			function(data){
+				if(data.success){
+					_table.remove();
+				}else{
+					alert('删除失败。');
+				}
+			},
+			'json'
+		);
+	}else{
+		_table.remove();
+	}
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PastHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1 fieldset[name="basic-fldset"]',_json);
+					FormUtil.setFormValues('#dialog1 fieldset[name="allergy-fldset"]',_json);
+	
+					//==================================10-07=====================================
+					FormUtil.setFormValues('#dialog1 fieldset[name="bloodPressure-fldset"]',_json);
+					FormUtil.setFormValues('#dialog1 fieldset[name="diabetes-fldset"]',_json);
+					FormUtil.setFormValues('#dialog1 fieldset[name="heart-fldset"]',_json);
+	
+					FormUtil.setFormValues('#dialog1 fieldset[name="oInfect-other-fldset"]',_json);
+	
+					$.each(_json.infects,function(i){
+						if (i > 0) {
+							$('#dialog1 fieldset[name="infect-fldset"] button').eq(0).click();
+						}
+						var _table=$('#dialog1 fieldset[name="infect-fldset"] div.con tbody').eq(i);
+						_table.find('input[name="id"]').val(_json.infects[i].id);
+						_table.find('input[name="happenTime"]').val(_json.infects[i].happenTime);
+						_table.find('input[name="infectTimeUnit"]').attr('inputValue',this['infectTimeUnit']);
+						_table.find('input[name="infectTimeUnit"]').val(getRowValue('infectTimeUnit',this['infectTimeUnit']));
+						_table.find('input[name="disName"]').val(_json.infects[i].disName);
+						_table.find('*[name="outCome"]').val(this['outCome']);
+					});
+					$.each(_json.noInfects,function(i){
+						if (i > 0) {
+							$('#dialog1 fieldset[name="noInfect-fldset"] button').eq(0).click();
+						}
+						var _table=$('#dialog1 fieldset[name="noInfect-fldset"] div *[name="noInfect-other-fldset"] tbody').eq(i);
+						_table.find('input[name="id"]').val(_json.noInfects[i].id);
+						_table.find('input[name="happenTime"]').val(_json.noInfects[i].happenTime);
+						_table.find('input[name="noInfectTimeUnit"]').attr('inputValue',this['noInfectTimeUnit']);
+						_table.find('input[name="noInfectTimeUnit"]').val(getRowValue('noInfectTimeUnit',this['noInfectTimeUnit']));
+						_table.find('input[name="disName"]').val(_json.noInfects[i].disName);
+						_table.find('textarea[name="currentStatu"]').val(_json.noInfects[i].currentStatu);
+					});
+					$.each(_json.outerHurts,function(i){
+						if (i > 0) {
+							$('#dialog1 fieldset[name="outerHurt-fldset"] button').eq(0).click();
+						}
+						var _table=$('#dialog1 fieldset[name="outerHurt-fldset"] div.con tbody').eq(i);
+						_table.find('input[name="id"]').val(_json.outerHurts[i].id);
+						_table.find('input[name="hurtTime"]').val(_json.outerHurts[i].hurtTime);
+						_table.find('input[name="outerHurtTimeUnit"]').attr('inputValue',this['outerHurtTimeUnit']);
+						_table.find('input[name="outerHurtTimeUnit"]').val(getRowValue('outerHurtTimeUnit',this['outerHurtTimeUnit']));
+						_table.find('input[name="hurtName"]').val(_json.outerHurts[i].hurtName);
+						_table.find('textarea[name="currentStatu"]').val(_json.outerHurts[i].currentStatu);
+					});
+					$.each(_json.surgerys,function(i){
+						if (i > 0) {
+							$('#dialog1 fieldset[name="surgery-fldset"] button').eq(0).click();
+						}
+						var _table=$('#dialog1 fieldset[name="surgery-fldset"] div.con tbody').eq(i);
+						_table.find('input[name="id"]').val(_json.surgerys[i].id);
+						_table.find('input[name="surgeryTime"]').val(_json.surgerys[i].surgeryTime);
+						_table.find('input[name="surgeryTimeUnit"]').attr('inputValue',this['surgeryTimeUnit']);
+						_table.find('input[name="surgeryTimeUnit"]').val(getRowValue('surgeryTimeUnit',this['surgeryTimeUnit']));
+						_table.find('input[name="surgeryCause"]').val(_json.surgerys[i].surgeryCause);
+						_table.find('input[name="surgeryName"]').val(_json.surgerys[i].surgeryName);
+						_table.find('textarea[name="surgeryDesc"]').val(_json.surgerys[i].surgeryDesc);
+					});
+					$('input[type="radio"]').each(function(){
+						if($(this).val()==_json[$(this).attr('name')]){
+							$(this).click();
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1 fieldset[name="basic-fldset"]'));
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1 fieldset[name="allergy-fldset"]'));
+	var array=[];
+	$('#dialog1 fieldset[name="infect-fldset"]').find('div').find('tbody').each(function(){
+		array.push({
+			id:$(this).find('input[name="id"]').val(),
+			happenTime:$(this).find('input[name="happenTime"]').val(),
+			infectTimeUnit:$(this).find('input[name="infectTimeUnit"]').attr('inputValue')||'',
+			disName:$(this).find('input[name="disName"]').val(),
+			outCome:$(this).find('*[name="outCome"]').val()
+		});
+	});
+	json.infects=array;
+	array=[];
+	$('#dialog1 fieldset[name="noInfect-fldset"]').find('div').find('*[name="noInfect-other-fldset"]').find('tbody').each(function(){
+		array.push({
+			id:$(this).find('input[name="id"]').val(),
+			happenTime:$(this).find('input[name="happenTime"]').val(),
+			noInfectTimeUnit:$(this).find('input[name="noInfectTimeUnit"]').attr('inputValue')||'',
+			disName:$(this).find('input[name="disName"]').val(),
+			currentStatu:$(this).find('textarea[name="currentStatu"]').val()
+		});
+	});
+	json.noInfects=array;
+	array=[];
+	$('#dialog1 fieldset[name="outerHurt-fldset"]').find('div').find('tbody').each(function(){
+		array.push({
+			id:$(this).find('input[name="id"]').val(),
+			hurtTime:$(this).find('input[name="hurtTime"]').val(),
+			outerHurtTimeUnit:$(this).find('input[name="outerHurtTimeUnit"]').attr('inputValue')||'',
+			hurtName:$(this).find('input[name="hurtName"]').val(),
+			currentStatu:$(this).find('textarea[name="currentStatu"]').val()
+		});
+	});
+	json.outerHurts=array;
+	array=[];
+	$('#dialog1 fieldset[name="surgery-fldset"]').find('div').find('tbody').each(function(){
+		array.push({
+			id:$(this).find('input[name="id"]').val(),
+			surgeryTime:$(this).find('input[name="surgeryTime"]').val(),
+			surgeryTimeUnit:$(this).find('input[name="surgeryTimeUnit"]').attr('inputValue')||'',
+			surgeryCause:$(this).find('input[name="surgeryCause"]').val(),
+			surgeryName:$(this).find('input[name="surgeryName"]').val(),
+			surgeryDesc:$(this).find('textarea[name="surgeryDesc"]').val()
+		});
+	});
+	json.surgerys=array;
+	
+	/*=====================================10-07获取高血压值==========================================================*/
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1 fieldset[name="bloodPressure-fldset"]'));
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1 fieldset[name="diabetes-fldset"]'));
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1 fieldset[name="heart-fldset"]'));
+	
+	$('*[name="otherFlag"]').each(function(){
+		if(this.checked){
+			json.otherFlag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="infect_flag"]').each(function(){
+		if(this.checked){
+			json.infect_flag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="noInfect_flag"]').each(function(){
+		if(this.checked){
+			json.noInfect_flag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="surgery_flag"]').each(function(){
+		if(this.checked){
+			json.surgery_flag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="outerHurt_flag"]').each(function(){
+		if(this.checked){
+			json.outerHurt_flag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="sexDis_flag"]').each(function(){
+		if(this.checked){
+			json.sexDis_flag=$(this).val();
+			return false;
+		}
+	});
+	$('*[name="allergy_flag"]').each(function(){
+		if(this.checked){
+			json.allergy_flag=$(this).val();
+			return false;
+		}
+	});
+	/*====================================10-07==============================================================*/
+	$('*[name="blood"]').each(function(){
+		if(this.checked){
+			json.blood=$(this).val();
+			return false;
+		}
+	});
+	
+	$('*[name="diabetes"]').each(function(){
+		if(this.checked){
+			json.diabetes=$(this).val();
+			return false;
+		}
+	});
+	
+	$('*[name="heart"]').each(function(){
+		if(this.checked){
+			json.heart=$(this).val();
+			return false;
+		}
+	});
+	
+	$('*[name="noInfect_other"]').each(function(){
+		if(this.checked){
+			json.noInfect_other=$(this).val();
+			return false;
+		}
+	});
+	
+	json.otherPasttFlag =$('*[name="otherPasttFlag"]').val();
+	return json;
+}
+function SaveData(){
+	var _values=CollectionData();
+	//if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PastHistory_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+				$('#dialog1 fieldset[name="infect-fldset"]').find('div').find('tbody').each(function(i){
+					$(this).find('input[name="id"]').val(_json.infects[i].id);
+				});
+				$('#dialog1 fieldset[name="noInfect-fldset"]').find('div').find('*[name="noInfect-other-fldset"]').find('tbody').each(function(i){
+					$(this).find('input[name="id"]').val(_json.noInfects[i].id);
+				});
+				$('#dialog1 fieldset[name="outerHurt-fldset"]').find('div').find('tbody').each(function(i){
+					$(this).find('input[name="id"]').val(_json.outerHurts[i].id);
+				});
+				$('#dialog1 fieldset[name="surgery-fldset"]').find('div').find('tbody').each(function(i){
+					$(this).find('input[name="id"]').val(_json.surgerys[i].id);
+				});
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(_values){
+	if(!_values.normalHealth||_values.normalHealth.length==0){
+		alert('平素健康状况不能为空。');
+		return false;
+	}
+	if(!_values.infect_flag||_values.infect_flag.length==0){
+		alert('传染性疾病史不能为空。');
+		return false;
+	}
+	if(!_values.noInfect_flag||_values.noInfect_flag.length==0){
+		alert('非传染性疾病史不能为空。');
+		return false;
+	}
+	if(_values.noInfect_flag && _values.noInfect_flag ==1){
+		if(!_values.blood||_values.blood.length==0){
+			alert('高血压史不能为空。');
+			return false;
+		}
+		if(!_values.diabetes||_values.diabetes.length==0){
+			alert('糖尿病史不能为空。');
+			return false;
+		}
+		if(!_values.heart||_values.heart.length==0){
+			alert('心脏病史不能为空。');
+			return false;
+		}
+	}
+	
+	if(!_values.outerHurt_flag||_values.outerHurt_flag.length==0){
+		alert('外伤史不能为空。');
+		return false;
+	}
+	if(_values.outerHurt_flag==1){
+		var _temp = 0;
+		$('input[name="hurtTime"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		$('input[name="outerHurtTimeUnit"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		if(_temp != 0){
+			alert('外伤史时间不能为空。');
+			return false;
+		}
+	}
+	if(!_values.outerHurt_flag==1){
+		var _temp = 0;
+		$('input[name="hurtName"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		if(_temp != 0){
+			alert('外伤史种类不能为空。');
+			return false;
+		}
+	}
+	if(!_values.surgery_flag||_values.surgery_flag.length==0){
+		alert('手术史不能为空。');
+		return false;
+	}  
+	if(_values.surgery_flag==1){
+		var _temp = 0;
+		$('input[name="surgeryTime"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		$('input[name="surgeryTimeUnit"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		if(_temp != 0){
+			alert('手术史时间不能为空。');
+			return false;
+		}
+	}
+	if(!_values.surgery_flag==1){
+		var _temp = 0;
+		$('input[name="surgeryName"]').each(function(){
+			if($(this).val() == ""){
+				_temp++;
+			}
+		});
+		if(_temp != 0){
+			alert('手术史名称不能为空。');
+			return false;
+		}
+	}
+	if(!_values.sexDis_flag||_values.sexDis_flag.length==0){
+		alert('性病史不能为空。');
+		return false;
+	}
+	if(!_values.allergy_flag||_values.allergy_flag.length==0){
+		alert('过敏史不能为空。');
+		return false;
+	}
+	return true;
+}
+	
+	function showInfectDict(_img){
+		var sheight = 500;
+		var swidth = 380;
+		var winoption ="dialogHeight:"+sheight+"px;dialogWidth:"+ swidth +"px;status:yes;scroll:yes;resizable:yes;center:yes";
+		var returnValue=window.showModalDialog(
+			App.App_Info.BasePath+'/PUBLIC/Modaldialog/DictSelect.html',
+			{
+				title:'传染性疾病名称选择',
+				sql:'select value as svalue,text as stext from SYS_DICT_Item where fldCodeId=(select id from SYS_DICT_FldCode where code=\'infectDisName\' and moduleId=(select id from SYS_DICT_Modules where code=\'EMR-liver-PastHistory\')) order by svalue;'
+			},winoption);
+				if(returnValue){
+				$(_img).prev().val(returnValue.text);
+			}
+	}
+	
+</script>
+<style type="text/css">
+	div.con{
+		display:none;
+	}
+	
+	div.other{
+		display:none;
+	}
+	
+	span.no-title{
+		font-size:12px;
+		color:#000;
+		font-weight:normal;
+	}
+	
+	.check_mark{
+		font-size:13px;
+		color:#800040;
+	}
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">既往史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="pastHistoryDesc" class="textarea" style="width:95%" ></textarea>
+		<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！</span></p>
+	<fieldset class="model-fldset" name="basic-fldset">
+		<legend>一般情况</legend>
+		<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="100">ABO血型：</td>
+				<td class="t2" width="135"><input name="bloodType" type="text" class="select"/></td>
+				<td class="t1" width="100">RH血型：</td>
+				<td class="t2"><input name="rhType" type="text" class="select"/></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top"><font color=red>*&nbsp;</font>平素健康状况：</td>
+				<td class="t2" colspan="3"><input name="normalHealth" type="radio" class="radio dict-fld" checked="checked"/></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset infect-fldset" name="infect-fldset">
+		<legend><font color=red>*&nbsp;</font>&nbsp;&nbsp;&nbsp;传染性疾病史
+			<input type="radio" class="radio" value="0" name="infect_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="infect_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="infect_flag"/><span class="no-title">未说明</legend>
+		<div class="con">
+			<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td colspan="4">&nbsp;<button class="btn_mouseout" style="font-size:12px;height:20px;">新增</button><input flag="infect" type="hidden" name="id" value=""/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>发病时间：</td>
+					<td class="t2" width="155"><input name="happenTime" type="text" class="text" style="width:35%"/>
+					<input name="infectTimeUnit" type="text" class="select" style="width:40%"/></td>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>疾病名称：</td>
+					<td class="t2">
+						<input name="disName" type="text" class="text"/>
+						<img class="hand" onclick="showInfectDict(this)" src="../../../../PUBLIC/images/sign.gif"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1"><font color=red>*&nbsp;</font>当前状态：</td>
+					<td class="t2" colspan="3"><textarea name="outCome" class="textarea" style="width:92%;height:50px;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+	<fieldset class="model-fldset noInfect-fldset" name="noInfect-fldset">
+		<legend><font color=red>*&nbsp;</font>非传染性疾病史
+			<input type="radio" class="radio" value="0" name="noInfect_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="noInfect_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="noInfect_flag"/><span class="no-title">未说明</legend>
+			<div class="con">
+				<fieldset name="bloodPressure-fldset">
+					<legend>
+						<p class="check_mark">
+							<font color=red>*&nbsp;</font>高血压
+							<input type="radio" class="radio" value="0" name="blood" /><span class="no-title">无</span>
+							<input type="radio" class="radio" value="1" name="blood"/><span class="no-title">有</span>
+							<input type="radio" class="radio" value="9" name="blood"/><span class="no-title">未说明</span>
+						</p>	
+					</legend>
+					<div class="other">
+						<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							<tr>
+								<td class="t1" width="100">发病年限：</td>
+								<td class="t2" width="140">
+									<input name="byear" type="text" class="text" style="width:35%"/>
+									<input name="bloodYear" type="text" class="select" style="width:35%"/></td>
+								<td class="t1" width="100">血压最高达：</td>
+								<td class="t2" width="140"><input name="bloodHeight" type="text" class="text" style="width:50%"/>mmHg</td>
+							</tr>
+							<tr>
+								<td class="t1" width="100">治疗情况：</td>
+								<td class="t2" colspan="3" width="380">
+									<input type="radio" name="useDrug" value="规律用药"/>规律用药
+									<input type="radio" name="useDrug" value="未规律用药"/>未规律用药
+									<input type="radio" name="useDrug" value="未用药，通过调整生活方式控制血压"/>未用药，通过调整生活方式控制血压</br>
+									<input type="radio" name="useDrug" value="未控制血压"/>未控制血压
+									<input type="radio" name="useDrug" value="其他"/>其他
+								</td>
+							</tr>
+							<tr>
+								<td class="t1"></td>
+								<td id="bloodHide"class="t2" colspan="3" style="display:none">
+									<input type="text" name="otherText" class="text" style="width:98%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">平时血压波动在：</td>
+								<td class="t2" colspan="3">
+									<input type="text" name="bloodBefor" style="width:15%"/>&nbsp;/&nbsp;
+									<input type="text" name="bloodAfter" style="width:15%"/>&nbsp;mmHg左右
+								</td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+				<fieldset name="diabetes-fldset">
+					<legend>
+							<p class="check_mark">
+								<font color=red>*&nbsp;</font>糖尿病
+								<input type="radio" class="radio" value="0" name="diabetes" /><span class="no-title">无</span>
+								<input type="radio" class="radio" value="1" name="diabetes"/><span class="no-title">有</span>
+								<input type="radio" class="radio" value="9" name="diabetes"/><span class="no-title">未说明</span>
+							</p>	
+					</legend>
+					<div class="other">
+						<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							<tr>
+								<td class="t1" width="120">病史:</td>
+								<td class="t2" >
+									<input name="dyear" type="text" class="text" style="width:20%"/>
+									<input rel="bloodYear" name="diabetesYear" type="text" class="select" style="width:20%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">空腹血糖最高达:</td>
+								<td class="t2"><input name="limosisDiabetes" type="text" class="text" style="width:43%"/>mmol/l</td>
+							</tr>
+							<tr>
+								<td class="t1">餐后2小时血糖最高达:</td>
+								<td class="t2"><input name="eatDiabetes" type="text" class="text" style="width:43%"/>mmol/l</td>
+							</tr>
+							<tr>
+								<td class="t1">治疗情况:</td>
+								<td class="t2" >
+									<input type="radio" name="duseDrug" value="规律用药"/>规律用药
+									<input type="radio" name="duseDrug" value="未规律用药"/>未规律用药
+									<input type="radio" name="duseDrug" value="未控制血糖"/>未控制血糖<br>
+									<input type="radio" name="duseDrug" value="未用药，通过调整生活方式控制血糖"/>未用药，通过调整生活方式控制血糖
+									<input type="radio" name="duseDrug" value="其他"/>其他
+								</td>
+							</tr>
+							<tr>
+								<td class="t1"></td>
+								<td id="diabetesHide"class="t2" style="display:none"><input type="text" name="dotherText" class="text" style="width:98%"/></td>
+							</tr>
+							<tr>
+								<td class="t1">平时血糖波动在:</td>
+								<td class="t2" colspan="3"><input type="text" name="peacetimeBefor" style="width:20%"/>-<input type="text" name="peacetimeAfter" style="width:20%"/>mmol/l左右</td>
+							</tr>
+							<tr>
+								<td class="t1">餐后2小时血糖波动在:</td>
+								<td class="t2" ><input type="text" name="eatBefor" style="width:20%"/>-<input type="text" name="eatAfter" style="width:20%"/>mmol/l左右</td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+				<fieldset name="heart-fldset">
+					<legend>
+						<p class="check_mark">
+							<font color=red>*&nbsp;</font>心脏病
+							<input type="radio" class="radio" value="0" name="heart" /><span class="no-title">无</span>
+							<input type="radio" class="radio" value="1" name="heart"/><span class="no-title">有</span>
+							<input type="radio" class="radio" value="9" name="heart"/><span class="no-title">未说明</span>
+						</p>
+					</legend>
+					<div class="other">
+						<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							<tr>
+								<td class="t1" width="80" valign="top">心脏病诊断：</td>
+								<td class="t2"><textarea name="heartDiagnose" class="textarea" style="width:92%"></textarea></td>
+							</tr>
+							<tr>
+								<td class="t1">发病年限：</td>
+								<td class="t2">
+									<input name="hyear" type="text" class="text" style="width:15%"/>
+									<input name="heartYear" type="text" rel="bloodYear" class="select" style="width:15%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">治疗情况：</td>
+								<td class="t2">
+									<input type="radio" name="huseDrug" value="规律用药"/>规律用药
+									<input type="radio" name="huseDrug" value="未规律用药"/>未规律用药
+									<input type="radio" name="huseDrug" value="未控制"/>未控制</br>
+									<input type="radio" name="huseDrug" value="未用药"/>未用药
+									<input type="radio" name="huseDrug" value="其他"/>其他
+								</td>
+							</tr>
+							<tr>
+								<td class="t1"></td>
+								<td id="heartHide" class="t2" colspan="3" style="display:none"><input type="text" name="hotherText" class="text" style="width:98%"/></td>
+							</tr>
+							<tr>
+								<td class="t1" valign="top">当前情况：</td>
+								<td class="t2" ><textarea name="nowThing" class="textarea" style="width:92%;height:50px;"></textarea></td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+				<fieldset name="noInfect-other-fldset">
+					<legend>
+						<p class="check_mark">其他非传染性疾病
+							<input type="radio" class="radio" value="0" name="noInfect_other" id="noInfect_other"/><span class="no-title">无</span>
+							<input type="radio" class="radio" value="1" name="noInfect_other" id="noInfect_other"/><span class="no-title">有</span>
+							<input type="radio" class="radio" value="9" name="noInfect_other" id="noInfect_other"/><span class="no-title">未说明</span>
+						</p>
+					</legend>
+					<div class="other">
+						<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							<tr>
+								<td colspan="4">&nbsp;<button class="btn_mouseout" style="font-size:12px;height:20px;">新增</button><input flag="noInfect" type="hidden" name="id" value=""/></td>
+							</tr>
+							<tr>
+								<td class="t1" width="70"><font color=red>*&nbsp;</font>疾病名称：</td>
+								<td class="t2" width="155"><input name="disName" type="text" class="text"/></td>
+								<td class="t1" width="70"><font color=red>*&nbsp;</font>发病年限：</td>
+								<td class="t2">
+									<input name="happenTime" type="text" class="text" style="width:35%"/>
+									<input name="noInfectTimeUnit" type="text" class="select" style="width:40%"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" valign="top"><font color=red>*&nbsp;</font>当前状态：</td>
+								<td class="t2" colspan="3"><textarea name="currentStatu" class="textarea" style="width:92%;height:50px;"></textarea></td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+			</div>
+	</fieldset>
+	<fieldset class="model-fldset" name="outerHurt-fldset">
+		<legend><font color=red>*&nbsp;</font>外伤史
+			<input type="radio" class="radio" value="0" name="outerHurt_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="outerHurt_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="outerHurt_flag"/><span class="no-title">未说明</legend>
+		<div class="con">
+			<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td colspan="4">&nbsp;<button class="btn_mouseout" style="font-size:12px;height:20px;">新增</button><input flag="outerHurt" type="hidden" name="id" value=""/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>外伤时间：</td>
+					<td class="t2"><input name="hurtTime" type="text" class="text" style="width:35%"/>
+					<input rel="infectTimeUnit" name="outerHurtTimeUnit" type="text" class="select" style="width:40%"/></td>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>外伤种类：</td>
+					<td class="t2" width="155"><input name="hurtName" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">当前状态：</td>
+					<td class="t2" colspan="3"><textarea name="currentStatu" class="textarea" style="width:92%;height:40px;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+	<fieldset class="model-fldset" name="surgery-fldset">
+		<legend><font color=red>*&nbsp;</font>手术史
+			<input type="radio" class="radio" value="0" name="surgery_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="surgery_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="surgery_flag"/><span class="no-title">未说明</legend>
+		<div class="con">
+			<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td colspan="4">&nbsp;<button class="btn_mouseout" style="font-size:12px;height:20px;">新增</button><input flag="surgery" type="hidden" name="id" value=""/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>手术时间：</td>
+					<td class="t2"><input name="surgeryTime" type="text" class="text" style="width:35%"/>
+					<input rel="infectTimeUnit" name="surgeryTimeUnit" type="text" class="select" style="width:40%"/></td>
+					<td class="t1" width="70">手术原因：</td>
+					<td class="t2" width="155"><input name="surgeryCause" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="70"><font color=red>*&nbsp;</font>手术名称：</td>
+					<td class="t2" width="155"><input name="surgeryName" type="text" class="text"/><span style="color:red">手术</span></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">当前状态：</td>
+					<td class="t2" colspan="3"><textarea name="surgeryDesc" class="textarea" style="width:92%;height:40px;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+	<fieldset class="model-fldset" name="sex-fldset">
+		<legend><font color=red>*&nbsp;</font>性病史
+			<input type="radio" class="radio" value="0" name="sexDis_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="sexDis_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="sexDis_flag"/><span class="no-title">未说明</legend>
+	</fieldset>
+	<fieldset class="model-fldset" name="allergy-fldset">
+		<legend><font color=red>*&nbsp;</font>过敏史
+			<input type="radio" class="radio" value="0" name="allergy_flag" /><span class="no-title">无</span>
+			<input type="radio" class="radio" value="1" name="allergy_flag"/><span class="no-title">有</span>
+			<input type="radio" class="radio" value="9" name="allergy_flag"/><span class="no-title">未说明</legend>
+		<div class="con">
+			<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="120"><font color=red>*&nbsp;</font>过敏源及药物：</td>
+					<td class="t2">
+						<!--<input name="allergySource" type="text" class="text"style="width:90%"/>-->
+						<input name="allergySource" type="text" class="checkbox" style="width:92%"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top"><font color=red>*&nbsp;</font>过敏症状及严重性：</td>
+					<td class="t2" colspan="3">
+						<input type="radio" class="radio" value="0" name="allergySym"><span class="no-title">不详</span>
+						<input type="radio" class="radio" value="1" name="allergySym"><span class="no-title">具体说明</span>
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2"><textarea name="allergyDesc" class="textarea" style="width:90%"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+	<fieldset class="model-fldset" name="allergy-fldset">
+		<legend>其他既往史</legend>
+		<div class="con" style="display:block;">
+			<table align="center" width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" valign="top" width="80">其他既往史：</td>
+					<td class="t2">
+						<input type="radio" class="radio" value="0" name="otherFlag" /><span>无</span>
+						<input type="radio" class="radio" value="1" name="otherFlag"/><span>有</span>
+						<input type="radio" class="radio" value="9" name="otherFlag"/><span>未说明</span>
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>	
+					<td class="t2">
+						<textarea name="otherPasttFlag" class="textarea" style="width:90%;"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+</div>
+</body>
+</html>

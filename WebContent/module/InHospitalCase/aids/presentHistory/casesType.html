@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>时间与诱因</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan;
+$(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		var jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('form',JSON.parse(spanContent));
+		showOrHide(JSON.parse(spanContent));
+	}
+	if($('input[name="causesFlag"][checked]').val()){
+		$('input[type="radio"]').each(function(){
+			$(this).attr("disabled",true);  
+		});
+		$('input[name="causesFlag"]').parent().parent().find('input[type="radio"]').attr("disabled",false);  
+	}
+	if($('input[name="medicalFind"][checked]').val()){
+		$('input[type="radio"]').each(function(){
+			$(this).attr("disabled",true);  
+		});
+		$('input[name="medicalFind"]').parent().parent().find('input[type="radio"]').attr("disabled",false);  
+	}
+	if($('input[name="otherTimeCausesFlag"][checked]').val()){
+		$('input[type="radio"]').each(function(){
+			$(this).attr("disabled",true);  
+		});
+		$('input[name="otherTimeCausesFlag"]').parent().parent().find('input[type="radio"]').attr("disabled",false);  
+	}
+});
+
+function showOrHide(json){
+	if(json.causesFlag == 1){
+		$('input[name="causesFlag"]').parent().parent().next().removeClass("hidden");
+	}else{
+		$('input[name="causes"]').val('');
+	}	
+	if(json.medicalFind == 1){
+		$('input[name="medicalFind"]').parent().parent().next().removeClass("hidden");
+	}else{
+		$('input[name="medicalexperunit"]').val('');
+		$('textarea[name="medicalquestionDesc"]').val('');
+	}
+	if(json.otherTimeCausesFlag == 1){
+		$('input[name="otherTimeCausesFlag"]').parent().parent().next().removeClass("hidden");
+	}else{
+		$('input[name="otherTimeCauses"]').val('');
+	}
+}
+
+function initPage(){
+	var dict=FormUtil.getPageDictionaryNew('EMR-liver-PresentIllnessHistory-IllThis');
+	//初始化公共字典值
+	$.each(dict,function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==0){
+				tr.hide();
+			}else{
+				tr.show();
+			}
+	
+			$('input[type="radio"]').each(function(){
+				$(this).attr("disabled",true);  
+			});
+			$(this).parent().parent().find('input[type="radio"]').attr("disabled",false);  
+		});
+	});
+	$('input[name="causesFlag"]').unbind('click');
+	$('input[name="causesFlag"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().next().show();
+		}else if($(this).val()==2){
+			$(this).parent().parent().next().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+		$('input[type="radio"]').each(function(){
+			$(this).attr("disabled",true);  
+		});
+		$(this).parent().parent().find('input[type="radio"]').attr("disabled",false);  
+	});
+	//确定事件
+	$('#ok-btn').click(function(){
+			var value = FormUtil.getFormValues('form');
+			var oldOperation = JSON.stringify(value);
+			var rst = "";
+			rst = Compose(value);
+			if(rst.length > 0){
+				rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hideAidsHis();parent.symptomInfoIfr('casesType.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+				var iframe = parent.document.getElementById('aidsHistory');
+				iframe.contentWindow.itemValue = rst;
+				if(iframe.contentWindow.dbclickedSpan){
+					iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+				}else{
+					iframe.contentWindow.setReturnValue();
+				}
+			}
+			backToPreIllWindow();
+	});
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showAidsHis();	
+}
+	
+function Compose(value){
+	var rst='';
+	var temp='';
+	var leftInputItem = '';
+	var rightInputItem = '';
+	
+	rst+=value.time.length>0?value.time:'';
+	temp=getRowValue('timeUnit',value.timeUnit);
+	rst+=temp.length>0?temp:'';
+	temp=getRowValue('timeUnitSuffix',value.timeUnitSuffix);
+	rst+=temp.length>0?temp:'';
+	leftInputItem = '<input name="illTime" type="text" />';
+	rightInputItem = '<input name="illTime" type="text" />';
+	if($('input[name="illTime"]').size() > 0){
+		$('input[name="illTime"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="illTime"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst = leftInputItem + rst + rightInputItem;
+	
+	leftInputItem = '<input name="otherCauses" type="text" />';
+	rightInputItem = '<input name="otherCauses" type="text" />';
+	if($('input[name="otherCauses"]').size() > 0){
+		$('input[name="otherCauses"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="otherCauses"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.otherTimeCausesFlag&&value.otherTimeCausesFlag!=0){
+		rst+=leftInputItem + value.otherTimeCauses + rightInputItem;
+	}
+	
+	if(value.medicalFind&&value.medicalFind!=0){
+		rst+=$("#medicalquestionDesc").val();
+	}
+	
+	leftInputItem = '<input name="illCauses" type="text" value=""  />';
+	rightInputItem = '<input name="illCauses" type="text" value="后"  />';
+	if($('input[name="illCauses"]').size() > 0){
+		$('input[name="illCauses"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="illCauses"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.causesFlag&&value.causesFlag!=0){             
+		temp=getRowValue('causesFlag',value.causesFlag); 
+		if(value.causes != "" && temp!='无明显诱因'){
+			temp=leftInputItem + value.causes + rightInputItem;
+			rst+=temp;
+		}	
+	}
+	
+	leftInputItem = '<input name="illCauses0" type="text" value="" />';
+	rightInputItem = '<input name="illCauses0" type="text" value=""/>';
+	if($('input[name="illCauses0"]').size() > 0){
+		$('input[name="illCauses0"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="illCauses0"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	if(value.causesFlag&&value.causesFlag==0){             
+		temp=getRowValue('causesFlag',value.causesFlag);
+		temp=leftInputItem + temp + rightInputItem;
+		rst+=temp;
+	}
+	return rst;
+}
+	
+function setBodyCheck(){
+	if($('#medicalquestionDesc').val() == ""){
+		$('#medicalquestionDesc').val('在'+$('#medicalexperunit').val()+'体检时发现');
+	}
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+</head>
+<body>
+<div id="toolbar" style="text-align:right;width:800px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<form>
+<table id="table-con" width="800" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr style="display:none">
+		<td class="t1" width="100" align="right">发病时间：</td>
+		<td class="t2" width="500"><input name="time" type="text" class="text" style="width:80px"/>
+					   <input name="timeUnit" type="text" class="select" style="width:60px"/>
+					   <input name="timeUnitSuffix" type="text" class="select" style="width:60px"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100" align="right">发病诱因：</td>
+		<td class="t2">
+			<input type="radio" name="causesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="causes" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="100" align="right">体检时发现：</td>
+		<td class="t2">
+			<input type="radio" name="medicalFind" value="0"/>无
+			<input type="radio" name="medicalFind" value="1" />有
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class=="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="80">体检单位：</td>
+					<td width="*"><input type="text" name="medicalexperunit" id="medicalexperunit" class="text" /></td>
+				</tr>
+				<tr>							
+					<td class="t3" valign="top">体检结果：</td>
+					<td><textarea name="medicalquestionDesc" id="medicalquestionDesc" class="textarea" onclick="setBodyCheck();"></textarea></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td style="color:red">如在"体检结果"框内输入内容，请在最后加标点</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr name="otherCauses">
+		<td class="t1" width="100" align="right">其它原因发病：</td>
+		<td class="t2">
+			<input type="radio" name="otherTimeCausesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden" name="otherCauses0">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="otherTimeCauses" class="textarea"></textarea></br><span style="color:red;">注：如在本编辑框内输入内容，请在最后加标点</span></td>
+	</tr>
+</table>
+</form>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

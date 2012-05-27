@@ -1,0 +1,564 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>组合项目</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<style type="text/css">
+	 .redstyle{color:red;}
+	 .blackstyle{color:black;}
+	 .icon-none{display:none  !important}
+     input{
+		border:none;
+		font-size:14px;
+		font-family:'宋体';	
+		width:14px;
+	 }
+	</style>
+
+	<script type="text/javascript">
+		var mainSymptomInfo = ['乏力', '厌油', '纳差', '反酸', '嗳气', '恶心', '呕吐', '呕血', '腹胀', '腹痛', '腹泻', '水肿', '发热', '黄染', '尿液改变', '大便改变', '神志改变', '行为异常'];
+		var dbclickedSpan = null;
+		var oldOperations = parent.getOldOperations();
+		var retmainSymptomInfo = '';
+		var retmainSymptomArray = [];
+		var itemName = "";
+		var itemValue = "";
+		var itemreturnValue = null;
+		var textAreaValue = '';
+		var symptomInfo;
+		var retToPreMainSymptomInfo = '';
+		var symptomArray = new Array();//存放导入的组合项目值
+		var store;
+		var addNo=0;//病人移除列表用，标志用户往列表中增加过几次，不包括移除操作
+		var url = App.App_Info.BasePath+'/InHospitalCase/PresentHistoryActionNew.do?method=getPresentHistory';
+		var isChange = 0;
+		var panel=new Ext.tree.TreePanel({
+			title:'',
+			height:300,
+			autoScroll:true,
+			containerScroll:true,
+			copyNode:null,					
+			loader: new Ext.tree.TreeLoader({dataUrl:url}),
+			root:{
+				nodeType:'async',
+				text:'现病史',
+				draggable:false,
+				itemName:'',
+				id:-1
+			},
+			useArrows:true,
+			rootVisible:false,
+			listeners:{
+				render:function(){
+					//this.getRootNode().expand();
+					this.expandAll();
+				},						
+				click:function(_node,_e){
+					itemName = _node.text;
+					if(_node.isLeaf()){
+						treeNodeClick(_node);
+					}
+					if(itemName == "发病情况"){
+						isChange = 1;					
+						panel.getRootNode().reload();
+						this.expandAll();
+					}		
+				}
+			}
+		});
+		panel.loader.on("beforeload", function(treeLoader, node){treeLoader.baseParams.isChange = isChange;}); 
+		
+		Ext.onReady(function(){
+			var sm=new Ext.grid.CheckboxSelectionModel({}); 
+			var cm=new Ext.grid.ColumnModel([	
+				new Ext.grid.RowNumberer(),
+				sm,			
+//				{header:'序号',dataIndex:'serialNo'},
+				{header:'字段',dataIndex:'symptomItem',width:160}
+			]);
+			symptomInfo = Ext.data.Record.create([
+				{name:'serialNo'},
+				{name:'symptomItem'}
+			]);
+			store=new Ext.data.Store({
+				proxy:new Ext.data.MemoryProxy(),
+				reader:new Ext.data.ArrayReader({},symptomInfo)
+			});
+			
+			var bodyPanel = new Ext.Viewport({
+				layout:"border",
+				collapsed:true,
+				collapsible:true,
+				items:[
+					{
+						region:"west",
+						id:"westPanel",
+						width:180,
+						title:"现病史字典树",
+						html:'<div style="width:240px;overflow:auto" id="div">'
+					},{
+						region:"center",
+						id:"centerPanel",
+						title:"确定前请在需分段字段前打勾",
+						width:200,
+						layout:"fit",			
+						tbar:[
+							{
+								xtype:"tbfill"
+							},{
+								pressed:true,
+								text:'从列表中移除',
+								handler:function(){
+									removeFromList();
+								}
+							}
+						],
+						items:[
+							{
+								xtype: "grid",
+								id:"symptomItemList",									
+								sm:sm,
+								store:store,
+							    cm:cm,
+								autoScroll:true,
+								listeners:{
+									click:function(){
+										$('span').addClass('blackstyle');
+										var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+										if(rows.length > 0){
+											$('span[name="' + rows[0].data.serialNo +'"]').removeClass('blackstyle');
+											$('span[name="' + rows[0].data.serialNo +'"]').addClass('redstyle');		
+										}									
+									}		
+								}
+							}
+						]
+					},{
+						region:"east",
+						id:"eastPanel",
+						xtype:"panel",
+						width:480,
+						title:"现病史组合内容",
+						autoScroll:true,
+						tbar:[
+							{
+								xtype:"tbfill"
+							},{
+								pressed:true,
+								text:'预览',
+								handler:function(){
+									var finalResult = showFinalResult();
+									parent.setRetValue('', finalResult);
+								}
+							},{
+								xtype:"tbfill"
+							},{
+								pressed:true,
+								text:'确定',
+								handler:function(){
+									setPreHistorySymptom();
+									if(saveOldOperations() == -1)return;
+									var finalResult = showFinalResult();
+									parent.setRetValue(oldOperations, finalResult);
+									parent.content = finalResult;
+									parent.isSave = 'true';
+									parent.destroyPerHis();
+								}
+							},{
+								xtype:"tbseparator"
+							},{
+								pressed:true,
+								text:'取消',
+								handler:function(){
+									parent.setRetValue('', parent.content);
+									parent.destroyPerHis();
+								}
+							}
+						],
+						html:'<div id="sysmptomContext" style="overflow:auto;"></div>'+
+							'<textarea id="finalResult" style="display:none;" readonly></textarea>'
+					}
+				]
+			});
+			Ext.getCmp('symptomItemList').setHeight($(window).height()-50);
+			panel.render('div');
+			panel.setHeight($(window).height());
+			
+			if(oldOperations != ""){
+				setOldOperations();
+  			}
+  			
+  			var max = 0;
+  			for(var i = 0; i < store.getCount(); i++){
+  				var record = store.getAt(i);
+				if(record.get('serialNo') > record.get('serialNo')){
+					max = record.get('serialNo');
+				}else{
+					max = record.get('serialNo');
+				}
+			}
+  			addNo = max;
+		});
+
+		function saveOldOperations(){
+			oldOperations = "";
+			var uncheckedInfo = "";
+			for(var i = 0; i < mainSymptomInfo.length; i++){
+				if(retmainSymptomInfo.search(mainSymptomInfo[i]) == -1){
+					uncheckedInfo += '“' + mainSymptomInfo[i] + '”、';
+				}
+			}
+			if(uncheckedInfo.length > 0){
+				uncheckedInfo = uncheckedInfo.substr(0, uncheckedInfo.length - 1);
+				alert("主要症状中的" + uncheckedInfo + "未填写！请完整填写主要症状信息！");
+				return -1;
+			}
+			store.each(function(symptomInfo){
+				oldOperations = oldOperations + "{serialNo:'" +  symptomInfo.get('serialNo') + "',symptomItem:'" + symptomInfo.get('symptomItem') + "'}@*^@";
+			});
+			if(oldOperations != ""){
+				oldOperations = oldOperations.substr(0, oldOperations.length - 4) + "#~$#";
+			}	
+												
+			for(var j = 0; j < symptomArray.length; j = j + 3){
+				oldOperations = oldOperations + symptomArray[j] + "@*^@" + symptomArray[j+1] + "@*^@" + symptomArray[j+2] + "@*^@";
+			}
+			if(symptomArray.length != 0){
+				oldOperations = oldOperations.substr(0, oldOperations.length - 4) + "#~$#";
+			}
+									
+			for(var k = 0; k < retmainSymptomArray.length; k = k + 2){
+				oldOperations = oldOperations + retmainSymptomArray[k] + "@*^@" + retmainSymptomArray[k+1] + "@*^@";
+			}
+									
+			if(oldOperations != ""){
+				oldOperations = oldOperations.substr(0, oldOperations.length - 4);
+			}
+			return 1; 
+		}
+		
+		function setOldOperations(){
+			if(oldOperations != ""){
+				var arr = oldOperations.split("#~$#");
+	  			var temp = arr[0];
+	  			var _arr = temp.split("@*^@");
+				var i = 0;
+	  			for(; i < _arr.length; i++){
+	  				var obj = eval('(' + _arr[i] + ')');
+	  				store.add(new symptomInfo(obj));
+	  			}
+	  			
+	  			temp = arr[1];
+	  			_arr = temp.split("@*^@");
+	  			for(i = 0; i < _arr.length; i = i + 3){
+	  				symptomArray.push(_arr[i], _arr[i+1], _arr[i+2]);
+	  			}
+					
+				temp = arr[2];
+	  			_arr = temp.split("@*^@");
+	  			for(i = 0; i < _arr.length; i = i + 2){
+	  				retmainSymptomArray.push(_arr[i], _arr[i+1]);
+					retmainSymptomInfo += _arr[i+1];
+	  			} 
+					
+	  			//把相应的信息放入“现病史组合内容”中
+				textAreaValue = symptomArrayToString(symptomArray);	
+				$('#sysmptomContext').html(textAreaValue);
+				$('#sysmptomContext').find('input').each(function(){
+					$(this).keyup(function(){
+						checkLength(this);
+					});
+					checkLength(this);
+						
+					$(this).change(function(){
+						changeText(this);
+					});
+				});		
+			}
+		}
+			
+		function treeNodeClick(_node){
+			parent.hidePreHis();
+			itemName = _node.text;
+			parent.symptomInfoIfr(_node.attributes.targetPage, itemName);
+		}
+		function removeFromList(){
+			var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();											
+			for(var i = 0; i < rows.length; i++){
+				var j;
+				for(j = 0; j < symptomArray.length; j = j + 3){
+					if(symptomArray[j] == rows[i].data.serialNo && symptomArray[j + 1] == rows[i].data.symptomItem) break;
+				}
+				if(j != symptomArray.length){
+					symptomArray.splice(j, 3);												
+				}
+				store.remove(rows[i]);
+												
+				var k = 0;
+				for(; k < retmainSymptomArray.length; k = k + 2){
+					if(retmainSymptomArray[k] == rows[i].data.serialNo) break;
+				}
+				retmainSymptomArray.splice(k, 2);
+			}
+											
+			retmainSymptomInfo = "";
+			i = 0;
+			for(; i < retmainSymptomArray.length; i = i + 2){
+				retmainSymptomInfo += retmainSymptomArray[i+1];
+			}
+			Ext.getCmp("symptomItemList").view.refresh();
+			textAreaValue = symptomArrayToString(symptomArray);		
+			$('#sysmptomContext').html(textAreaValue);
+			$('#sysmptomContext').find('input').each(function(){
+				$(this).keyup(function(){
+					checkLength(this);
+				});
+				checkLength(this);
+				$(this).change(function(){
+					changeText(this);
+				});
+			});	
+		}
+			
+		function symptomArrayToString(symptomArray){
+			var str = "";
+			for(var i = 0; i < symptomArray.length; i = i + 3){
+				str = str + symptomArray[i+2];
+			}
+			return str;
+		}
+		
+		function setReturnValue(span){
+			var spanProperty = "";
+			if(span){
+				spanProperty = itemValue.replace('onclick', 'name="' + $(span).attr("name") + '" onclick');
+				//获得所选记录在数组中的位置
+				var _pos;
+				for(_pos = 0; _pos < store.getCount(); _pos++){
+					if(store.getAt(_pos).get("serialNo") == $(span).attr("name")) break;
+				}
+				symptomArray.splice(_pos * 3 + 2, 1);
+				symptomArray.splice(_pos * 3 + 2, 0, spanProperty);
+				textAreaValue = symptomArrayToString(symptomArray);	
+				
+				$('#sysmptomContext').html('');
+				$('#sysmptomContext').html(textAreaValue);
+					
+				$('#sysmptomContext').find('input').each(function(){
+					$(this).keyup(function(){
+						checkLength(this);
+					});
+					checkLength(this);
+					
+					$(this).change(function(){
+						changeText(this);
+					});
+				});
+				
+				if(itemName == "主要症状"){
+					var i = 0;
+					for(; i < retmainSymptomArray.length; i = i + 2){
+						if(retmainSymptomArray[i] == $(span).attr("name")) break;
+					}
+					retmainSymptomArray.splice(i, 2);
+					retmainSymptomArray.push($(span).attr("name"), retToPreMainSymptomInfo);
+					retmainSymptomInfo = "";
+					for(var j = 0; j < retmainSymptomArray.length; j = j + 2){
+						retmainSymptomInfo += retmainSymptomArray[j+1];
+					}
+				}	
+				return;
+			}
+			addNo = addNo + 1;																									
+			//在中间的记录列表中添加相应的信息
+			var symItem = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+			var index = store.indexOf(symItem[0]);
+			
+			spanProperty = itemValue.replace('onclick', 'name="' + addNo + '" onclick');				
+			if(index != -1){
+				//获得所选记录在数组中的位置
+				var pos;
+				for(pos = 0; pos < symptomArray.length; pos++){
+					if(symptomArray[pos] == symItem[0].data.serialNo && symptomArray[pos + 1] == symItem[0].data.symptomItem) break;
+				}
+				//把导入的数据放入数组的指定位置处,一次向数组添加两个元素，分别是“序号”、“字段”和相应的需要在右边文本框中显示的信息
+				symptomArray.splice(pos, 0, addNo, itemName, spanProperty);
+				store.insert(index, new symptomInfo({serialNo:addNo,symptomItem:itemName}));
+			}else{
+				//把导入的数据放入数组中,一次向数组添加两个元素，分别是“序号”、“字段”和相应的需要在右边文本框中显示的信息						
+				symptomArray.push(addNo, itemName, spanProperty);	
+								
+				store.add(new symptomInfo({serialNo:addNo,symptomItem:itemName}));
+			}
+			if(itemName == "主要症状"){
+				retmainSymptomArray.push(addNo, retToPreMainSymptomInfo);
+				retmainSymptomInfo = "";
+				for(var k = 0; k < retmainSymptomArray.length; k = k + 2){
+					retmainSymptomInfo += retmainSymptomArray[k+1];
+				}
+			}
+			Ext.getCmp("symptomItemList").view.refresh();
+			//把相应的信息放入“现病史组合内容”中
+			textAreaValue = symptomArrayToString(symptomArray);
+			$('#sysmptomContext').html('');
+			$('#sysmptomContext').html(textAreaValue);
+			
+			$('#sysmptomContext').find('input').each(function(){
+				$(this).keyup(function(){
+					checkLength(this);
+				});
+				checkLength(this);
+				
+				$(this).change(function(){
+					changeText(this);
+				});
+			});
+			
+		}
+		
+		function checkLength(inputInfo) {
+			var inputLen = $(inputInfo).val().length;
+			if(inputLen > 0){
+				$(inputInfo).width(inputLen * 14);
+			}else{
+				$(inputInfo).width(inputLen * 14 + 14);
+			}
+		}
+
+		function changeText(inputChanged){   
+			var spanProperty = $(inputChanged).parent();
+			spanProperty.wrap("<div id='spanwrap'></div>");
+			spanProperty = $('#spanwrap').html();
+			$('#spanwrap').replaceWith($('#spanwrap').html());
+			//获得所选记录在数组中的位置
+			var _pos;
+			for(_pos = 0; _pos < store.getCount(); _pos++){
+				if(store.getAt(_pos).get("serialNo") == $(inputChanged).parent().attr("name")) break;
+			}
+			symptomArray.splice(_pos * 3 + 2, 1);
+			symptomArray.splice(_pos * 3 + 2, 0, spanProperty);
+			
+			$('#sysmptomContext').find('input').each(function(){
+				$(this).keyup(function(){
+					checkLength(this);
+				});
+				checkLength(this);
+				
+				$(this).change(function(){
+					changeText(this);
+				});
+			});
+		}
+			
+		function showFinalResult(){
+			var finalResult = '  ';
+			var flag = true;
+			flag = !Ext.getCmp("symptomItemList").getSelectionModel().isSelected(0);
+			var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+			$('#sysmptomContext').children().each(function(){
+				var children = this.childNodes;
+				var text = '';
+				for(var i =0 ; i < children.length; i++){
+					if(children[i].nodeName == "SPAN") continue;
+					if(children[i].nodeType==3){
+						text+=children[i].nodeValue;
+					}else if(children[i].nodeType==1){
+						text+=children[i].value;
+					}
+				}
+				
+				var j = 0;											
+				for(; j < rows.length; j++){
+					if(rows[j].data.serialNo == $(this).attr('name')) break;
+				}
+				if(flag && j < rows.length){
+					finalResult += '\n' + '  ' + text;
+				}else{
+					finalResult += text;
+				}
+				flag = true;
+			});
+			return finalResult;
+		}
+				
+		function setPreHistorySymptom(){
+			var prehis_cases = [];
+			var prehis_mainSymptom = [];
+			var prehis_otherPositive = [];
+			var prehis_negaSymptom = [];
+			var prehis_sideSysptom = [];
+			var prehis_treat = [];
+			var prehis_sysptomEvolution = [];
+			var prehis_currentStatus = [];
+			var prehis_otherDisease = [];
+			$('#sysmptomContext').children().each(function(){
+				var _addNo = $(this).attr('name');
+				var _pos = 0;
+				for(; _pos < store.getCount(); _pos++){
+					if(store.getAt(_pos).get("serialNo") == _addNo) break;
+				}
+				
+				var _symptomObj = null;
+				var _symptomName = store.getAt(_pos).get("symptomItem");
+				if(_symptomName == "重要阴性症状"){
+					_symptomObj = JSON.parse('{"negaSysptom":"' + $(this).find('SPAN').eq(0).text() + '"}');
+				}else if(_symptomName == "症状病情演变"){
+					_symptomObj = JSON.parse('{"evolution":"' + $(this).find('SPAN').eq(0).text() + '"}');
+				}else{
+					_symptomObj = JSON.parse($(this).find('SPAN').eq(0).text());
+				}
+				
+				if(_symptomName == "发病情况"){
+					prehis_cases.push(_symptomObj);
+					parent.prehis_cases = prehis_cases;
+				}
+				if(_symptomName == "主要症状"){
+					prehis_mainSymptom.push(_symptomObj);
+					parent.prehis_mainSymptom = prehis_mainSymptom;
+				}
+				if(_symptomName == "次要症状"){
+					prehis_otherPositive.push(_symptomObj);
+					parent.prehis_otherPositive = prehis_otherPositive;
+				}
+				if(_symptomName == "目前状况"){
+					prehis_currentStatus.push(_symptomObj);
+					parent.prehis_currentStatus = prehis_currentStatus;
+				}
+				if(_symptomName == "伴随症状"){
+					prehis_sideSysptom.push(_symptomObj);
+					parent.prehis_sideSysptom = prehis_sideSysptom;
+				}
+				if(_symptomName == "其它疾病情况"){
+					prehis_otherDisease.push(_symptomObj);
+					parent.prehis_otherDisease = prehis_otherDisease;
+				}
+				if(_symptomName == "重要阴性症状"){
+					prehis_negaSymptom.push(_symptomObj);
+					parent.prehis_negaSymptom = prehis_negaSymptom;
+				}
+				if(_symptomName == "诊疗经过"){
+					prehis_treat.push(_symptomObj);
+					parent.prehis_treat = prehis_treat;
+				}
+				if(_symptomName == "症状病情演变"){
+					prehis_sysptomEvolution.push(_symptomObj);
+					parent.prehis_sysptomEvolution = prehis_sysptomEvolution;
+				}
+			});
+		}
+	</script>
+
+  </head>
+  
+  <body>
+  </body>
+</html>

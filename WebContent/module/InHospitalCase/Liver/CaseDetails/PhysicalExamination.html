@@ -1,0 +1,1668 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>体格检查(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../Js/validData.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-PhysicalExamination';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	//addBlur(FormUtil.getFormValues('form'));
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PhysicalExamination'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//下拉框
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Text2Checkbox
+	$('input.checkbox[type="text"]').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//Radio事件
+	RadioClick();
+	//checkbox事件
+	$('input[type="checkbox"]').filter(function(){
+		return $(this).parent().parent().next().hasClass('hidden');
+	}).click(function(){
+		if(this.checked){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	
+	/*image事件*/
+	$('*[name="image"]').click(function(){
+		$(this).parent().parent().next().show();
+	});
+	
+	/*确定事件*/
+	$('input[class="btn_mouseout ok"]').click(function(){
+		$(this).parent().parent().parent().parent().parent().parent().parent().hide();
+		/*执行指定名称的函数*/
+		eval(this.name+'()');
+	});
+	
+	/*所有取消按钮操作*/
+	$('input[class="btn_mouseout cancel"]').click(function(){
+		$(this).parent().parent().parent().parent().parent().parent().parent().hide();
+	});
+}
+	
+	/*淋巴结与淋巴管-浅表淋巴结肿大-组合值*/
+	function linbajie_ok(){
+		var rst = '';
+		var temp = '';
+		temp = $('input[name="linbajie_fangwei"][checked]').val();
+		temp = getRowValue('linbajie_fangwei',temp);
+		rst = temp.length>0 ? temp : '';
+		temp = $('input[name="linbajie_buwei"]').val();
+		rst += temp.length> 0 ? temp : '';
+		temp = $('input[name="linbajie_shumu"]').val();
+		rst += temp.length>0 ? '触及' + temp + '个淋巴结肿大，' : '';
+		temp = $('input[name="linbajie_zhijing"]').val(); 
+		rst += temp.length > 0 ? '最大为' +  temp + 'mm，' : '';
+		temp = $('input[name="linbajie_zhidi"]').val();
+		rst += temp.length > 0 ? temp + '，' : '';
+		temp = $('input[name="linbajie_yidong"]').val();
+		rst += temp.length > 0 ? '移动度' + temp + '，' : '';
+		temp = $('input[name="linbajie_chutong"]').val();
+		if(temp.length>0){
+			if(temp =='无'){
+				rst += '无触痛，';
+			}else{
+				rst += temp + '触痛，'
+			}
+		}
+		temp = $('input[name="linbajie_guan"][checked]').val();
+		if(temp=='0'){
+			rst += '无瘘管，';
+		}else if(temp=='1'){
+			rst +='有瘘管，'
+		}
+		temp = $('input[name="linbajie_fenmiwu"][checked]').val();
+		if(temp == '0'){
+			rst += '无分泌物，';
+		}else if(temp=='1'){
+			rst +='有分泌物，';
+		}
+		temp = $('input[name="linbajie_banhen"][checked]').val();
+		if(temp=='0'){
+			rst +='无瘢痕，';
+		}else if(temp=='1'){
+			rst +='有瘢痕，';
+		}
+		if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="linbajie_zhongdaDesc"]').val(rst);
+	}
+ 	/*===08-31 颈部-甲状腺肿大组合值*/
+    function neck_ok(){
+    	var json = FormUtil.getFormValues('#neck_jia');
+    	var temp = '';
+    	var rst = '';
+    	temp = getRowValue('neck_chengdu',json.neck_chengdu);
+    	rst = temp.length > 0 ? temp + '，' : '';
+    	temp = getRowValue('neck_weizhi',json.neck_weizhi);
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = getRowValue('neck_xingzhi',json.neck_xingzhi);
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = getRowValue('neck_zhidi',json.neck_zhidi);
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = getRowValue('neck_jiaother',json.neck_jiaother);
+    	rst += temp.length > 0 ? '有' + temp + '，' : '';
+    	if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="neck_jiazhxDesc"]').val(rst);
+    }
+    
+    /*腹部-触诊-包块组合值*/
+    function baokuai_ok(){
+    	var json = FormUtil.getFormValues('#baokuai');
+    	var temp = '';
+    	var rst = '';
+    	temp = json.baokuai_shumu;
+    	rst = temp.length >0 ? json.baokuai_weizhi + '触及' + temp + '个包块，' : '';
+    	temp = json.baokuai_zhijing;
+    	rst += temp.length >0 ? '最大直径' + temp + 'mm，' : '';
+    	temp = getRowValue('baokuai_zhidi',json.baokuai_zhidi);
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = getRowValue('baokuai_yidong',json.baokuai_yidong);
+    	rst += temp.length > 0 ? '移动度' + temp + '，' : '';
+    	temp = getRowValue('baokuai_chutong',json.baokuai_chutong);
+    	if(temp.length > 0){
+    		if(temp=='无'){
+    			rst += '无触痛，';
+    		}else{
+    			rst += temp + '触痛，';
+    		}
+    	}
+    	if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="fubu_baokuaiDesc"]').val(rst);
+    }
+    /*触诊-肝脏组合值*/
+    function ganzang_ok(){
+    	var temp = '';
+    	var rst = '';
+    	temp = $('input[name="ganzang_leixia"]').val();
+    	rst = temp.length > 0 ? '肋下' + temp + 'cm' + '，' : '';
+    	temp = $('input[name="ganzang_jiantuxia"]').val();
+    	rst += temp.length > 0 ? '剑突下' + temp + 'cm' + '，' : '';
+    	temp = getRowValue('ganzang_zhidi',$('input[name="ganzang_zhidi"]').val());
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = $('input[name="ganzang_yatong"][checked]').val();
+    	if(temp == '0'){
+    		rst += '无压痛，';
+    	}else if(temp == '1'){
+    		rst += '有压痛，';
+    	}
+    	temp = $('input[name="ganzang_biaomain"][checked]').val();
+    	if(temp == '0'){
+    		rst += '表面光滑，';
+    	}else if(temp == '1'){
+    		rst += '表面不平，';
+    	}
+    	temp = $('input[name="ganzang_bianyuan"][checked]').val();
+    	if(temp == '0'){
+    		rst += '边缘锐利，';
+    	}else if(temp == '1'){
+    		rst += '边缘圆钝，';
+    	}
+    	if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="fubu_ganzangDesc"]').val(rst);
+    }
+    
+    function dannang_ok(){
+    	var temp = $('input[name="dannang_yadong"][checked]').val();
+    	if(temp == '0'){
+    		$('textarea[name="fubu_dannangDesc"]').val('无压痛。');
+    	}else if(temp == '1'){
+    		$('textarea[name="fubu_dannangDesc"]').val('有压痛。');
+    	}
+    }
+    /*腹部-触诊-脾组合值*/
+    function pi_ok(){
+    	var temp = '';
+    	var rst = '';
+    	temp = $('input[name="pi_leixia"]').val();
+    	rst = temp.length > 0 ? '肋下' + temp + 'cm' + '，' : '';
+    	temp = $('input[name="pi_jiantuxia"]').val();
+    	rst += temp.length > 0 ? '剑突下' + temp + 'cm' + '，' : '';
+    	temp = getRowValue('pi_zhidi',$('input[name="pi_zhidi"]').val());
+    	rst += temp.length > 0 ? temp + '，' : '';
+    	temp = $('input[name="pi_yatong"][checked]').val();
+    	if(temp == '0'){
+    		rst += '无压痛，';
+    	}else if(temp == '1'){
+    		rst += '有压痛，';
+    	}
+    	temp = $('input[name="pi_biaomain"][checked]').val();
+    	if(temp == '0'){
+    		rst += '表面光滑，';
+    	}else if(temp == '1'){
+    		rst += '表面不平，';
+    	}
+    	temp = $('input[name="pi_bianyuan"][checked]').val();
+    	if(temp == '0'){
+    		rst += '边缘锐利，';
+    	}else if(temp == '1'){
+    		rst += '边缘圆钝，';
+    	}
+    	if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="fubu_piDesc"]').val(rst);
+    }
+    /*腹部-触诊-肾组合值*/
+    function shen_ok(){
+    	var temp = '';
+    	var rst = '';
+    	temp = $('input[name="shen_weizhi"]').val();
+    	rst = temp.length > 0 ? temp + '，' : '';
+    	temp = $('input[name="shen_yatong"][checked]').val();
+    	if(temp == '0'){
+    		rst += '无压痛，';
+    	}else if(temp == '1'){
+    		 rst += '有压痛，';
+    	}
+    	temp = $('input[name="shen_shuniaoguan"][checked]').val();
+    	if(temp == '0'){
+    		rst += '无输尿管压痛点，';
+    	}else if(temp == '1'){
+    		rst +='有输尿管压痛点，'
+    	}
+    	if(rst.length > 0){
+			rst = rst.substr(0,rst.length-1) + '。';
+		}
+		$('textarea[name="fubu_shenDesc"]').val(rst);
+    }
+ 		
+//radio事件
+function RadioClick(){
+	//Show&Hide
+	var radios='eyes_jiaomo,eyes_tongkong,eyes_zhijie,eyes_jianjie,'+
+			   'ear_erkuo,nose_waiguan,fei_huxiyin,zhouweixg_zheng,'+
+			   'shengzhiqi,shenjing_xijian,shenjing_genjian,shenjing_jili,shenjing_jizhang';
+	$.each(radios.split(','),function(){
+		$('input[name="'+this+'"]').click(function(){
+			if(this.value==1){
+				$(this).parent().parent().next().show();
+			}else{
+				$(this).parent().parent().next().hide();
+			}
+		});
+	});
+	//心尖搏动位置
+	$('input[name="xinz_bodongPosi"]').click(function(){
+		if(this.value==1){
+			$(this).parent().find('span').show();
+		}else{
+			$(this).parent().find('span').hide();
+		}
+	});
+	//肌力、肌张力
+	$('input[name="shenjing_jili"],input[name="shenjing_jizhang"]').click(function(){
+		if(this.value==1){
+			$(this).parent().parent().next().show();
+			$(this).parent().parent().next().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+			$(this).parent().parent().next().next().hide();
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PhysicalExamination_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					$('input[type="checkbox"]').each(function(){
+						if(this.name&&this.name.length>0){
+							if(_json[this.name]==1){
+								$(this).attr('checked',true);
+								$(this).parent().parent().next().show();	
+							}else{
+								$(this).attr('checked',false);
+							}
+						}
+					});
+					var radios='eyes_jiaomo,eyes_tongkong,eyes_zhijie,eyes_jianjie,'+
+					   'ear_erkuo,nose_waiguan,fei_huxiyin,zhouweixg_zheng,'+
+					   'shengzhiqi,shenjing_xijian,shenjing_genjian,shenjing_jili,'+
+					   'shenjing_jizhang,xinz_bodongPosi,shenjing_jili,shenjing_jizhang';
+					 $.each(radios.split(','),function(){
+					 	$('input[name="'+this+'"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					 });
+				}else{
+					setDefaultValue();
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function setDefaultValue(){
+	$('input.select').each(function(){
+		var value=$(this).attr('inputValue');
+		if(value){
+			return true;
+		}
+		var options=$(this).data('options');
+		if(options.length>0){
+			var value=options[0];
+			$(this).val(value[1]);
+			$(this).attr('inputValue',value[0]);
+		}
+	});
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.name&&this.name.length>0){
+			if(this.checked){
+				_values[this.name]=1;
+			}else{
+				_values[this.name]=0;
+			}
+		}
+	});
+	
+	if(ValidForm(_values,'form')== false)	return;
+
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PhysicalExamination_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+
+</script>
+<style type="text/css">
+body{
+	margin:0 0 50px;
+}
+fieldset{
+	display:block;
+	width:610px;
+	margin:5px 0 0 5px;
+	padding:5px 0;
+}
+fieldset legend{
+	font-size:14px;
+	color:#800040;
+}
+
+h1{
+	font-size:14px;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	padding-left:1em;
+}
+	.red{color:red}
+	.line{
+		border:none;
+		border-bottom:solid #000 1px;
+	}
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！&nbsp;&nbsp;带“□”不选默认为“阴性”。</span></p>
+<!--生命体征-->
+<fieldset>
+	<legend>生命体征</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>体温(℃)：</td>
+			<td class="t2" width="195"><input name="smtz_tiwen" type="text" class="text"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>血压(mmHg)：</td>
+			<td class="t2">
+				<input name="smtz_xueya" type="text" class="text line" style="width:40px;" maxlength="3" size="3"/><b>&nbsp;/&nbsp;</b>
+				<input name="smtz_xueya2" type="text" class="text line" style="width:40px;" maxlength="3" size="3"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>脉搏(次/分)：</td>
+			<td class="t2"><input name="smtz_maibo" type="text" class="text"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>呼吸(次/分)：</td>
+			<td class="t2"><input name="smtz_huxi" type="text" class="text"/></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--一般状况-->
+<fieldset>
+	<legend>一般状况</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>发育：</td>
+			<td class="t2" width="195">
+					<input name="ybzc_fayu" type="text" class="select"/><br/>
+					<input name="ybzc_fayu0" type="text" class="text hidden"/>
+			</td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>营养：</td>
+			<td class="t2"><input name="ybzc_yingyang" type="text" class="select"/><br/>
+					<input name="ybzc_yingyang0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>神志：</td>
+			<td class="t2"><input name="ybzc_shenzhi" type="text" class="select"/><br/>
+					<input name="ybzc_shenzhi0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>表情：</td>
+			<td class="t2"><input name="ybzc_biaoqing" type="text" class="select"/><br/>
+					<input name="ybzc_biaoqing0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>面容：</td>
+			<td class="t2"><input name="ybzc_mianrong" type="text" class="select"/><br/>
+					<input name="ybzc_mianrong0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>体位：</td>
+			<td class="t2"><input name="ybzc_tiwei" type="text" class="select"/><br/>
+					<input name="ybzc_tiwei0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>步态：</td>
+			<td class="t2"><input name="ybzc_butai" type="text" class="select"/><br/>
+					<input name="ybzc_butai0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>查体：</td>
+			<td class="t2"><input name="ybzc_chati" type="text" class="select"/><br/>
+					<input name="ybzc_chati0" type="text" class="text hidden"/></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--皮肤粘膜-->
+<fieldset>
+	<legend>皮肤粘膜</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>色泽：</td>
+			<td class="t2" width="195"><input name="pfnm_seze" type="text" class="select"/><br/>
+					<input name="pfnm_seze0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>温度与湿度：</td>
+			<td class="t2"><input name="pfnm_wenshi" type="text" class="select"/><br/>
+					<input name="pfnm_wenshi0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>弹性：</td>
+			<td class="t2"><input name="pfnm_tanxing" type="text" class="select"/><br/>
+					<input name="pfnm_tanxing0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>毛发分布：</td>
+			<td class="t2"><input name="pfnm_maofa" type="text" class="select"/><br/>
+					<input name="pfnm_maofa0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肝掌：</td>
+			<td class="t2">
+				<input name="pfnm_ganzhang" value=0 type="radio" class="radio"/>阴性
+				<input name="pfnm_ganzhang" value=1 type="radio" class="radio"/>阳性
+			</td>
+			<td class="t1" width="105"><span class="red">*</span>毛细血管扩张征：</td>
+			<td class="t2">
+				<input name="pfnm_maoxi" value=0 type="radio" class="radio" />阴性
+				<input name="pfnm_maoxi" value=1 type="radio" class="radio"/>阳性
+			</td>
+		</tr>
+		<!--========-->
+		<tr>
+			<td class="t1"><span class="red">*</span> 蜘蛛痣：</td>
+			<td class="t2" colspan="3">
+				<input name="pfnm_zhizhu" value=0 type="radio" class="radio" />无
+				<input name="pfnm_zhizhu" value=1 type="radio" class="radio" />有
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">皮疹：</td>
+			<td class="t2" colspan="3"><input name="pfnm_pizhen" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="pfnm_pizhenDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">皮下出血：</td>
+			<td class="t2" colspan="3"><input name="pfnm_pixia" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="pfnm_pixiaDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">瘢痕：</td>
+			<td class="t2" colspan="3"><input name="pfnm_banhen" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="pfnm_banhenDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">水肿：</td>
+			<td class="t2" colspan="3"><input name="pfnm_shuizhong" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="pfnm_shuizhongDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="pfnm_qita" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="pfnm_qitaDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--淋巴结与淋巴管-->
+<fieldset>
+	<legend>淋巴结与淋巴管</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105">浅表淋巴结肿大：</td>
+			<td class="t2"><input name="linbajie_zhongda" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<textarea name="linbajie_zhongdaDesc" class="textarea"></textarea>
+				<!-- 09-01 -->
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="linbajie_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">方位：</td>
+						<td class="t2" width="150">
+							<input type="radio" name="linbajie_fangwei" class="radio dict-fld"/>
+						</td>
+						<td class="t1" width="70">&nbsp;</td>
+						<td class="t2" width="150">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">部位：</td>
+						<td class="t2" colspan="3">
+							<input type="text" class="checkbox" name="linbajie_buwei" style="width:92%"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">数目：</td>
+						<td class="t2"><input type="text" class="text" name="linbajie_shumu"/>个</td>
+						<td class="t1">最大直径：</td>
+						<td class="t2"><input type="text" class="text" name="linbajie_zhijing" />mm</td>
+					</tr>
+					<tr>
+						<td class="t1">质地：</td>
+						<td class="t2"><input type="text" class="select" name="linbajie_zhidi"/></td>
+						<td class="t1">移动度：</td>
+						<td class="t2"><input type="text" class="select" name="linbajie_yidong"/></td>
+					</tr>
+					<tr>
+						<td class="t1">触痛：</td>
+						<td class="t2"><input type="text" class="select" name="linbajie_chutong"/></td>
+						<td class="t1">瘘管：</td>
+						<td class="t2">
+							<input  type="radio" class="radio" name="linbajie_guan" value="0"/>无
+							<input type="radio" class="radio" name="linbajie_guan" value="1"/>有
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">分泌物：</td>
+						<td class="t2">
+							<input  type="radio" class="radio" name="linbajie_fenmiwu" value="0"/>无
+							<input type="radio" class="radio" name="linbajie_fenmiwu" value="1"/>有
+						</td>
+						<td class="t1">瘢痕：</td>
+						<td class="t2">
+							<input  type="radio" class="radio" name="linbajie_banhen" value="0"/>无
+							<input type="radio" class="radio" name="linbajie_banhen" value="1"/>有
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">淋巴管／结炎：</td>
+			<td class="t2"><input name="linbajie_jieyan" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<p><span>发作特点：<input name="linbajie_jieyantd" type="radio" class="radio dict-fld" /></span>&nbsp;&nbsp;|&nbsp;&nbsp;伴全身性高热寒战：<input name="linbajie_jieyanbs" type="checkbox"/></p>
+			</td>
+		</tr>
+	</table>	
+</fieldset>
+<!--头部-->
+<fieldset>
+	<legend>头部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr><td colspan="4"><h1>头颅</h1></td></tr>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>头颅大小：</td>
+			<td class="t2" width="195"><input name="head_daxiao" type="text" class="select"/><br/>
+					<input name="head_daxiao0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>头颅畸形：</td>
+			<td class="t2" width="195"><input name="head_jixing" type="text" class="select"/><br/>
+					<input name="head_jixing0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="head_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="head_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>眼</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>眼睑：</td>
+			<td class="t2"><input name="eyes_yanjian" type="text" class="select"/><br/>
+					<input name="eyes_yanjian0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>结膜：</td>
+			<td class="t2"><input name="eyes_jiemo" type="text" class="select"/>
+					<input name="eyes_jiemo0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>角膜：</td>
+			<td class="t2" colspan="3">
+				<input name="eyes_jiaomo" value=0 type="radio" class="radio" />正常
+				<input name="eyes_jiaomo" value=1 type="radio" class="radio"/>异常</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="eyes_jiaomoDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>巩膜：</td>
+			<td class="t2"><input name="eyes_gongmo" type="text" class="select"/>
+					<input name="eyes_gongmo0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>眼球：</td>
+			<td class="t2"><input name="eyes_yanqiu" type="text" class="select"/><br/>
+					<input name="eyes_yanqiu0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>瞳孔：</td>
+			<td class="t2" colspan="3">
+				<input name="eyes_tongkong" value=0 type="radio" class="radio" />等圆等大
+				<input name="eyes_tongkong" value=1 type="radio" class="radio"/>不等大</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="eyes_tongkongDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>直接对光反射：</td>
+			<td class="t2" colspan="3">
+				<input name="eyes_zhijie" value=0 type="radio" class="radio" />正常
+				<input name="eyes_zhijie" value=1 type="radio" class="radio"/>异常</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="eyes_zhijieDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>间接对光反射：</td>
+			<td class="t2" colspan="3">
+				<input name="eyes_jianjie" value=0 type="radio" class="radio" />正常
+				<input name="eyes_jianjie" value=1 type="radio" class="radio"/>异常</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="eyes_jianjieDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="eyes_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="eyes_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>耳</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>耳廓：</td>
+			<td class="t2" colspan="3">
+				<input name="ear_erkuo" value=0 type="radio" class="radio" />正常
+				<input name="ear_erkuo" value=1 type="radio" class="radio"/>异常</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="ear_erkuoDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">外耳道分泌物：</td>
+			<td class="t2" colspan="3"><input name="ear_waier" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<p>位置：<input name="ear_waierPosi" type="radio" class="radio dict-fld" /></p>
+				<p>性质：<input name="ear_waierxingzhi" type="text" class="select" style="width:150px"/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="ear_waierxingzhi0" type="text" class="text hidden" style="width:150px;"/></p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>乳突压痛：</td>
+			<td class="t2"><input name="ear_rutu" type="text" class="select"/>
+					<input name="ear_rutu0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>听力粗试障碍：</td>
+			<td class="t2"><input rel="ear_rutu" name="ear_tingli" type="text" class="select"/>
+					<input name="ear_tingli0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="ear_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="ear_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>鼻</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>外观：</td>
+			<td class="t2" colspan="3">
+				<input name="nose_waiguan" value=0 type="radio" class="radio" />正常
+				<input name="nose_waiguan" value=1 type="radio" class="radio"/>异常</td>
+			
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="nose_waiguanDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>鼻中隔：</td>
+			<td class="t2" colspan="3"><input name="nose_zhongge" type="radio" class="radio dict-fld" /></td>
+		</tr>
+		<tr>
+			<td class="t1">鼻窦压痛：</td>
+			<td class="t2" colspan="3"><input name="nose_bidou" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><input name="nose_bidouPosi" type="text" class="checkbox" style="width:90%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="nose_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="nose_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>口</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>口唇：</td>
+			<td class="t2"><input name="mouth_kouchun" type="text" class="select"/><br/>
+					<input name="mouth_kouchun0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>口腔粘膜：</td>
+			<td class="t2"><input name="mouth_nianmo" type="text" class="select"/><br/>
+					<input name="mouth_nianmo0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>伸舌：</td>
+			<td class="t2"><input name="mouth_shenshe" type="text" class="select"/><br/>
+					<input name="mouth_shenshe0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>口腔气味：</td>
+			<td class="t2"><input name="mouth_qiwei" type="text" class="select"/><br/>
+					<input name="mouth_qiwei0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>牙龈：</td>
+			<td class="t2"><input name="mouth_yayin" type="text" class="select"/><br/>
+					<input name="mouth_yayin0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>齿列：</td>
+			<td class="t2"><input name="mouth_chilie" type="text" class="select"/><br/>
+					<input name="mouth_chilie0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>咽部：</td>
+			<td class="t2"><input name="mouth_yanbu" type="text" class="select"/><br/>
+					<input name="mouth_yanbu0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>扁桃体：</td>
+			<td class="t2"><input name="mouth_biantaoti" type="text" class="select"/><br/>
+					<input name="mouth_biantaoti0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>声音：</td>
+			<td class="t2"><input name="mouth_shenyin" type="text" class="select"/><br/>
+					<input name="mouth_shenyin0" type="text" class="text hidden"/></td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1">腮腺肿大：</td>
+			<td class="t2" colspan="3"><input name="saix_zhongda" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="saix_zhongdaDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="mouth_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="mouth_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--颈部-->
+<fieldset>
+	<legend>颈部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>抵触感：</td>
+			<td class="t2" width="195"><input name="neck_dichu" value=0 type="radio" class="radio" />无
+										<input name="neck_dichu" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>颈静脉：</td>
+			<td class="t2"><input name="neck_jingmai" type="text" class="select"/>
+					<input name="neck_jingmai0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>气管位置：</td>
+			<td class="t2"><input name="neck_qiguan" type="text" class="select"/>
+					<input name="neck_qiguan0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>颈动脉搏动：</td>
+			<td class="t2"><input name="neck_dongmai" type="text" class="select"/>
+					<input name="neck_dongmai0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*</span>肝颈静脉回流征：</td>
+			<td class="t2">
+				<input name="neck_jmhuiliu" value=0 type="radio" class="radio" />阴性
+				<input name="neck_jmhuiliu" value=1 type="radio" class="radio"/>阳性</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1">甲状腺肿大：</td>
+			<td class="t2" colspan="3"><input name="neck_jiazhx" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="neck_jiazhxDesc" class="textarea"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table id="neck_jia" width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="neck_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">程度：</td>
+						<td class="t2">
+							<input type="text" name="neck_chengdu" class="select"/>
+						</td>
+						<td class="t1" width="70">位置：</td>
+						<td class="t2"><input type="text" name="neck_weizhi" class="select"/></td>
+					</tr>
+					<tr>
+						<td class="t1">性质：</td>
+						<td class="t2"><input type="text" name="neck_xingzhi" class="select"/></td>
+						<td class="t1">质地：</td>
+						<td class="t2"><input type="text" name="neck_zhidi" class="select"/></td>
+					</tr>
+					<tr>
+						<td class="t1">其他：</td>
+						<td class="t2"><input type="text" name="neck_jiaother" class="select"/></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+				</table>
+			</td>
+		</tr>			
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="neck_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="neck_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--胸部-->
+<fieldset>
+	<legend>胸部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>胸廓：</td>
+			<td class="t2" width="195"><input name="xiong_kuo" type="text" class="select"/>
+					<input name="xiong_kuo0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>胸骨压痛：</td>
+			<td class="t2"><input name="xiong_yatong" value=0 type="radio" class="radio" />无
+						<input name="xiong_yatong" value=1 type="radio" class="radio"/>有</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>双侧乳房：</td>
+			<td class="t2">
+				<input name="xiong_rufangDc" value=0 type="radio" class="radio" />对称
+				<input name="xiong_rufangDc" value=1 type="radio" class="radio"/>不对称
+			</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1">乳房异常：</td>
+			<td class="t2"><input name="xiong_fufang" type="checkbox"/></td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="xiong_rufangDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="xiong_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="xiong_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--肺部-->
+<fieldset>
+	<legend>肺部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>呼吸运动：</td>
+			<td class="t2" width="195"><input name="fei_huxi" type="text" class="select"/>
+					<input name="fei_huxi0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>触觉语颤：</td>
+			<td class="t2"><input rel="fei_huxi" name="fei_yuchan" type="text" class="select"/>
+					<input name="fei_yuchan0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>左肺叩诊：</td>
+			<td class="t2"><input name="fei_zuokou" type="text" class="select"/>
+					<input name="fei_zuokou0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>右肺叩诊：</td>
+			<td class="t2"><input rel="fei_zuokou" name="fei_youkou" type="text" class="select"/>
+					<input name="fei_youkou0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>左肺下界：</td>
+			<td class="t2" colspan="3">位于肩胛线第<input name="fei_zuoxiajie" type="text" class="text" style="width:50px;"/>肋间</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>右肺下界：</td>
+			<td class="t2" colspan="3">位于肩胛线第<input name="fei_youxiajie" type="text" class="text" style="width:50px;"/>肋间</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>呼吸音：</td>
+			<td class="t2" colspan="3">
+				<input name="fei_huxiyin" value=0 type="radio" class="radio" />正常
+				<input name="fei_huxiyin" value=1 type="radio" class="radio"/>异常</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fei_huxiyinDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">胸膜摩擦音：</td>
+			<td class="t2" colspan="3"><input name="fei_xiongmo" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fei_xiongmoDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">啰音：</td>
+			<td class="t2" colspan="3"><input name="fei_luoyin" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<p>位置：<input rel="ear_waierPosi" name="fei_luoyinPosi" type="radio" class="radio dict-fld" /></p>
+				<p>性质：<input name="fei_luoyinxzhi" type="text" class="checkbox" style="width:80%"/></p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fei_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fei_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--心脏-->
+<fieldset>
+	<legend>心脏</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>心前区膨隆：</td>
+			<td class="t2" width="195"><input name="xinz_penglong" value=0 type="radio" class="radio" />无
+						<input name="xinz_penglong" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>心尖博动：</td>
+			<td class="t2"><input name="xinz_bodong" type="text" class="select"/>
+					<input name="xinz_bodong0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>心尖搏动位置：</td>
+			<td class="t2" colspan="3">
+				<input name="xinz_bodongPosi" value=0 type="radio" class="radio" />正常
+				<input name="xinz_bodongPosi" value=1 type="radio" class="radio"/>移位
+				<span class="hidden">&nbsp;&nbsp;距左锁骨中线<input name="xinz_bodongCM" type="text" class="text" style="width:50px;"/>cm</span></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>叩诊心界：</td>
+			<td class="t2"><input name="xinz_xinjie" type="text" class="select"/>
+					<input name="xinz_xinjie0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>心率：</td>
+			<td class="t2"><input name="xinz_xinlv" type="text" class="text" style="width:50px;"/>次/分</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>心律：</td>
+			<td class="t2"><input name="xinz_xinrate" type="text" class="select">
+					<input name="xinz_xinrate0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>心音：</td>
+			<td class="t2"><input name="xinz_xinyin" type="text" class="select">
+					<input name="xinz_xinyin0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>心包摩擦感：</td>
+			<td class="t2"><input name="xinz_xinbao" value=0 type="radio" class="radio" />无
+							<input name="xinz_xinbao" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1"><span class="red">*&nbsp;</span>杂音：</td>
+			<td class="t2"><input name="xinz_zayin" type="text" class="select"/>
+					<input name="xinz_zayin0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="xinz_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="xinz_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--周围血管征-->
+<fieldset>
+	<legend>周围血管征</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>周围血管征：</td>
+			<td class="t2" width="*">
+				<input name="zhouweixg_zheng" value=0 type="radio" class="radio" />正常
+				<input name="zhouweixg_zheng" value=1 type="radio" class="radio"/>异常
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2"><textarea name="zhouweixg_zhengDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--腹部-->
+<fieldset>
+	<legend>腹部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr><td colspan="4"><h1>视诊</h1></td></tr>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>外形：</td>
+			<td class="t2" colspan="3">
+				<input name="fubu_waixing" type="text" class="checkbox" style="width:80%"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>腹式呼吸：</td>
+			<td class="t2" width="195">
+				<input name="fubu_huxi" value=0 type="radio" class="radio" />存在
+				<input name="fubu_huxi" value=1 type="radio" class="radio"/>消失
+			</td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>腹壁静脉曲张：</td>
+			<td class="t2">
+				<input name="fubu_jingmai" value=0 type="radio" class="radio" />无
+				<input name="fubu_jingmai" value=1 type="radio" class="radio"/>有
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fubu_shizhen_o" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_shizhen_oDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>触诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>腹壁：</td>
+			<td class="t2"><input name="fubu_fubi" type="text" class="select"/><br/>
+						   <input name="fubu_fubi0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>肌紧张：</td>
+			<td class="t2"><input name="fubu_jijzh" type="text" class="select"/><br/>
+						   <input name="fubu_jijzh0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>压痛：</td>
+			<td class="t2"><input rel="fubu_jijzh" name="fubu_yatong" type="text" class="select"/><br/>
+						   <input name="fubu_yatong0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>反跳痛：</td>
+			<td class="t2"><input rel="fubu_jijzh" name="fubu_fantt" type="text" class="select"/><br/>
+						   <input name="fubu_fantt0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1">包块：</td>
+			<td class="t2" colspan="3"><input name="fubu_baokuai" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="fubu_baokuaiDesc" class="textarea"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table width="100%" id="baokuai" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="baokuai_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">位置：</td>
+						<td class="t2" colspan="3"><input type="text" name="baokuai_weizhi" class="checkbox" style="width:92%"/></td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">数目：</td>
+						<td class="t2" width="150"><input type="text" class="text" name="baokuai_shumu"/>个</td>
+						<td class="t1" width="70">最大直径：</td>
+						<td class="t2" width="150"><input type="text" class="text" name="baokuai_zhijing"/>mm</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">质地：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="linbajie_zhidi" name="baokuai_zhidi"/></td>
+						<td class="t1" width="70">移动度：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="linbajie_yidong" name="baokuai_yidong"/></td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">触痛：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="linbajie_chutong" name="baokuai_chutong"/></td>
+						<td class="t1" width="70">&nbsp;</td>
+						<td class="t2" width="150">&nbsp;</td>
+					</tr>
+				</table>
+			</td>
+		</tr>				
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>液波震颤：</td>
+			<td class="t2"><input name="fubu_yebo" value=0 type="radio" class="radio" />无
+				<input name="fubu_yebo" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1"><span class="red">*&nbsp;</span>振水音：</td>
+			<td class="t2"><input name="fubu_zhenshui" value=0 type="radio" class="radio" />无
+							<input name="fubu_zhenshui" value=1 type="radio" class="radio"/>有</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>Murphy's征：</td>
+			<td class="t2" colspan="3"><input name="fubu_murphy" type="radio" class="radio dict-fld" ></td>
+		</tr>
+		<tr>
+			<td class="t1">肝脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_ganzang" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="fubu_ganzangDesc" class="textarea"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="ganzang_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">肋下：</td>
+						<td class="t2" width="150"><input type="text" name="ganzang_leixia" class="text"/>cm</td>
+						<td class="t1" width="70">剑突下：</td>
+						<td class="t2" width="150"><input type="text" class="text" name="ganzang_jiantuxia"/>cm</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">质地：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="linbajie_zhidi" name="ganzang_zhidi"/></td>
+						<td class="t1" width="70">压痛：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="ganzang_yatong" value="0"/>无
+							<input type="radio" class="radio" name="ganzang_yatong" value="1"/>有
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">表面：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="ganzang_biaomain" value="0"/>光滑
+							<input type="radio" class="radio" name="ganzang_biaomain" value="1"/>不平
+						</td>
+						<td class="t1" width="70">边缘：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="ganzang_bianyuan" value="0"/>锐利
+							<input type="radio" class="radio" name="ganzang_bianyuan" value="1"/>圆钝 
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>		
+		<tr>
+			<td class="t1">胆囊：</td>
+			<td class="t2" colspan="3"><input name="fubu_dannang" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="fubu_dannangDesc" class="textarea"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="dannang_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">压痛：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio" name="dannang_yadong" value="0"/>无
+							<input type="radio" class="radio" name="dannang_yadong" value="1"/>有
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>				
+		<tr>
+			<td class="t1">脾脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_pi" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="fubu_piDesc" class="textarea"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="pi_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">肋下：</td>
+						<td class="t2" width="150"><input type="text" name="pi_leixia" class="text"/>cm</td>
+						<td class="t1" width="70">剑突下：</td>
+						<td class="t2" width="150"><input type="text" class="text" name="pi_jiantuxia"/>cm</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">质地：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="linbajie_zhidi" name="pi_zhidi"/></td>
+						<td class="t1" width="70">压痛：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="pi_yatong" value="0"/>无
+							<input type="radio" class="radio" name="pi_yatong" value="1"/>有
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="70">表面：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="pi_biaomain" value="0"/>光滑
+							<input type="radio" class="radio" name="pi_biaomain" value="1"/>不平
+						</td>
+						<td class="t1" width="70">边缘：</td>
+						<td class="t2" width="150">
+							<input type="radio" class="radio" name="pi_bianyuan" value="0"/>锐利
+							<input type="radio" class="radio" name="pi_bianyuan" value="1"/>圆钝 
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>			
+		<tr>
+			<td class="t1">肾脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_shen" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<textarea name="fubu_shenDesc" class="textarea" style="width:92%"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3">
+				<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+					<tr>
+						<td colspan="4">
+							<div style="text-align:right">
+								<input type="button" class="btn_mouseout ok" name="shen_ok" value="确定">
+								<input type="button" class="btn_mouseout cancel" value="取消"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="90">触及位置：</td>
+						<td class="t2" colspan="3"><input type="text" name="shen_weizhi" class="text" style="width:92%"/></td>
+					</tr>
+					<tr>
+						<td class="t1" width="90">压痛：</td>
+						<td class="t2">
+							<input type="radio" class="radio" name="shen_yatong" value="0"/>无
+							<input type="radio" class="radio" name="shen_yatong" value="1"/>有
+						</td>
+						<td class="t1" width="90">输尿管压痛点：</td>
+						<td class="t2">
+							<input type="radio" class="radio" name="shen_shuniaoguan" value="0"/>无
+							<input type="radio" class="radio" name="shen_shuniaoguan" value="1"/>有
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>				
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fubu_chu_other" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_chu_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>叩诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肝浊音界：</td>
+			<td class="t2"><input name="fubu_ganzhuo" type="radio" class="radio dict-fld" /></td>
+			<td class="t1"><span class="red">*&nbsp;</span>肝上界：</td>
+			<td class="t2">位于右锁骨中线第<input name="fubu_ganshangjie" type="text" class="text" style="width:50px;"/>肋间</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肝区叩痛：</td>
+			<td class="t2"><input name="fubu_ganqukt" value=0 type="radio" class="radio" />无
+							<input name="fubu_ganqukt" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1"><span class="red">*&nbsp;</span>肾区叩痛：</td>
+			<td class="t2"><input rel="ear_rutu" name="fubu_shenkt" type="text" class="select" />
+							<input name="fubu_shenkt0" type="text" class="text hidden"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>移动性浊音：</td>
+			<td class="t2"><input rel="fubu_murphy" name="fubu_yidong" type="radio" class="radio dict-fld" /></td>
+			<td class="t1"><span class="red">*&nbsp;</span>腹水：</td>
+			<td class="t2"><input name="fubu_fushui" type="radio" class="radio dict-fld" /></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fubu_k_other" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_k_otherDesc" class="textarea" style="width:92%"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>听诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肠鸣音：</td>
+			<td class="t2"><input name="fubu_changming" type="text" class="text" style="width:50px"/>次/分</td>
+			<td class="t1"><span class="red">*&nbsp;</span>气过水声：</td>
+			<td class="t2"><input name="fubu_qishui" value=0 type="radio" class="radio" />无
+							<input name="fubu_qishui" value=1 type="radio" class="radio"/>有</td>
+		</tr>
+		<tr>
+			<td class="t1">血管杂音：</td>
+			<td class="t2" colspan="3"><input name="fubu_xueguan" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_xueguanDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fubu_tz_other" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_tz_otherDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>
+</fieldset>
+<!--生殖器/肛门/直肠-->
+<fieldset>
+	<legend>生殖器/肛门/直肠</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="115"><span class="red">*</span>生殖器/肛门/直肠：</td>
+			<td class="t2" width="*">
+				<input name="shengzhiqi" value=0 type="radio" class="radio" />正常
+				<input name="shengzhiqi" value=1 type="radio" class="radio"/>异常
+				<input name="shengzhiqi" value=3 type="radio" class="radio"/>拒查
+				<input name="shengzhiqi" value=4 type="radio" class="radio"/>未查
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2"><textarea name="shengzhiqiDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--脊柱-四肢-->
+<fieldset>
+	<legend>脊柱-四肢</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>外型：</td>
+			<td class="t2" width="195"><input name="jisi_waixing" type="text" class="select"/>
+					<input name="jisi_waixing0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>叩击痛：</td>
+			<td class="t2"><input name="jisi_kouji" value=0 type="radio" class="radio" />无
+						<input name="jisi_kouji" value=1 type="radio" class="radio"/>有</br>
+						<input name="jisi_kouji" value=2 type="radio" class="radio"/>不合作
+						<input name="jisi_kouji" value=3 type="radio" class="radio"/>无法配合
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>活动度：</td>
+			<td class="t2"><input name="jisi_huodong" type="radio" class="radio dict-fld" /></td>
+			<td class="t1"><span class="red">*&nbsp;</span>压痛：</td>
+			<td class="t2"><input name="jisi_yatong" value=0 type="radio" class="radio" />无
+						<input name="jisi_yatong" value=1 type="radio" class="radio"/>有</br>
+							<input name="jisi_yatong" value=2 type="radio" class="radio"/>不合作
+						<input name="jisi_yatong" value=3 type="radio" class="radio"/>无法配合
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>下肢水肿：</td>
+			<td class="t2">
+					<input name="jisi_xiazhi" type="text" class="select"/><br/>
+					<input name="jisi_xiazhi0" type="text" class="text hidden"/>
+			</td>
+			<td class="t1" width="105">其它异常：</td>
+			<td class="t2"><input name="jisi_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="jisi_otherDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<!--神经系统-->
+<fieldset>
+	<legend>神经系统</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>腹壁反射：</td>
+			<td class="t2" width="195">
+					<input name="shenjing_fubi" type="text" class="select"/>
+							<input name="shenjing_fubi0" type="text" class="text hidden"/></td>
+			<td class="t1" width="105"><span class="red">*&nbsp;</span>角膜反射：</td>
+			<td class="t2"><input rel="shenjing_fubi" name="shenjing_jiaomo" type="text" class="select"/>
+					<input name="shenjing_jiaomo0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>膝腱反射：</td>
+			<td class="t2">
+				<input name="shenjing_xijian" value=0 type="radio" class="radio" />正常
+				<input name="shenjing_xijian" value=1 type="radio" class="radio"/>异常</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">位置：</td>
+			<td class="t2">
+				<input rel="ear_waierPosi" name="shenjing_xijianPosi" type="radio" class="radio dict-fld" /></td>
+			<td class="t1">性质：</td>
+			<td class="t2"><input name="shenjing_xijianXZ" type="radio" class="radio dict-fld" /></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>跟腱反射：</td>
+			<td class="t2">
+				<input name="shenjing_genjian" value=0 type="radio" class="radio" />正常
+				<input name="shenjing_genjian" value=1 type="radio" class="radio"/>异常</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">位置：</td>
+			<td class="t2">
+				<input rel="ear_waierPosi" name="shenjing_genjianPosi" type="radio" class="radio dict-fld" /></td>
+			<td class="t1">性质：</td>
+			<td class="t2"><input name="shenjing_genjianXZ" rel="shenjing_xijianXZ" type="radio" class="radio dict-fld" /></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>Babinski征：</td>
+			<td class="t2"><input name="shenjing_babinski" type="text" class="select"/>
+					<input name="shenjing_babinski0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>Kernig征：</td>
+			<td class="t2"><input rel="shenjing_babinski" name="shenjing_kerning" type="text" class="select"/>
+					<input name="shenjing_kerning0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>Brudzinski征：</td>
+			<td class="t2"><input rel="shenjing_babinski" name="shenjing_brudzinski" type="text" class="select"/>
+					<input name="shenjing_brudzinski0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>扑翼样振颤：</td>
+			<td class="t2"><input rel="shenjing_huai" name="shenjing_puyi" type="text" class="select"/>
+					<input name="shenjing_puyi0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>踝阵挛：</td>
+			<td class="t2"><input name="shenjing_huai" type="text" class="select"/>
+					<input name="shenjing_huai0" type="text" class="text hidden"/></td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肌力：</td>
+			<td class="t2">
+				<input name="shenjing_jili" value=0 type="radio" class="radio" />正常
+				<input name="shenjing_jili" value=1 type="radio" class="radio"/>异常</br>
+				<input name="shenjing_jili" value=2 type="radio" class="radio"/>不合作
+				<input name="shenjing_jili" value=3 type="radio" class="radio"/>无法配合</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">上肢左侧：</td>
+			<td class="t2"><input name="shenjing_jilitl" type="text" class="select"/></td>
+			<td class="t1">上肢右侧：</td>
+			<td class="t2"><input name="shenjing_jilitr" rel="shenjing_jilitl" type="text" class="select"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">下肢左侧：</td>
+			<td class="t2"><input name="shenjing_jilibl" rel="shenjing_jilitl" type="text" class="select"/></td>
+			<td class="t1">下肢右侧：</td>
+			<td class="t2"><input name="shenjing_jilibr" rel="shenjing_jilitl" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肌张力：</td>
+			<td class="t2">
+				<input name="shenjing_jizhang" value=0 type="radio" class="radio" />正常
+				<input name="shenjing_jizhang" value=1 type="radio" class="radio"/>异常</td>
+				<!--<input type="text" name="shenjing_jizhang" class="select"/>-->
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">上肢左侧：</td>
+			<td class="t2"><input name="shenjing_jizhangtl" type="text" class="select"/></td>
+			<td class="t1">上肢右侧：</td>
+			<td class="t2"><input name="shenjing_jizhangtr" rel="shenjing_jizhangtl" type="text" class="select"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">下肢左侧：</td>
+			<td class="t2"><input name="shenjing_jizhangbl" rel="shenjing_jizhangtl" type="text" class="select"/></td>
+			<td class="t1">下肢右侧：</td>
+			<td class="t2"><input name="shenjing_jizhangbr" rel="shenjing_jizhangtl" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="shenjing_other" type="checkbox"/></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="shenjing_otherDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+</form>
+</body>
+</html>

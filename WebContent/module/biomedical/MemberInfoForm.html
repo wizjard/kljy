@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员基本信息</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="MemberPatientInfo.js"></script>
+<style type="text/css">
+.item-title{
+	padding-left:1em;
+	line-height:18px;
+	font-size:14px;
+	font-weight:bold;
+}
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="createDate" value=""/>
+<input type="hidden" name="modifyDate" value=""/>
+<input type="hidden" name="currentWardCode" value=""/>
+<input type="hidden" name="outDeptCode" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">病人信息</td>
+	</tr>
+	<tr>
+		<td colspan=4 class="item-title">基本</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>姓名：</td>
+		<td class="t2" width="210"><input name="patientName" type="text" class="text"/></td>
+		<td class="t1" width="80"><font color="red">*</font>病案号：</td>
+		<td class="t2"><input name="patientNo" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>性别：</td>
+		<td class="t2"><input name="gender" type="text" class="select"/></td>
+		<td class="t1"><font color="red">*</font>出生日期：</td>
+		<td class="t2"><input name="birthday" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>证件类型：</td>
+		<td class="t2"><input name="idType" type="text" class="select"/><br/><input name="idType0" type="text" class="text input-hidden"/></td>
+		<td class="t1"><font color="red">*</font>证件号码：</td>
+		<td class="t2"><input name="idNo" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>国籍：</td>
+		<td class="t2"><input name="nationality" type="text" class="select"/><br/><input name="nationality0" type="text" class="text input-hidden"/></td>
+		<td class="t1">籍贯：</td>
+		<td class="t2"><input name="province" type="text" class="select"/><br/><input name="province0" type="text" class="text input-hidden"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>民族：</td>
+		<td class="t2"><input name="people" type="text" class="select"/><br/><input name="people0" type="text" class="text input-hidden"/></td>
+		<td class="t1">职业：</td>
+		<td class="t2"><input name="occupation" type="text" class="select"/><br/><input name="occupation0" type="text" class="text input-hidden"/></td>
+	</tr>
+	<tr>
+		<td class="t1">婚姻状态：</td>
+		<td class="t2"><input name="marrageStatus" type="text" class="select"/><br/><input name="marrageStatus0" type="text" class="text input-hidden"/></td>
+		<td class="t1">教育程度：</td>
+		<td class="t2"><input name="educationLv" type="text" class="select"/><br/><input name="educationLv0" type="text" class="text input-hidden"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>手机：</td>
+		<td class="t2"><input name="mobilePhone" type="text" class="text"/></td>
+		<td class="t1">电子邮箱：</td>
+		<td class="t2"><input name="email" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>家庭电话：</td>
+		<td class="t2"><input name="homeTel" type="text" class="text"/></td>
+		<td class="t1">邮政编码：</td>
+		<td class="t2"><input name="homePostCode" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>家庭地址：</td>
+		<td class="t2" colspan=3><input name="homeAddr" type="text" class="text" style="width:92%"/></td>
+	</tr>
+	<tr>
+		<td colspan=4 class="item-title">工作单位</td>
+	</tr>
+	<tr>
+		<td class="t1">单位名称：</td>
+		<td class="t2"><input name="workUnit" type="text" class="text"/></td>
+		<td class="t1">邮政编码：</td>
+		<td class="t2"><input name="workUnitPostCode" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">单位电话：</td>
+		<td class="t2"><input name="workUnitTel" type="text" class="text"/></td>
+		<td class="t1">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1">单位地址：</td>
+		<td class="t2" colspan=3><input name="workUnitAddr" type="text" class="text" style="width:92%"/></td>
+	</tr>
+	<tr>
+		<td colspan=4 class="item-title">联系人</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>姓名：</td>
+		<td class="t2"><input name="contacterName" type="text" class="text"/></td>
+		<td class="t1"><font color="red">*</font>电话：</td>
+		<td class="t2"><input name="contacterTel" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>与患者关系：</td>
+		<td class="t2"><input name="contacterRelationship" type="text" class="select"/><br/><input name="contacterRelationship0" type="text" class="text input-hidden"/></td>
+		<td class="t1">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+	</tr>
+	<!-- 
+	<tr>
+		<td colspan=4 class="item-title">当前或上次所在科室</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*</font>科室：</td>
+		<td class="t2" colspan="3"><input readOnly="readOnly" name="currentWardCodeShow" type="text" class="text" style="width:92%"/></td>
+	</tr>
+    -->
+	<tr>
+		<td colspan=4 class="title">会员基本信息</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>会员编号：</td>
+		<td class="t2" width="210"><input name="memberNo" type="text" class="text" readOnly="readOnly"/></td>
+		<td class="t1" width="80"><font color="red">*</font>入会日期：</td>
+		<td class="t2"><input name="inDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>用户名：</td>
+		<td class="t2" width="210"><input name="account" type="text" class="text" readOnly="readOnly"/></td>
+		<td class="t1" width="80"><font color="red">*</font>密码：</td>
+		<td class="t2"><input name="password" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>会员状态：</td>
+		<td class="t2" width="210"><select name="memberStatus"><option value="正常">正常</option><option value="失访">失访</option><option value="死亡">死亡</option></select></td>
+		<td class="t1" width="80"><font color="red">*</font>会员类型：</td>
+		<td class="t2"><select name="memberType"><option value="普通会员">普通会员</option><option value="VIP会员">VIP会员</option></select></td>
+	</tr>
+	
+	
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>入会科室：</td>
+		<td class="t2" width="210"><input name="inWard" type="text" class="text" readOnly="readOnly"/></td>
+		<td class="t1" width="80">预留标本：</td>
+		<td class="t2"><select name="biaoben"><option value="0">否</option><option value="1">是</option></select></td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>责任科室：</td>
+		<td class="t2" width="210"><select name="deptCode" onchange="selectOneDept()"></select></td>
+		<td class="t1" width="80"><font color="red">*</font>入会医生：</td>
+		<td class="t2"><input name="inDoctor" type="text" class="text" readOnly="readOnly"/></td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="80"><font color="red">*</font>责任小组：</td>
+		<td class="t2" width="210"><select name="grounpId" onchange="findGrounpName(0)"></select></td>
+	</tr>
+	<tr id="grounpShow" style="display:none">
+		<td class="t1" width="80">小组成员：</td>
+		<td class="t2" width="210"><label id="grounpAllName"></label></td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="80" >&nbsp;&nbsp;&nbsp;<font color="red">*</font> 住院入会(住院次数)：</td>
+		<td class="t2" width="210"><input name="inHspTimes" type="text" class="text" readOnly="readOnly" style="width:30px"/></td>
+		<!--  
+		<td class="t1" width="180" colspan=2><font color=red>注:</font>住院病人入会时需要填写</td>
+		-->
+		<td class="t1" width="80">&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>门诊入会(门诊时间)：</td>
+		<td class="t2"><input name="inOutTimesDate" type="text" class="text" readOnly="readOnly"/></td>
+	</tr>
+	<tr>
+		<td class="t1">备注：</td>
+		<td class="t2" colspan=3><input name="memo" type="text" class="text" style="width:92%"/></td>
+	</tr>
+	
+	<tr>
+		<td colspan="4">
+			<div style="text-align:center">
+				<input type="button" value="保存" class="btn_mouseout" onclick="SaveData()"/>
+				<input type="reset" value="重置" class="btn_mouseout" style="margin-left:2em" onclick=""/>
+			</div>
+		</td>
+	</tr>
+	 
+</table>
+</form>
+</body>
+</html>

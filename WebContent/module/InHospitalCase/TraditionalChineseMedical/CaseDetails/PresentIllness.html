@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>现病史(中医)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/EditPlus/editplus.js"></script>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	var _editor=new MyEditPlus('content1',590,80);
+	_editor.BasePath=App.App_Info.BasePath+'/PUBLIC/Scripts/MyJavascripts/EditPlus';
+	$(_editor.create()).appendTo('#content1-div');
+	_editor=new MyEditPlus('content2',590,80);
+	_editor.BasePath=App.App_Info.BasePath+'/PUBLIC/Scripts/MyJavascripts/EditPlus';
+	$(_editor.create()).appendTo('#content2-div');
+	autoContentHeight();
+	setValue();
+});
+var _rtc1;
+var _rtc2;
+var _con1;
+var _con2;
+function autoContentHeight(){
+	_rtc1=$('#content1-RTC');
+	_rtc2=$('#content2-RTC');
+	_con1=$('#content1-RTC-con');
+	_con2=$('#content2-RTC-con');
+	setInterval(function(){
+		var _dh=_rtc1.get(0).scrollHeight-_rtc1.get(0).clientHeight;
+		_con1.height(_con1.outerHeight()+_dh);
+		_rtc1.height(_rtc1.innerHeight()+_dh);
+	},300);
+	setInterval(function(){
+		var _dh=_rtc2.get(0).scrollHeight-_rtc2.get(0).clientHeight;
+		_con2.height(_con2.outerHeight()+_dh);
+		_rtc2.height(_rtc2.innerHeight()+_dh);
+	},300);
+}
+var defaultValue={
+	id:'',
+	caseId:KID,
+	content1:'',
+	content2:'',
+	illThis:{},
+	onsets:[],
+	treats:[]
+};
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PresentIllnessHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					$.extend(defaultValue,_json);
+					_rtc1.html(defaultValue.content1);
+					_rtc2.html(defaultValue.content2);
+					$('#id').val(defaultValue.id);
+				}
+				$('#id').data('data',defaultValue);
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function ShowDialog1(){
+	var returnValue=window.showModalDialog(App.App_Info.BasePath+'/module/InHospitalCase/Liver/CaseDetails/PresentIllness_onset.html',$('#id').data('data').onsets,'dialogWidth:620px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		_rtc1.html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.onsets=returnValue.values;
+		$('#id').data('data',_data);
+	}
+}
+function ShowDialog2(){
+	var returnValue=window.showModalDialog('PresentIllness_illThis.html',
+	{
+		illThis:$('#id').data('data').illThis,
+		treats:$('#id').data('data').treats
+	},
+	'dialogWidth:620px;dialogHeight:'+(screen.height*0.9)+'px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		_rtc2.html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.illThis=returnValue.values.illThis;
+		_data.treats=returnValue.values.treats;
+		$('#id').data('data',_data);
+	}
+}
+function SaveData(){
+	var _data=$('#id').data('data');
+	$.extend(_data,{
+		id:$('#id').val(),
+		caseId:$('input[name="caseId"]').val(),
+		content1:_rtc1.html().replaceAll('\r\n',''),
+		content2:_rtc2.html().replaceAll('\r\n','')
+	});
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PresentIllnessHistory_saveOrUpdate',
+			data:JSON.stringify(_data)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$.extend(defaultValue,_json);
+				$('#id').val(_json.id);
+				$('#id').data('data',defaultValue);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" id="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">起病史&nbsp;&nbsp;<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowDialog1()"/></td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><div id="content1-div"></div></td>
+	</tr>
+	<tr>
+		<td class="title">本次发病&nbsp;&nbsp;<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowDialog2()"/></td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><div id="content2-div"></div></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

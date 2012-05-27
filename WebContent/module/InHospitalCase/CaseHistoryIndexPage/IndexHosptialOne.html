@@ -1,0 +1,849 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>病案首页</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link type="text/css" rel="stylesheet" href="css/IndexHosptialCss.css"/>
+    <script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript">
+    	var kid=null;
+		var pid=null;
+		$(function(){			
+			kid = App.util.getHtmlParameters('kid');
+			pid = App.util.getHtmlParameters('pid');
+			inItTable();
+			setValues();
+			$('input[name="kezhuren_show"]').attr('readOnly',false);
+			$('input[name="directorDoctorId_show"]').attr('readOnly',false);	
+			$('input[name="treatDoctorId_show"]').attr('readOnly',false);	
+			$('input[name="inhspDoctorId_show"]').attr('readOnly',false);	
+			$('input[name="jinxiu_show"]').attr('readOnly',false);	
+			$('input[name="yanjiusheng_show"]').attr('readOnly',false);	
+			$('input[name="shixi_show"]').attr('readOnly',false);	
+			
+			$('select').change(function(){
+				$(this).prev().val($(this).val());
+				getAddress($(this), $(this).val());
+			});
+			getAddress($('*[name="provinceSelect"]'), "");
+		});
+		
+		function getAddress(jq_address, addressName){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do?',
+				{
+					method:'getAddress',
+					addressName:addressName
+				},function(data){
+					if(data.success){
+						if(addressName == ""){
+							jq_address.html('');
+							var value=$('input[name="province"]').val();
+							$.each($(data.data),function(){
+								if(this.value==value){
+									jq_address.append('<option value="'+value+'" selected>' + value + '</option>');
+								}else{
+									jq_address.append('<option value="'+this.value+'">' + $(this).text() + '</option>');
+								}
+							});
+							value=$('input[name="city"]').val();
+							$('select[name="citySelect"]').append('<option value="'+value+'">' + value + '</option>');
+							value=$('input[name="area"]').val();
+							$('select[name="areaSelect"]').append('<option value="'+value+'">' + value + '</option>')
+							
+						}else if(jq_address.next()){
+							jq_address.next().next().html('');
+							jq_address.next().val('');
+							if(jq_address.next().next().next()){
+								jq_address.next().next().next().next().html('');
+								jq_address.next().next().next().val('');
+							}
+							if(data.data){
+								jq_address.next().next().append(data.data);
+							}
+						}
+					}else{
+						alert("获取数据失败！");
+					}
+					$("#caseId").val(kid);
+				},'json'
+			);
+		}
+		
+		function importInHospOne(){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do?',
+				{
+					method:'importInHospOneByCaseId',
+					kid:kid
+				},function(data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						if(json){				
+							FormUtil.setFormValues('form',json);
+							$('input[type="checkbox"]').each(function(){
+								var _va = json[this.name];
+								if($(this).val()==_va){
+									$(this).attr('checked',true);
+								}				
+							});
+							$("#id").val(json.id);
+						}
+						if($('input[name="birthplace"]').val() != ""){
+							$('input[name="birthplace"]').parent().parent().show();
+						}
+						if($("#hspDate2").val() == "" || $("#hspDate2").val() == 0){
+							setInHspCountDay();
+						}
+						
+					}else{
+						alert("获取数据失败！");
+					}
+					$("#caseId").val(kid);
+				},'json'
+			);
+		}
+		
+		/*
+		 * 初始化页面
+		*/	
+    	function inItTable(){
+    		var _table = $('.out');
+    		_table.find('td').css('border-right','solid 1px #000');
+    		var ch = ['leaveHospital1','leaveHospital2','leaveHospital3','leaveHospital4','leaveHospital5','leaveHospital6','leaveHospital7','leaveHospital8'];
+    		$.each(ch,function(){
+				$('input[name="'+this+'"]').click(function(){
+					var $checked = $(this).attr('checked');
+					$('input[name="'+$(this).attr('name')+'"]').attr('checked',false);
+					if($checked){
+						$(this).attr('checked',true);
+					}else{
+						$(this).attr('checked',false);
+					}
+				});
+			});
+    		doctorDict();	
+    		initDate();
+    	}
+    
+    	function initDate(){
+    		FormUtil.toDateField({el:$('input[name="birthday"]'), dateFormat:"yyyy-MM-dd"});
+//    		FormUtil.toDateField({el:$('input[name="inHspDate"]'), dateFormat:"yyyy-MM-dd"});
+    		FormUtil.toDateField({el:$('input[name="outHspDate"]'), dateFormat:"yyyy-MM-dd"});
+    		FormUtil.toDateField({el:$('input[name="queding_checkdate"]'), dateFormat:"yyyy-MM-dd"});
+    		FormUtil.toDateField({el:$('input[name="badate"]'), dateFormat:"yyyy-MM-dd"});
+    	}
+ //2010-12-11修改/PUBLIC/Modaldialog/MyDoctorSelect.html	   	
+    	function doctorDict(){
+			var _input = $('#sign input');
+			_input.filter(function(_index){
+				return $(this).attr('name').indexOf('_show')!=-1;
+			}).each(function(){
+				FormUtil.toDictSelect({
+					url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+					hiddenEl:$('input[name="'+$(this).attr('name').replace('_show','')+'"]'),
+					showEl:$('input[name="'+$(this).attr('name')+'"]')
+				});
+			});
+		}
+		
+		function setValues(){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do?',
+				{
+					method:'getInHospOneByCaseId',
+					kid:kid
+				},function(data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						if(json){				
+							FormUtil.setFormValues('form',json);
+							$('input[type="checkbox"]').each(function(){
+								var _va = json[this.name];
+								if($(this).val()==_va){
+									$(this).attr('checked',true);
+								}else{
+									$(this).attr('checked',false);
+								}						
+							});
+							$("#id").val(json.id);	
+							/*2011年2月23日allnef修改——将select的复制置于全部内容赋值后
+							$('select').each(function(){
+								$(this).val($(this).prev().val());
+							});	*/
+						}
+						if($('input[name="birthplace"]').val() != ""){
+							$('input[name="birthplace"]').parent().parent().show();
+						}
+						if($("#hspDate2").val() == "" || $("#hspDate2").val() == 0){
+							setInHspCountDay();
+						}
+						
+					}else{
+						alert("获取数据失败！");
+					}
+					$("#caseId").val(kid);
+				},'json'
+			);
+		}
+    	
+    	function setInHspCountDay(){
+    		if($("#inHspDate").val() != "" && $("#outHspDate").val() != ""){
+				var inHspDateStr = $("#inHspDate").val();
+				inHspDateStr = inHspDateStr.split("-");
+				var outHspDateStr = $("#outHspDate").val();
+				outHspDateStr = outHspDateStr.split("-");
+				var inHspDate = new Date(inHspDateStr[0], inHspDateStr[1], inHspDateStr[2]);
+				var outHspDate = new Date(outHspDateStr[0], outHspDateStr[1], outHspDateStr[2]);
+				var countDay = (outHspDate.getTime() - inHspDate.getTime())/(1000*60*60*24);
+				if(countDay == 0){
+					countDay = countDay + 1;
+				}
+				$("#hspDate2").val(countDay);
+			}
+    	}
+    	
+    	function SaveData(){
+	    	if($('input[name="patientNo"]').val() == ""){
+	    			alert('病案号未填写');
+	    			return;
+	    	}
+	    	if($('input[name="inHspDate"]').val() == ""){
+	    			alert('入院日期未填写');
+	    			return;
+	    	}
+	    	if($('input[name="outHspDate"]').val() == ""){
+	    			alert('出院日期未填写');
+	    			return;
+	    	}
+				var json = FormUtil.getFormValues('form');
+				//alert(JSON.stringify(json));
+				$('.out input[type="checkbox"]').each(function(){
+					json[this.name] = $('input[name="'+this.name+'"][checked]').val();
+				});
+				$.post(
+					App.App_Info.BasePath +'/InHosp.do',
+					{
+						method:'saveOrUpdateInHospOne',
+						data:JSON.stringify(json)
+					},function(data){
+						if(data.success){
+							json = JSON.parse(data.data);
+							if(json){
+								alert("保存成功！");							
+							}
+							setValues();
+						}else{
+							alert("保存失败！");
+						}
+					},'json'
+				);	
+		}
+		
+		function printPage(){
+	//		location.href="print/IndexPageOne_Print.html?kid=" + kid + "&pid=" + pid;
+			if($('input[name="kezhuren_show"]').val() == ""){
+				alert('请填写"科主任"项并保存');
+				return;
+			}
+			if($('input[name="directorDoctorId_show"]').val() == ""){
+				alert('请填写"主(副主)任医师"项并保存');
+				return;
+			}
+			if($('input[name="treatDoctorId_show"]').val() == ""){
+				alert('请填写"主治医师"项并保存');
+				return;
+			}
+			if(isvalidate() == -1)return;
+			document.getElementById("printPage").src = "print/IndexPageOne_Print.html?kid=" + kid + "&pid=" + pid;
+		}
+		
+		function showBirAddr(birthplace){
+			$(birthplace).parent().parent().parent().parent().next().show();
+		}
+		
+		function isvalidate(){
+			if($('input[name="typeOfPayment"]').val() == ""){
+				alert('请填写医疗付款方式并保存');	
+				return -1;
+			}
+			if($('input[name="patientNo"]').val() == ""){
+				alert('请填写病案号并保存');	
+				return -1;
+			}
+			if($('input[name="inHspTimes"]').val() == ""){
+				alert('请填写住院次数并保存');	
+				return -1;
+			}
+			if($('input[name="patientName"]').val() == ""){
+				alert('请填写姓名并保存');
+				return -1;	
+			}
+			if($('input[name="gender"]').val() == ""){
+				alert('请填写性别并保存');	
+			}
+			if($('input[name="birthday"]').val() == ""){
+				alert('请填写出生日期并保存');	
+				return -1;
+			}
+			if($('input[name="age"]').val() == ""){
+				alert('请填写年龄并保存');	
+				return -1;
+			}
+			if($('input[name="marrageStatus"]').val() == ""){
+				alert('请填写婚姻并保存');	
+				return -1;
+			}
+			if($('input[name="province"]').val() == "" && $('input[name="city"]').val() == "" && $('input[name="area"]').val() == "" && $('input[name="birthplace"]').val() == ""){
+				alert('请填写出生地并保存');	
+				return -1;
+			}
+			if($('input[name="occupation"]').val() == ""){
+				alert('请填写职业并保存');	
+				return -1;
+			}
+			if($('input[name="people"]').val() == ""){
+				alert('请填写民族并保存');	
+				return -1;
+			}
+			if($('input[name="nationality"]').val() == ""){
+				alert('请填写国籍并保存');	
+				return -1;
+			}
+			if($('input[name="idNo"]').val() == ""){
+				alert('请填写身份证号并保存');	
+				return -1;
+			}
+			if($('input[name="workUnitAddr"]').val() == ""){
+				alert('请填写工作单位及地址并保存');	
+				return -1;
+			}
+			if($('input[name="workUnitTel"]').val() == ""){
+				alert('请填写工作单位电话并保存');	
+				return -1;
+			}
+			if($('input[name="workUnitPostCode"]').val() == ""){
+				alert('请填写工作单位邮政编码并保存');	
+				return -1;
+			}
+			if($('input[name="homeAddr"]').val() == ""){
+				alert('请填写户口地址/现住址并保存');	
+				return -1;
+			}
+			if($('input[name="homePostCode"]').val() == ""){
+				alert('请填写户口地址/现住址邮政编码并保存');	
+				return -1;
+			}
+			if($('input[name="contacterName"]').val() == ""){
+				alert('请填写联系人姓名并保存');	
+				return -1;
+			}
+			if($('input[name="contacterRelationship"]').val() == ""){
+				alert('请填写与联系人的关系并保存');	
+				return -1;
+			}
+			if($('input[name="contacterAdd"]').val() == ""){
+				alert('请填写联系人地址并保存');	
+				return -1;
+			}
+			if($('input[name="contacterTel"]').val() == ""){
+				alert('请填写联系人电话并保存');	
+				return -1;
+			}
+			if($('input[name="inHspDate"]').val() == ""){
+				alert('请填写入院日期并保存');	
+				return -1;
+			}
+			if($('input[name="inWardCode"]').val() == ""){
+				alert('请填写入院科别并保存');	
+				return -1;
+			}
+			if($('input[name="inWard"]').val() == ""){
+				alert('请填写入院病室并保存');	
+				return -1;
+			}
+			if($('input[name="creditWard"]').val() == ""){
+				alert('请填写转科科别并保存');	
+				return -1;
+			}
+			if($('input[name="outHspDate"]').val() == ""){
+				alert('请填写出院日期并保存');	
+				return -1;
+			}
+			if($('input[name="outHspWard"]').val() == ""){
+				alert('请填写出院科别并保存');	
+				return -1;
+			}
+			if($('input[name="outWard"]').val() == ""){
+				alert('请填写出院病室并保存');	
+				return -1;
+			}
+			if($('input[name="hspDate2"]').val() == ""){
+				alert('请填写实际住院天数并保存');	
+				return -1;
+			}
+			if($('input[name="menzhen"]').val() == ""){
+				alert('请填写门(急)诊诊断并保存');	
+				return -1;
+			}
+			if($('input[name="inStatus"]').val() == ""){
+				alert('请填写入院时情况并保存');	
+				return -1;
+			}
+			if($('input[name="inIllsShow"]').val() == ""){
+				alert('请填写入院诊断并保存');	
+				return -1;
+			}
+			if($('input[name="queding_checkdate"]').val() == ""){
+				alert('请填写入院后确诊日期并保存');	
+				return -1;
+			}
+			if($('input[name="outIlls1"]').val() == ""){
+				alert('请填写主要诊断并保存');	
+				return -1;
+			}
+			var maincheck = 0;
+			$('tr[name="maincheck"]').each(function(){
+				if($(this).find('input:eq(0)').val() != "" && $(this).find('input:checked').size() == 0){
+					maincheck = 1;
+				}
+			});
+			if(maincheck == 1){
+				alert('请填写出院情况并保存');
+				return -1;
+			}
+			
+			if($('input[name="ganran"]').val() == ""){
+				alert('请填写医院感染名称并保存');	
+				return -1;
+			}
+			if($('input[name="pathology"]').val() == ""){
+				alert('请填写病理诊断并保存');	
+				return -1;
+			}
+			if($('input[name="harm"]').val() == ""){
+				alert('请填写损伤、中毒的外部因素并保存');	
+				return -1;
+			}
+			if($('input[name="drugAllergy"]').val() == ""){
+				alert('请填写药物过敏并保存');	
+				return -1;
+			}
+			if($('input[name="hbsag"]').val() == ""){
+				alert('请填写HBsAg并保存');	
+				return -1;
+			}
+			if($('input[name="hcvab"]').val() == ""){
+				alert('请填写HCV-Ab并保存');	
+				return -1;
+			}
+			if($('input[name="hivab"]').val() == ""){
+				alert('请填写HIV-Ab并保存');	
+				return -1;
+			}
+			if($('input[name="contagion"]').val() == ""){
+				alert('请填写传染病并保存 ');	
+				return -1;
+			}
+			if($('input[name="baoka"]').val() == ""){
+				alert('请填写传染病报卡并保存');	
+				return -1;
+			}
+			if($('input[name="menzhen_chuyuan"]').val() == ""){
+				alert('请填写门诊与出院并保存');	
+				return -1;
+			}
+			if($('input[name="ruyuan_chuyuan"]').val() == ""){
+				alert('请填写入院与出院并保存');	
+				return -1;
+			}
+			if($('input[name="shuqian_shuhou"]').val() == ""){
+				alert('请填写术前与术后并保存');	
+				return -1;
+			}
+			if($('input[name="linchuang_bingli"]').val() == ""){
+				alert('请填写临床与病理并保存');	
+				return -1;
+			}
+			if($('input[name="fangshe_bingli"]').val() == ""){
+				alert('请填写放射与病理并保存');	
+				return -1;
+			}
+			if($('input[name="qiangjiu"]').val() == ""){
+				alert('请填写抢救次数并保存');	
+				return -1;
+			}
+			if($('input[name="succed"]').val() == ""){
+				alert('请填写成功次数并保存');	
+				return -1;
+			}
+			if($('input[name="inhspDoctorId_show"]').val() == "" && $('input[name="jinxiu_show"]').val() == ""){
+				alert('请填写住院医师或进修医师并保存');	
+				return -1;
+			}
+			var outHospState = 0;
+			$('tr[name="othercheck"]').each(function(){
+				var temp = $(this).find('input:eq(0)').val();
+				temp = temp.replace(/ /g, "");
+				if(temp != "" && $(this).find('input:checked').size() == 0){
+					outHospState = 1;
+				}
+			});
+			if(outHospState == 1){
+				alert('请选择出院情况并保存');	
+				return -1;
+			}
+			return 1;
+		}
+    </script>
+    
+
+  </head>
+  
+  <body>
+  		<IFRAME name="printPage" id="printPage" width=0px height=0px src=""></IFRAME>
+  		<form>
+		    <div>
+		    	<p>&nbsp;</p>
+		    	<p>&nbsp;</p>
+		    	<table class="head" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		    		<tr>
+		    			<td class="noTd">医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+						<td class="noTd">
+							医疗保险手册(卡)号：<input type="text" name="policymanualNo"/>
+						</td>
+		    		</tr>
+		    		<tr><td colspan="2" class="noTd">&nbsp;</td></tr>
+		    		<tr>
+						<td class="noTd" colspan="2" align="center">
+							<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+						</td>	
+					</tr>
+					<tr>
+						<td class="noTd" colspan="2">
+							<input type="hidden" name="id" id="id" />
+							<input type="hidden" name="caseId" id="caseId" />
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd" colspan="2" align="center" width="550" style="line-height:27px;">
+							<b style="font-size:20px;font-family:'黑体'">住  院  病  案  首  页</b>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">
+							<span style="color:red;font-size:11px;">医疗付款方式：</span>
+							<input type="text" style="width:50px" name="typeOfPayment" />							
+						</td>
+						<td class="noTd" width="*" align="right">	
+							<div style="margin-right:50px;">病案号：<input type="text" name="patientNo" style="width:50px;" readOnly/></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">	
+							<div>X 线号：<input type="text" name="xno" style="width:50px;"/></div>
+						</td>
+						<td class="noTd" align="right">
+							<div style="margin-right:50px;">门诊号：<input type="text" name="menzhenhao" style="width:50px;"/></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">
+							<div>
+								C T 号：<input type="text" name="ctNo" style="width:50px;"/>
+								<span style="padding-left:25%">
+									第<input type="text" style="width:20px" name="inHspTimes"/>次住院
+								</span>
+							</div>
+						</td>
+						<td class="noTd" align="right">	
+							<div style="margin-right:50px;">MRI 号：<input type="text" name="mriNo" style="width:50px;"/></div>
+						</td>
+					</tr>
+		    	</table>
+		    </div>
+	    	<div>
+	    		<table class="info" align="center" border="0" style="border-bottom:none;" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+	    			<tr>
+	    				<td>
+	    					姓名：<input type="text" name="patientName" style="width:65px;"/>
+	    					<span style="margin-left:15px;">性别：<input type="text" style="width:15px;" name="gender" />&nbsp;&nbsp;1.男&nbsp;&nbsp;2.女</span>
+							<span style="margin-left:15px;">出生日期：<input type="text" name="birthday" style="width:68px;"/></span>
+							<span style="margin-left:15px;">年龄：
+								<input type="text" style="width:100px;" name="age" maxlength="3" />
+								<input type="text" style="width:25px;" name="age_months" maxlength="2" style="display:none;" />
+								<input type="text" style="width:25px;" name="age_day" maxlength="2" style="display:none;"/>
+							</span>
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+	    					婚姻：<input type="text" style="width:15px;" name="marrageStatus"/>&nbsp;&nbsp;1.未&nbsp;&nbsp;2.已&nbsp;&nbsp;3.离&nbsp;&nbsp;4.丧
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+	    					<span><div style="float:left;">出生地：</div>
+	    						<div style="float:left;">
+								<input maxlength="5" type="text" name="province" style="width:60px;display:none;"/>
+								<select name="provinceSelect" value="" style="width:240px;"></select>
+								<input maxlength="5" type="text" name="city" style="width:70px;display:none;"/>
+								<select name="citySelect" value="" style="width:280px;"></select>
+								<input maxlength="5" type="text" name="area" style="width:60px;display:none;"/>
+								<select value="" name="areaSelect" style="width:460px;"></select>
+								<input type="hidden"><input type="hidden"><input type="hidden">
+								<input type="button" value="自填" style="width:60px;" onclick="showBirAddr(this);">
+								</div>
+							</span>
+						</td>
+	    			</tr>
+	    			<tr style="display:none;">
+	    				<td><input type="text" name="birthplace" style="width:300px;"></td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+	    					职业：<input type="text" name="occupation" style="width:85px;"/>
+							<span style="margin-left:15px;">民族：<input maxlength="5" type="text" style="width:75px;" name="people" /></span>
+							<span style="margin-left:15px;">国籍：<input maxlength="6" type="text" name="nationality" style="width:70px;"/></span>
+							<span style="margin-left:15px;">身份证号：<input type="text" name="idNo" maxlength="18" style="width:135px;"/></span>
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+							工作单位及地址：<input type="text" name="workUnitAddr" style="width:30%"/>
+							<span style="margin-left:10px;">电话：</span><input type="text" maxlength="13" name="workUnitTel" style="width:92px;"/>&nbsp;
+							<span style="margin-left:10px;">邮政编码：</span><input type="text" maxlength="6" name="workUnitPostCode" style="width:55px;"/>
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+	    					户口地址/现住址：<input type="text" name="homeAddr" style="width:58%" />
+							<span style="margin-left:15px;">邮政编码：</span><input type="text" maxlength="6" name="homePostCode" style="width:55px;"/>
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td>
+							联系人姓名：<input maxlength="4" type="text" name="contacterName" style="width:50px;"/>
+							<span style="margin-left:10px;">关系：</span><input type="text" name="contacterRelationship" style="width:75px;"/>
+							<span style="margin-left:10px;">地址：</span><input type="text" name="contacterAdd" style="width:26%"/>
+							<span style="margin-left:10px;">电话：</span><input maxlength="13" type="text" name="contacterTel" style="width:88px;"/>
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					入院日期：<input type="text" id="inHspDate" name="inHspDate" style="width:100px;" readOnly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<span style="marign-left:5px;">&nbsp;&nbsp;入院科别：<input type="text" name="inWardCode" style="width:85px;"/></span>&nbsp;
+							<span style="marign-left:5px;">&nbsp;&nbsp;病室：<input type="text" name="inWard" style="width:60px;"/></span>
+							<span style="marign-left:5px;">&nbsp;&nbsp;转科科别：<input type="text" name="creditWard" style="width:85px;"/></span>
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					出院日期：<input type="text" id="outHspDate" name="outHspDate" onpropertychange="setInHspCountDay()" style="width:100px;"/>
+							<span>&nbsp;&nbsp;出院科别：</span><input type="text" name="outHspWard" style="width:86px;"/>
+							<span>&nbsp;&nbsp;病室：</span><input type="text" name="outWard" style="width:60px;"/>
+							<span>&nbsp;&nbsp;实际住院：</span><input type="text" style="width:25px;" id="hspDate2" name="hspDate2"/>&nbsp;天
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					门(急)诊诊断：<input type="text" name="menzhen" style="width:50%"/>
+							<span style="padding-left:2%">入院时情况：</span>
+							<input type="text" style="width:25px;" maxlength="1" name="inStatus"/>
+							<span>&nbsp;1.危&nbsp;2.急&nbsp;3.一般</span>
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					入院诊断：<input type="text" name="inIllsShow" style="width:53%"/>
+							<span style="padding-left:2%">&nbsp;入院后确诊日期：</span>
+							<input type="text" style="width:70px;" name="queding_checkdate" style="width:100px;"/>
+	    				</td>
+	    			</tr>
+	    		</table>
+	    		<table align="center" class="out" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+	    			<tr>
+			            <td width="320px;" colspan="5" rowspan="2" align="center">
+			            	<span style="font-size:20px;">出 院 诊 断</br>
+			            		<input type="button" value="导入出院诊断" style="width:80px;" onclick="importInHospOne();">
+			            	</span>
+			            </td>
+			            <td align="center" colspan="5">出院情况</td>
+			            <td width="115px;" class="right" rowspan="2" align="center">
+			            	<span style="color:red;"><B>ICD-10</B></span>
+			            </td>
+		        	</tr>
+			        <tr align="center">
+			           <td width="37px;">治愈</td>
+			           <td width="37px;">好转</td>
+			           <td width="37px;">未愈</td>
+			           <td width="37px;">死亡</td>
+			           <td width="37px;">其他</td>
+			        </tr>
+			         	<tr name="maincheck">
+				            <td colspan="5">主要诊断：<input maxlength="32" type="text" name="outIlls1" style="width:76%"/></td>
+				            <td width="37px;"><input type="checkbox" name="leaveHospital1" class="put" value="1"/></td>
+				            <td width="37px;"><input type="checkbox" name="leaveHospital1" value="2" class="put"/></td>
+				            <td width="37px;"><input type="checkbox" name="leaveHospital1" value="3" class="put"/></td>
+				            <td width="37px;"><input type="checkbox" name="leaveHospital1" value="4" class="put"/></td>
+				            <td width="37px;"><input type="checkbox" name="leaveHospital1" value="5" class="put"/></td>
+				            <td width="115px;"><input maxlength="18" type="text" name="icd1" style="width:99%;" /></td>
+				       </tr>
+				       <tr name="othercheck">
+				           <td colspan="5"><span>其他诊断：</span><input maxlength="32" type="text" name="outIlls2" style="width:76%"/></td>
+				           <td><input type="checkbox" name="leaveHospital2" value="1" class="put" /></td>
+				           <td><input type="checkbox" name="leaveHospital2" value="2" class="put"/></td>
+				           <td><input type="checkbox" name="leaveHospital2" value="3" class="put"/></td>
+				           <td><input type="checkbox" name="leaveHospital2" value="4" class="put"/></td>
+				           <td><input type="checkbox" name="leaveHospital2" value="5" class="put"/></td>
+				           <td><input maxlength="18" type="text" name="icd2" style="width:99%;" /></td>
+				      </tr>
+			          <tr name="othercheck">
+			              <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls3" style="width:76%;" /></span></td>
+			              <td><input type="checkbox" name="leaveHospital3" value="1" class="put"/></td>
+			              <td><input type="checkbox" name="leaveHospital3" value="2" class="put"/></td>
+			              <td><input type="checkbox" name="leaveHospital3" value="3" class="put"/></td>
+			              <td><input type="checkbox" name="leaveHospital3" value="4" class="put"/></td>
+			              <td><input type="checkbox" name="leaveHospital3" value="5" class="put"/></td>
+			              <td><input maxlength="18" type="text" name="icd3" style="width:99%;" /></td>
+			         </tr>
+			         <tr name="othercheck">
+			             <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls4" style="width:76%;" /></span></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="1" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="2" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="3" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="4" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="5" class="put"/></td>
+			             <td><input maxlength="18" type="text" name="icd4" style="width:99%;" /></td>
+			         </tr>
+			         <tr name="othercheck">
+			             <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls5" style="width:76%;" /></span></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="1" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="2" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="3" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="4" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="5" class="put"/></td>
+			             <td style="border-right:none;"><input maxlength="18" type="text" name="icd5" style="width:99%;" /></td>      	       	 
+			         </tr>
+			         <tr name="othercheck">
+			             <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls6" style="width:76%;" /></span></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="1" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="2" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="3" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="4" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="5" class="put"/></td>
+			            <td class="right"><input maxlength="18" type="text" name="icd6" style="width:99%;" /></td>      	       	 
+			        </tr>
+			        <tr name="othercheck">
+			             <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls7" style="width:76%;" /></span></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="1" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="2" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="3" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="4" class="put"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="5" class="put"/></td>
+			             <td class="right"><input maxlength="18" type="text" name="icd7" style="width:99%;" /></td>      	       	 
+			        </tr>
+			         <tr name="othercheck">
+			            <td colspan="5"><span style="margin-left:63px;"><input maxlength="22" type="text" name="outIlls8" style="width:76%;" /></span></td>
+			            <td><input type="checkbox" name="leaveHospital8" value="1" class="put"/></td>
+			            <td><input type="checkbox" name="leaveHospital8" value="2" class="put"/></td>
+			            <td><input type="checkbox" name="leaveHospital8" value="3" class="put"/></td>
+			            <td><input type="checkbox" name="leaveHospital8" value="4" class="put"/></td>
+			            <td><input type="checkbox" name="leaveHospital8" value="5" class="put"/></td>
+			            <td><input maxlength="18" type="text" name="icd8" style="width:99%;" /></td>      	       	 
+			        </tr>
+	    		</table>
+	    		<table align="center" id="sign" cellSpacing=0 style="border-top:none;" borderColorDark=#ffffff cellPadding=0>
+	    			<tr>
+			            <td colspan="3" width="515px;">医院感染名称：<input type="text" name="ganran" style="width:81%;"/></td>
+			        	<td width="115px;" style="border-left:solid 1px #000;"><input type="text" name="icd9" style="width:100%;" /></td>
+					</tr>
+		        <tr>
+					<td colspan="3">病理诊断：<input type="text" name="pathology" style="width:85%;"/></td>
+					<td width="115px;" style="border-left:solid 1px #000;"><input type="text" name="icd10" style="width:100%;" /></td>
+				</tr>
+				<tr>
+					<td colspan="4">损伤、中毒的外部因素：<input type="text" name="harm" style="width:75%"/></td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span style="color:red;">
+							<b style="font-size:16px;">药物过敏</b>
+							<input type="text" name="drugAllergy" style="width:400px"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span style="color:red">
+							HBsAg&nbsp;<input type="text" maxlength="1" style="width:15px;" name="hbsag"/>&nbsp;
+							HCV-Ab&nbsp;<input type="text" maxlength="1" style="width:15px;" name="hcvab"/>&nbsp;
+							HIV-Ab&nbsp;<input type="text" maxlength="1" style="width:15px;" name="hivab"/>&nbsp;
+						</span>
+						<span>0.未做&nbsp;1.阴性&nbsp;2.阳性&nbsp;3.待回报&nbsp;4.可疑阳性</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span>传染病 <input type="text" maxlength="1" style="width:20px;" name="contagion"/><span>&nbsp;&nbsp;&nbsp;1.有&nbsp;&nbsp;2.无&nbsp;&nbsp;3.未确定</span>
+						<span style="padding-left:15%">传染病报卡：<input type="text" maxlength="1" style="width:20px;" name="baoka"/></span>&nbsp;&nbsp;&nbsp;
+						<span>1.未报&nbsp;&nbsp;2.已报&nbsp;&nbsp;3.订正&nbsp;&nbsp;4.不需上报</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						诊断符合情况
+						<span style="margin-left:75px;">门诊与出院<input type="text" name="menzhen_chuyuan" maxlength="1" style="width:20px;"/></span>
+						<span style="margin-left:20px;">入院与出院<input type="text" name="ruyuan_chuyuan" maxlength="1" style="width:20px;"/></span>
+						<span style="margin-left:20px;">术前与术后<input type="text" name="shuqian_shuhou" maxlength="1" style="width:20px;"/></span>
+						<span style="margin-left:20px;">临床与病理<input type="text" name="linchuang_bingli" maxlength="1" style="width:20px;"/></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span style="margin-left:160px;">
+							放射与病理<input type="text" style="width:25px;" maxlength="1" name="fangshe_bingli"/>
+						</span>&nbsp;&nbsp;
+						<span>0.未做&nbsp;1.符合&nbsp;2.不符合&nbsp;3.不肯定</span>
+						<span style="margin-left:10px;">
+							抢救<input type="text" maxlength="2" style="width:25px;" name="qiangjiu"/>次&nbsp;&nbsp;&nbsp;成功
+							<input type="text" maxlength="2" style="width:25px;" name="succed" />&nbsp;次
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span>科主任<input type="text" name="kezhuren_show" style="width:65px;"/></span>
+						<span style="margin-left:15px;">主(副主)任医师<input type="text" name="directorDoctorId_show" style="width:65px;"/></span>
+						<span style="margin-left:15px;">主治医师<input type="text" name="treatDoctorId_show" style="width:65px;"/></span>
+						<span style="margin-left:15px;">住院医师<input type="text" name="inhspDoctorId_show" style="width:65px;"/></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span>进修医师<input type="text" name="jinxiu_show" style="width:75px;"/></span>
+						<span style="margin-left:10px;">研究生实习师<input type="text" name="yanjiusheng_show" style="width:75px;"/></span>
+						<span style="margin-left:10px;">实习医师<input type="text" name="shixi_show" style="width:75px;"/></span>
+						<span style="margin-left:10px;">编码员<input type="text" name="bianma" style="width:75px;"/></span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<span>病案质量<input type="text" maxlength="1" style="width:25px;" name="bingan" />&nbsp;&nbsp;&nbsp;1.甲&nbsp;2.乙&nbsp;3.丙</span>
+						<span style="margin-left:15px;">质控医师<input type="text" name="qcyishi" style="width:75px;"/></span>
+						<span style="margin-left:15px;">质控护师<input type="text" name="qchushi" style="width:75px;"/></span>
+						<span style="margin-left:15px;">日期<input type="text" name="badate" style="width:80px;"/></span>
+					</td>
+				</tr>
+	    		</table>
+	    	</div>
+	    	
+	   </form>
+  </body>
+</html>

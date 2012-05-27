@@ -1,0 +1,75 @@
+body{
+	margin:0;
+	font-size:12px;
+}
+#pat-info-div{
+	height:23px;
+	overflow:hidden;
+	background:url(../../../PUBLIC/images/label_line_bg.gif) center repeat;
+}
+#toolbar{
+	background:url(../../../PUBLIC/images/toolbar-bg.gif) center repeat;
+	height:28px;
+	border:none;
+}
+#tabs{
+	background:none;
+}
+#tabs UL{
+	margin-top:-3px;
+	margin-left:-3px;
+}
+#tabs div.tabs-content{
+	padding:3px;
+	margin:0;
+}
+.ui-tabs .ui-tabs-nav li a { 
+	float: left; 
+	text-decoration: none; 
+	padding: 3px 5px; 
+}
+.ui-tabs .ui-tabs-nav li { 
+	position: relative; 
+	float: left; 
+	border-bottom-width: 0 !important; 
+	margin: 0 2px -1px 0; 
+	padding: 0; 
+}
+table.toolbar{
+
+}
+td.verify{
+	font-size:14px;
+}
+td.verify button{
+	margin:0;
+	padding:0;
+}
+td.verify img{
+	width:23px;
+	height:23px;
+	cursor:pointer;
+	margin-left:0 -5px 0 0;
+}
+td.case-title{
+	text-align:center;
+	font-size:14px;
+	color:#10036E;
+	font-weight:bold;
+	letter-spacing:.5em;
+}
+.btn{
+	border:solid 1px #666;
+	background:url(../../../PUBLIC/images/btn-bg.gif) center repeat;
+	height:24px;
+	line-height:20px;
+	color:#FFF;
+	font-weight:bold;
+	padding:0 3px;
+	margin:0 3px;
+	cursor:pointer;
+	margin-left:3px;
+}
+.btn-hover{
+	background:url(../../../PUBLIC/images/btn-over-bg.gif) center repeat;
+}

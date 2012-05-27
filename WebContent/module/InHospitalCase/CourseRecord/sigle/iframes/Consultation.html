@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会诊记录</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript">
+	var kid=App.util.getHtmlParameters('kid');
+	$(function(){
+		initDict();
+		getChiefCom(kid);
+		initPage('Consultation_findById');	
+	});
+	
+	function initDict(){
+		//初始化公共字典值
+		$.each(FormUtil.getPageDictionary('ERM-RECORDS-Contsultation'),function(code){
+			$('input[name="'+code+'"]').data('options',this);
+		});
+		
+		$('input.select').each(function(){
+			FormUtil.toCombobox({el:$(this)});
+		});
+	}
+	
+	function getChiefCom(kid){
+		$.ajax(
+			{
+				url:App.App_Info.BasePath+'/InHospitalCase/CourseRecordingAction.do',
+				data:{
+					method:'getChiefComByCaseId',
+					caseId:kid
+				},
+				async:false,
+				dataType:'json',
+				success:function(data){
+					if (data.success) {
+						var json=JSON.parse(data.data);
+						var content = "患者主因" + json.ccContent + "于" + json.inHspDate + "入院，";
+						$('textarea[name="simpleCase"]').val(content);
+					}
+				}
+			}
+		);
+	}
+	
+function before_init(){
+	registrationPageHead(kid,'会诊记录','#header');
+	FormUtil.toDateField({el:$('*[name="time"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="apptime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="rectime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+}
+function initPage_callback(json){
+	json.title='会诊记录('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'Consultation_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'会诊记录'
+	}
+}
+function isValid(data){
+	if(data.time.length==0){
+		alert('记录时间不能为空。');
+		return false;
+	}
+	return true;
+}
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/CourseRecord/sigle/iframes/print/Consultation.html?kid='+
+	id+'&cid='+kid);
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="80">记录日期：</td>
+		<td class="t2" widht="220"><input name="time" type="text" class="text"/></td>
+		<td class="t2" colspan="2" width="300"><span style="color:red">*</span> 本次记录的日期，用以区分病程内的多次记录</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">姓名：</td>
+		<td class="t2" widht="220"><input name="name" type="text" class="text"/></td>
+		<td class="t1" width="80">性别：</td>
+		<td class="t2" width="220"><input name="gender" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">年龄：</td>
+		<td class="t2" width="220"><input name="age" type="text" class="text"/></td>
+		<td class="t1" width="80">床号：</td>
+		<td class="t2" width="220"><input name="bedNo" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">申请科室：</td>
+		<td class="t2"><input name="ward" type="text" class="text"/></td>
+		<td class="t1">申请医师：</td>
+		<td class="t2"><input type="text" name="appDoctors" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">上级医师：</td>
+		<td class="t2"><input type="text" name="superDoctors" class="text"/></td>
+		<td class="t1">申请日期：</td>
+		<td class="t2"><input name="apptime" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">被邀请科室：</td>
+		<td class="t2"><input type="text" name="invitedWard" class="text"/></td>
+		<td class="t1">被邀请医师：</td>
+		<td class="t2"><input type="text" name="invitedDoctors" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">会诊等级：</td>
+		<td class="t2"><input name="conLv" type="radio" checked="checked" value="急"/>急 <input name="conLv" type="radio" value="平"/>平 <input name="conLv" type="radio" value="等"/>等</td>
+		<td class="t2" colspan="2">&nbsp;</td>
+	</tr>
+	<!--<tr>
+		<td class="t1">邀请科室：</td>
+		<td class="t2" colspan="3"><input name="appward" type="text" class="text" style="width:91%"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">简述病历：</td>
+		<td class="t2" colspan="3"><textarea name="simpleCase" class="textarea" style="width:98%"></textarea></td>
+	</tr>-->
+	<tr>
+		<td class="t1" valign="top">会诊目的：</td>
+		<td class="t2"><input name="conTarget" class="select"/></td>
+		<td class="t2" colspan="2"><input type="text" class="text hidden" name="conTarget0" style="width:86%"/>&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80" valign="top">病历摘要：</td>
+		<td class="t2" width="520" colspan="3"><textarea name="simpleCase" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">会诊意见：</td>
+		<td class="t2" colspan="3"><textarea name="conAdv" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">会诊医师：</td>
+		<td class="t2"><input name="recName" type="text" class="text"/></td>
+		<td class="t1">会诊日期：</td>
+		<td class="t2"><input name="rectime" type="text" class="text"/></td>
+	</tr>
+</form>
+</body>
+</html>

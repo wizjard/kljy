@@ -1,0 +1,80 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+					<input type="hidden" name="id" id="id" value="-1"/>
+					<input type="hidden" name="scId" id="scId" value=""/>
+					<input type="hidden" name="caseId" id="caseId" value=""/>
+					<div id="print">
+					<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+							<tr><td colspan="4" style="font-size:20px;color:red;align:right;"> MELD指数</td></tr>
+		            		<tr>
+		              			  <td width="150" align="right">肌酐：</td>
+		              			  <td width="175">
+		              				  <input name="creatinine" type="text" id="creatinine" style="width:120px;""/>&nbsp;μmol/L
+		              			  </td>
+				                  <td width="150" align="right">胆红素：</td>
+				                  <td width="175">
+				              	     <input name="bilirubin" type="text" id="bilirubin" style="width:120px;""/>&nbsp;μmol/L
+				                  </td>
+		            		</tr>
+		            		<tr>
+		              			<td align="right">INR：</td>
+		              			<td>
+		             				<input name="inr" type="text" id="inr" style="width:120""/>
+		             			</td>
+		              			<td align="right">病因：</td>
+				                <td>
+									<select name="etiology" id="etiology" style="width:120px">
+										  <option value=""></option>
+										  <option value="0">胆汁淤积性</option>
+										  <option value="0">酒精性肝硬化</option>
+										  <option value="1">其它</option>
+									</select>
+				                </td>
+		            		</tr>
+				            <tr>
+				              	<td align="right">结果：</td>
+				                <td>
+				              	   <input name="result" type="text" id="result" style="width:120px;" readOnly/>
+				                </td>
+				                <td>&nbsp;</td>
+				                <td>&nbsp;</td>
+				            </tr>
+          			</table>
+          			</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>系统模块管理</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../mainface/main.css"/>
+<script type="text/javascript">
+var currentModuleCode=null;
+Ext.onReady(function(){
+	LayoutPage();
+});
+function LayoutPage(){
+	var _sm=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var _sm2=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	new Ext.Viewport({
+		layout:'border',
+		border:false,
+		items:[
+			{
+				region:'center',
+				border:false,
+				layout:'border',
+				items:[
+					new Ext.grid.EditorGridPanel({
+						region:'north',
+						title:'大模块',
+						id:'grid1',
+						getSelections:function(){
+							var _ss=this.getSelectionModel().getSelections();
+							if(_ss.length==0){
+								alert('未选择行。');
+								return;
+							}
+							return _ss[0];
+						},
+						columns:[
+							new Ext.grid.RowNumberer(),
+							_sm,
+							{header:'代码',dataIndex:'moduleCode',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'名称',dataIndex:'moduleName',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'序号',dataIndex:'orderNo',editor:new Ext.form.NumberField({allowBlank:false})}
+						],
+						store:new Ext.data.Store({
+							pruneModifiedRecords:true,
+							proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/SysModuleAction.do?method=getBigModules'}),
+							reader:new Ext.data.JsonReader({root:''},[
+								{name:'id'},
+								{name:'moduleCode'},
+								{name:'moduleName'},
+								{name:'parentModuleCode'},
+								{name:'icon'},
+								{name:'onClick'},
+								{name:'orderNo'}
+							])
+						}),
+						height:400,
+						viewConfig:{
+							forceFit:true
+						},
+						sm:_sm,
+						tbar:[
+							{
+								text:'新增',handler:function(){
+									Ext.getCmp('grid1').getStore().insert(0,new Ext.data.Record({
+										id:-1,
+										moduleCode:'',
+										moduleName:'',
+										orderNo:0
+									}));
+								}
+							},{
+								xtype:'tbseparator'
+							},{
+								text:'删除',handler:function(){
+									var _record=Ext.getCmp('grid1').getSelections();
+									if(!_record)return;
+									if(!confirm('确定要删除？'))	return;
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath+'/admin/SysModuleAction.do',
+										params:{method:'deleteBigModules',id:_record.data.id},
+										success:function(_response,_options){
+											var _res=Ext.util.JSON.decode(_response.responseText);
+											if(_res.success){
+												alert('删除成功。');
+												Ext.getCmp('grid1').getStore().reload();
+											}else{
+												alert('删除失败。');
+											}
+										}
+									});
+								}
+							},{
+								xtype:'tbseparator'
+							},{
+								text:'保存',handler:function(){
+									var _store=Ext.getCmp('grid1').getStore();
+									var _mr=_store.getModifiedRecords();
+									if(_mr.length==0){
+										alert('无数据需要保存。');
+										return;
+									}
+									var _array=[];
+									Ext.each(_mr,function(_item,_index){
+										_array.push(_item.data);
+									});
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath+'/admin/SysModuleAction.do',
+										params:{method:'saveBigModules',data:Ext.util.JSON.encode(_array)},
+										success:function(_response,_options){
+											var _res=Ext.util.JSON.decode(_response.responseText);
+											if(_res.success){
+												alert('保存成功。');
+												_store.reload();
+											}else{
+												alert('保存失败。');
+											}
+										}
+									});
+								}
+							},'->',{
+								text:'编辑子模块',handler:function(){
+									var _record=Ext.getCmp('grid1').getSelections();
+									if(!_record)return;
+									currentModuleCode=_record.data.moduleCode;
+									var _grid2=Ext.getCmp('grid2');
+									var _store=_grid2.getStore();
+									_grid2.setTitle('编辑<'+_record.data.moduleName+'>的子模块');
+									_store.baseParams={ModuleCode:currentModuleCode};
+									_store.load();
+								}
+							},{
+								xtype:'tbseparator'
+							},{
+								text:'预览',handler:function(){
+									initMenu();
+								}
+							}
+						],
+						listeners:{
+							render:function(){
+								this.getStore().load();
+							}
+						}
+					}),new Ext.grid.EditorGridPanel({
+						region:'center',
+						title:'子模块',
+						id:'grid2',
+						getSelections:function(){
+							var _ss=this.getSelectionModel().getSelections();
+							if(_ss.length==0){
+								alert('未选择行。');
+								return;
+							}
+							return _ss[0];
+						},
+						sm:_sm2,
+						columns:[
+							new Ext.grid.RowNumberer(),
+							_sm2,
+							{header:'代码',dataIndex:'moduleCode',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'名称',dataIndex:'moduleName',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'图标',dataIndex:'icon',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'点击事件',dataIndex:'onClick',editor:new Ext.form.TextField({allowBlank:false})},
+							{header:'序号',dataIndex:'orderNo',editor:new Ext.form.NumberField({allowBlank:false})}
+						],
+						store:new Ext.data.Store({
+							pruneModifiedRecords:true,
+							proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/SysModuleAction.do?method=getChildModules'}),
+							reader:new Ext.data.JsonReader({root:''},[
+								{name:'id'},
+								{name:'moduleCode'},
+								{name:'moduleName'},
+								{name:'parentModuleCode'},
+								{name:'icon'},
+								{name:'onClick'},
+								{name:'orderNo'}
+							])
+						}),
+						viewConfig:{
+							forceFit:true
+						},
+						tbar:[
+							{
+								text:'新增',handler:function(){
+									if(!currentModuleCode)	return;
+									Ext.getCmp('grid2').getStore().insert(0,new Ext.data.Record({
+										id:-1,
+										moduleCode:'',
+										moduleName:'',
+										parentModuleCode:currentModuleCode,
+										icon:'',
+										onClick:'',
+										orderNo:0
+									}));
+								}
+							},{
+								xtype:'tbseparator'
+							},{
+								text:'删除',handler:function(){
+									if(!currentModuleCode)	return;
+									var _record=Ext.getCmp('grid2').getSelections();
+									if(!_record)return;
+									if(!confirm('确定要删除？'))	return;
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath+'/admin/SysModuleAction.do',
+										params:{method:'deleteBigModules',id:_record.data.id},
+										success:function(_response,_options){
+											var _res=Ext.util.JSON.decode(_response.responseText);
+											if(_res.success){
+												alert('删除成功。');
+												Ext.getCmp('grid2').getStore().reload();
+											}else{
+												alert('删除失败。');
+											}
+										}
+									});
+								}
+							},{
+								xtype:'tbseparator'
+							},{
+								text:'保存',handler:function(){
+									if(!currentModuleCode)	return;
+									var _store=Ext.getCmp('grid2').getStore();
+									var _mr=_store.getModifiedRecords();
+									if(_mr.length==0){
+										alert('无数据需要保存。');
+										return;
+									}
+									var _array=[];
+									Ext.each(_mr,function(_item,_index){
+										_array.push(_item.data);
+									});
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath+'/admin/SysModuleAction.do',
+										params:{method:'saveBigModules',data:Ext.util.JSON.encode(_array)},
+										success:function(_response,_options){
+											var _res=Ext.util.JSON.decode(_response.responseText);
+											if(_res.success){
+												alert('保存成功。');
+												_store.reload();
+											}else{
+												alert('保存失败。');
+											}
+										}
+									});
+								}
+							}
+						],
+						listeners:{
+							render:function(){
+								this.ownerCt.items.get(0).setHeight(Ext.getBody().getSize().height/2);
+							}
+						}
+					})
+				]
+			},{
+				region:'east',
+				title:'预览窗口',
+				id:'east-panel',
+				split:true,
+                width: 150,
+                minSize: 100,
+                maxSize: 400,
+                collapsible: true,
+				border:true,
+                margins:'0 0 0 0',
+                layout:'accordion',
+                layoutConfig:{
+                    animate:true
+                }
+			}
+		]
+	});
+}
+function initMenu(_left){
+	var _left=Ext.getCmp('east-panel');
+	_left.removeAll();
+	_left.doLayout();
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/admin/SysModuleAction.do?method=getJSONModules',
+		success:function(_response,_options){
+			var _res=Ext.util.JSON.decode(_response.responseText);
+			if(!_res.success){
+				alert('预览失败。');
+				return;
+			}
+			var _cfgs=Ext.util.JSON.decode(_res.data);
+			if(_cfgs){
+				var tpl=new Ext.XTemplate('<tpl for=".">','<div class="left-menu-item-con">',
+											  '<table width="100%" border=0 cellspacing=0 cellpadding=0>',
+												  '<tr>',
+													  '<td class="dropShadow">',
+														  '<img class="img-normal" src="'+App.App_Info.BasePath+'{icon}" ',
+																'onmouseover="this.className=\'img-over\'" ',
+																'onmouseout="this.className=\'img-normal\'" ',
+																'onclick="{action}"/>',
+													  '</td>',
+												  '</tr>',
+											  '</table>',
+											  '<p>{title}</p>',
+										  '</div></tpl>');
+				Ext.each(_cfgs,function(_item,_index,_length){
+					var _panel=new Ext.Panel({
+						title:'<div class="left-menu-item-title">'+_item.title+'</div>',
+						border:false
+					});	
+					_left.add(_panel);
+					_left.doLayout();
+					tpl.overwrite(_panel.body,_item.children);
+				});	
+			}
+		}
+	});	
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

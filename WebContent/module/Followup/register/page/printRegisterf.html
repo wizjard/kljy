@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>科研标本登记打印</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+	<link rel="stylesheet" type="text/css" href="../jsOrCss/print.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript"src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../jsOrCss/print.js"></script>
+	<script type="text/javascript" src="../jsOrCss/printView.js"></script>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0></object>
+	<OBJECT id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" height="0" width="0"></OBJECT> 
+  <script>
+  		var	ch =App.util.getHtmlParameters('ch');
+  		$(function(){
+  			document.getElementById('page-header').innerHTML=CreatePageHeader('科研标本打印预览');
+  			$.post(App.App_Info.BasePath+'/EMR/register.do',
+				{
+					ch:ch,
+					method:'getRegisterPrintInfo'
+				},function(data){
+					var _table=$("#pri");
+      				//清空表,保留第一行
+      				_table.find("tr").each(function(b){
+        				if (b>0) {
+        					$(this).remove();
+        				}else{
+        				var _data=JSON.parse(data.data);
+							$.each(_data,function(i){
+						var tr = "<tr align='center'><td>"+
+			_data[i].dateTime.split(" ")[0]+"&nbsp;</td><td>"+_data[i].name+"</td><td>"+_data[i].scientificRoom+"&nbsp;</td>"+
+			"<td>"+_data[i].patientName+"&nbsp;</td><td>"+_data[i].patientNo+"&nbsp;</td><td>"+_data[i].diacrisis+"&nbsp;</td><td>"
+			+_data[i].sampleType+"&nbsp;</td><td>"+_data[i].number+"&nbsp;</td><td>"+_data[i].giveSampleP
+			+"&nbsp;</td><td>"+_data[i].belong+"&nbsp;</td><td>"+_data[i].remarks+"&nbsp;</td></tr>";
+			$(tr).appendTo(_table);
+							});
+        				}	
+      				});
+			},'json');
+  		});
+  		
+  	//打印预览函数
+	function doPrintView() {
+		CreateOneFormPage("divMargin",'科研标本');	
+		LODOP.PREVIEW();	
+	}
+		
+  </script>
+  </head>
+  
+  <body>
+  	<div id="page-header" style="width:100%;position:relative;"></div>
+    <p align="right" style="padding-right:80px;padding-top:10px;">
+	<input type="button" value="打印预览" onClick="doPrintView()"/>&nbsp;&nbsp;
+	<hr align="left" size="0" class="hrclass" width="94%">
+    <div id="page1Div" class="printCon">
+	
+	<div id="divMargin" class="divMargin">
+    	<table id="pri" width="85%" border="0" cellpadding="0" cellspacing="1" style="font-size:12px">
+	       <tr align="center">
+	          <td>日期</td>
+	          <td>课题名称</td>
+	          <td>课题科室</td>
+	          <td>病人姓名</td>
+	          <td>病案号</td>
+	          <td>诊断</td>
+	          <td>标本类型</td>
+	          <td>数量</td>
+	          <td>送标本人</td>
+	          <td>送标本科室</td>
+	          <td>备注</td>
+	      </tr>
+       </table>
+  </div>
+</div>		
+  </body>
+</html>

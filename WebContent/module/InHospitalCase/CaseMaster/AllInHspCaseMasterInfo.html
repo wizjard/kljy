@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>入院记录主表信息</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript" src="./info.js"></script>
+</head>
+<body>
+<form>
+<div id="header" style="width:600px;position:relative;"></div>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="patientId" value=""/>
+<input type="hidden" name="outDate" value=""/>
+<input type="hidden" name="outIlls" value=""/>
+<input type="hidden" name="outWardCode" value=""/>
+<input type="hidden" name="responsibleDoc" value=""/>
+<input type="hidden" name="inIlls" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">入院基本信息</td>
+	</tr>
+	<tr>
+		<td colspan=4 class="t1" style="line-height:18px;text-align:center">病 人 基 本 信 息 ( <a href="javascript:" id="pat-btntoAll">查看</a> )</td>
+	</tr>
+	<tr>
+		<td colspan=4 class="t1" style="line-height:18px;text-align:center">HIS 入 院 信 息</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">病历类型：</td>
+		<td class="t2" width="210"><input name="caseModuleId" type="text" class="select"/></td>
+		<td class="t1" width="80">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">入院次数：</td>
+		<td class="t2" width="210"><input name="inHspTimes" type="text" class="text"/></td>
+		<td class="t1" width="80">年龄：</td>
+		<td class="t2"><input name="age" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">入院日期：</td>
+		<td class="t2"><input name="inHspDate" type="text" class="text"/></td>
+		<td class="t1">入院科室：</td>
+		<td class="t2"><input name="inWardCode" type="text" class="select"/></td>
+	</tr>
+	<tr>
+		<td class="t1">入院诊断：</td>
+		<td class="t2"><input name="inIllsShow" type="text" class="text"/></td>
+		<td class="t1">入院状态：</td>
+		<td class="t2"><input name="inStatus" type="text" class="select"/></td>
+	</tr>
+	<tr>
+		<td class="t1">负责医生：</td>
+		<td class="t2"><input name="responsibleDocShow" type="text" class="text"/></td>
+		<td class="t1">当前科室：</td>
+		<td class="t2"><input name="currentWordCode" type="text" class="select"/></td>
+	<tr>
+		<td colspan="4">
+			<div style="text-align:center">
+				<input type="button" value="保存" class="btn_mouseout" onclick="SaveData()"/>
+				<input type="reset" value="重置" class="btn_mouseout" style="margin-left:1em" onclick=""/>
+				<input type="button" value="返回" class="btn_mouseout" style="margin-left:1em" onclick="history.go(-1)"/>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="6" style="font-size:20px;color:red;">原发性肝癌临床分期</td></tr>
+		<tr>
+			<td width="120" align="center">肿瘤</td>
+			<td width="130" align="center">癌栓</td>
+			<td width="70" align="center">腹腔淋巴结转移</td>
+			<td width="60" align="center">远处转移</td>
+			<td width="120" align="center">Child分级</td>
+			<td width="100" align="center">分期</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="1" /></div><div style="float:left;">单个，直径≤3cm </div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce1" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cln" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="pm" value="1" /></div><div style="float:left;">无</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="1" /></div><div style="float:left;">Child-Pugh A</div></div></td>
+			<td rowspan="10"><input type="text" name="stage" value="" style="width:90px; height:20px;" readOnly/></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="2" /></div><div style="float:left;">单个，直径≤5cm</div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce2" value="2" /></div><div style="float:left;">门静脉分支癌栓</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cln" value="2" /></div><div style="float:left;">有</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="pm" value="2" /></div><div style="float:left;">有</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="2" /></div><div style="float:left;">Child-Pugh B</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="3" /></div><div style="float:left;">两个，位于同侧半肝，且最大直径之和≤5cm</div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce3" value="3" /></div><div style="float:left;">肝静脉癌栓</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><div><div style="float:left;"><input type="radio" name="cgrade" value="3" /></div><div style="float:left;">Child-Pugh C</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="4" /></div><div style="float:left;">单个，直径≤10cm</div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce4" value="4" /></div><div style="float:left;">胆管癌栓</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="5" /></div><div style="float:left;">两个，位于同侧半肝，且最大直径之和≤10cm</div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce5" value="5" /></div><div style="float:left;">门静脉主干癌栓</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="6" /></div><div style="float:left;">两个，分别位于左、右半肝，且最大直径之和≤5cm</div></div></td>
+			<td><div><div style="float:left;"><input type="checkbox" name="ce6" value="6" /></div><div style="float:left;">下腔静脉癌栓</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="7" /></div><div style="float:left;">单个，直径＞10cm</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="8" /></div><div style="float:left;">两个，位于同侧半肝，且最大直径之和＞10cm</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="9" /></div><div style="float:left;">两个，在左、右两半肝，且最大直径之和＞5cm</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="tumor" value="10" /></div><div style="float:left;">多个肿瘤</div></div></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+    </table>
+    </div>
+</form>
+</body>
+</html>

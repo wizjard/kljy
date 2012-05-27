@@ -1,0 +1,530 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>组合项目</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<style type="text/css">
+	 .redstyle{color:red;}
+	 .blackstyle{color:black;}
+     input{
+		border:none;
+		font-size:14px;
+		font-family:'宋体';	
+		width:14px;
+	 }
+	</style>
+
+	<script type="text/javascript">
+		var oldOperations = null;
+		var itemReturnValue = null;
+		var itemName = "symptomInfo";
+		var textAreaValue = '';
+		var symptomInfo;
+		var symptomArray = new Array();//存放导入的组合项目值
+		var store;
+		var addNo=0;//病人移除列表用，标志用户往列表中增加过几次，不包括移除操作
+		var url = App.App_Info.BasePath+'/PresentHistory/preHistory.do?method=getPresentHistory';
+		var panel=new Ext.tree.TreePanel({
+			title:'',
+			autoScroll:true,
+			containerScroll:true,
+			height:578,
+			copyNode:null,					
+			loader: new Ext.tree.TreeLoader({dataUrl:url}),
+			root:{
+				nodeType:'async',
+				text:'现病史',
+				draggable:false,
+				itemName:'',
+				id:-1
+			},
+			useArrows:true,
+			rootVisible:false,
+			listeners:{
+				render:function(){
+					//this.getRootNode().expand();
+					this.expandAll();
+				},						
+				click:function(_node,_e){
+					//alert(panel.getRootNode().indexOf(_node));
+					//alert(_node.getPath());
+					itemName = _node.text;
+					if(_node.isLeaf()){
+						itemReturnValue = treeNodeClick(_node);
+					}
+					if(itemReturnValue){
+						if(itemReturnValue.itemValue != 0){
+							setReturnValue();						
+						}																																											
+					}
+				}
+			}
+		});
+		panel.loader.on("beforeload", function(treeLoader, node){treeLoader.baseParams.itemName = itemName;}); 
+		
+		Ext.onReady(function(){	
+			var sm=new Ext.grid.CheckboxSelectionModel({}); 
+			var cm=new Ext.grid.ColumnModel([	
+				new Ext.grid.RowNumberer(),
+				sm,			
+//				{header:'序号',dataIndex:'serialNo'},
+				{header:'字段',dataIndex:'symptomItem',width:160}
+			]);
+			symptomInfo = Ext.data.Record.create([
+				{name:'serialNo'},
+				{name:'symptomItem'}
+			]);
+			store=new Ext.data.Store({
+				proxy:new Ext.data.MemoryProxy(),
+				reader:new Ext.data.ArrayReader({},symptomInfo)
+			});
+			
+			new Ext.Viewport({
+				layout:"border",
+				items:[
+					{
+						region:"west",
+						width:240,
+						title:"现病史字典树",
+						html:'<div style="width:240px;overflow:auto" id="div">'
+					},{
+						region:"center",
+						title:"病人结构化现病史",
+						width:180,										
+						items:[
+							{
+								xtype:'panel',
+								layout:'column',
+								tbar:[
+									{
+										xtype:"tbfill"
+									},{
+										pressed:true,
+										text:'从列表中移除',
+										handler:function(){
+											var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();											
+											for(var i = 0; i < rows.length; i++){
+												var j;
+												for(j = 0; j < symptomArray.length; j = j + 3){
+													if(symptomArray[j] == rows[i].data.serialNo && symptomArray[j + 1] == rows[i].data.symptomItem) break;
+												}
+												if(j != symptomArray.length){
+													symptomArray.splice(j, 3);												
+												}
+												store.remove(rows[i]);	
+											}
+											Ext.getCmp("symptomItemList").view.refresh();
+											textAreaValue = symptomArrayToString(symptomArray);		
+											$('#sysmptomContext').html(textAreaValue);									
+										}
+									}
+								],
+								items:[
+									{
+										xtype: "grid",
+										id:"symptomItemList",	
+										height:550,										
+										sm:sm,
+										store:store,
+									    cm:cm,
+										listeners:{
+											click:function(){
+												$('span').addClass('blackstyle');
+												var rows = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+												if(rows.length > 0){
+													$('span[name="' + rows[0].data.serialNo +'"]').removeClass('blackstyle');
+													$('span[name="' + rows[0].data.serialNo +'"]').addClass('redstyle');		
+												}									
+											}		
+										}
+									}
+								]
+							}
+						]
+					},{
+						region:"east",
+						width:480,
+						title:"现病史组合内容",
+						tbar:[
+							{
+								xtype:"tbfill"
+							},{
+								pressed:true,
+								text:'预览',
+								handler:function(){
+									showFinalContent();
+								}
+							},{
+								xtype:"tbseparator"
+							},{
+								pressed:true,
+								text:'确定',
+								handler:function(){
+									if(store.getCount() == 0){
+										window.returnValue={
+											retValue:'',
+											oldOperations:''
+										};
+										window.close();
+									}
+									var i = 0;
+									for(var i = 0; i < store.getCount(); i++){
+										var symptomInfo = store.getAt(i);
+										if(symptomInfo.get('symptomItem').search("主要症状") != -1) break;
+									}
+									var retValue = $("#sysmptomContext").html();
+									oldOperations = "";
+									if(i < store.getCount()){
+										store.each(function(symptomInfo){
+											oldOperations = oldOperations + "{serialNo:'" +  symptomInfo.get('serialNo') + "',symptomItem:'" + symptomInfo.get('symptomItem') + "'}*";
+										});
+										if(oldOperations != ""){
+										oldOperations = oldOperations.substr(0, oldOperations.length - 1) + "~";
+										}	
+										
+										var j = 0;				
+										for(var j = 0; j < symptomArray.length; j = j + 3){
+											oldOperations = oldOperations + symptomArray[j] + "*" + symptomArray[j+1] + "*" + symptomArray[j+2] + "*";
+										}
+										if(symptomArray.length != 0){
+											oldOperations = oldOperations.substr(0, oldOperations.length - 1);
+										}
+										window.returnValue={
+											retValue:retValue,
+											oldOperations:oldOperations
+										};
+										window.close();
+									}else{
+										alert("主要症状为必填项！");		
+									}																						
+								}
+							},{
+								xtype:"tbseparator"
+							},{
+								pressed:true,
+								text:'取消',
+								handler:function(){
+									window.close();
+								}
+							}
+						],
+						items:[
+							{
+								xtype:"panel",
+								title:"",
+								html:'<div id="sysmptomContext" style="height:300;width:480;"></div>'+
+									 '<div id="finalContext" style="height:300;width:480;"></div>'
+							}
+						]
+					}
+				]
+			});
+			panel.render('div');	
+		});
+
+
+		function treeNodeClick(_node){
+			//发病情况		
+			itemName = _node.text;
+			if(_node.text == "发病情况(全部)"){
+				return window.showModalDialog('cases2.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "发病时间"){
+				return window.showModalDialog('cases_faBingShiJian.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "发病诱因"){
+				return window.showModalDialog('cases_faBingYouYin.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text=='体检时发现'){
+				return window.showModalDialog('case_tiJian.html?nodeText=' + _node.text,'','dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "其它情况"){
+				return window.showModalDialog('cases_qiTaShiJian.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			//主要症状
+			if(_node.text == "主要症状(必填项)"){
+				return window.showModalDialog('mainSysptom2.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "乏力"){
+				return window.showModalDialog('mainSysptom_fali.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "厌油"){
+				return window.showModalDialog('mainSysptom_yanyou.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "纳差"){
+				return window.showModalDialog('mainSysptom_nacha.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "反酸"){
+				return window.showModalDialog('mainSysptom_fansuan.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "嗳气"){
+				return window.showModalDialog('mainSysptom_aiqi.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "恶心"){
+				return window.showModalDialog('mainSysptom_exin.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "呕吐"){
+				return window.showModalDialog('mainSysptom_outu.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "呕血"){
+				return window.showModalDialog('mainSysptom_ouxue.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "腹胀"){
+				return window.showModalDialog('mainSysptom_fuzhang.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "腹痛"){
+				return window.showModalDialog('mainSysptom_futong.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "腹泻"){
+				return window.showModalDialog('mainSysptom_fuxie.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "水肿"){
+				return window.showModalDialog('mainSysptom_shuizhong.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "发热"){
+				return window.showModalDialog('mainSysptom_fare.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "黄染"){
+				return window.showModalDialog('mainSysptom_huangran.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "尿液改变"){
+				return window.showModalDialog('mainSysptom_niaoYeGaiBai.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "大便改变"){
+				return window.showModalDialog('mainSysptom_daBianGaiBian.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "神志改变"){
+				return window.showModalDialog('mainSysptom_shenZhiGaiBian.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			if(_node.text == "行为异常"){
+				return window.showModalDialog('mainSysptom_xingWeiYiChang.html?nodeText=' + _node.text, '', 'dialogWidth=825px;dialogHeight=600px');
+			}
+			//其他阳性症状
+			if(_node.text == "次要症状"){
+				return window.showModalDialog('otherPositiveSysptom.html?nodeText=' + _node.text, '', 'dialogWidth=820px;dialogHeight=480px');
+			}
+			if(_node.text == "全身不适"){
+				return window.showModalDialog('otherPositiveSysptom_quanShenBuShi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "皮肤瘙痒"){
+				return window.showModalDialog('otherPositiveSysptom_piFuSaoYang.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "排气异常"){
+				return window.showModalDialog('otherPositiveSysptom_paiQiYiChang.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "腹部包块"){
+				return window.showModalDialog('otherPositiveSysptom_fuBuBaoKuai.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "肝区不适"){
+				return window.showModalDialog('otherPositiveSysptom_ganQuBuShi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "脾区不适"){
+				return window.showModalDialog('otherPositiveSysptom_piQuBuShi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "吞咽困难"){
+				return window.showModalDialog('otherPositiveSysptom_tunYanKunNan.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "出血"){
+				return window.showModalDialog('otherPositiveSysptom_chuXue.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "咳血"){
+				return window.showModalDialog('otherPositiveSysptom_keXue.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "性格改变"){
+				return window.showModalDialog('otherPositiveSysptom_xingGeGaiBian.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "行为异常"){
+				return window.showModalDialog('otherPositiveSysptom_xingWeiYiChang.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "幻觉"){
+				return window.showModalDialog('otherPositiveSysptom_huanJue.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "计算力障碍"){
+				return window.showModalDialog('otherPositiveSysptom_jiSuanLiZhangAi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "定向力障碍"){
+				return window.showModalDialog('otherPositiveSysptom_dingXiangLiZhangAi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "其它症状" && _node.parentNode.text == "次要症状"){
+				return window.showModalDialog('otherPositiveSysptom_qiTa.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			//目前状况
+			if(_node.text == "目前状况"){
+				return window.showModalDialog('currentStatus.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			//伴随症状
+			if(_node.text == "伴随症状"){
+				return window.showModalDialog('sideSysptom2.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "消化系统"){
+				return window.showModalDialog('sideSysptom_xiaoHua.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "循环系统"){
+				return window.showModalDialog('sideSysptom_xunHuan.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "呼吸系统"){
+				return window.showModalDialog('sideSysptom_huXi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "泌尿生殖系统"){
+				return window.showModalDialog('sideSysptom_miniaoshenzhi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "血液系统"){
+				return window.showModalDialog('sideSysptom_xueye.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "神经系统"){
+				return window.showModalDialog('sideSysptom_shenjing.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "风湿免疫系统"){
+				return window.showModalDialog('sideSysptom_fengshimianyi.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "内分泌代谢系统"){
+				return window.showModalDialog('sideSysptom_neifenmidaixie.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			if(_node.text == "骨骼肌肉系统"){
+				return window.showModalDialog('sideSysptom_gugejirou.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+//			if(_node.text == "其它伴随症状" && _node.parentNode.text == "伴随症状"){
+//				return window.showModalDialog('sideSysptom_qita.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+//			}
+			//其它疾病情况
+			if(_node.text == "其它疾病情况"){
+				return window.showModalDialog('otherDisease.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+				//return window.showModalDialog('sideSysptom_qita.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+			
+			if(_node.text == "重要阴性症状"){
+				return window.showModalDialog('negaSysptom.html?nodeText=' + _node.text, '', 'dialogWidth=820px;dialogHeight=480px');
+			}
+			
+			if(_node.text == "诊疗经过"){
+				return window.showModalDialog('treat2.html?nodeText=' + _node.text, '', 'dialogWidth=900px;dialogHeight=400px');
+			}
+			//病情演变
+			if(_node.text == "病情演变"){
+				return window.showModalDialog('sysptomEvolution.html?nodeText=' + _node.text, '', 'dialogWidth=800px;dialogHeight=400px');
+			}
+		}
+		
+		function symptomArrayToString(symptomArray){
+			var str = "";
+			for(i = 0; i < symptomArray.length; i = i + 3){
+				str = str + symptomArray[i+2];
+			}
+			return str;
+		}
+		
+		function setReturnValue(span){
+			var spanProperty = "";
+			if(span){
+				spanProperty = itemReturnValue.itemValue.replace('onclick', 'name="' + $(span).attr("name") + '" onclick');
+				//获得所选记录在数组中的位置
+				var _pos;
+				for(_pos = 0; _pos < store.getCount(); _pos++){
+					if(store.getAt(_pos).get("serialNo") == $(span).attr("name")) break;
+				}
+				symptomArray.splice(_pos * 3 + 2, 1);
+				symptomArray.splice(_pos * 3 + 2, 0, spanProperty);
+				textAreaValue = symptomArrayToString(symptomArray);	
+				
+				$('#sysmptomContext').html('');
+				$('#sysmptomContext').html(textAreaValue);
+					
+				$('#sysmptomContext').find('input').each(function(){
+					$(this).keyup(function(){
+						checkLength(this);
+					});
+					checkLength(this);
+					
+					$(this).change(function(){
+						changeText(this);
+					});
+				});
+				
+				return;
+			}						
+			addNo = addNo + 1;																									
+			//在中间的记录列表中添加相应的信息
+			var symItem = Ext.getCmp("symptomItemList").getSelectionModel().getSelections();
+			var index = store.indexOf(symItem[0]);								
+			
+			spanProperty = itemReturnValue.itemValue.replace('onclick', 'name="' + addNo + '" onclick');				
+			if(index != -1){
+				//获得所选记录在数组中的位置
+				var pos;
+				for(pos = 0; pos < symptomArray.length; pos++){
+					if(symptomArray[pos] == symItem[0].data.serialNo && symptomArray[pos + 1] == symItem[0].data.symptomItem) break;
+				}
+				//把导入的数据放入数组的指定位置处,一次向数组添加两个元素，分别是“序号”、“字段”和相应的需要在右边文本框中显示的信息
+				symptomArray.splice(pos, 0, addNo, itemReturnValue.itemName, spanProperty);
+				store.insert(index, new symptomInfo({serialNo:addNo,symptomItem:itemName}));
+			}else{
+				//把导入的数据放入数组中,一次向数组添加两个元素，分别是“序号”、“字段”和相应的需要在右边文本框中显示的信息						
+				symptomArray.push(addNo, itemReturnValue.itemName, spanProperty);	
+								
+				store.add(new symptomInfo({serialNo:addNo,symptomItem:itemName}));
+			}
+			Ext.getCmp("symptomItemList").view.refresh();
+			//把相应的信息放入“现病史组合内容”中
+			textAreaValue = symptomArrayToString(symptomArray);	
+			$('#sysmptomContext').html('');
+			$('#sysmptomContext').html(textAreaValue);
+				
+			$('#sysmptomContext').find('input').each(function(){
+				$(this).keyup(function(){
+					checkLength(this);
+				});
+				checkLength(this);
+				
+				$(this).change(function(){
+					changeText(this);
+				});
+			});
+				
+			if(itemName == "主要症状(必填项)"){
+				itemName = "mainSymptom";						
+				panel.getRootNode().reload();
+				panel.expandAll();
+			}
+		}
+		
+		function checkLength(inputInfo) {
+			var inputLen = $(inputInfo).val().length;			
+			if(inputLen > 0){
+				$(inputInfo).width(inputLen * 14);
+			}else{
+				$(inputInfo).width(inputLen * 14 + 14);
+			}
+		} 
+
+		function changeText(inputChanged){
+			spanProperty = $(inputChanged).parent().html();
+			//获得所选记录在数组中的位置
+			var _pos;
+			for(_pos = 0; _pos < store.getCount(); _pos++){
+				if(store.getAt(_pos).get("serialNo") == $(inputChanged).parent().attr("name")) break;
+			}
+			symptomArray.splice(_pos * 3 + 2, 1);
+			symptomArray.splice(_pos * 3 + 2, 0, spanProperty);
+		}
+			
+		function showFinalContent(){
+			$("#finalContext").html();
+			alert($("#sysmptomContext").html());
+		}
+	</script>
+
+  </head>
+  
+  <body>
+  </body>
+</html>
+

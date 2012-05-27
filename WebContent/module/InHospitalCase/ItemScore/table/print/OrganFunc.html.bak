@@ -1,0 +1,320 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>肝病功能评估</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		
+		
+		$.each(json,function(name,value){
+			if(name.search("0") != -1 && value != ""){
+				$('div[name="'+name.substr(0,name.length-1)+'"]').html(value.substr(1,value.length-2));
+			}
+		});
+		
+		if(json.ndanbai0 == "" && json.ndanbaiYDesc == ""){
+			$('span[name="ndanbaiYDesc"]').next().text('');
+		}
+		
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+<style type="text/css">
+	input{
+		border:none;
+		border-bottom:solid 1px #000;
+		font-size:12px;
+		font-family:'宋体';
+	}
+</style>
+</head>
+<body>
+<form id="form">
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+	<table width="650" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+			<tr>
+				<td rowspan="9" width="100" style="font-size:14px;"><b>肝功能评估</b></td>
+				<td colspan="4" align="center"><b>Child-Pugh评分</b></td>
+			</tr>
+			<tr>
+				<td width="150" align="right">肝性脑病(期)：</td>
+				<td width="125">
+					<select name="hepaticEp" id="hepaticEp" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="2">1</option>
+						  <option value="2">2</option>
+						  <option value="3">3</option>
+						  <option value="3">4</option>
+					</select>
+				</td>
+				<td width="150" align="right">腹水：</td>
+				<td width="125">
+					<select name="ascites" id="ascites" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="2">轻度</option>
+						  <option value="3">中重度</option>
+					</select>
+				</td>
+			</tr>
+		    <tr>
+				<td align="right">胆红素(μmol/L)：</td>
+				<td>
+					<select name="cpBilirubin" id="cpBilirubin" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">&lt;34.2</option>
+						  <option value="2">34.2-51.3</option>
+						  <option value="3">&gt;51.3</option>
+					</select>
+				</td>
+				<td align="right">白蛋白(g/L)：</td>
+				<td>
+					<select name="albumin" id="albumin" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="3">&lt;28</option>
+						  <option value="2">28-35</option>
+						  <option value="1">&gt;35</option>
+					</select>
+				</td>
+		    </tr>
+			<tr>
+				<td align="right">凝血酶原时间较正常</br>延长（秒）：</td>
+				<td>
+					<select name="prothrombinTime" id="prothrombinTime" style="width:120px" flag="cp">
+						  <option value="0"></option>
+						  <option value="1">&lt;4</option>
+						  <option value="2">4-6</option>
+						  <option value="3">&gt;6</option>
+					</select>
+				</td>
+				<td align="right">Child-Pugh总积分：</td>
+				<td>
+					<span name="totalScore"></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Child-Pugh分级：</td>
+				<td>
+					<span name="scoreGrade"></span>
+				</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			
+			<tr><td colspan="4" align="center"> <b>MELD指数</b></td></tr>
+		    <tr>
+		        <td align="right">肌酐：</td>
+		        <td>
+		        	<span name="creatinine"></span>&nbsp;μmol/L
+		        </td>
+				<td align="right">胆红素：</td>
+				<td>
+				     <span name="meldBilirubin"></span>&nbsp;μmol/L
+				</td>
+		     </tr>
+		     <tr>
+		        <td align="right">INR：</td>
+		        <td>
+		             <span name=""></span>
+		             <input name="meldInr" type="text" id="meldInr" style="width:80%;" flag="meld"/>
+		        </td>
+		        <td align="right">病因：</td>
+				<td>
+					<select name="etiology" id="etiology" style="width:80%;" flag="meld">
+						<option value=""></option>
+						<option value="0">胆汁淤积性</option>
+						<option value="0">酒精性肝硬化</option>
+						<option value="1">其它</option>
+					</select>
+				</td>
+		     </tr>
+			 <tr>
+				 <td align="right">结果：</td>
+				 <td>
+				      <span name="meldResult"></span>
+				 </td>
+				 <td>&nbsp;</td>
+				 <td>&nbsp;</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="4" style="font-size:14px;"><b>心功能评估</b></td>
+				<td>心电图</td>
+				<td colspan="3"><div name="xindian"><span name="xindian"></span></div></td>
+			</tr>
+			<tr>
+				<td>24小时动态心电图</td>
+				<td colspan="3"><div name="dongXindian"><span name="dongXindian"></span></div></td>
+			</tr>
+			<tr>
+				<td>超声心动检查</td>
+				<td colspan="3"><div name="csXindong"><span name="csXindong"></span></div></td>
+			</tr>
+			<tr>
+				<td>心功能分级（美国NTHA分级）</td>
+				<td colspan="3"><div name="ntha"><span name="ntha"></span></div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="6" style="font-size:14px;"><b>肺功能评估</b></td>
+				<td>胸部X线</td>
+				<td colspan="3"><div name="chestX"><span name="chestX"></span></div></td>
+			</tr>
+			<tr>
+				<td>胸部CT</td>
+				<td colspan="3"><div name="chestCT"><span name="chestCT"></span></div></td>
+			</tr>
+			<tr>
+				<td>肺功能检查</td>
+				<td colspan="3"><div name="chestCheck"><span name="chestCheck"></span></div></td>
+			</tr>
+			<tr>
+				<td>血氧分压</td>
+				<td colspan="3"><div name="xyFengya"><span name="xyFengya"></span>mmHg</div></td>
+			</tr>
+			<tr>
+				<td>血二氧化碳分压</td>
+				<td colspan="3"><div name="xeFengya"><span name="xeFengya"></span>mmHg</div></td>
+			</tr>
+			<tr>
+				<td>血氧饱和度</td>
+				<td colspan="3"><div name="xyBaohe"><span name="xyBaohe"></span>%</div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="6" style="font-size:14px;"><b>肾功能评估</b></td>
+				<td>尿量</td>
+				<td colspan="3"><div name="niaovolum"><span name="niaovolum"></span>ml/日</div></td>
+			</tr>
+			<tr>
+				<td>24小时尿蛋白</td>
+				<td colspan="3">
+					<div name="ndanbai">
+					<span name="ndanbai"></span>&nbsp;&nbsp;
+					<span name="ndanbaiYDesc"></span><span>g/24h</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td>血尿素氮</td>
+				<td colspan="3"><div name="xueniaoN"><span name="xueniaoN"></span>mmol/L</div></td>
+			</tr>
+			<tr>
+				<td>血肌酐</td>
+				<td colspan="3"><div name="xuejigan"><span name="xuejigan"></span>μmol/L</div></td>
+			</tr>
+			<tr>
+				<td>内生肌酐清除率（Ccr）</td>
+				<td colspan="3"><div name="ccr"><span name="ccr"></span>ml/min</div></td>
+			</tr>
+			<tr>
+				<td>肾脏超声</td>
+				<td colspan="3"><div name="szChaosheng"><span name="szChaosheng"></span></div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="4" style="font-size:14px;"><b>凝血功能评估</b></td>
+				<td>PLT</td>
+				<td colspan="3"><div name="ningxueFunc"><span name="ningxueFunc"></span>×10<sup>9</sup>/L</div></td>
+			</tr>
+			<tr>
+				<td>PTA</td>
+				<td colspan="3"><div name="pta"><span name="pta"></span>%</div></td>
+			</tr>
+			<tr>
+				<td>INR</td>
+				<td colspan="3"><div name="inr"><span name="inr"></span></div></td>
+			</tr>
+			<tr>
+				<td>DIC</td>
+				<td colspan="3">
+					<div name="dic">
+						<span name="dic"></span>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="3" style="font-size:14px;"><b>胃肠道功能 评价</b></td>
+				<td>胃镜</td>
+				<td colspan="3"><div name="weijing"><span name="weijing"></span></div></td>
+			</tr>
+			<tr>
+				<td>胃电图</td>
+				<td colspan="3"><div name="weidiantu"><span name="weidiantu"></span></div></td>
+			</tr>
+			<tr>
+				<td>血乳酸</td>
+				<td colspan="3"><div name="xuerusuan"><span name="xuerusuan"></span>mmol/L</div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="2" style="font-size:14px;"><b>神经系统</b></td>
+				<td>肝性脊髓病</td>
+				<td colspan="3">
+					<div name="gxjisui"><span name="gxjisui"></span></div>
+				</td>
+			</tr>
+			<tr>
+				<td>头颅CT</td>
+				<td colspan="3"><div name="headCT"><span name="headCT"></span></div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="5" style="font-size:14px;"><b>营养状态评估</b></td>
+				<td>BMI</td>
+				<td colspan="3"><div name="yingyangBmi"><span name="yingyangBmi"></span></div></td>
+			</tr>
+			<tr>
+				<td>营养风险筛查</td>
+				<td colspan="3"><div name="yingyangNrs"><span name="yingyangNrs"></span></div></td>
+			</tr>
+			<tr>
+				<td>血清白蛋白</td>
+				<td colspan="3"><div name="xqbdb"><span name="xqbdb"></span>g/L</div></td>
+			</tr>
+			<tr>
+				<td>血清前白蛋白</td>
+				<td colspan="3"><div name="xqqbdb"><span name="xqqbdb"></span>mg/L</div></td>
+			</tr>
+			<tr>
+				<td>淋巴细胞计数</td>
+				<td colspan="3"><div name="lbxbjs"><span name="lbxbjs"></span>×10<sup>9</sup>/L</div></td>
+			</tr>
+			
+			<tr>
+				<td rowspan="2" style="font-size:14px;"><b>其他器官评价结果</b></td>
+				<td colspan="5"><span name="otherOrgan"></span></td>
+			</tr>
+      </table>
+      </div>
+</form>
+</body>
+</html>

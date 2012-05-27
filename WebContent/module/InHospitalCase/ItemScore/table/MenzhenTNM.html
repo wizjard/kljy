@@ -1,0 +1,139 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('input').click(function(){
+			getTnmStage();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	
+	function getTnmStage(){
+		var t = isRadioSelected(document.getElementsByName('tnmt'));
+		var n = isRadioSelected(document.getElementsByName('tnmn'));
+		var m = isRadioSelected(document.getElementsByName('tnmm'));
+		if(t == 2 && n == 1 && m == 1){
+			$('input[name="tnmStage"]').val('I期');
+		}else if(t == 3 && n == 1 && m == 1){
+			$('input[name="tnmStage"]').val('II期');
+		}else if(t == 4 && n == 1 && m == 1){
+			$('input[name="tnmStage"]').val('IIIa期');
+		}else if(t == 5 && n == 1 && m == 1){
+			$('input[name="tnmStage"]').val('IIIb期');
+		}else if(n == 2 && m == 1){
+			$('input[name="tnmStage"]').val('IIIc期');
+		}else if(m == 2){
+			$('input[name="tnmStage"]').val('IV期');
+		}else{
+			$('input[name="tnmStage"]').val('');
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		    <tr><td colspan="4" style="font-size:20px;color:red;height:30px" align="center"><B>肝癌TNM分期</B></td></tr>
+			<tr>
+				<td bgcolor="#D4D4D4" width="290"align="center"><B>
+					原发肿瘤(T)分期
+				</B></td>
+				<td width="150"align="center"><B>
+					淋巴结转移(N)分期
+				</B></td>
+				<td bgcolor="#D4D4D4" width="160"align="center"><B>
+					远处转移(M)分期
+				</B></td>
+				<td width="100"align="center"><B>
+					TNM分期
+				</B></td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmt" value="1" /></div><div style="float:left;">没有原发肿瘤的证据</div></div></br>
+				</td>
+				<td>
+					<div><div style="float:left;"><input type="radio" name="tnmn" value="1" /></div><div style="float:left;">无局部淋巴结转移</div></div></br>
+				</td>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmm" value="1" /></div><div style="float:left;">无远处转移</div></div></br>
+				</td>
+				<td rowspan="5"><input name="tnmStage" type="text" id="" style="width:100px;"/></td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmt" value="2" /></div><div style="float:left;">单个肿瘤结节，无血管侵润</div></div></br>
+				</td>
+				<td>
+					<div><div style="float:left;"><input type="radio" name="tnmn" value="2" /></div><div style="float:left;">有局部淋巴结转移</div></div>
+				</td>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmm" value="2" /></div><div style="float:left;">有远处转移，包括不同肺叶散播和除前斜角肌窝、锁骨上区淋巴结转移以外的其他部位的淋巴结转移</div></div>
+				</td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmt" value="3" /></div><div style="float:left;">单个肿瘤结节，并伴血管侵润；或多个肿瘤结节，最大径均≤5cm</div></div></br>
+				</td>
+				<td>&nbsp;</td>
+				<td bgcolor="#D4D4D4" >&nbsp;</td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmt" value="4" /></div><div style="float:left;">多个肿瘤结节，最大径＞5cm；或肿瘤侵犯门静脉或肝静脉的主要分支</div></div></br>
+				</td>
+				<td>&nbsp;</td>
+				<td bgcolor="#D4D4D4" >&nbsp;</td>
+			</tr>
+			<tr>
+				<td bgcolor="#D4D4D4" >
+					<div><div style="float:left;"><input type="radio" name="tnmt" value="5" /></div><div style="float:left;">肿瘤直接侵犯除胆囊以外的附近脏器；或穿破内脏腹膜</div></div>
+				</td>
+				<td>&nbsp;</td>
+				<td bgcolor="#D4D4D4" >&nbsp;</td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

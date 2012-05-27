@@ -1,0 +1,54 @@
+body{
+	margin:0;
+	padding:0;
+	font-family:'宋体';
+	font-size:12px;
+}
+.toolbar{
+	text-align:right;
+	border-bottom:#ccc;
+	background:#F3E397;
+	padding:2px 0;
+}
+.toolbar input{
+	margin-right:5px;
+}
+.btn{
+	BORDER-RIGHT: #7EBF4F 1px solid; 
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #7EBF4F 1px solid; 
+	PADDING-LEFT: 2px; 
+	FONT-SIZE: 12px; 
+	FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#CAE4B6); 
+	BORDER-LEFT: #7EBF4F 1px solid; 
+	CURSOR: pointer; 
+	COLOR: black; 
+	PADDING-TOP: 2px; 
+	BORDER-BOTTOM: #7EBF4F 1px solid
+}
+.filterbar{
+	background:#ddc4b7;
+}
+.filterbar span{
+	font-size:12px;
+	color:#004080;
+	line-height:16px;
+}
+.filterbar input{
+	width:200px;
+	height:14px;
+}
+.dict-item{
+	font-size:12px;
+	color:#000;
+	background:#FFF;
+	border:solid 1px #FFF;
+	cursor:default;
+}
+.dict-item-over{
+	font-size:12px;
+	color:#0000a0;
+	background:#DDD;
+	border:solid 1px #999;
+	cursor:default;
+}

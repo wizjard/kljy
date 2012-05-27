@@ -1,0 +1,551 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>检查报告详细信息</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+    	<script type="text/javascript"><!--
+			var is_check_add = null;
+			var patientId = App.util.getHtmlParameters('patientId');
+			var	is_check_add = App.util.getHtmlParameters('is_check_add');
+			var itemName = App.util.getHtmlParameters('itemName');
+			itemName = unescape(itemName);
+			var receiveDate = App.util.getHtmlParameters('receiveDate');
+			var sectionNo = App.util.getHtmlParameters('sectionNo');
+			var testTypeNo = App.util.getHtmlParameters('testTypeNo');
+			var sampleNo = App.util.getHtmlParameters('sampleNo');
+			var parItemNo = App.util.getHtmlParameters('parItemNo');
+			var is_pad  = App.util.getHtmlParameters('is_pad');		
+			
+			var KID = App.util.getHtmlParameters('KID');
+			var flag = App.util.getHtmlParameters('flag');
+			var data = App.util.getHtmlParameters('data'); //随访项目ID  JSON数据类型
+			//var type = App.util.getHtmlParameters('type');  //类型 
+			var link = App.util.getHtmlParameters('link'); //看看是不是要执行关联动作，如果该参数为空，则仅仅为查看，隐藏'关联'两个字
+			
+			Ext.onReady(function(){
+				var checkProject = itemName;
+				var checkreport = new checkReport();
+				var panel=checkreport.init();
+				panel.render(Ext.getBody());
+				$.getJSON(App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=getCheckReportInfo',{patientId:patientId,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},function(data){
+					checkreport.setCheckReportData(data);					
+				});
+			});
+
+function checkReport() {
+	this.checkReportListTable;	
+    this.store;	
+
+}
+checkReport.prototype.init = function() {
+
+	var check_report = this;
+	
+	var checkReportRcd = Ext.data.Record.create([
+			{name : 'projectname'},{name : 'esname'},
+			{name : 'result'},{name : 'refvalue'},{name : 'unit'},
+			{name : 'historyResult'},{name : 'historyRatio'}			
+			]
+		);
+	
+	var sm = new Ext.grid.CheckboxSelectionModel({
+		sigleSelect : true
+	});
+	var modelData = [
+		new Ext.grid.RowNumberer(), sm, {
+			header : '项目名称',
+			dataIndex : 'projectname',
+			width : 170
+		}, {
+			header : '英文缩写',
+			dataIndex : 'esname',
+			width : 100
+		}, {
+			header : '结果',
+			dataIndex : 'result',
+			width : 160,
+			editor:new Ext.grid.GridEditor(new Ext.form.TextField({allowBlank:false}))
+//			editor:{xtype:"textfield"}
+		}, {
+			header : '参考值',
+			dataIndex : 'refvalue',
+			width : 120
+		}, {
+			header : '单位',
+			dataIndex : 'unit',
+			width : 80
+		}, {
+			header : '历史结果',
+			dataIndex : 'historyResult',
+			width : 100
+		}, {
+			header : '历史比值',
+			dataIndex : 'historyRatio',
+			width : 110
+		}
+	];
+	var tableModel = new Ext.grid.ColumnModel(modelData);
+	var checkReportUrl = App.App_Info.BasePath + '/CheckReport/checkreport.do';
+	this.store = new Ext.data.Store({ 
+		 proxy : new Ext.data.HttpProxy({ url : checkReportUrl}), 
+		 baseParams:{method:'getCheckReportList',receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo,parItemNo:parItemNo},
+		 reader : new Ext.data.JsonReader({root :''}, checkReportRcd) 
+	 });
+
+	clinicType = [
+        ['0', '住院'],
+        ['1', '常规'],
+        ['2', '急诊'],
+        ['3', '质控'],
+        ['4', '门诊']
+    ];
+	var clinicTypeList = new Ext.data.SimpleStore({
+        fields: ['clinicTypeValue', 'showClincType'],
+        data : clinicType 
+    });
+    
+    home_foreign = [
+        ['0', '国产'],
+        ['1', '进口']
+    ];
+	var homeForeignList = new Ext.data.SimpleStore({
+        fields: ['homeForeignValue', 'showHomeForeign'],
+        data : home_foreign 
+    });
+    
+    var section = [     
+    ];
+	var sectionList = new Ext.data.SimpleStore({
+        fields: ['sectionValue', 'showsection'],
+        data : section 
+    });
+    var toolbar = false;
+     var toolbar = [
+					{
+						xtype:"tbfill"
+					}
+					,{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    if(is_pad != 'pad'){    
+	    toolbar = [
+					{
+						xtype:"tbfill"
+					},{
+						pressed:true,
+						text:' 关联检查结果 ',
+						handler:function(){
+						   if(link == null || link == "null"){
+					    	  alert('此页面仅提供查看功能，请进入随访页面进行关联!');
+					    	  return;
+					       }
+					       linkCheckReport();
+						}
+					},{
+						xtype:"tbseparator"
+					}/*,{
+						pressed:true,
+						text:' 关联随访 ',
+						handler:function(){
+							linkPlan();
+						}
+					}*/,{
+						pressed:true,
+						text:' 导入 ',
+						handler:function(){
+							importData();
+						}
+					},{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:' 取消 ',
+						handler:function(){
+							window.close();
+						}
+					}
+				];
+	}	
+
+	var panel = new Ext.Viewport({
+		layout:"border",
+		defaults:{border:true},
+		items:[
+			new Ext.form.FormPanel({
+				region:"north",
+				height:270,
+				frame:true,
+				labelAlign:'right',
+				labelWidth:80,
+				defaults:{border:false},
+				tbar:toolbar,
+				items:[
+					{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: .25,
+								layout:'form',						
+								items:[{
+									xtype:'datefield',
+									anchor:'95%',
+									fieldLabel:'核收日期',
+									name:'receiveDate',
+									id:'receiveDate',
+									disabled:true
+								}]
+							},{
+								columnWidth: .35,
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'85%',
+									fieldLabel:'检验项目',
+									name:'checkProject',
+									id:'checkProject',
+									readOnly:true
+								}]
+							},{
+								columnWidth: .2,
+								layout:'form',						
+								items:[{
+									xtype : "combo",
+									anchor:'98%',	
+									fieldLabel:'就诊类型',								
+									id:'testTypeNo',
+									store: clinicTypeList,
+                                    displayField:'showClincType',
+                                    valueField:'clinicTypeValue',
+                                    typeAhead: true,
+                                    mode: 'local',
+                                    triggerAction: 'all',
+									disabled:true
+								}]
+							},{
+								columnWidth: .2,
+								layout:'form',						
+								items:[{
+									xtype:'combo',
+									anchor:'98%',
+									fieldLabel:'试剂来源',
+									id:'home_foreign',
+									store: homeForeignList,
+                                    displayField:'showHomeForeign',
+                                    valueField:'homeForeignValue',
+                                    typeAhead: true,
+                                    mode: 'local',
+                                    triggerAction: 'all',
+									disabled:true
+								}]
+							}
+						]
+					},{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: 1,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'0%',
+									labelWidth:0,
+									labelSeparator:''
+								}]
+							}
+						]
+					},{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: .15,
+								layout:'form',								
+								items:[{
+									xtype:'label'
+								}]
+							},{
+								columnWidth: .5,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'98%',
+									labelWidth:0,
+									labelSeparator:'',
+									name:'hospitalName',
+									id:'hospitalName',
+									readOnly:true
+								}]
+							},{
+								columnWidth: .35,
+								layout:'form',								
+								items:[{
+									xtype:'label',
+									labelAlign:'left',
+									html:'<p style="font-size:18px">检&nbsp&nbsp验&nbsp&nbsp报&nbsp&nbsp告&nbsp&nbsp单</p>'
+								}]
+							}
+						]
+					},{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: 1,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'0%',
+									labelWidth:0,
+									labelSeparator:''
+								}]
+							}
+						]
+					},{
+						layout:'column',
+						items:[
+							{
+								columnWidth: .33,
+								layout:'form',
+								items:[{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'样本编号',
+									name:'sampleNo',
+									id:'sampleNo',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'病&nbsp案&nbsp&nbsp号',
+									name:'patNo',
+									id:'patNo',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名',
+									name:'cname',
+									id:'cname',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'性&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp别',
+									name:'genderNo',
+									id:'genderNo',
+									readOnly:true
+								}]
+							},{
+								columnWidth: .33,
+								layout:'form',
+								items:[
+								/*
+								{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'科&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp别',
+									name:'deptNo',
+									id:'deptNo',
+									readOnly:true
+								},
+								*/
+								{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'病床&nbsp&nbsp&nbsp号',
+									name:'bed',
+									id:'bed',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'申请医师',
+									name:'doctor',
+									id:'doctor',
+									readOnly:true
+								},{
+									xtype:'datefield',
+									anchor:'80%',
+									fieldLabel:'采样日期',
+									name:'collectDate',
+									id:'collectDate',
+									disabled:true
+								}]
+							},{
+								columnWidth: .33,
+								layout:'form',
+								items:[{
+									xtype:'datefield',
+									anchor:'80%',
+									fieldLabel:'检验日期',
+									name:'testDate',
+									id:'testDate',
+									disabled:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'标本种类',
+									name:'sampleTypeNo',
+									id:'sampleTypeNo',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'备&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp注',
+									name:'formMemo',
+									id:'formMemo',
+									readOnly:true
+								}]
+							}
+						]
+					}
+				]
+			}),{
+			region:"center",
+			items:[
+					{
+						id:"checkReportList_table",
+						xtype : "editorgrid",
+						width:993,
+    					height:350,
+						cm : tableModel,
+						sm : sm,
+						ds : check_report.store
+					}
+				]
+		}]
+	});
+	this.store.load();
+	return panel;
+}
+
+
+checkReport.prototype.setCheckReportData = function(data){
+	Ext.getCmp('receiveDate').setValue(receiveDate);
+	Ext.getCmp('checkProject').setValue(itemName);
+	Ext.getCmp('testTypeNo').setValue(testTypeNo);
+	Ext.getCmp('sampleNo').setValue(sampleNo);
+	if(data.home_foreign != -1){
+		Ext.getCmp('home_foreign').setValue(data.home_foreign);
+	}else if(itemName.search('进口') != -1){
+		Ext.getCmp('home_foreign').setValue(1);
+	}else{
+		Ext.getCmp('home_foreign').setValue(0);
+	};
+	
+	Ext.getCmp('hospitalName').setValue(data.hospitalName);
+	Ext.getCmp('patNo').setValue(data.patNo);
+	Ext.getCmp('cname').setValue(data.cname);
+	Ext.getCmp('genderNo').setValue(data.genderNo);	
+	//Ext.getCmp('deptNo').setValue(data.deptNo);
+	Ext.getCmp('bed').setValue(data.bed);
+	Ext.getCmp('doctor').setValue(data.doctor);
+	Ext.getCmp('testDate').setValue(data.testDate);
+	Ext.getCmp('collectDate').setValue(data.collectDate);
+	Ext.getCmp('sampleTypeNo').setValue(data.sampleTypeNo);
+	Ext.getCmp('formMemo').setValue(data.formMemo);
+}
+
+checkReport.prototype.selectRows = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var recordArray=selectModel.getSelections() ;
+	return  recordArray;
+}	
+
+
+checkReport.prototype.selectRow = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var record=selectModel.getSelected();
+	this.currRecord=record;
+	return record;
+}	
+
+function linkPlan() {
+   /* var params = '?patientId=' + patientId + '&is_check_add=' + is_check_add+ '&itemName=' + _node.text 
+							+ '&receiveDate=' + _node.attributes.receiveDate + '&sectionNo=' + _node.attributes.sectionNo 
+							+ '&testTypeNo=' + _node.attributes.testTypeNo + '&sampleNo=' + _node.attributes.sampleNo 
+							+ '&parItemNo=' + _node.attributes.parItemNo;		
+				 return window.showModalDialog('../CheckReport/checkReport.html' + params, '', 'dialogWidth=1000px;dialogHeight=700px');*/
+   var url = "../../../../module/plan/selectPlan.html?paId=" + patientId + "&type=checkReport&receiveDate=" + 
+   receiveDate + "&sectionNo=" + sectionNo + "&testTypeNo=" + testTypeNo + "&sampleNo=" + sampleNo + "&parItemNo=" + parItemNo + "&itemName=" + itemName;
+	   window.open(url, 'plan', 'toolbar=no,scrollbar=yes, top=200, left=100,width=1200,height=500');
+}
+
+//关联检查结果
+function linkCheckReport() {
+   /* var params = '?patientId=' + patientId + '&is_check_add=' + is_check_add+ '&itemName=' + _node.text 
+							+ '&receiveDate=' + _node.attributes.receiveDate + '&sectionNo=' + _node.attributes.sectionNo 
+							+ '&testTypeNo=' + _node.attributes.testTypeNo + '&sampleNo=' + _node.attributes.sampleNo 
+							+ '&parItemNo=' + _node.attributes.parItemNo;		
+				 return window.showModalDialog('../CheckReport/checkReport.html' + params, '', 'dialogWidth=1000px;dialogHeight=700px');*/
+   /* var url = "../../../../module/plan/selectPlan.html?flag="+flag+"&data="+data+"&paId=" + patientId + "&type=checkReport&receiveDate=" + 
+   receiveDate + "&sectionNo=" + sectionNo + "&testTypeNo=" + testTypeNo + "&sampleNo=" + sampleNo + "&parItemNo=" + parItemNo + "&itemName=" + itemName;
+	   window.open(url, 'plan', 'toolbar=no,scrollbar=yes, top=200, left=100,width=1200,height=500'); */
+					  Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/plan.do',
+							params:{
+								method:'linkReport',
+								flag:flag,
+							    data:data,
+							    paId:patientId,
+							    type:'checkReport',
+							    receiveDate:receiveDate,
+							    sectionNo:sectionNo,
+							    testTypeNo:testTypeNo,
+							    sampleNo:sampleNo,
+							    parItemNo:parItemNo,
+							    itemName:itemName
+							},
+							success:function(_response){
+								if(confirm("关联成功")){   
+									window.opener.opener.refreshItem();
+									window.opener.close();
+									window.close();
+								}
+							}
+						});
+	   
+}
+
+function importData(){
+	var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+	
+	var checkProject = Ext.getCmp('checkProject').getValue();
+	var hospitalName = Ext.getCmp('hospitalName').getValue();	
+	if(temp.length == 0){
+		alert('请选择要导入的记录');
+		return;
+	}
+	
+	window.returnValue={
+		obj:temp,
+		checkProject:checkProject,
+		reportDate:receiveDate,
+		hospitalName:hospitalName
+	};
+	window.close();
+}
+
+</script>
+
+  </head>
+  
+  <body><div id='checkReport'></div></body>
+</html>

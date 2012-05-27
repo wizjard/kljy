@@ -1,0 +1,397 @@
+From: <ÓÉ Microsoft Internet Explorer 5 ±£´æ>
+Subject: Destroydrop ? Javascripts ? Tree ? Api
+Date: Thu, 20 Sep 2007 11:54:37 +0800
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_0000_01C7FB7D.04997C80"
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.3138
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0000_01C7FB7D.04997C80
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.destroydrop.com/javascripts/tree/api/
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" =
+"http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML><HEAD><TITLE>Destroydrop =BB Javascripts =BB Tree =BB Api</TITLE>
+<META http-equiv=3Dcontent-type =
+content=3Dtext/html;charset=3Diso-8859-1><LINK=20
+href=3D"http://www.destroydrop.com/dd.css" type=3Dtext/css =
+rel=3Dstylesheet><LINK=20
+href=3D"/favicon.ico" rel=3D"shortcut icon">
+<META content=3D"MSHTML 6.00.2900.3157" name=3DGENERATOR></HEAD>
+<BODY>
+<DIV id=3Dshadow>
+<DIV id=3Dcontent>
+<DIV id=3Dlocation>
+<H1><A href=3D"http://www.destroydrop.com/">Destroydrop</A> =BB <A=20
+href=3D"http://www.destroydrop.com/javascripts/">Javascripts</A> =BB <A=20
+href=3D"http://www.destroydrop.com/javascripts/tree/">Tree</A> =BB <A=20
+href=3D"http://www.destroydrop.com/javascripts/tree/api/">Api</A></H1></D=
+IV>
+<DIV class=3Dline></DIV>
+<DIV id=3Dfiles>
+<H3>Overview</H3>
+<DIV class=3Dline></DIV>
+<DIV class=3Ditem>
+<UL class=3Darrow>
+  <LI><A=20
+  =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#functions">Funct=
+ions</A>=20
+
+  <UL class=3Darrow>
+    <LI><A =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#add">add</A>=20
+    <LI><A=20
+    =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#openall">openAll=
+</A>=20
+    <LI><A=20
+    =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#closeall">closeA=
+ll</A>=20
+
+    <LI><A=20
+    =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#opento">openTo</=
+A>=20
+    </LI></UL>
+  <LI><A=20
+  =
+href=3D"http://www.destroydrop.com/javascripts/tree/api/#configuration">C=
+onfiguration</A>=20
+  </LI></UL></DIV><A name=3Dfunctions></A>
+<H3>Functions</H3>
+<DIV class=3Dline></DIV>
+<DIV class=3Ditem><A name=3Dadd></A>
+<H4 class=3Dfunc>add()</H4>
+<P>Adds a node to the tree.<BR>Can only be called before the tree is =
+drawn.</P>
+<P>id, pid and name are required.</P>
+<H4>Parameters</H4>
+<TABLE class=3Dfiles>
+  <TBODY>
+  <TR>
+    <TH>Name</TH>
+    <TH>Type</TH>
+    <TH>Description</TH></TR>
+  <TR>
+    <TD>id</TD>
+    <TD>Number</TD>
+    <TD>Unique identity number.</TD></TR>
+  <TR>
+    <TD>pid</TD>
+    <TD>Number</TD>
+    <TD>Number refering to the parent node. The value for the root node =
+has to=20
+      be -1.</TD></TR>
+  <TR>
+    <TD>name</TD>
+    <TD>String</TD>
+    <TD>Text label for the node.</TD></TR>
+  <TR>
+    <TD>url</TD>
+    <TD>String</TD>
+    <TD>Url for the node.</TD></TR>
+  <TR>
+    <TD>title</TD>
+    <TD>String</TD>
+    <TD>Title for the node.</TD></TR>
+  <TR>
+    <TD>target</TD>
+    <TD>String</TD>
+    <TD>Target for the node.</TD></TR>
+  <TR>
+    <TD>icon</TD>
+    <TD>String</TD>
+    <TD>Image file to use as the icon. Uses default if not =
+specified.</TD></TR>
+  <TR>
+    <TD>iconOpen</TD>
+    <TD>String</TD>
+    <TD>Image file to use as the open icon. Uses default if not=20
+  specified.</TD></TR>
+  <TR>
+    <TD>open</TD>
+    <TD>Boolean</TD>
+    <TD>Is the node open.</TD></TR></TBODY></TABLE><BR>
+<H4>Example</H4>
+<P><CODE>mytree.add(1, 0, 'My node', 'node.html', 'node title', =
+'mainframe',=20
+'img/musicfolder.gif');</CODE></P><BR><A name=3Dopenall></A>
+<H4 class=3Dfunc>openAll()</H4>
+<P>Opens all the nodes.<BR>Can be called before and after the tree is =
+drawn.</P>
+<H4>Example</H4>
+<P><CODE>mytree.openAll();</CODE></P><BR><A name=3Dcloseall></A>
+<H4 class=3Dfunc>closeAll()</H4>
+<P>Closes all the nodes.<BR>Can be called before and after the tree is=20
+drawn.</P>
+<H4>Example</H4>
+<P><CODE>mytree.closeAll();</CODE></P><BR><A name=3Dopento></A>
+<H4 class=3Dfunc>openTo()</H4>
+<P>Opens the tree to a certain node and can also select the node.<BR>Can =
+only be=20
+called after the tree is drawn.</P>
+<H4>Parameters</H4>
+<TABLE class=3Dfiles>
+  <TBODY>
+  <TR>
+    <TH>Name</TH>
+    <TH>Type</TH>
+    <TH>Description</TH></TR>
+  <TR>
+    <TD>id</TD>
+    <TD>Number</TD>
+    <TD>Identity number for the node.</TD></TR>
+  <TR>
+    <TD>select</TD>
+    <TD>Boolean</TD>
+    <TD>Should the node be selected.</TD></TR></TBODY></TABLE>
+<H4>Example</H4>
+<P><CODE>mytree.openTo(4, true);</CODE></P></DIV><A =
+name=3Dconfiguration></A>
+<H3>Configuration</H3>
+<DIV class=3Dline></DIV>
+<DIV class=3Ditem>
+<TABLE class=3Dfiles>
+  <TBODY>
+  <TR>
+    <TH>Variable</TH>
+    <TH>Type</TH>
+    <TH>Default</TH>
+    <TH>Description</TH></TR>
+  <TR>
+    <TD>target</TD>
+    <TD>String</TD>
+    <TD>true</TD>
+    <TD>Target for all the nodes.</TD></TR>
+  <TR>
+    <TD>folderLinks</TD>
+    <TD>Boolean</TD>
+    <TD>true</TD>
+    <TD>Should folders be links.</TD></TR>
+  <TR>
+    <TD>useSelection</TD>
+    <TD>Boolean</TD>
+    <TD>true</TD>
+    <TD>Nodes can be selected(highlighted).</TD></TR>
+  <TR>
+    <TD>useCookies</TD>
+    <TD>Boolean</TD>
+    <TD>true</TD>
+    <TD>The tree uses cookies to rember it's state.</TD></TR>
+  <TR>
+    <TD>useLines</TD>
+    <TD>Boolean</TD>
+    <TD>true</TD>
+    <TD>Tree is drawn with lines.</TD></TR>
+  <TR>
+    <TD>useIcons</TD>
+    <TD>Boolean</TD>
+    <TD>true</TD>
+    <TD>Tree is drawn with icons.</TD></TR>
+  <TR>
+    <TD>useStatusText</TD>
+    <TD>Boolean</TD>
+    <TD>false</TD>
+    <TD>Displays node names in the statusbar instead of the =
+url.</TD></TR>
+  <TR>
+    <TD>closeSameLevel</TD>
+    <TD>Boolean</TD>
+    <TD>false</TD>
+    <TD>Only one node within a parent can be expanded at the same time.=20
+      openAll() and closeAll() functions do not work when this is =
+enabled.</TD></TR>
+  <TR>
+    <TD>inOrder</TD>
+    <TD>Boolean</TD>
+    <TD>false</TD>
+    <TD>If parent nodes are always added before children, setting this =
+to true=20
+      speeds up the tree.</TD></TR></TBODY></TABLE>
+<H4>Example</H4>
+<P><CODE>mytree.config.target =3D "mytarget";</CODE></P></DIV></DIV>
+<DIV class=3Dline></DIV>
+<DIV id=3Dcopy>
+<P class=3Dright><A =
+href=3D"http://validator.w3.org/check/referer">XHTML</A>, <A=20
+href=3D"http://jigsaw.w3.org/css-validator/check/referer">CSS</A></P>
+<P><A href=3D"mailto:drop@destroydrop.com">=A92002-2003 Geir=20
+Landr=F6</A></P></DIV></DIV></DIV></BODY></HTML>
+
+------=_NextPart_000_0000_01C7FB7D.04997C80
+Content-Type: application/x-css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.destroydrop.com/dd.css
+
+BODY {
+	FONT-SIZE: 76%; COLOR: #666; FONT-FAMILY: Trebuchet MS, Verdana, =
+Geneva, Arial, sans-serif
+}
+INPUT {
+	FONT-SIZE: 76%; COLOR: #666; FONT-FAMILY: Trebuchet MS, Verdana, =
+Geneva, Arial, sans-serif
+}
+SELECT {
+	FONT-SIZE: 76%; COLOR: #666; FONT-FAMILY: Trebuchet MS, Verdana, =
+Geneva, Arial, sans-serif
+}
+BODY {
+	PADDING-RIGHT: 25px; PADDING-LEFT: 25px; BACKGROUND: url(/img/bg_g.gif) =
+#fff repeat-x center top; PADDING-BOTTOM: 0px; MARGIN: 28px 0px; =
+PADDING-TOP: 0px; TEXT-ALIGN: center
+}
+#shadow {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BACKGROUND: url(/img/bg_tg.gif) =
+no-repeat center top; PADDING-BOTTOM: 0px; MARGIN: 0px auto; WIDTH: =
+716px; PADDING-TOP: 9px; TEXT-ALIGN: left
+}
+#content {
+	BORDER-RIGHT: #ccd7e0 1px solid; PADDING-RIGHT: 20px; BORDER-TOP: =
+#ccd7e0 0px solid; PADDING-LEFT: 20px; BACKGROUND: #fff; PADDING-BOTTOM: =
+20px; MARGIN: 0px 8px; BORDER-LEFT: #ccd7e0 1px solid; PADDING-TOP: 0px; =
+BORDER-BOTTOM: #ccd7e0 1px solid; HEIGHT: 1em
+}
+#location {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 16px; =
+PADDING-TOP: 20px
+}
+#location H1 {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: =
+21px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #ffc76f; PADDING-TOP: 0px
+}
+#location H1 A {
+	FONT-SIZE: 18px; COLOR: #718ea5; TEXT-DECORATION: none
+}
+#location H1 A:hover {
+	COLOR: #93b2c8
+}
+#front {
+	BACKGROUND: url(/img/front.gif) left bottom; MARGIN: 20px 0px; HEIGHT: =
+16em; max-height: 262px
+}
+#main {
+	FLOAT: left; MARGIN: 20px 0px; WIDTH: 460px; POSITION: relative
+}
+#extra {
+	FLOAT: right; MARGIN: 20px 0px; WIDTH: 180px; POSITION: relative
+}
+#main H3 {
+	FONT-WEIGHT: normal; FONT-SIZE: 1em; MARGIN: 0px; COLOR: #718ea5
+}
+#extra H3 {
+	FONT-WEIGHT: normal; FONT-SIZE: 1em; MARGIN: 0px; COLOR: #718ea5
+}
+#files {
+	FLOAT: left; MARGIN: 20px 0px; WIDTH: 100%; POSITION: relative
+}
+#files H3 {
+	FONT-WEIGHT: normal; FONT-SIZE: 1em; MARGIN: 0px; COLOR: #718ea5
+}
+#copy {
+	MARGIN-TOP: 5px
+}
+#copy P {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 0.8em; =
+PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#copy A {
+	COLOR: #718ea5; TEXT-DECORATION: none
+}
+#copy A:hover {
+	COLOR: #8cc0e5; TEXT-DECORATION: underline
+}
+.line {
+	CLEAR: both; PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 0px; =
+BACKGROUND: url(/img/line.gif) #718ea5 repeat-x; PADDING-BOTTOM: 0px; =
+MARGIN: 0px; PADDING-TOP: 0px; HEIGHT: 1px
+}
+.item {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 10px; BACKGROUND: =
+url(/img/item_bg.gif) #fafbfc repeat-x left bottom; MARGIN-BOTTOM: 10px; =
+PADDING-BOTTOM: 20px; PADDING-TOP: 10px; POSITION: relative
+}
+.item A {
+	COLOR: #93b2c8
+}
+.item A:hover {
+	BACKGROUND: #fff; COLOR: #8cc0e5
+}
+.item H4 {
+	FONT-WEIGHT: normal; FONT-SIZE: 1em; MARGIN: 0px; COLOR: #222
+}
+.item P {
+	FONT-SIZE: 0.9em; MARGIN: 0px 0px 10px; TEXT-ALIGN: justify
+}
+.nav {
+	PADDING-RIGHT: 0px; LIST-STYLE: disc url(/img/arrow.gif) outside; =
+PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px 0px 0px 10px; =
+PADDING-TOP: 0px
+}
+.nav LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+.check {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; LIST-STYLE-POSITION: outside; =
+LIST-STYLE-IMAGE: url(/img/check.gif); PADDING-BOTTOM: 0px; MARGIN: 0px =
+0px 0px 18px; PADDING-TOP: 0px
+}
+.arrow {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; LIST-STYLE-POSITION: outside; =
+LIST-STYLE-IMAGE: url(/img/arrow.gif); PADDING-BOTTOM: 0px; MARGIN: 0px =
+0px 0px 18px; PADDING-TOP: 0px
+}
+.right {
+	FLOAT: right; POSITION: relative
+}
+.files {
+	WIDTH: 100%
+}
+.files TH {
+	TEXT-ALIGN: left
+}
+.files TD {
+	BORDER-TOP: #fff 1px solid
+}
+.files IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: =
+0px; VERTICAL-ALIGN: text-bottom; MARGIN-RIGHT: 2px; BORDER-RIGHT-WIDTH: =
+0px
+}
+H4.func {
+	FONT-WEIGHT: bold; FONT-SIZE: 1.1em; BACKGROUND: #ecf0f3; COLOR: #666
+}
+FORM {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+INPUT {
+	FONT-SIZE: 1em
+}
+SELECT {
+	FONT-SIZE: 1em
+}
+CODE {
+	BORDER-RIGHT: #dcddde 1px solid; PADDING-RIGHT: 1px; BORDER-TOP: =
+#dcddde 1px solid; PADDING-LEFT: 1px; FONT-SIZE: 0.8em; PADDING-BOTTOM: =
+1px; BORDER-LEFT: #dcddde 1px solid; PADDING-TOP: 1px; BORDER-BOTTOM: =
+#dcddde 1px solid; FONT-FAMILY: "Courier New", courier, monospace; =
+BACKGROUND-COLOR: #eeeff0
+}
+PRE {
+	BORDER-RIGHT: #dcddde 1px solid; PADDING-RIGHT: 1px; BORDER-TOP: =
+#dcddde 1px solid; PADDING-LEFT: 1px; FONT-SIZE: 0.8em; PADDING-BOTTOM: =
+1px; BORDER-LEFT: #dcddde 1px solid; PADDING-TOP: 1px; BORDER-BOTTOM: =
+#dcddde 1px solid; FONT-FAMILY: "Courier New", courier, monospace; =
+BACKGROUND-COLOR: #eeeff0
+}
+
+------=_NextPart_000_0000_01C7FB7D.04997C80--

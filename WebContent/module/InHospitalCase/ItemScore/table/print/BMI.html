@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+	<table width="650" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:14px">
+		<tr><td colspan="4" style="font-size:20px;color:red;">BMI指数</td></tr>
+		<tr>
+			<td width="120" align="right">体重：</td>
+			<td width="205"><input type="text" name="weight" style="width:100;" />kg</td>
+			<td width="120" align="right">身高：</td>
+			<td width="205"><input type="text" name="height" style="width:100;" />m</td>
+		</tr>
+		<tr>
+			<td align="right">体质指数(BMI)：</td>
+			<td><input type="text" name="bodyMi" style="width:100;" readOnly/></td>
+			<td align="right">国内标准：</td>
+			<td><input type="text" name="clinicalValue" style="width:100;" readOnly/></td>
+		</tr>
+		<tr>
+			<td align="right">国际标准：</td>
+			<td><input type="text" name="whoClinicalValue" style="width:100;" readOnly/></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+    </table>
+    </div>
+</form>
+</body>
+</html>

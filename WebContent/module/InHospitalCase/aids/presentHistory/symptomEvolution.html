@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>主要症状</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan;
+$(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		$("#evolution").val(spanContent);
+	}
+});
+function initPage(){	
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value = $("#evolution").val();
+		var rst = value;
+		if(rst.length > 0){
+			var rightInputItem = '<input name="lrsystomEvolution" type="text" value="。" />';
+			if($('input[name="lrsystomEvolution"]').size() > 0){	
+				$('input[name="lrsystomEvolution"]').eq(0).wrap("<div id='wrap'></div>");
+				rightInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());
+			}
+			rst = rst + rightInputItem;
+			rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hideAidsHis();parent.symptomInfoIfr('symptomEvolution.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + value + '</span>' + '</span>';
+			var iframe = parent.document.getElementById('aidsHistory');
+			iframe.contentWindow.itemValue = rst;
+			if(iframe.contentWindow.dbclickedSpan){
+				iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+			}else{
+				iframe.contentWindow.setReturnValue();
+			}
+		}
+		backToPreIllWindow();
+	});
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showAidsHis();
+}
+	
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+<style type="text/css">
+.sortdiv{
+	border:solid 1px #666;
+	width:120px;
+	height:220px;
+	overflow-y:scroll;
+}
+.sortdiv ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+.sortdiv ul li{
+	cursor:default;
+	line-height:22px;
+	text-align:center;
+}
+</style>
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:820px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<form>
+<table id="table-con" width="820" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font>症状病情演变：</td>
+		<td>
+			<select name="evolution" id="evolution" style="width:740">
+				<option value=""></option>
+				<option value="上述症状逐渐加重">上述症状逐渐加重</option>
+			    <option value="上述症状突然加重">上述症状突然加重</option>
+			    <option value="上述症状在劳累后加重">上述症状在劳累后加重</option>
+			    <option value="上述症状逐渐减轻">上述症状逐渐减轻</option>
+			    <option value="上述症状在休息后减轻">上述症状在休息后减轻</option>
+			    <option value="上述症状加重">上述症状加重</option>
+			    <option value="上述症状减轻">上述症状减轻</option>
+			    <option value="病情逐渐加重">病情逐渐加重</option>
+			    <option value="病情突然加重">病情突然加重</option>
+			    <option value="病情在劳累后加重">病情在劳累后加重</option>
+			    <option value="病情逐渐减轻">病情逐渐减轻</option>
+			    <option value="病情在休息后减轻">病情在休息后减轻</option>
+			    <option value="病情加重">病情加重</option>
+			    <option value="病情减轻">病情减轻</option>
+			    <option value="病情无明显变化">病情无明显变化</option>
+				<option value="症状无明显好转">症状无明显好转</option>
+		  </select>					
+</table>
+</form>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="N">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="8" style="font-size:20px;color:red;height:30px" align="center"><B>肝性脑病诊断标准</B></td></tr>
+		<tr>
+			<td bgcolor="#D4D4D4" width="50" height="25" align="center"><B>分期</B></td>
+			<td bgcolor="#D4D4D4" colspan="3" width="240" align="center"><B>神志改变</B></td>
+			<td bgcolor="#D4D4D4" colspan="2" width="220" align="center"><B>神经系统体征</B></td>
+			<td bgcolor="#D4D4D4" colspan="2" width="190" style="color:blue;" align="center"><B>脑电图</B></td>
+		</tr>
+		<tr>
+			<td rowspan="2">前驱期</td>
+			<td colspan="2" width="160">轻度性格改变和行为异常如欣快、激动或抑郁寡言，衣冠不整或随地便溺</td>
+			<td width="80"><div><div style="float:left;"><input type="radio" name="pds_ams1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pds_ams1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td rowspan="2" width="140">可出现扑翼样震颤</td>
+			<td rowspan="2" width="80"><div><div style="float:left;"><input type="radio" name="pds_ns" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pds_ns" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td rowspan="2" width="110" style="color:blue;">轻度变化或正常</td>
+			<td rowspan="2" width="80" style="color:blue;"><div><div style="float:left;"><input type="radio" name="pds_eeg" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pds_eeg" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td colspan="2">应答尚准确，但吐词不清且较缓慢</td>
+			<td><div><div style="float:left;"><input type="radio" name="pds_ams2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pds_ams2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="6">昏迷前期</td>
+			<td bgcolor="#D4D4D4" colspan="2">嗜睡，昼睡夜醒</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ams1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ams1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >存在扑翼样震颤</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" rowspan="6" style="color:blue;" style="color:blue;">脑电图有特征性异常</td>
+			<td bgcolor="#D4D4D4" rowspan="6" style="color:blue;" style="color:blue;"><div><div style="float:left;"><input type="radio" name="pcs_eeg" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_eeg" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" colspan="2">定向力丧失</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ams2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ams2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >腱反射亢进</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" colspan="2">理解力、计算力下降</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ams3" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ams3" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >肌张力增高</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns3" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns3" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="3" colspan="2">行为失常，幻觉、恐惧、狂躁。精神错乱，意识模糊</td>
+			<td bgcolor="#D4D4D4" rowspan="3"><div><div style="float:left;"><input type="radio" name="pcs_ams4" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ams4" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >踝阵挛</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns4" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns4" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >Babinski征阳性</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns5" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns5" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >不随意运动及运动失调</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="pcs_ns6" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="pcs_ns6" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		
+		<tr>
+			<td rowspan="5">昏睡期</td>
+			<td colspan="2">昏睡但能唤醒</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ams1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ams1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td>扑翼样震颤</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ns1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ns1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td rowspan="5" style="color:blue;">脑电图异常</td>
+			<td rowspan="5" style="color:blue;"><div><div style="float:left;"><input type="radio" name="ls_eeg" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_eeg" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td colspan="2">意识不清及幻觉</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ams2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ams2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td>肌张力增高</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ns2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ns2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td rowspan="3" colspan="2">理解力及计算力丧失</td>
+			<td rowspan="3"><div><div style="float:left;"><input type="radio" name="ls_ams3" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ams3" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td>腱反射亢进</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ns3" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ns3" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td>踝阵挛</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ns4" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ns4" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td>Babinski征</td>
+			<td><div><div style="float:left;"><input type="radio" name="ls_ns5" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="ls_ns5" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="9">昏迷期 </td>
+			<td bgcolor="#D4D4D4" rowspan="3" width="40">浅昏迷</td>
+			<td bgcolor="#D4D4D4" rowspan="3" width="120">神志完全丧失，不能唤醒</td>
+			<td bgcolor="#D4D4D4" rowspan="3"><div><div style="float:left;"><input type="radio" name="cs_ams1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ams1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >对痛刺激和不适体位尚有反应</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" rowspan="3" style="color:blue;">脑电图明显异常</td>
+			<td bgcolor="#D4D4D4" rowspan="3" style="color:blue;"><div><div style="float:left;"><input type="radio" name="cs_eeg1" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_eeg1" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >腱反射</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >肌张力亢进</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns3" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns3" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" rowspan="6">深昏迷</td>
+			<td bgcolor="#D4D4D4" rowspan="6">神志完全丧失，不能唤醒</td>
+			<td bgcolor="#D4D4D4" rowspan="6"><div><div style="float:left;"><input type="radio" name="cs_ams2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ams2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" >各种反射消失</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns4" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns4" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+			<td bgcolor="#D4D4D4" rowspan="6" style="color:blue;">脑电图明显异常</td>
+			<td bgcolor="#D4D4D4" rowspan="6" style="color:blue;"><div><div style="float:left;"><input type="radio" name="cs_eeg2" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_eeg2" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >肌张力降低</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns5" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns5" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >瞳孔常散大</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns6" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns6" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >阵发性惊厥</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns7" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns7" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >踝阵挛</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns8" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns8" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" >换气过度</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="cs_ns9" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="cs_ns9" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td rowspan="2">结果</td>
+			<td colspan="6" width="570">请临床医生根据患者临床具体情况判定是否符合肝性脑病诊断：</td>
+			<td ><div><div style="float:left;"><input type="radio" name="result" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">是</div><div style="float:left;"><input type="radio" name="result" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">否</div></div></td>
+		</tr>
+		<tr>
+			<td colspan="2" width="120">肝性脑病分期：</td>
+			<td colspan="5">
+				<div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">亚临床期</div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="2" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">前驱期</div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="3" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">昏迷前期</div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="4" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">昏睡期</div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="5" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">浅昏迷期</div>
+					<div style="float:left;"><input type="radio" name="hesRst" value="6" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">深昏迷期</div>
+				</div>
+			</td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

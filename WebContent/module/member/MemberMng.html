@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员管理</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var patId=App.util.getHtmlParameters('patId');
+var memId=App.util.getHtmlParameters('memId');
+memId=memId?memId:-1;
+var basePath=App.App_Info.BasePath+'/MemberAction.do';
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	Ext.form.Field.prototype.msgTarget = 'side';
+	layout();
+});
+function layout(){
+	var _form1=new Ext.form.FormPanel({
+		title:'基本信息',
+		layout:'column',
+		bodyStyle:'padding-top:5px',
+		defaults:{
+			columnWidth:.5,
+			bodyStyle:'padding-top:1px',
+			layout:'form',
+			labelWidth:60,
+			labelAlign:'right',
+			defaults:{
+				xtype:'textfield',
+				readOnly:true,
+				anchor:'90%'
+			}
+		},
+		items:[
+			{
+				items:[
+					{
+						fieldLabel:'姓名',
+						name:'patientName'
+					},{
+						fieldLabel:'性别',
+						name:'gender'
+					},{
+						fieldLabel:'手机',
+						name:'mobilePhone'
+					},{
+						fieldLabel:'家庭电话',
+						name:'homeTel'
+					}
+				]
+			},{
+				items:[
+					{
+						fieldLabel:'病案号',
+						name:'patientNo'
+					},{
+						fieldLabel:'出生日期',
+						name:'birthday'
+					},{
+						fieldLabel:'E-mail',
+						name:'email'
+					},{
+						fieldLabel:'邮政编码',
+						name:'homePostCode'
+					}
+				]
+			},{
+				columnWidth:1,
+				items:{
+					fieldLabel:'家庭地址',
+					name:'homeAddr',
+					anchor:'95%'
+				}
+			}
+		],
+		reader:new Ext.data.JsonReader({root:'data',successProperty:'success'},[
+			'patientName','gender','mobilePhone','homeTel','patientNo','birthday','email','homePostCode','homeAddr'
+		]),
+		buttonAlign:'center',
+		buttons:[
+			{
+				text:'编辑基本信息',handler:function(){
+					App.util.addNewMainTab('/module/Patient/PatientInfo.html?id='+patId,'基本信息');
+				}
+			}
+		]
+	});
+	var _form2=new Ext.form.FormPanel({
+		title:'会员信息',
+		layout:'column',
+		bodyStyle:'padding-top:5px',
+		defaults:{
+			columnWidth:.5,
+			bodyStyle:'padding-top:1px',
+			layout:'form',
+			labelWidth:60,
+			labelAlign:'right',
+			defaults:{
+				xtype:'textfield',
+				anchor:'90%'
+			}
+		},
+		items:[
+			{
+				items:[
+					{
+						fieldLabel:'会员编号',
+						emptyText:'系统自动生成,无需填写',
+						readOnly:true,
+						name:'memberNo'
+					},{
+						xtype:'combo',
+						fieldLabel:'会员类型',
+						readOnly:true,
+						allowBlank:false,
+						value:0,
+						mode:'local',
+						hiddenName:'memberType',
+						triggerAction:'all',
+						displayField:'text',
+						valueField:'value',
+						store:new Ext.data.SimpleStore({
+							data:[[0,'普通会员'],[1,'VIP会员']],
+							fields:['value','text']
+						})
+					},{
+						fieldLabel:'会员账号',
+						name:'account',
+						allowBlank:false
+					}
+				]
+			},{
+				items:[
+					{
+						xtype:'datefield',
+						fieldLabel:'入会日期',
+						emptyText:'必填',
+						allowBlank:false,
+						name:'inDate',
+						readOnly:true,
+						format:'Y-m-d'
+					},{
+						xtype:'combo',
+						fieldLabel:'会员状态',
+						readOnly:true,
+						value:0,
+						mode:'local',
+						allowBlank:false,
+						hiddenName:'memberStatus',
+						triggerAction:'all',
+						displayField:'text',
+						valueField:'value',
+						store:new Ext.data.SimpleStore({
+							data:[[0,'正常'],[1,'失访'],[2,'退会']],
+							fields:['value','text']
+						})
+					},{
+						fieldLabel:'登录密码',
+						name:'password',
+						allowBlank:false
+					}
+				]
+			},{
+				columnWidth:1,
+				items:[
+					{
+						xtype:'textarea',
+						fieldLabel:'备注',
+						name:'memo',
+						height:60,
+						anchor:'95%'
+					},{
+						xtype:'hidden',
+						name:'id',
+						value:memId
+					},{
+						xtype:'hidden',
+						name:'patientId',
+						value:patId
+					},{
+						xtype:'hidden',
+						name:'caseId',
+						value:''
+					}
+				]
+			}
+		],
+		reader:new Ext.data.JsonReader({root:'data',successProperty:'success'},[
+			'id','patientId','memberNo','inDate','caseId','memo','memberType','memberStatus','account','password'
+		]),
+		buttonAlign:'center',
+		buttons:[
+			{
+				text:'保存会员信息',handler:function(){
+					if(!this.ownerCt.getForm().isValid()){
+						alert('表单未通过验证。');
+						return;
+					}
+					var data=this.ownerCt.getForm().getValues();
+					_form2.getForm().submit({
+						url:basePath,
+						params:{
+							method:'mem_saveOrUpdate',
+							data:Ext.util.JSON.encode(data)
+						},
+						success:function(_form,_action){
+							alert('保存成功。');
+							if(memId==-1){
+								location.href=location.href.replace('&memId=-1','')+'&memId='+Ext.util.JSON.decode(_action.response.responseText).msg;
+							}
+						},
+						failure:function(_form,_action){
+							alert('保存失败。');
+						}
+					});
+				}
+			}
+		]
+	});
+	var _panel=new Ext.Panel({
+		width:600,
+		frame:true,
+		items:[
+			_form1,_form2,{
+				title:'会员服务',
+				buttonAlign:'left',
+				buttons:[
+					{
+						text:'打印同意书',handler:function(){
+							window.open('memberAgreePrint.html');
+						}
+					},{
+						text:'入会病历',handler:function(){
+							var caseId=_form2.getForm().findField('caseId').getValue();
+							if(caseId>0)
+								App.util.addNewMainTab('/module/member/case/InHspRec.html?PID='+patId+'&KID='+caseId,'入会病历管理');
+							else
+								alert('请先保存会员信息。');
+						}
+					}
+				]
+			}
+		]
+	});
+	_panel.render(Ext.getBody());
+	_form1.getForm().load({
+		url:basePath+'?method=getPatInfo&patId='+patId,
+		failure : function(form,action) {   
+            Ext.MessageBox.alert('提示', '载入基本信息失败。');   
+        }  
+	});
+	_form2.getForm().load({
+		url:basePath+'?method=getMemInfo&memId='+memId+'&patId='+patId,
+		failure : function(form,action) {  
+            Ext.MessageBox.alert('提示', '载入会员信息失败。');
+        }
+	});
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

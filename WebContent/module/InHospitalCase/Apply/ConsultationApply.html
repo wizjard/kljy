@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>院外会诊申请单</title>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+	var KID = null;
+	var PID = null;
+	$(function(){
+		KID=App.util.getHtmlParameters('kid');
+		PID=App.util.getHtmlParameters('pid');
+		$('input[name="patientId"]').val(PID);
+		$('input[name="historyCaseId"]').val(KID);
+		$('input[name="id"]').val(App.util.getHtmlParameters('this'))
+		initPage();
+	});
+function initPage(){
+		
+		registrationPageHead(KID,'院外会诊申请单','#header');
+		//时间选择框
+	FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="issueDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	
+	//医生字典选择
+		
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="treatDoctor"]')
+		});
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="directorDoctor"]')
+		});
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="superiorDoctor"]')
+		});
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="specifyExpert"]')
+		});
+		//科室字典
+		$.ajax({
+		url:App.App_Info.BasePath+'/common/CommonAction.do',
+		data:{
+			method:'QueryMyBelongs',
+			timestamp:new Date().getTime()
+		},
+		async:false,
+		dataType:'json',
+		success:function(_data){
+			var _fld=$('input[name="department"]');
+			_fld.data('options',_data);
+			FormUtil.toCombobox({el:_fld});
+			
+		}
+	});
+		var id =$('input[name="id"]').val();
+		if(id==-1){
+			setMainValue();
+			return;
+		}else{
+			setValue(id);
+		}
+	}
+	
+//获取病人基本信息
+function setMainValue(){
+	$.post(
+		App.App_Info.BasePath+'/ConsultationApplyAction.do',
+		{
+			method:'get_Main_Info',
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+			});
+				/*$('input[type="radio"]').each(function(){
+					if($(this).val() == json[this.name]){
+						$(this).attr("checked",true);
+					}
+				});*/
+			}
+		},
+		'json'
+	)
+}
+//获取申请单信息
+function setValue(id){
+	$.post(
+		App.App_Info.BasePath+'/ConsultationApplyAction.do',
+		{
+			method:'get_Patient_Info',
+			id:id
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('textarea').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('input[type="radio"]').each(function(){
+					if($(this).attr("value") == json[this.name]){
+						$(this).attr("checked",true);
+					}
+				});
+				$('input[type="checkbox"]').each(function(){
+					if(('<'+$(this).attr("value")+'>') == json[this.name]){
+						$(this).attr("checked",true);
+					}
+				});
+				setMainValue();
+				FormUtil.valueTool.setComboValue($('input[name="department"]'),json.department);
+			}
+		},
+		'json'
+	)
+}
+//保存和修改信息
+function SaveData(){
+	var checkDate=$('input[name="checkDate"]').val();
+	if(checkDate==""){
+		alert("申请日期不能为空");
+		return;
+	}
+	var data=JSON.stringify(FormUtil.getFormValues('form'));
+	var id = $('input[name="id"]').val();
+	$.post(
+		App.App_Info.BasePath+'/ConsultationApplyAction.do',
+		{
+			method:'saveOrUpdate',
+			data:data,
+			id:id
+		},
+		function(data){
+			$('input[name="id"]').val(data.id);
+			alert("保存成功");
+			parent.createIndex();
+		},
+		'json'
+	)
+}
+//删除一条信息
+function deleteData(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert("请保存后再删除");
+		return;
+	}
+	var yrn = confirm("确定删除嘛？");
+	if(!yrn){
+		return;
+	}
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	$.post(
+		App.App_Info.BasePath+'/ConsultationApplyAction.do',
+		{
+			method:'deleteData',
+			data:data
+		}
+	)
+	parent.location.reload();
+}
+
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/Apply/print/ConsultationApplyPrint.html?id='+id+'&&'+'kid='+KID);
+}
+</script>
+</head>
+<body>
+	<div id="header" style="width:600px;position:relative;"></div>
+	<form>
+		<input type="hidden" name="id" value="-1"/>
+		<input type="hidden" name="patientId"/>
+		<input type="hidden" name="historyCaseId"/>
+		<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="120">姓名：</td>
+				<td class="t2" width="180"><input type="text" name="patientName" readonly="readonly"/></td>
+				<td class="t1" width="120">性别：</td>
+				<td class="t2" width="180"><input type="text" name="gender" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">年龄：</td>
+				<td class="t2"><input type="text" name="age" readonly="readonly"/></td>
+				<td class="t1">病历号：</td>
+				<td class="t2"><input type="text" name="patientCaseNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">科室：</td>
+				<td class="t2"><input type="text" name="department" class="select"/></td>
+				<td class="t1">床号：</td>
+				<td class="t2"><input type="text" name="bedNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">会诊级别：</td>
+				<td class="t2">
+					<input type="radio" name="consultationGrade" value="常规" checked="checked"/>常规
+					<input type="radio" name="consultationGrade" value="急诊"/>急诊
+				</td>
+				<td class="t1">申请会诊时间：</td>
+				<td class="t2"><input type="text" name="checkDate"/></td>
+			</tr>
+			<tr>
+				<td class="t1" style="text-align:left" colspan="4">病历摘要(含主要症状、体征及检查)：</td>
+			</tr>
+			<tr>
+				<td class="t1">&nbsp;</td>
+				<td class="t2" colspan="3" width="480"><textarea class="textarea" style="width:98%"name="caseHistorySummary"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">目前初步诊断：</td>
+				<td class="t2" colspan="3" width="480"><textarea class="textarea" name="primaryDiagnosis" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">会诊理由及目的：</td>
+				<td class="t2" colspan="3" width="480"><textarea class="textarea" name="consultationEnd" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1">拟请医院：</td>
+				<td class="t2"><input type="text" name="applyHospital"/></td>
+				<td class="t1">拟请科室或专业：</td>
+				<td class="t2"><input type="text" name="applyDepartment"/></td>
+			</tr>
+			<tr>
+				<td class="t1">拟请医师职称：</td>
+				<td class="t2" colspan="3">
+				<input type="radio" name="applyJobTitle" value="主任医师" checked="checked"/>主任医师
+				<input type="radio" name="applyJobTitle" value="副主任医师"/>副主任医师
+				<input type="radio" name="applyJobTitle" value="主治医师"/>主治医师
+				</td>
+			</tr>
+			<tr>
+				<td class="t1">点名专家：</td>
+				<td class="t2"><input type="text" name="specifyExpert"/></td>
+				<td class="t1">会诊方式：</td>
+				<td class="t2">
+				<input type="radio" name="consultationFashion" value="请来我院" checked="checked"/>请来我院
+				<input type="radio" name="consultationFashion" value="病人前往"/>病人前往
+				</td>
+			</tr>
+			<tr>
+				<td class="t1">患者承担费用：</td>
+				<td class="t2" colspan="3">
+					<input type="checkbox" name="patientConsultationCost" value="会诊费"/>会诊费
+					<input type="checkbox" name="patientTrafficCost" value="交通费"/>交通费
+					<input type="checkbox" name="patientTravellingCost" value="差旅费"/>差旅费
+				</td>
+			</tr>
+			<tr>
+				<td class="t1">我院承担费用：</td>
+				<td class="t2" colspan="3">
+					<input type="checkbox" name="hosptalConsultationCost" value="会诊费"/>会诊费
+					<input type="checkbox" name="hosptalTrafficCost" value="交通费"/>交通费
+					<input type="checkbox" name="hosptalTravellingCost" value="差旅费"/>差旅费
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="4" style="text-align:left">患方签字：</td>
+			</tr>
+			<tr>
+				<td class="t1">本人签字：</td>
+				<td class="t2"><input type="text" name="patientSign"/></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">关系人签字：</td>
+				<td class="t2"><input type="text"  name="familySign"/></td>
+				<td class="t1">与患者关系：</td>
+				<td class="t2"><input type="text"  name="relationship"/></td>
+			</tr>
+			<tr>
+				<td class="t1">经治医师：</td>
+				<td class="t2"><input type="text" name="treatDoctor"/></td>
+				<td class="t1">上级医师：</td>
+				<td class="t2"><input type="text" name="superiorDoctor"/></td>
+			</tr>
+			<tr>
+				<td class="t1">科主任：</td>
+				<td class="t2"><input type="text" name="directorDoctor"/></td>
+				<td class="t1">医务部审核签字<!--(盖章)-->：</td>
+				<td class="t2"><input type="text" name="sickBaySign"/></td>
+			</tr>
+			<tr>
+				<td class="t1">发出时间：</td>
+				<td class="t2"><input type="text" name="issueDate"/></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">地址：</td>
+				<td class="t2" colspan="3"><textarea class="textarea" name="address" style="width:98%">北京市丰台区右安门外西头条8号(大观园正南)</textarea></td>
+			</tr>
+			<tr>
+				<td class="t1">邮编：</td>
+				<td class="t2"><input type="text" name="postNum"/></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">医务部联系电话：</td>
+				<td class="t2"><input type="text" name="sickBayPhone"/></td>
+				<td class="t1">传真号：</td>
+				<td class="t2"><input type="text" name="faxNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">科室联系电话：</td>
+				<td class="t2"><input type="text" name="departmentPhone"/></td>
+				<td class="t1">联系人：</td>
+				<td class="t2"><input type="text" name="linkman"/></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

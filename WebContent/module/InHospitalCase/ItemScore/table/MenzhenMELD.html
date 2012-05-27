@@ -1,0 +1,133 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('input[type="text"]').change(function(){
+			meldScore();
+		});
+		$('select').change(function(){
+			meldScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+	
+	function meldScore(){
+		var creatinine=document.getElementById('creatinine').value;
+		if(creatinine.length==0) return;
+		creatinine = creatinine/88.4;
+		
+		var bilirubin=document.getElementById('bilirubin').value;
+		if(bilirubin.length==0) return;
+		bilirubin = bilirubin/17.1;
+		
+		var inr=document.getElementById('inr').value;
+		if(inr.length==0) return;
+		
+		var etiology="";
+		$('#etiology option').each(function(){
+			if($(this).attr('selected')){
+				etiology=$(this).attr('vvalue');
+				return false;
+			}
+		});
+		if(etiology.length==0) return;
+		
+		var rst1=9.6*(Math.log(eval(creatinine))/Math.log(Math.E));
+		var rst2=3.8*(Math.log(eval(bilirubin))/Math.log(Math.E));
+		var rst3=11.2*(Math.log(eval(inr))/Math.log(Math.E));
+		var rst4=6.4*eval(etiology);
+		var rst=rst1+rst2+rst3+rst4;
+		var start= rst.toString().indexOf(".");
+		var attemp = rst.toString().substring(0,start);
+		var dataAtt = rst.toString().substring(start+1,start+2);
+		var para = 0;
+		if(dataAtt >=5){
+			para= 1;
+		}
+		document.getElementById('meldResult').value=Math.abs(attemp)+Math.abs(para);
+	}
+</script>
+</head>
+<body>
+<form>
+					<input type="hidden" name="id" id="id" value="-1"/>
+					<input type="hidden" name="scId" id="scId" value=""/>
+					<input type="hidden" name="caseId" id="caseId" value=""/>
+					<input type="hidden" name="fiag" value="Y">
+					<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+						    <tr><td colspan="4" style="font-size:20px;color:red;height:30px" align="center"><B>MELD评分</B></td></tr>
+		            		<tr>
+		              			  <td bgcolor="#D4D4D4" width="150" align="right">肌酐：</td>
+		              			  <td bgcolor="#D4D4D4"width="200">
+		              				  <input name="creatinine" type="text" id="creatinine" style="width:120px;""/>&nbsp;μmol/L
+		              			  </td>
+				                  <td bgcolor="#D4D4D4" width="150" align="right">胆红素：</td>
+				                  <td bgcolor="#D4D4D4"width="200">
+				              	     <input name="bilirubin" type="text" id="bilirubin" style="width:120px;""/>&nbsp;μmol/L
+				                  </td>
+		            		</tr>
+		            		<tr>
+		              			<td align="right">INR：</td>
+		              			<td>
+		             				<input name="inr" type="text" id="inr" style="width:120""/>
+		             			</td>
+		              			<td align="right">病因：</td>
+				                <td>
+									<select name="etiology" id="etiology" style="width:120px">
+										  <option value=""></option>
+										  <option value="0" vvalue="0">胆汁淤积性</option>
+										  <option value="1" vvalue="0">酒精性肝硬化</option>
+										  <option value="2" vvalue="1">其它</option>
+									</select>
+				                </td>
+		            		</tr>
+				            <tr>
+				              	<td bgcolor="#D4D4D4" align="right">MELD评分结果：</td>
+				                <td bgcolor="#D4D4D4"width="200">
+				              	   <input name="result" type="text" id="result" style="width:120px;" readOnly/>
+				                </td>
+				                <td bgcolor="#D4D4D4">&nbsp;</td>
+				                <td bgcolor="#D4D4D4">&nbsp;</td>
+				            </tr>
+          			</table>
+</form>
+</body>
+</html>

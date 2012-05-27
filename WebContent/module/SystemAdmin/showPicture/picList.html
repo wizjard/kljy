@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>图片管理</title>
+<link rel="Shortcut Icon" href="../Notice/images/favicon.ico" />
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="script/picList.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'fit',
+		items:Ext.apply(CreateNotice(),{
+			xtype:'grid',
+			title:'图片列表',
+			tbar:[
+				{
+					xtype:'tbseparator'
+				},{
+					text:'&nbsp;刷新&nbsp;',
+					tooltip:'刷新当前列表',
+					handler:function(){
+						Ext.getCmp('picture-list-grid').getStore().reload();
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'编辑图片',
+					tooltip:'编辑图片信息,保存成功后请刷新列表显示。',
+					handler:function(){
+						var _data=getEditSelect();
+						if(!_data)	return;
+						window.open('picEdit.html?id='+_data.data.id,'编辑图片','height=350,width=500,top=250,left=320');
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'新增图片',
+					tooltip:'新增一条图片,保存成功后请刷新列表显示。',
+					handler:function(){
+						window.open('picInsert.html','新增图片','height=350,width=500,top=250,left=320');
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'删除图片',
+					tooltip:'删除一条图片',
+					handler:function(){
+						var _data=getSelections();
+						if(!_data)	return;
+						$.post(
+							App.App_Info.BasePath+'/admin/picture.do',
+							{
+								method:'delete',
+								data:_data.data.id
+							},
+							function(data){
+								if(data.success){
+									alert('删除成功');
+									Ext.getCmp('picture-list-grid').getStore().reload();
+								}else{
+									alert('删除失败');
+								}
+							},
+							'json'
+						);
+					}
+				},
+				'->',
+				{
+					xtype:'tbseparator'
+				},
+				{
+					xtype:'textfield',
+					width:200,
+					emptyText:'图片标题',
+					id:'search-keyword'
+				},{
+					text:'搜索图片',
+					tooltip:'根据图片名',
+					handler:function(){
+						var _val=Ext.getCmp('search-keyword').getValue().trim();
+						if(_val.length==0){
+							alert('关键字不能为空。');
+							return;
+						}
+						var _store=Ext.getCmp('picture-list-grid').getStore();
+						_store.baseParams={method:'searchByName',keyword:_val,typeName:'医务处'};
+						_store.load({params:{start:0,limit:20}});
+					}
+				}
+			],
+			listeners:{
+				render:function(){
+					this.getStore().load({params:{start:0,limit:20}});
+				}
+			}
+		})
+	});
+})
+function getSelections(){
+	var _ss=Ext.getCmp('picture-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}
+	return _ss[0];
+}
+function getEditSelect(){
+	var ss = Ext.getCmp('picture-list-grid').getSelectionModel().getSelections();
+	if(ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}else if(ss.length>1){
+		alert('只能选择一条记录进行编辑。');
+		return null;
+	}else{
+		return ss[0];
+	}
+}
+
+function reloadParent(){
+	Ext.getCmp('picture-list-grid').getStore().reload();
+}
+
+</script>
+</head>
+<body>
+	
+</body>
+</html>

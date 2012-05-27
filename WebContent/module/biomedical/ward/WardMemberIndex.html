@@ -1,0 +1,1646 @@
+<!--生物医学中心全部会员索引页面 by xl 2010年12月10日9:19:42--> <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>我科会员索引</title>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/common.js">
+        </script>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js">
+        </script>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js">
+        </script>
+		<script type="text/javascript" src="../MemberInfoForm.js">
+        </script>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+        <link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+        <script type="text/javascript"
+			src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+        <script type="text/javascript">
+        var grounpName;
+         // var deptcodenameGrounpList = new Array();
+         // var deptcodeGrounp;
+         var deptName;
+         var searchObj;
+            Ext.onReady(function(){
+            //liugang 2011-08-06 start 
+			//弹出框
+			$('#dialog1').dialog({
+				title:'转科转组历史记录',
+				autoOpen:false,
+				closeOnEscape:true,
+				width:600,
+				resizable:true,
+				zIndex:10,
+				position:['left','top'],
+				buttons:{
+					'关闭':function(){$(this).dialog("close");}
+				}
+			});
+			//liugang 2011-08-06 end
+             
+            // getAllDeptmentGrounp();
+               getDoctorDeptmentAndGrounp();  // 根据医生Id 获得当前责任科室和小组名称  by cheng jiangyu 2011-09-30
+                layout();
+            });
+			var ascOrDescOrder = true;
+            function layout(){
+                var ds = new Ext.data.Store({
+                    proxy: new Ext.data.HttpProxy({
+                        url: App.App_Info.BasePath + '/biomedical.do'
+                    }),
+                    reader: new Ext.data.JsonReader({
+                        root: 'root',
+                        totalProperty: 'total'
+                    }, [{
+                        name: 'memberNo'
+                    }, {
+                        name: 'account'
+                    }, {
+                        name: 'password'
+                    }, {
+                        name: 'inDate'
+                    }, {
+                        name: 'inWard'
+                    }, {
+                        name: 'memberStatus'
+                    }, {
+                        name: 'memberType'
+                    }, {
+                        name: 'memo'
+                    }, {
+                        name: 'patient'
+                    }, {
+                        name: 'cm'
+                    },{
+						name: 'currentGroup'
+					},{
+						name: 'biaoben'
+					},{
+						name: 'deptName'
+					},{
+						name: 'inDoctor'
+					},
+					{
+						name:'grounpName'
+					},
+					{   
+						name:'pcount'
+					},
+					{
+					    name:'patientName'
+					},{
+						name:'patientNo'
+					},{
+						name:'birthday'
+					},{
+						name:'xNo'
+					},{
+						name:'ctNo'
+					},{
+						name:'mriNo'
+					},{
+						name:'blNo'
+					}, {
+					    name:'deptCode'
+					}, {
+					    name:'grounpId'
+					}
+					])
+                });
+                ds.baseParams = {
+                    method: 'getMemberByDoctorId',
+					doctorId:top.USER.id
+					
+                };
+                ds.load({
+                    params: {
+                        start: 0,
+                        limit: 20
+                    }
+                });
+                
+                var sm = new Ext.grid.RowSelectionModel({
+	                singleSelect: true
+	            }); 
+                
+                var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
+                 //sm,
+                {
+                    header: '姓名',
+                    dataIndex: 'patientName',
+                    width:70,
+					renderer:function(value){
+						return value;
+					}
+                }, {
+                    header: '病案号',
+                    dataIndex: 'patientNo',
+                    sortable:true,
+                    width:70,
+					renderer:function(value){
+						return value;
+					}
+                },
+                 {
+                    header: '出生日期',
+                    sortable:true,
+                    dataIndex: 'birthday',
+                    renderer:function(value){
+						return value;
+					}
+                }
+                /*
+                ,
+                 {
+                    header: '会员编号',
+                    sortable:true,
+                    dataIndex: 'memberNo'
+                }
+                , 
+                {
+                    header: '用户名',
+                    width:90,
+                    sortable:true,
+                    dataIndex: 'account'
+                }
+                */
+                ,{
+                 header: '是否有随访计划',
+                    dataIndex: 'pcount',
+                    sortable:true,
+                    width:90,
+                    renderer: function(value){
+                        if (value > 0) {
+                            return "<font color='red'>有随访</font>";
+                        }
+                        else {
+                           return "无随访";
+                        }
+                    }
+                },{
+                    header: '入会科室',
+                    dataIndex: 'inWard',
+                    sortable:true,
+                    width:100
+                }, {
+                    header: '当前责任科室',
+                    dataIndex: 'deptName',
+                    width:100,
+					renderer: function(value,meta,record,row,col){
+                        if (!value||value.length==0) {
+                            value=record.get('deptName');
+                        }
+						return value;
+                    }
+                }
+                ,
+                {
+                    header: '当前责任小组',
+                    dataIndex: 'grounpName',
+                    width:120,
+                    sortable:true,
+					renderer: function(value,meta,record,row,col){
+                        if (!value||value.length==0) {
+                            value=record.get('grounpName');
+                        }
+						return value;
+                    }
+                }
+                ,{
+                    header: '入会日期',
+                    dataIndex: 'inDate',
+                    width:90,
+                    sortable:true,
+                    renderer: function(value){
+                        return value;
+                    }
+                },{
+                    header: '预留标本',
+                    dataIndex: 'biaoben',
+                    sortable:true,
+                    width:70,
+					renderer:function(value){
+						if(value==1){
+							return '是';
+						}
+						return '否';
+					}
+                },{
+                    header: '当前疾病分组',
+                    sortable:true,
+                    width:200,
+                    dataIndex: 'currentGroup'
+                },{
+                    header: 'X线号',
+                    sortable:true,
+                    width:70,
+                    dataIndex: 'xNo'
+                },{
+                    header: 'CT号',
+                    sortable:true,
+                   	width:70,
+                    dataIndex: 'ctNo'
+                },{
+                    header: 'MRI号',
+                    sortable:true,
+                    width:70,
+                    dataIndex: 'mriNo'
+                },{
+                    header: '病理号',
+                    sortable:true,
+                    width:70,
+                    dataIndex: 'blNo'
+                }
+                ]);
+                // getAllDeptment();
+            	//getAllDeptmentGrounp();
+                var SearchButton = Ext.extend(Ext.Button, {
+                    text: '查询',
+                    sw: null,
+                    toggleSw: function(){
+                        if (this.sw.isVisible()) {
+                            this.sw.hide();
+                        }
+                        else {
+                            this.sw.show();
+                            this.setSwPosition();
+                        }
+                    },
+                    /*Init Search Window*/
+                    initSw: function(){
+                        var o = this;
+                        o.sw = new Ext.Window({
+                            draggable: false,
+                            resizable: false,
+                            width: 300,
+                            autoHeight: true,
+                            closable: false,
+                            buttonAlign: 'center',
+                            frame: true,
+                            items: {
+                                xtype: 'form',
+                                border: false,
+                                bodyStyle: 'padding-top:5px',
+                                labelAlign: 'right',
+                                labelWidth: 60,
+                                defaults: {
+                                    xtype: 'textfield',
+                                    anchor: '95%'
+                                },
+                                items: [
+                                {
+                                    fieldLabel: '姓名',
+                                    name: 'name',
+									id:'name'
+                                }, {
+                                    fieldLabel: '病案号',
+                                    name: 'patientNo',
+									id:'patientNo'
+                                }, {
+                                    fieldLabel: '年龄',
+                                    name: 'age',
+									id:'age'
+                                }, {
+			                        xtype: 'panel',
+			                        border: false,
+			                        html: '<p style="font-size:12px;color:red;text-align:center">年龄格式例：>60或<60或60</p>'
+			                    }, {
+                                    fieldLabel: '用户名',
+                                    name: 'account',
+									id:'account'
+                                }
+                                , {
+                                    fieldLabel: '入院日期',
+                                    name: 'inDate',
+									id:'inDate'
+                                }, {
+                                    xtype: 'panel',
+                                    border: false,
+                                    html: '<p style="font-size:10px;color:red;text-align:center">例：(2010-01-02)或(2010-01-01 2010-02-01)不包括括号。</p>'
+                                }
+                                ]
+                            },
+                            buttons: [{
+                                text: '查询',
+                                handler: function(){
+                                    var values = o.sw.items.get(0).getForm().getValues();
+                                    var store = Ext.getCmp('grid').getStore();
+                                    values.doctorId=top.USER.id;
+                                    searchObj = Ext.encode(values);
+                                    store.baseParams.search = Ext.encode(values);      
+                                    store.load({
+                                        params: {
+                                            start: 0,
+                                            limit: 20
+                                        }
+                                    });
+                                    o.sw.items.get(0).getForm().reset(); //用于清空框中的值 by cheng jiangyu 2011-9-30
+                                    o.sw.hide();
+                                    
+                                }
+                            }, {
+                                text: '取消',
+                                handler: function(){
+                                    o.sw.items.get(0).getForm().reset(); //用于清空框中的值 by cheng jiangyu 2011-9-30
+                                    o.sw.hide();
+                                }
+                            }]
+                        });
+                    },
+                    /*ReSet Window's Position*/
+                    setSwPosition: function(){
+                        var el = this.el.dom;
+                        var pos = getElementPos(el);
+                        var oPos = [pos.x, pos.y];
+                        var oSize = {
+                            width: el.offsetWidth,
+                            height: el.offsetHeight
+                        };
+                        var bodySize = Ext.getBody().getSize();
+                        var sSize = this.sw.getSize();
+                        var x = oPos[0];
+                        var y = oPos[1] + oSize.height;
+                        if ((x + sSize.width) > bodySize.width) {
+                            x = x - sSize.width + oSize.width;
+                        }
+                        if ((y + sSize.height) > bodySize.height) {
+                            y = y - sSize.height - oSize.height;
+                        }
+                        this.sw.setPosition(x, y);
+                    }
+                });
+                var grid = new Ext.grid.GridPanel({
+                    id: 'grid',
+                    title: '会员列表',
+                    renderTo:Ext.getBody(),
+                    /*sm: new Ext.grid.CheckboxSelectionModel({
+                        sigleSelect: true
+                    }), */ 
+                    cm: cm,
+                    ds: ds,
+                    autoScroll: true,
+                    viewConfig: {
+                        forceFit: true
+                    },
+                    sm: sm,
+                    tbar: ['-', {
+                        text: '返回列表',
+                        handler: function(){
+                            var store = Ext.getCmp('grid').getStore();
+                            store.baseParams={
+                               	   method:'getMemberByDoctorId',
+                               	   doctorId:top.USER.id
+								};
+                            store.load({
+                                params: {
+                                    start: 0,
+                                    limit: 20
+                                }
+                            });
+                        }
+                    }, '-', new SearchButton({
+                        handler: function(){
+                            if (!this.sw) {
+                                this.initSw();
+                            }
+                            this.toggleSw();
+                        }
+                    }),'-',{
+						text:'住院入会会员',
+						handler:function(){
+							var store = Ext.getCmp('grid').getStore();
+                            store.baseParams={
+                               	   method:'getMemberByDoctorId',
+                               	   doctorId:top.USER.id,
+                               	   flag:'zhu'
+								};
+                            store.load({
+                                params: {
+                                    start: 0,
+                                    limit: 20
+                                }
+                            });
+						}
+					}
+					,'-',{
+						text:'门诊入会会员',
+						handler:function(){
+							var store = Ext.getCmp('grid').getStore();
+                            store.baseParams={
+                               	   method:'getMemberByDoctorId',
+                               	   doctorId:top.USER.id,
+                               	   flag:'men'
+								};
+                            store.load({
+                                params: {
+                                    start: 0,
+                                    limit: 20
+                                }
+                            });
+						}
+					}
+					,'-',{
+						text:'按姓名排序',
+						handler:function(){
+							if(ascOrDescOrder){
+								this.setText("<B>(升序↑)</B>姓名");
+								var store = Ext.getCmp('grid').getStore();
+	                            store.baseParams={
+	                               	method:'getMemberByDoctorId',
+	                               	doctorId:top.USER.id,
+	                               	orderBy:'pa.patientName',
+	                               	descOrasc:'asc'
+								};
+								ascOrDescOrder = false;
+							}else{
+								this.setText("<B>(降序↓)</B>姓名");
+								var store = Ext.getCmp('grid').getStore();
+	                            store.baseParams={
+	                               	method:'getMemberByDoctorId',
+	                               	doctorId:top.USER.id,
+	                               	orderBy:'pa.patientName',
+	                               	descOrasc:'desc'
+								};
+								ascOrDescOrder = true;
+							}
+							store.load({
+	                           params: {
+	                               start: 0,
+	                               limit: 20
+	                           }
+	                       });
+						}
+					}				
+					,'-', {
+            text: '发送短信',
+            handler: function(){
+                 var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+				 if (ss.length == 0) {
+				     alert('请至少选择一条记录。');
+				     return;
+				 }
+				 var pid = "";    //支持多选发送短信
+				 var patients = ""; //给哪些病人发短信
+				    pid = pid + ss[0].get('memberNo');  
+				    patients = ss[0].get('patient').patientName;
+				     if(ss[0].get('patient').mobilePhone==''||ss[0].get('patient').mobilePhone== null||(ss[0].get('patient').mobilePhone!=''&&!(/^1[3|4|5|8][0-9]\d{4,8}$/.test(ss[0].get('patient').mobilePhone)))){  //如果没有登记手机号码的病人不为空
+				 			        alert("会员"+patients+"手机号码为空或格式不正确");
+				 			        return;
+				 	} 
+				    var send=function(id,ctx,callback){
+				 	Ext.Ajax.request({
+					 	url:App.App_Info.BasePath + '/biomedical.do',
+					 	params:{
+					 		method:'sendMsg',
+					 		id:id,
+					 		appendix:'北京佑安医院'+deptName+''+grounpName, 
+					 		content:ctx
+					 	},
+					 	success:function(response){
+					 		var resObj=Ext.decode(response.responseText);
+					 		if(resObj.success){
+					 			Ext.Msg.show({
+					 				title:'成功',
+					 				msg:resObj.msg,
+					 				buttons:Ext.Msg.OK,
+					 				fn:function(){callback(resObj)},
+					 				icon:Ext.Msg.INFO
+					 			});
+					 		}else{
+					 			Ext.Msg.show({
+					 				title:'错误',
+					 				msg:resObj.msg,
+					 				buttons:Ext.Msg.OK,
+					 				fn:function(){callback(resObj)},
+					 				icon:Ext.Msg.ERROR
+					 			});
+					 		}
+					 	}
+					 });
+				 }
+				 new Ext.Window({
+				 	title:'给【'+patients+'】发送短信',
+				 	closeAction:'close',
+				 	width:400,
+				 	height:200,
+				 	autoHeight:true,
+				 	layout:'anchor',
+				 	items:[{
+				 		xtype:'textarea',
+				 		width:390,
+				 		height:160,
+				 		value:'患者您好,',
+				 		style:'color:blue',
+				 		emptyText:'<请在这里输入要发送的内容>',
+				 		enableKeyEvents:true,
+				 		listeners:{'keyup':function(){
+				 			var label_ = this.ownerCt.findByType('label')[0];
+				 			var textLength = this.getValue().length;
+				 			label_.setText('当前字数:'+textLength+'字');
+				 		}}
+				 	},{
+				 		layout:'column',
+				 		frame:true,
+				 		items:[{
+					 			columnWidth:0.3,
+						 		xtype:'label',
+						 		labelWidth:100,
+						 		text:'当前字数:5字'
+						 	},{
+						 		columnWidth:0.3,
+						 		xtype:'label',
+						 		width:20,
+						 		text:'短信条数:'+ss.length+'条'
+						 	},{
+						 		columnWidth:0.4,
+						 		xtype:'label',
+						 		width:20
+						 		// text:'短信总字数上限:'+wordCount+'字'
+					 	}]
+				 	}],
+				 	buttonAlign:'center',
+				 	buttons:[
+				 		{
+				 			text:'发送',
+				 			handler:function(){
+				 				var win=this.ownerCt;
+				 				var value=win.items.get(0).getValue();
+				 				var headAndAppendix = '北京佑安医院'+deptName+''+grounpName+''+value;  //自动的短信头和落款 加上短信正文
+				 			     if(value&&value.length>5){ 
+				 			        if(Math.ceil(headAndAppendix.length/64)>1){   //看发送的短信字数是否超过一条短信
+						 			       if(confirm('您确定发送吗？该条短信将分'+Math.ceil(headAndAppendix.length/64)+'条发送')){
+						 			       	   win.close();
+						 			           send(pid,value,function(data){
+					 					  	   });
+						 			       }else{
+						 			         return;
+						 			       }
+				 			         }else{
+				 			         	win.close();
+				 			            send(pid,value,function(data){
+				 					    });
+				 			         }
+				 			       	 
+				 			    }else{
+				 					 alert('信息正文不能为空。');
+				 				 }
+				 			}
+				 		}
+				 	]
+				 }).show();
+            }
+        },'-',{
+            text: '导出电子表格',
+            handler: function(){
+		        var url = App.App_Info.BasePath+'/biomedical.do?'
+		    		+'method=creatExcel&doctorId='+top.USER.id;
+		    	if(searchObj)
+		        	  url += ('&search='+encodeURIComponent(encodeURIComponent(searchObj)));
+		    	window.open(url);
+            }
+        },'-',{
+            text: '会员转科',
+            handler: function() {
+                ApplicationMemberChange();
+                //MemberChangeWard();
+            }
+        }],
+                    bbar: new Ext.PagingToolbar({
+                        pageSize: 20,
+                        store: ds,
+                        displayInfo: true,
+                        displayMsg: '显示第<font color="red"> {0} </font>条' +
+                        '到<font color="red"> {1} </font>条记录，' +
+                        '一共<font color="red"> {2} </font>条',
+                        emptyMsg: "没有记录"
+                    })
+                });
+                var viewport = new Ext.Viewport({
+                	id:'oneview',
+                	layout:'border',
+                	items:[{
+							title:'选择操作',
+							region:'west',
+							width:115,
+							collapsible:true,
+							xtype:'treepanel',
+							autoScroll:true,
+							containerScroll:true,
+							autoShow:true,
+							dataUrl:'EMR_TREE_CFG.json',
+							root:{
+								nodeType:'async',
+								text:'字典树',
+								draggable:false,
+								id:-1
+							},
+							rootVisible:false,
+							listeners:{
+								render:function(){
+									this.expandAll();
+								}
+							}
+						},{
+							id:'rightpanel',
+		                	region:'center',
+		                	layout:'fit',
+		                    items:grid
+			        	}
+                	]
+                });
+                
+                grid.show();
+            }
+            
+            function MemberInfo(rowIndex){
+                var store = Ext.getCmp('grid').getStore();
+                var record = store.getAt(rowIndex);
+                var win = Ext.getCmp('MemberInfo-Window');
+                if (!win) {
+                    win = new Biomedical.MemberInfoWindow({
+                        id: 'MemberInfo-Window',
+                        saveCallback: function(res, w){
+                            record.set('memberNo', res.data);
+                            w.hide();
+                        }
+                    });
+                }
+                win.show();
+                var memberNo = record.get('memberNo');
+                var obj = {
+                    name: record.get('patient').patientName,
+                    patientNo: record.get('patient').patientNo,
+                    patientId: record.get('patient').id
+                };
+                if (memberNo && memberNo.length > 0) {
+                    Ext.Ajax.request({
+                        url: App.App_Info.BasePath + '/biomedical.do',
+                        params: {
+                            memberNo: memberNo,
+                            method: 'getMember'
+                        },
+                        success: function(response){
+                            var res = Ext.decode(response.responseText);
+                            if (res.success) {
+								win.items.get(0).getForm().reset();
+                                win.items.get(0).getForm().loadRecord(new Ext.data.Record(Ext.apply(obj, Ext.decode(res.data))));
+                                var _deptNameObjectValue=Ext.getCmp('deptNameObject');
+      							_deptNameObjectValue.setValue(obj.deptName);
+								var _storeValue=Ext.getCmp('grounp');
+      							_storeValue.setValue(obj.grounpName);
+                            }
+                            else {
+                                alert('获取会员信息失败。');
+                            }
+                        }
+                    });
+                }
+                else {
+					win.items.get(0).getForm().reset();
+                    win.items.get(0).getForm().loadRecord(new Ext.data.Record(obj));
+                }
+            }
+            //会员转科弹出列表操作
+			function ApplicationMemberChange(){
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+				var patientId = ss[0].get('patient').id;
+				var deptCode = ss[0].get('deptCode');
+				var grounpId = ss[0].get('grounpId');
+				getAllDeptment(deptCode);
+				//alert(deptCode);
+				//var memNo=ss[0].get('memberNo');
+				var cm=new Ext.grid.ColumnModel([
+					new Ext.grid.RowNumberer(),
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请时间', dataIndex:'appsendDate'},
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请人', dataIndex:'appuserName'},
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审批时间', dataIndex:'transappDate'},
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审批人', dataIndex:'transappuserName'},
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同意日期',dataIndex:'applicatinDate'},
+					{header:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转入科室',dataIndex:'newdeptName'}
+				]);
+				var ds=new Ext.data.Store({
+				
+					proxy:new Ext.data.HttpProxy({
+						url:App.App_Info.BasePath + '/DepartmentGrounpAction.do?method=findUserHistoryApplicationRecord&patientId='+patientId
+					}),
+					reader:new Ext.data.JsonReader({root:'root'},[
+						{name:'newdeptName'},
+						{name:'applicatinDate'},
+						{name:'appsendDate'},
+						{name:'appuserName'},
+						{name:'transappDate'},
+						{name:'transappuserName'}
+					])
+				});
+				ds.load();
+				var editor=new Ext.Window({
+                    draggable: false,
+                    resizable: false,
+                    width: 300,
+                    autoHeight: true,
+                    closable: false,
+                    buttonAlign: 'center',
+                    frame: true,
+                          items: {
+                              xtype: 'form',
+                              border: false,
+                              bodyStyle: 'padding-top:5px',
+                              labelAlign: 'right',
+                              labelWidth: 60,
+                              defaults: {
+                                  xtype: 'textfield',
+                                  anchor: '95%'
+                              },
+                              items: [
+                              {
+                                fieldLabel: '转入科室',
+		                    xtype: 'combo',
+		                    mode: 'local',
+		                    store: new Ext.data.SimpleStore({
+								 fields:['clinicValue','showClincType'],
+								 data: deptcodenameList
+							}),
+		                    displayField: 'showClincType',
+							valueField: 'clinicValue',
+		                    triggerAction: 'all',
+		                    readOnly: true,
+		                    listeners:{
+								select:function(){
+							      	deptcode =this.getValue();
+								}
+							}
+                              },
+                              {
+                                  fieldLabel: '申请理由',
+		                          xtype: 'textarea',
+		                          height: 80,
+		                          allowBlank: true,
+		                          anchor: '95%',
+		                          name: 'applicationBacuse'
+                              }
+                              ]
+                          },
+                          buttons:[{
+                              text:'保存',
+                              handler: function(){
+                                  //alert(deptcode);
+                                  /*
+                                  var values = {'clinicValue':deptcode, 
+                                      'applicationBacuse':applicationBacuse, 
+					                  'applicationDeptCode':deptcode,
+					                  'patientId':patientId,
+					                  'oldDeptCode':deptCode,
+					                  'oldGrounpId':top.Member.grounpId,
+					                  'flag': 0
+					              };*/
+					              var values = editor.items.get(0).getForm().getValues();
+					              values.patientId = patientId;
+					              values.oldDeptCode = deptCode;
+					              values.oldGrounpId = grounpId;
+					              values.applicationDeptCode = deptcode;
+					              values.flag = 0;
+					              Ext.Ajax.request({
+					                  url:App.App_Info.BasePath + '/DepartmentGrounpAction.do',
+					                  params:{
+					                      method: 'cacheApplicationRecord',
+					                      data:Ext.encode(values)
+					                  },
+					                  success:function(_response) {
+					                      var res = Ext.decode(_response.responseText);
+					                      if(res.success){
+					                          alert("申请已提交");
+					                      } else {
+					                          alert("申请未能成功提交");
+					                      }
+					                  }
+					              });
+                                  editor.hide();
+                              }
+                          }, {
+                              text:'取消',
+                              handler: function() {
+                                  editor.hide();
+                              }                                
+                          }]
+                        
+					
+		        });
+		        var win=new Ext.Window({
+					title:'会员转科列表',
+					width: 720,
+		            height: 300,
+		            buttonAlign: 'center',
+		            closable: false,
+		            layout: 'fit',
+		            items: {
+						xtype:'grid',
+						border:false,
+						autoScroll:true,
+						viewConfig:{
+							forceFit:true
+						},
+						cm:cm,
+						ds:ds,
+						tbar:[
+							{
+								text:'新增',
+								handler:function(){
+								    if(publicCheckState(patientId)==null) {
+								    	editor.show();
+									}
+									/*
+									editor.items.get(0).getForm().loadRecord(new Ext.data.Record({
+										id:'',
+										memNo:memNo,
+										changeDate:new Date(),
+										ward:'',
+										memo:''
+									}));*/
+								}
+							}
+						]
+					},
+					buttons:[
+						{
+							text:'关闭',
+							handler:function(){
+								win.close();
+							}
+						}
+					]
+				});
+				win.show();
+			}
+			function publicCheckState(patientId){
+			 var ishas;
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/DepartmentGrounpAction.do',
+				params:{
+					method:'findCurrentState',
+					id:patientId
+				},
+				scope:this,
+				success:function(_response){
+					var _res=Ext.util.JSON.decode(_response.responseText);
+					if(_res.success){
+				    	var data = Ext.util.JSON.decode(_res.data);
+			    		if(data !=null){
+				    		if(data.applicationDeptCode == data.oldDeptCode){
+				    		    ishas = true;
+				    			alert("转组申请中，请完成后再申请...");
+				    			
+					    	}else if(data.applicationDeptCode != data.oldDeptCode)
+				    		{
+				    		    ishas = true;
+					    		alert("转科申请中，请完成后再申请...");
+				    		}
+				    	}
+			    	}
+		    	}
+		    });
+		    return ishas;
+			}
+			function MemberChangeWard(){
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+				var memNo=ss[0].get('memberNo');
+				var cm=new Ext.grid.ColumnModel([
+					new Ext.grid.RowNumberer(),
+					{header:'转科日期',dataIndex:'changeDate'},
+					{header:'转入科室',dataIndex:'ward'}
+				]);
+				var ds=new Ext.data.Store({
+					proxy:new Ext.data.HttpProxy({
+						url:App.App_Info.BasePath + '/biomedical.do?method=ChangeWard_GetByMemNo&memNo='+memNo
+					}),
+					reader:new Ext.data.JsonReader({root:''},[
+						{name:'id'},
+						{name:'memNo'},
+						{name:'changeDate'},
+						{name:'ward'},
+						{name:'memo'}
+					])
+				});
+				ds.load();
+				var editor=new Ext.Window({
+					title:'会员转科',
+					width: 450,
+		            autoHeight: true,
+		            buttonAlign: 'center',
+		            closable: false,
+		            layout: 'fit',
+					items:{
+						xtype:'form',
+						bodyStyle: 'padding:5px',
+			            border: false,
+			            autoHeight: true,
+			            labelAlign: 'right',
+			            labelWidth: 60,
+			            layout: 'form',
+						defaults:{
+							anchor:'98%'
+						},
+						items:[
+							{
+								xtype:'datefield',
+								readOnly:true,
+								format:'Y-m-d',
+								name:'changeDate',
+								allowBlank:false,
+								fieldLabel:'转科日期',
+								anchor:'45%'
+							},{
+								xtype: 'panel',
+								layout: 'column',
+								border: false,
+								defaults: {
+									border: false
+								},
+								anchor:'100%',
+								items:[
+									{
+										columnWidth:.9,
+										layout:'form',
+										items:{
+											xtype:'textfield',
+											fieldLabel: '转入科室',
+											readOnly:true,
+											allowBlank:false,
+						                    name: 'ward',
+											anchor:'98%'
+										}
+									},{
+										columnWidth:.1,
+										listeners:{
+											render:function(){
+												var panel=this;
+												var img=Ext.DomHelper.append(this.body,{
+													tag:'img',
+													src:App.App_Info.BasePath+'/PUBLIC/images/sign.gif',
+													style:'cursor:pointer'
+												});
+												Ext.get(img).on('click',function(){
+													var obj=window.showModalDialog(App.App_Info.BasePath+'/PUBLIC/Modaldialog/DictSelect.html',{
+														title:'科室选择',
+														sql:'SELECT CODE AS svalue, NAME AS stext FROM SYS_ZD_UserBelong WHERE (PCODE = \'40068648-6\')'
+													},'dialogWidth=400px;dialogHeight=400px');
+													if(obj){
+														panel.ownerCt.items.get(0).items.get(0).setValue(obj.text);
+													}
+												});
+											}
+										}
+									}
+								]
+							},{
+								xtype:'textarea',
+								name:'memo',
+								fieldLabel:'备注'
+							},{
+								xtype:'hidden',
+								name:'id'
+							},{
+								xtype:'hidden',
+								name:'memNo',
+								value:memNo
+							}
+						]
+					},
+					buttons:[
+						{
+							text:'保存',
+							handler:function(){
+								var form=editor.items.get(0).getForm();
+								if(form.isValid()){
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath + '/biomedical.do',
+										params:{
+											method:'ChangeWard_SaveOrUpdate',
+											data:Ext.encode(form.getValues())
+										},
+										success:function(response){
+											var res=Ext.decode(response.responseText);
+											if(res.success){
+												win.items.get(0).getStore().reload();
+												alert('保存成功。');
+												editor.hide();
+											}else{
+												alert('保存失败。');
+											}
+										}
+									});
+								}else{
+									alert('表单未填写完整。');
+								}
+							}
+						},{
+							text:'关闭',
+							handler:function(){
+								editor.hide();
+							}
+						}
+					]
+				});
+				var win=new Ext.Window({
+					title:'会员转科列表',
+					width: 450,
+		            height: 300,
+		            buttonAlign: 'center',
+		            closable: false,
+		            layout: 'fit',
+		            items: {
+						xtype:'grid',
+						border:false,
+						autoScroll:true,
+						viewConfig:{
+							forceFit:true
+						},
+						cm:cm,
+						ds:ds,
+						tbar:[
+							{
+								text:'新增',
+								handler:function(){
+									editor.show();
+									editor.items.get(0).getForm().loadRecord(new Ext.data.Record({
+										id:'',
+										memNo:memNo,
+										changeDate:new Date(),
+										ward:'',
+										memo:''
+									}));
+								}
+							},'-',{
+								text:'编辑',
+								handler:function(){
+									var ss=win.items.get(0).getSelectionModel().getSelections();
+									if(ss.length==0){
+										alert('请选择记录。');
+									}else{
+										editor.show();
+										editor.items.get(0).getForm().loadRecord(new Ext.data.Record(ss[0].data));
+									}
+								}
+							},'-',{
+								text:'删除',
+								handler:function(){
+									var ss=win.items.get(0).getSelectionModel().getSelections();
+									if(ss.length==0){
+										alert('请选择记录。');
+									}else{
+										if(confirm('确定要删除？')){
+											Ext.Ajax.request({
+											url:App.App_Info.BasePath + '/biomedical.do',
+											params:{
+												method:'ChangeWard_Delete',
+												id:ss[0].get('id')
+											},
+											success:function(response){
+												var res=Ext.decode(response.responseText);
+												if(res.success){
+													win.items.get(0).getStore().reload();
+													alert('删除成功。');
+												}else{
+													alert('删除失败。');
+												}
+											}
+										});
+										}
+									}
+								}
+							}
+						]
+					},
+					buttons:[
+						{
+							text:'关闭',
+							handler:function(){
+								win.close();
+							}
+						}
+					]
+				});
+				win.show();
+			}
+			
+			
+ //根据医生Id 获得当前责任科室和小组名称  by cheng jiangyu 2011-09-30
+function getDoctorDeptmentAndGrounp(){
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/DepartmentHISAction.do',
+		params:{
+			method:'findDoctorDeptAndGroupByDoctorId',
+			doctorId:top.USER.id
+		},
+		sync:true,
+		success:function(response){
+			var list = Ext.util.JSON.decode(response.responseText);
+			deptName = list[0].deptName;
+			grounpName = list[0].grounpName;
+		}
+	});	
+}	
+			
+			
+var deptcodenameList = new Array();		
+var deptcode;			
+function getAllDeptment(deptCode){
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/PatientConsultingAction.do',
+		params:{
+			method:'findAllSYS_HIS_DepartmentHISEntity',
+			name:'inHospitalType',
+			nameValue:1
+		},
+		sync:true,
+		success:function(response){
+			var list = Ext.util.JSON.decode(response.responseText);
+			for(var i=0,size=list.length;i<size;i++){
+			    if(deptCode != list[i].deptCode) {
+				    var deptcodenameList1 = new Array();
+			    	deptcodenameList1.push(list[i].deptCode);
+			    	deptcodenameList1.push(list[i].deptName);
+			    	deptcodenameList.push(deptcodenameList1);
+				}
+//				deptNameOption+="<option value="+list[i].deptCode+">"+list[i].deptName+"</option>";
+			}
+			deptcode = deptcodenameList[0][0];
+		}
+	});
+}
+/*
+//var grounpName;
+//var deptcodenameGrounpList = new Array();
+//var deptcodeGrounp ;	
+//查找某个科室下的责任小组
+function getAllDeptmentGrounp(){
+	deptcodenameGrounpList = new Array();
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/DepartmentHISAction.do',
+		params:{
+			method:'findDoctorGrounpByMemberByDoctorId',
+			deptCode:deptcode,
+			doctorId:top.USER.id
+		},
+		sync:true,
+		success:function(response){
+			var list = Ext.util.JSON.decode(response.responseText);
+			for(var i=0,size=list.length;i<size;i++){
+				var deptGrounp = new Array();
+				deptGrounp.push(list[i].id);
+				deptGrounp.push(list[i].grounpName);
+				deptcodenameGrounpList.push(deptGrounp);
+			}
+			deptcodeGrounp = deptcodenameGrounpList[0][0];
+			grounpName = deptcodenameGrounpList[0][1];
+		}
+	});
+}*/
+		Do={
+			Rhzqtys:function(){//入会知情同意书
+				window.open(App.App_Info.BasePath+'/module/member/memberAgreePrint.html');
+			},
+			RhInfo:function(){//入会信息
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+						alert('请先选择一个会员。');
+						return;
+				}
+				App.util.addNewMainTab('/module/biomedical/MemberInfoForm.html?id='+ss[0].get('patient').id,'会员基本信息');
+			},
+			Rhjkda:function(){//入会健康档案
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+				App.util.addNewMainTab('/module/biomedical/ward/memberHealthRecord.html?PID='+ss[0].get('patient').id,'会员健康档案');
+							if(confirm('确定要编辑此病人的入会病历？')){
+									Ext.Ajax.request({
+										url: App.App_Info.BasePath + '/biomedical.do',
+										params:{
+											method:'saveMemberCase',
+											memberNo:ss[0].get('memberNo')					
+										},
+										success:function(response){
+											var res=Ext.decode(response.responseText);
+											if(res.success){
+												var cm=Ext.decode(res.data);
+												ss[0].set('cm',Ext.decode(res.data));
+												App.util.addNewMainTab('/module/biomedical/MemberCase/InHspRec.html?PID='+ss[0].get('patient').id+'&KID='+cm.id,'入会病历信息');
+											}else{
+												alert('会员入会病历初始化失败。');
+											}
+										}
+									});
+								
+							}
+		},
+		plan:function(){//随访计划
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+			}
+			var patient = ss[0].get('patient');
+			//location.href=App.App_Info.BasePath+'/module/plan/plan.html?paId='+_ss[0].data.id;
+			var planURL = '/module/plan/selectPlan.html?paId='+patient.id + '&type=plan&KID='+ss[0].get('memberNo')+'&deptName='+deptName+'&grounpName='+grounpName;
+	        App.util.addNewMainTab(planURL,'设置随访计划');
+		},
+		sendMessage:function(){ //发送短信
+                 var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+				 if (ss.length == 0) {
+				     alert('请至少选择一条记录。');
+				     return;
+				 }
+				 var pid = "";    //不支持多选发送短信
+				 var patients = ""; //给哪些病人发短信
+				    pid = ss[0].get('memberNo');  
+				    patients = ss[0].get('patient').patientName;
+				  if(ss[0].get('patient').mobilePhone==''||ss[0].get('patient').mobilePhone == null||(ss[0].get('patient').mobilePhone!=''&&!(/^1[3|4|5|8][0-9]\d{4,8}$/.test(ss[0].get('patient').mobilePhone)))){  //如果没有登记手机号码的病人不为空
+				 			        alert("会员"+patients+"手机号码为空或格式不正确");
+				 			        return;
+				  }
+				 var send=function(id,ctx,callback){
+				 	Ext.Ajax.request({
+					 	url:App.App_Info.BasePath + '/biomedical.do',
+					 	params:{
+					 		method:'sendMsg',
+					 		id:id,
+					 		appendix:'北京佑安医院'+deptName+''+grounpName, 
+					 		content:ctx
+					 	},
+					 	success:function(response){
+					 		var resObj=Ext.decode(response.responseText);
+					 		if(resObj.success){
+					 			Ext.Msg.show({
+					 				title:'成功',
+					 				msg:resObj.msg,
+					 				buttons:Ext.Msg.OK,
+					 				fn:function(){callback(resObj)},
+					 				icon:Ext.Msg.INFO
+					 			});
+					 		}else{
+					 			Ext.Msg.show({
+					 				title:'错误',
+					 				msg:resObj.msg,
+					 				buttons:Ext.Msg.OK,
+					 				fn:function(){callback(resObj)},
+					 				icon:Ext.Msg.ERROR
+					 			});
+					 		}
+					 	}
+					 });
+				 }
+				 new Ext.Window({
+				 	title:'给【'+patients+'】发送短信',
+				 	closeAction:'close',
+				 	width:400,
+				 	height:200,
+				 	autoHeight:true,
+				 	layout:'anchor',
+				 	items:[{
+				 		xtype:'textarea',
+				 		width:390,
+				 		height:160,
+				 		value:'患者您好,',
+				 		style:'color:blue',
+				 		emptyText:'<请在这里输入要发送的内容>',
+				 		enableKeyEvents:true,
+				 		listeners:{'keyup':function(){
+				 			var label_ = this.ownerCt.findByType('label')[0];
+				 			var textLength = this.getValue().length;
+				 			label_.setText('当前字数:'+textLength+'字');
+				 		}}
+				 	},{
+				 		layout:'column',
+				 		frame:true,
+				 		items:[{
+					 			columnWidth:0.3,
+						 		xtype:'label',
+						 		labelWidth:100,
+						 		text:'当前字数:5字'
+						 	},{
+						 		columnWidth:0.3,
+						 		xtype:'label',
+						 		width:20,
+						 		text:'短信条数:'+ss.length+'条'
+						 	},{
+						 		columnWidth:0.4,
+						 		xtype:'label',
+						 		width:20
+						 		//text:'短信总字数上限:'+wordCount+'字'
+					 	}]
+				 	}],
+				 	buttonAlign:'center',
+				 	buttons:[
+				 		{
+				 			text:'发送',
+				 			handler:function(){
+				 				var win=this.ownerCt;
+				 				var value=win.items.get(0).getValue();
+				 				var headAndAppendix = '北京佑安医院'+deptName+grounpName+value;  //自动的短信头和落款 加上短信正文
+				 			     if(value&&value.length>5){ 
+				 			        if(Math.ceil(headAndAppendix.length/64)>1){   //看发送的短信字数是否超过一条短信
+						 			       if(confirm('您确定发送吗？该条短信将分'+Math.ceil(headAndAppendix.length/64)+'条发送')){
+						 			       	   win.close();
+						 			           send(pid,value,function(data){}
+					 						   );
+						 			       }else{
+						 			         return;
+						 			       }
+				 			         }else{
+				 			           win.close();
+				 			           send(pid,value,function(data){
+				 					 });
+				 			         }
+				 			     }else{
+				 					 alert('信息正文不能为空。');
+				 				 }
+				 			}
+				 		}
+				 	]
+				 }).show();
+        },
+		Inhospital:function(){//住院记录
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+        App.util.addNewMainTab('/module/InHospitalCase/MyMemberInfoInhspCaseList.html?id='+ss[0].get('patient').id,'住院记录');
+		},
+		Mzjl:function(){//门诊记录
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+				return;
+				}
+		//2011-08-06 liugang 新增
+       		 App.util.addNewMainTab('/module/Followup/Followup.html?id='+ss[0].get('patient').id+'&hisPID='+ss[0].get('patient').patientId+'&flag=ward','门诊记录');                
+		},
+		Jyresult:function(){//检验结果
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var patient = ss[0].get('patient');
+			App.util.addNewMainTab('/module/checkreport/combinationListofMember.jsp?patientId='+
+	                        		patient.id + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+	                        		'化验检验结果');			
+		},
+		searchCheckResult:function(){
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var patient = ss[0].get('patient');
+			App.util.addNewMainTab('/module/checkreport/MyGrounpCombinationListofMember.jsp?patientId='+
+	                        		patient.id + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+	                        		'外院化验检验结果');		
+		},
+		searchPacsResult:function(){
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var patient = ss[0].get('patient');
+			App.util.addNewMainTab('/module/InHospitalCase/Liver/CheckReport/LabExamination/MyGrounpCombinationListofMemberPacs.jsp?patientId='+
+	                        		patient.id + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+	                        		'外院放射影像结果');		
+		},
+		searchMaidiResult:function(){
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var patient = ss[0].get('patient');
+			App.util.addNewMainTab('/module/InHospitalCase/Liver/CheckReport/LabExamination/MyGrounpCombinationListofMemberMaiDi.jsp?patientId='+
+	                        		patient.id + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+	                        		'外院综合影像结果');		
+		}
+		,
+		cacheApplicationRecord: function() {//转科转组操作
+		    /**
+		    var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+		    if(ss.length == 0) {
+		        alert('请先选择一个会员。');
+		        return;
+		    }
+		    var patient = ss[0].get('patient');
+		    App.util.addNewMainTab('/module/biomedical/ward/applicationMemberList.html?patientId=' + patient.id, '会员转科');
+		    */
+		    App.util.addNewMainTab('/module/biomedical/ward/applicationMemberList.html', '会员转科');
+		},
+		Zhuanke:function(){//转科转组历史记录查询
+			//liugang 2011-08-06 start 
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/DepartmentGrounpAction.do',
+				params:{
+					method:'findMemberDeptOrGrounpRecordByPatientId',
+					patientId:ss[0].get('patient').id
+				},
+				scope:this,
+				sync:true,
+				success:function(_response){
+					var lists = Ext.util.JSON.decode(_response.responseText);
+					if(lists != "" && lists.length > 0)
+					{
+						var createDia ='<table width="570" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>'
+							+'<tr><td class="t1"><center>序号</center></td><td class="t1"><center>转科转组时间</center></td><td class="t1"><center>(原)责任科室</center></td><td class="t1"><center>(现)责任科室</center></td>'
+							+'</tr>';	
+						for(var i=0,size = lists.length;i<size;i++)
+						{
+							createDia+='<tr><td class="t1"><center>'+(i+1)+'</center></td><td class="t1"><center>'+lists[i].appDate+'<center></td><td class="t1"><center>'+lists[i].oldDeptCodeG+'<center></td>'
+								+'<td class="t1"><center>'+lists[i].DeptCodeG+'<center></td></tr>';
+						}
+						createDia+='</table>';
+						document.getElementById("dialog1").innerHTML = createDia;
+					}else{
+						document.getElementById("dialog1").innerHTML = "暂无转科转组记录";
+					}
+				}
+			});
+			FormUtil.showJqueryDialog('dialog1');
+			}
+		,
+		HealthRecord:function(){//健康记录
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+				App.util.addNewMainTab('/module/patientanddoctoroperator/doctorLookHealthRecord.html?PID='+ss[0].get('patient').id,'会员健康记录列表');
+		},
+	ConsultRecord:function(){//咨询记录
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+			}
+			App.util.addNewMainTab('/module/patientanddoctoroperator/doctorLookpatientConsultingList.html?PID='+ss[0].get('patient').id,'会员咨询记录列表');
+	},
+
+	/**		
+=======
+	/**	
+>>>>>>> .r241
+	GradingDiag:function(){//十二级诊断系统
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+			App.util.addNewMainTab('/module/InHospitalCase/GradingDiag/mgrading.html?KID='+ss[0].get('memberNo')+'&PID='+ss[0].get('patient').id+'account='+ss[0].get('account'),'肝病十二级诊断系统');
+		},
+		**/
+		GradingDiag:function(){//十二级诊断系统全（住院+门诊） 
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+			App.util.addNewMainTab('/module/InHospitalCase/GradingDiag/mgradingAll.html?account='+ss[0].get('account')+'&PID='+ss[0].get('patient').id+'&PID='+ss[0].get('memberNo')+'&KID='+ss[0].get('cid'),'肝病十二级分类诊断系统');
+		},
+		addCheckResult:function(){//录入检验检查结果
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+			 window.open('../../InHospitalCase/Liver/CheckReport/inputCombinationList.html?patientId='+ss[0].get('patient').id+"&doctorName="+top.USER.name+"&doctorOrPatient=1", '', 'width=240px;');
+		}
+		,
+		Pacs:function(){//放射医学影像检查结果
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+		var patient = ss[0].get('patient');
+		App.util.addNewMainTab('/module/checkreport/pacs.html?id='+
+                        		patient.patientId + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+                        		'放射医学影像检查结果');
+		},
+		MaiDi:function(){//综合医学影像检查结果
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var patient = ss[0].get('patient');
+        	App.util.addNewMainTab('/module/checkreport/maidi.html?id='+
+                        		patient.patientId + '&no=' + patient.patientNo + "&name=" + patient.patientName,
+                        		'综合医学影像检查结果');
+		}
+		,
+		ScoreCommentTemplate:function(){//新评分系统
+			var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+			if(ss.length==0){
+				alert('请先选择一个会员。');
+				return;
+			}
+			var src ="../../InHospitalCase/ItemScore/table/mainmenzhen.html?KID="+ss[0].get('memberNo')+"&PID="+ss[0].get('patient').id+"&entity=scoreCommentTemplate1&title="+encodeURIComponent('评分套餐');
+			var oneview = Ext.getCmp('oneview');
+			var rightpanel = Ext.getCmp('rightpanel');
+			rightpanel.hide();	
+			new Ext.Viewport({
+			layout:'border',
+			items:[{
+					id:'westPanel',
+					title:'选择操作',
+					region:'west',
+					width:115,
+					split:true,
+					collapsible:true,
+					xtype:'treepanel',
+					autoScroll:true,
+					containerScroll:true,
+					dataUrl:'EMR_TREE_CFG.json',
+					root:{
+						nodeType:'async',
+						text:'字典树',
+						draggable:false,
+						id:-1
+					},
+					rootVisible:false,
+					listeners:{
+						render:function(){
+							this.expandAll();
+						}
+					}
+				},{
+					id:'centerPanel',
+					region:'center',
+					border:false,
+					html:'<iframe id="iframe" src="'+src+'" width="1052" height="690"></iframe>'
+				}
+			]
+		});	
+	}
+}
+
+function loadPatSimInfo(){
+	var _div=Ext.get('PatSimInfo-DIV');
+	if (!_div) {
+		Ext.DomHelper.append(Ext.getBody(), {
+			tag: 'div',
+			id: 'PatSimInfo-DIV'
+		});
+		_div=Ext.get('PatSimInfo-DIV');
+	}
+	_div.load({
+		url:App.App_Info.BasePath+'/module/Patient/PatSimpleInfo.jsp?timestamp='+new Date().getTime()+'&id='+PID,
+		scripts:true,
+		text:'正在获取病人基本信息......'
+	});
+}
+
+//器官功能评价页面返回
+function backToHistory(){
+	location.href="../../../../module/biomedical/ward/WardMemberIndex.html";
+}
+        </script>
+    </head>
+    <body>
+    <div id="dialog1">
+	</div>
+    </body>
+</html>
+
+<!-- 
+
+刘刚 2011-08-09 取消随访设置
+,{
+		id:'OutPatientNode8',
+		text:'随访设置',
+		iconCls:'icon-none',
+		leaf:true,
+		href:'javascript:Do.Sfsz()'
+	}
+,
+	Sfsz:function(){//随访设置
+		var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+		if(ss.length==0){
+			alert('请先选择一个会员。');
+			return;
+		}
+        App.util.addNewMainTab('/module/biomedical/OutPatientRecordIndex.html?id='+ss[0].get('patient').id+'&memNo='+ss[0].get('memberNo'),'门诊随访记录');
+	}
+ -->

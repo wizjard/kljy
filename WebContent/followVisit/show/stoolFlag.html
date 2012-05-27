@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>大便情况</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+function closeWindow(){
+	var _radioV="";
+	var _selectV="";
+	var sum='';
+	var _obj = document.all;
+
+	for(var i=0;i<_obj.length;i++){
+		if(_obj[i].type=="radio"){
+			if(_obj[i].checked){
+				_radioV +=_obj[i].value +",";
+			}
+		}	
+	}
+	
+	var sele = document.getElementsByTagName('select');
+		for(var i=0;i<sele.length;i++){
+			if(sele[i].value!=""){
+				_selectV += sele[i].value +",";
+			}
+		}
+	
+	var textV = "";
+	var te = document.getElementsByTagName('input');
+		for(var i=0;i<te.length;i++){
+			if(te[i].type =="text"){
+				if(te[i].value!=""){
+					textV += te[i].value+",";
+				}
+			}
+		}
+		
+		sum = _radioV+ _selectV + textV;
+		
+		//查询最后一个','的下标位置
+		var _num = sum.lastIndexOf(",");
+		//从第0个下标开始截取长度为_num的字符串
+		sum = sum.slice(0,_num);
+		
+		window.returnValue = sum;
+		window.close();
+	}
+</script>
+</head>
+
+<body>
+	<table  align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td align="right">腹泻：</td>
+        <td width="178">
+           <input type="radio" name="stoolScoursFlag" id="stoolScoursFlag" checked="checked" value="无" />无&nbsp;&nbsp;
+           <input type="radio" name="stoolScoursFlag" id="stoolScoursFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolScoursFlag" id="stoolScoursFlag" value="未说明" />未说明
+        </td>
+        <td width="71" align="right">黑便：</td>
+        <td width="202">
+            <input type="radio" name="stoolBlackFlag" checked="checked" id="stoolBlackFlag" value="无" />无&nbsp;&nbsp;
+           <input type="radio" name="stoolBlackFlag" id="stoolBlackFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolBlackFlag" id="stoolBlackFlag" value="未说明" />未说明
+        </td>
+  </tr>
+  <tr>
+        <td align="right">便秘：</td>
+        <td>
+        	 <input type="radio" name="stoolAsTrictionFlag" id="stoolAsTrictionFlag" value="无" checked="checked"/>无&nbsp;&nbsp;
+           <input type="radio" name="stoolAsTrictionFlag" id="stoolAsTrictionFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolAsTrictionFlag" id="stoolAsTrictionFlag" value="未说明" />未说明
+        </td>
+        <td align="right">灰白便：</td>
+        <td>
+		   <input type="radio" name="stoolWhiteFlag" id="stoolWhiteFlag" value="无" checked="checked"/>无&nbsp;&nbsp;
+           <input type="radio" name="stoolWhiteFlag" id="stoolWhiteFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolWhiteFlag" id="stoolWhiteFlag" value="未说明" />未说明
+        </td>
+  </tr>
+  <tr>
+      <td align="right">便血：</td>
+      <td> <input type="radio" checked="checked" name="stoolBloodFlag" id="stoolBloodFlag" value="无" />无&nbsp;&nbsp;
+           <input type="radio" name="stoolBloodFlag" id="stoolBloodFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolBloodFlag" id="stoolBloodFlag" value="未说明" />未说明
+      </td>
+      <td align="right">里急后重：</td>
+      <td>
+      	   <input type="radio" name="stoolTenesmusFlag" checked="checked" id="stoolTenesmusFlag" value="无" />无&nbsp;&nbsp;
+           <input type="radio" name="stoolTenesmusFlag" id="stoolTenesmusFlag" value="有" />有&nbsp;&nbsp;
+           <input type="radio" name="stoolTenesmusFlag" id="stoolTenesmusFlag" value="未说明" />未说明
+      </td>
+  </tr>
+  <tr>
+      <td align="right">颜色：</td>
+      <td>
+      		 <select name="stoolColor" id="stoolColor">
+                <option value=""></option>
+                <option value="黄褐色">黄褐色</option>
+                <option value="暗红色">暗红色</option>
+                <option value="鲜红色">鲜红色</option>
+                <option value="柏油色">柏油色</option>
+                <option value="暗红色果酱样">暗红色果酱样</option>
+                <option value="洗肉水样">洗肉水样</option>
+                <option value="灰白便">灰白便</option>
+            </select>
+      </td>
+      <td align="right">形态：</td>
+      <td>
+      		 <select name="stoolShape" id="stoolShape">
+                <option value=""></option>
+                <option value="粘液便">粘液便</option>
+                <option value="脓血便">脓血便</option>
+                <option value="粘液脓血便">粘液脓血便</option>
+                <option value="稀便">稀便</option>
+                <option value="溏便" >	溏便</option>
+                <option value="不成形软便">不成形软便</option>
+                <option value="成形脓便">成形脓便</option>
+                <option value="干燥大便">干燥大便</option>
+                <option value="团块样便">团块样便</option>
+                <option value="大便变细/变扁">大便变细/变扁</option>
+             </select>
+      </td>
+  </tr>
+  <tr>
+      <td align="right">每天次数：</td>
+      <td><input type="text" name="stoolPday" id="stoolPday" /></td>
+      <td align="right">每次量：</td>
+      <td><input type="text" name="stoolVolumePtime" id="stoolVolumePtime" /></td>
+  </tr>
+  <tr>
+      <td align="right">总次数：</td>
+      <td><input type="text" name="stoolTotal" id="stoolTotal" /></td>
+      <td align="right">总量：</td>
+      <td><input type="text" name="stoolVolumeTotal" id="stoolVolumeTotal" /></td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

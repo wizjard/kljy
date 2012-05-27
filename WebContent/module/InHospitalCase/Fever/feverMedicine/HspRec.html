@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>发热中医病人基本信息</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+    <script type="text/javascript" src="../../scripts/InHspRec.js"></script>
+	<script type="text/javascript">
+	var _KID=null;
+	var _PID=null;
+	$(function(){
+		_PID=App.util.getHtmlParameters('PID');
+		_KID=App.util.getHtmlParameters('KID');
+		initPage(PageCfg());
+	});
+	function PageCfg(){
+		return {
+			PID:_PID,
+			KID:_KID,
+			tabs:[
+				{
+					name:'基本',
+					src:'/module/InHospitalCase/CaseMaster/InHspCaseMasterInfo.html'
+				},{
+					name:'主诉',
+					src:'/module/InHospitalCase/Fever/feverMedicine/chiefCompaint.html'
+				},{
+					name:'现病史(新)',
+					src:'/module/InHospitalCase/Fever/feverMedicine/FeverMedicineHistory.html?KID='+_KID+'&PID='+_PID
+				},{
+					name:'现病史(旧)',
+					src:'/module/InHospitalCase/Liver/CaseDetails/PresentIllness.html'
+				},{
+					name:'流行病史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/EpidemicDisHistory.html'
+				},{
+					name:'既往史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/PastHistory_new.html'
+				},{
+					name:'个人史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/PersonalHistory.html'
+				},{
+					name:'月经史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/MenstrualHistory.html'
+				},{
+					name:'婚育史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/MarritalChildbearingHistory.html'
+				},{
+					name:'家族史',
+					src:'/module/InHospitalCase/Liver/CaseDetails/FamilyHistory.html'
+				},{
+					name:'中医四诊',
+					src:'/module/InHospitalCase/Fever/feverMedicine/TCM_4.html'
+				},{
+					name:'辅助检查',
+					src:'/module/InHospitalCase/Liver/CaseDetails/LabDiagnosticExamination.html'
+				},{
+					name:'诊断',
+					src:'/module/InHospitalCase/Liver/CaseDetails/Diagnosis.html'
+				},{
+					name:'订正诊断',
+					src:'/module/InHospitalCase/Liver/CaseDetails/RevisedDiagnosis.html'
+				}
+			]
+		}
+	}
+	
+	function InHspPrint(){
+		var flag = $("#InHspPrint").val();//转换为数值
+		if(flag == 0) return;
+		document.getElementById("printPage").src = '../CasePrint/Liver.jsp?id=' + _KID + '&flag='+flag;
+	}
+	</script>
+  </head>
+  
+  <body>
+  <div id="toolbar">
+	<IFRAME name="printPage" id="printPage" width=0px height=0px src=""></IFRAME>
+	<table width="100%" border=0 cellpadding=0 cellspacing=0>
+		<tr>
+			<td class="verify" width="120" style="line-height:25px;font-size:12px"><img id="verify-img" alt="未提交审核" src="../../../../PUBLIC/images/3D_ball_gray.png"/><button id="view-verify-btn" class="btn">审核状态</button></td>
+			<td width="95"><button id="verify-btn" class="btn">审核签名</button></td>
+			<td width="60"><button id="save-btn" class="btn">保&nbsp;存</button></td>
+			<td width="*" class="case-title">发热中医记录</td>			
+		<!--     <td width="60"><button id="print-btn" class="btn" link="../CasePrint/Liver.jsp">打&nbsp;印</button></td>		-->
+			<td width="60">
+				<select id="InHspPrint" onchange="InHspPrint()">
+					<option value="0">请选择打印方式</option>
+					<option value="1">全部打印（非双面）</option>
+					<option value="2">全部打印（双面）</option>
+					<option value="3">续打（确定诊断）</option>
+					<option value="4">续打（订正诊断）</option>
+				</select>
+			</td>
+			<td width="60"><button id="back-btn" class="btn" onclick="javascript:history.go(-1);">返&nbsp;回</button></td>
+		</tr>
+	</table>
+</div>
+<div id="pat-info-div"></div>
+<div id="tabs"></div>
+  </body>
+</html>

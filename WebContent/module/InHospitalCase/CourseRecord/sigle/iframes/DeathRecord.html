@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>死亡记录</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript">
+var pathologyDiag = null;
+$(function(){
+	initPage('DeathRecord_findById');	
+});
+function before_init(){
+	registrationPageHead(kid,'死亡记录','#header');
+	FormUtil.toDateField({el:$('*[name="time"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="inhspTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="deathTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+}
+function initPage_callback(json){
+	json.title='死亡记录('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'DeathRecord_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'死亡记录'
+	}
+}
+function isValid(data){
+	if(data.time.length==0){
+		alert('记录时间不能为空。');
+		return false;
+	}
+	return true;
+}
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	SaveData2();
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/CourseRecord/sigle/iframes/print/DeathRecord.html?kid='+
+	id+'&cid='+kid);
+}
+function showPathologyDiag(){
+	if(pathologyDiag){
+		pathologyDiag = pathologyDiag.next();
+	}else{
+		$('textarea[flag="hide"]').each(function(){
+			if(pathologyDiag == null && $(this).val() == ""){
+				pathologyDiag = $(this).parent().parent();
+			}
+		});
+	}
+	pathologyDiag.show();
+}
+
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="16%">记录日期：</td>
+		<td class="t2" widht="34%"><input name="time" type="text" class="text"/></td>
+		<td class="t2" colspan="2" width="50%"> <span style="color:red">*</span> 本次记录的日期，用以区分病程内的多次记录</td>
+	</tr>
+	<tr>
+		<td class="t1">姓名：</td>
+		<td class="t2"><input name="name" type="text" class="text"/></td>
+		<td class="t1" width="16%">科室：</td>
+		<td class="t2" width="34%"><input name="ward" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">性别：</td>
+		<td class="t2"><input name="gender" type="text" class="text"/></td>
+		<td class="t1">年龄：</td>
+		<td class="t2"><input name="age" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">入院日期：</td>
+		<td class="t2"><input name="inhspTime" type="text" class="text"/></td>
+		<td class="t1">死亡时间：</td>
+		<td class="t2"><input name="deathTime" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">入院情况：</td>
+		<td class="t2" colspan="3">
+			<textarea name="inHspStatu" class="textarea" style="width:98%"></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">入院初步诊断：</td>
+		<td class="t2" colspan="3"><textarea name="inhspDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">临床死亡诊断：</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag2" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag3" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag4" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3">
+			<textarea name="deathDiag5" class="textarea" style="width:98%"></textarea>
+			<input type="button" value="继续添加诊断" onclick="showPathologyDiag()">
+		</td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag6" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag7" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag8" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag9" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag10" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag11" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag12" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag13" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag14" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag15" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag16" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag17" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag18" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag19" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag20" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag21" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag22" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag23" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag24" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag25" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag26" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag27" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag28" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag29" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag30" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">病理诊断：</td>
+		<td class="t2" colspan="3"><textarea name="pathologyDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan="4" style="text-align:left;height:26px">病历摘要，主要检查结果，治疗抢救经过及死亡原因：</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="caseSummary" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">主治医师：</td>
+		<td class="t2"><input name="treatDocName" type="text" class="text"/></td>
+		<td class="t1">住院医师：</td>
+		<td class="t2"><input name="inhspDocName" type="text" class="text"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

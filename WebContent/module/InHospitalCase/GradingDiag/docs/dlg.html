@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<style type="text/css">
+*{
+	line-height:1.6em;
+}
+html,body{
+	height:100%;
+}
+body{
+	maign:5px;
+}
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	document.title=window.dialogArguments.title;
+	var data=window.dialogArguments.data;
+	var p=data.split('\n');
+	for(var i=0,len=p.length;i<len;i++){
+		document.getElementById('data').innerHTML+=p[i]+'<br>';
+	}
+}
+</script>
+</head>
+<body>
+<div style="width:99%;height:99%;overflow:auto" id="data"></div>
+</body>
+</html>

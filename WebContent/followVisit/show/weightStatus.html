@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>体重</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+function getValue(){
+	var ra="";
+	//获得单选按钮的值
+	var ty = document.getElementsByName("weight");
+	for(var i=0;i<ty.length;i++){
+		if(ty[i].checked){
+			ra= ty[i].value;
+		}
+	}
+	
+	if(ra =="add"){
+		document.getElementById("addOrReduce").innerHTML='增加';
+	}else if(ra=="reduce") {
+		document.getElementById("addOrReduce").innerHTML='减轻';
+	}
+}
+function closeWindow(){
+	var sum="";
+	var v = new Array();
+	v[0] = document.getElementById("addOrReduce").innerText;
+	v[1] = document.getElementById("wegi").value;
+	v[2] = document.getElementById("date").value;
+	v[3] = document.getElementById("kg").value;	
+	
+	if(v[0]==""||v[1]==""||v[2]==""||v[3]==""){
+		alert("此项不能空，请输入...");
+		return false;
+	}
+	sum=v[0]+","+v[1]+v[2]+","+v[3]+"Kg";
+		window.returnValue = sum;
+		window.close();
+	}
+</script>
+</head>
+
+<body>
+<table  align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+      <td align="center" colspan="4">
+      		<input type="radio" value="add" name="weight" id="add" checked="checked" onclick="getValue();"/>&nbsp;增加&nbsp;
+            <input type="radio" value="reduce" name="weight" id="reduce" onclick="getValue();"/>减轻
+      </td>
+  </tr>
+  <tr>
+      <td colspan="4">体重&nbsp;<input type="text" size="2" name="wegi" id="wegi"  />
+      		 <select name="date" id="date">
+                <option value=""></option>
+                <option value="年">年</option>
+                <option value="月">月</option>
+                <option value="日">日</option>
+                <option value="周">周</option>
+                <option value="天" >	天</option>
+                <option value="小时">小时</option>
+             </select>&nbsp;<span id="addOrReduce">增加</span>&nbsp;
+             <input type="text" name="kg" id="kg" size="3" />&nbsp;Kg
+      </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

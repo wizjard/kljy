@@ -1,0 +1,68 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>首次营养筛查</title>
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript">
+	var flag=0;//0代表没有点击确定按钮，1代表有单选按钮'是'选项被选择并且单击确定按钮，2代表全部单选按钮'否'选项被选择并且单击确定按钮
+	function ok(){
+		var count=0;
+		$('input[type="radio"]').each(function(){
+			if(this.checked && this.value==1){
+				flag=1;
+			}
+			if(this.checked && this.value==0){
+				count++;
+			}
+		});
+		if(count==4){
+			flag=2;
+		}
+		window.returnValue={
+			flag:flag
+		};
+		window.close();
+	}
+</script>
+</head>
+<body>
+<form id="form">
+	<table width="400" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:12px">
+			<tr align="right">
+				<td colspan="3">
+					<input type="button" onclick="ok()" value="确定"/>
+					<input type="button" onclick="window.close();" value="取消"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" width="300">筛查项目</td>
+				<td align="center" width="50">是</td>
+				<td align="center" width="50">否</td>
+			</tr>
+			<tr>
+				<td>BMI&lt;20.5？</td>
+				<td align="center"><input name="bmi" type="radio" value="1"/></td>
+				<td align="center"><input name="bmi" type="radio" value="0"/></td>
+			</tr>
+			<tr>
+				<td>患者在过去3个月有体重下降吗？</td>
+				<td align="center"><input name="weightDown" type="radio" value="1"/></td>
+				<td align="center"><input name="weightDown" type="radio" value="0"/></td>
+			</tr>
+			<tr>
+				<td>患者在过去的1周内有摄食减少吗？</td>
+				<td align="center"><input name="foodCut" type="radio" value="1"/></td>
+				<td align="center"><input name="foodCut" type="radio" value="0"/></td>
+			</tr>
+			<tr>
+				<td>患者有严重疾病吗（如ICU治疗）？</td>
+				<td align="center"><input name="illness" type="radio" value="1"/></td>
+				<td align="center"><input name="illness" type="radio" value="0"/></td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

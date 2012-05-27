@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>医患沟通记录</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			LODOP=document.getElementById("LODOP");
+			/*CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+			var r=new RepoertHeader();
+			r.basePath=App.App_Info.BasePath;
+			r.el=document.getElementById('page-header');
+			r.config.title='医患沟通记录';
+			r.cid=KID;
+			r.create();*/
+			singlePageTableInfo(KID,'医患沟通记录','#page-header');
+			setValue('CommunicationPrint','CommunicationAction','get_Main_Info','CommunicationAction');
+			///setMainValue('get_Main_Info','CommunicationAction');
+		});
+	</script>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button onclick="PREVIEW('医患沟通记录')">打印预览</button>
+	</div>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none;" cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="width:25%;">患者姓名：<span name="patientName"></span></td>
+			<td >性别:<span name="gender"></span></td>
+			<td >年龄：<span name="age"></span></td>
+			<td >沟通：第<span name="communicationNum"></span>次</td>
+		</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 style="border:1px solid black;border-top:none;border-bottom:none" cellspacing=0>
+		<tr>
+			<td align="center" valign="top"style="width:12%;border:1px solid black;border-left:none;border-top:none;border-right:none">临床诊断:</td>
+			<td style="border:1px solid black;border-left:none;border-top:none;border-right:none"><span name="diagnose"></span></td>
+		</tr>
+		<tr>
+			<td colspan="2">参加沟通交流人员：</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">患方：</td><td><span name="joinPatient"></span></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">医方：</td><td><span name="joinDoctor"></span></td>
+		</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-bottom:none"cellpadding=0 cellspacing=0>
+		<tr>
+			<td colspan="5"valign="top" >沟通目的及内容：</td>
+		</tr>
+		<tr align="center">
+			<td style="width:20%"><input type="checkbox" name="conditionNeed" value="病情需要"/>病情需要</td>
+			<td style="width:20%"><input type="checkbox" name="patientAsk" value="患者要求"/>患者要求</td>
+			<td style="width:20%"><input type="checkbox" name="familyAsk" value="家属要求"/>家属要求</td>
+			<td style="width:20%"><input type="checkbox" name="fandpAsk" value="患者及家属要求"/>患者及家属要求</td>
+			<td style="width:15%"><input type="checkbox" name="otherNeed" value="其他"/>其他:</td>
+		</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-bottom:none" cellpadding=0 cellspacing=0>
+		<tr>
+			<td valign="top" style="width:12%">其他目的:</td><td><span name="otherText"></span></td>
+		</tr>
+		
+		<tr>
+			<td valign="top">
+				具体内容:
+			</td>
+			<td><span name="concreteContent"></span></td>
+		</tr>
+	</table>
+		<table class="conTable" border=0 style="border:1px solid black" cellpadding=0 cellspacing=0>
+				<tr>
+					<td class="td2" valign="top" width="*" colspan="2">患者/家属意见：</td>
+				</tr>
+				<tr>
+					<td class="td1" width="85">&nbsp;</td>
+					<td class="td2" width="*"><span name="pfIdea"></span></td>
+				</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none"cellpadding=0 cellspacing=0>
+			<tr>
+				<td align="center">患者/家属对上述内容已全面、充分理解，并签字确认</td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none"cellpadding=0 cellspacing=0>
+		<tr>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">患者签字：<span name="patientSign"></span>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">联系电话：<span name="patientPhone"></span></td>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">签字日期：<span name="patientDate"></span></td>
+		</tr>
+		<tr>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">家属签字：<span name="familySign"></span></td>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">与患者关系：<span name="frelation"></span></td>
+			<td style="border:1px solid black;border-top:none;border-left:none;border-right:none">联系电话：<span name="familyPhone"></span></td>
+		</tr>
+		<tr>
+			<td></td><td></td><td align="right" style="border:1px solid black;border-top:none;border-left:none;border-right:none">签字日期：<span name="familyDate"></span></td>
+		</tr>
+		<tr>
+			<td colspan="2">沟通医师签字：<span name="doctorsign"></span></td>
+			<td align="right">签字日期：<span name="checkDate"></span></td>
+		</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

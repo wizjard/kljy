@@ -1,0 +1,1200 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>检查报告详细信息</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+    	<script type="text/javascript">
+			var is_check_add = null;
+			var patientId = App.util.getHtmlParameters('patientId');
+			var	is_check_add = App.util.getHtmlParameters('is_check_add');
+			var itemName = App.util.getHtmlParameters('itemName');
+			itemName = unescape(itemName);
+			var receiveDate = App.util.getHtmlParameters('receiveDate');
+			var sectionNo = App.util.getHtmlParameters('sectionNo');
+			var testTypeNo = App.util.getHtmlParameters('testTypeNo');
+			var sampleNo = App.util.getHtmlParameters('sampleNo');
+			var parItemNo = App.util.getHtmlParameters('parItemNo');
+			var is_pad  = App.util.getHtmlParameters('is_pad');		
+			var isFromOutHispital  = App.util.getHtmlParameters('isFromOutHispital');
+			var guiDangDate = App.util.getHtmlParameters('guiDangDate');
+			//主表ID
+			var reportFormforRemoteId  = App.util.getHtmlParameters('reportFormforRemoteId');
+			var isAllowUpdate = App.util.getHtmlParameters('isAllowUpdate');//是否已经归档
+			var chexiao = App.util.getHtmlParameters('chexiao');//是否将归档的检查撤销
+			var cheXiaoTrue = App.util.getHtmlParameters('cheXiaoTrue');//撤销次数
+			var KID = App.util.getHtmlParameters('KID');
+			var flag = App.util.getHtmlParameters('flag');
+			var data = App.util.getHtmlParameters('data'); //随访项目ID  JSON数据类型
+			//var type = App.util.getHtmlParameters('type');  //类型 
+			var link = App.util.getHtmlParameters('link'); //看看是不是要执行关联动作，如果该参数为空，则仅仅为查看，隐藏'关联'两个字
+			var checkreport = new checkReport();
+			Ext.onReady(function(){
+				var checkProject = itemName;
+				var checkreport = new checkReport();
+				var panel=checkreport.init();
+				panel.render(Ext.getBody());
+				$.getJSON(App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=getCheckReportInfo',{patientId:patientId,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},function(data){
+					checkreport.setCheckReportData(data);					
+				});
+				$('#dialog1').dialog({
+					title:'修改记录列表',
+					autoOpen:false,
+					closeOnEscape:true,
+					width:525,
+					resizable:true,
+					zIndex:10,
+					position:['left','top'],
+					buttons:{
+						'关闭':function(){$(this).dialog("close");}
+					}
+				});
+			});
+
+function checkReport() {
+	this.checkReportListTable;	
+    this.store;	
+
+}
+
+checkReport.prototype.setCheckReportData = function(data){
+	Ext.getCmp('checkProject').setValue(childNode);
+	Ext.getCmp('receiveDate').setValue(parentNode);
+	Ext.getCmp('hospitalName').setValue("首都医科大学附属北京佑安医院");
+	Ext.getCmp('cname').setValue(data.patientName);
+	if(1 == data.gender){
+		Ext.getCmp('genderNo').setValue("男");
+	}else{
+		Ext.getCmp('genderNo').setValue("女");
+	}	
+	Ext.getCmp('age').setValue(data.age);
+	Ext.getCmp('patNo').setValue(data.patientNo);
+	Ext.getCmp('deptNo').setValue(data.deptNo);
+	Ext.getCmp('bed').setValue("");
+	Ext.getCmp('diagNo').setValue("");
+	Ext.getCmp('doctor').setValue("");
+	 
+}
+
+//暂存
+checkReport.prototype.getCheckReportData = function(){
+	var receiveDate = Ext.getCmp('receiveDate').getValue();
+	var checkProject = Ext.getCmp('checkProject').getValue();
+	var hospitalName = Ext.getCmp('hospitalName').getValue();
+	var cname = Ext.getCmp('cname').getValue();
+	var genderNo = Ext.getCmp('genderNo').getValue();
+	var age = Ext.getCmp('age').getValue();
+	var patNo = Ext.getCmp('patNo').getValue();
+	//var deptNo = Ext.getCmp('deptNo').getValue();
+	//var bed = Ext.getCmp('bed').getValue();
+	//var testTypeNo = Ext.getCmp('testTypeNo').getValue();
+	var doctor = Ext.getCmp('doctor').getValue();
+	var sampleNo = 1;
+	//var collectDate = Ext.getCmp('collectDate').getValue();
+	var sampleTypeNo = Ext.getCmp('sampleTypeNo').getValue();//样本种类
+	var formMemo = Ext.getCmp('formMemo').getValue();//特殊说明
+	//var diagNo = Ext.getCmp('diagNo').getValue();
+	//var home_foreign = Ext.getCmp('home_foreign').getValue(); 
+	var isPatientOrDoctorWriteZanCun;
+	if(top.USER != undefined){
+		isPatientOrDoctorWriteZanCun = 20;//区分是会员还是责任医生录入，10:表示会员暂存，20:表示医生暂存，11:表示会员提交给责任医生，21:表示医生把自己录入的化验或者病人录入的化验提交归档
+		doctor= top.USER.name;
+	}else{
+		isPatientOrDoctorWriteZanCun = 10;//区分是会员还是责任医生录入，10:表示会员暂存，20:表示医生暂存，11:表示会员提交给责任医生，21:表示医生把自己录入的化验或者病人录入的化验提交归档
+		doctor= top.Member.name;
+	}
+	
+	return '{receiveDate:"' + receiveDate + '",checkProject:"' + checkProject + '",hospitalName:"' + 
+			hospitalName + '",cname:"' + cname + '",genderNo:"' + genderNo + '",age:"' + 
+			age + '",patNo:"' + patNo + '",sampleNo:"'+sampleNo+'",doctor:"' + 
+			doctor + '",sampleTypeNo:"' + sampleTypeNo + '",formMemo:"'+formMemo+'",isPatientOrDoctorWriteZanCun:"'
+			+isPatientOrDoctorWriteZanCun+'",id:"'+reportFormforRemoteId+'"}';
+}
+//提交
+checkReport.prototype.getCheckReportDataT = function(){
+	var receiveDate = Ext.getCmp('receiveDate').getValue();
+	var checkProject = Ext.getCmp('checkProject').getValue();
+	var hospitalName = Ext.getCmp('hospitalName').getValue();
+	var cname = Ext.getCmp('cname').getValue();
+	var genderNo = Ext.getCmp('genderNo').getValue();
+	var age = Ext.getCmp('age').getValue();
+	var patNo = Ext.getCmp('patNo').getValue();
+	//var deptNo = Ext.getCmp('deptNo').getValue();
+	//var bed = Ext.getCmp('bed').getValue();
+	//var testTypeNo = Ext.getCmp('testTypeNo').getValue();
+	var doctor = Ext.getCmp('doctor').getValue();
+	var sampleNo = 1;
+	//var collectDate = Ext.getCmp('collectDate').getValue();
+	var sampleTypeNo = Ext.getCmp('sampleTypeNo').getValue();//样本种类
+	var formMemo = Ext.getCmp('formMemo').getValue();//特殊说明
+	//var diagNo = Ext.getCmp('diagNo').getValue();
+	//var home_foreign = Ext.getCmp('home_foreign').getValue(); 
+	var isPatientOrDoctorWriteZanCun;
+	var collecter;
+	if(top.USER != undefined){
+		isPatientOrDoctorWriteZanCun = 21;//区分是会员还是责任医生录入，10:表示会员暂存，20:表示医生暂存，11:表示会员提交给责任医生，21:表示医生把自己录入的化验或者病人录入的化验提交归档
+		collecter = top.USER.name;
+	}else{
+		isPatientOrDoctorWriteZanCun = 11;//区分是会员还是责任医生录入，10:表示会员暂存，20:表示医生暂存，11:表示会员提交给责任医生，21:表示医生把自己录入的化验或者病人录入的化验提交归档
+		doctor= top.Member.name;
+	}
+	return '{receiveDate:"' + receiveDate + '",checkProject:"' + checkProject + '",hospitalName:"' + 
+			hospitalName + '",cname:"' + cname + '",genderNo:"' + genderNo + '",age:"' + 
+			age + '",patNo:"' + patNo + '",sampleNo:"'+sampleNo+'",doctor:"' + 
+			doctor + '",sampleTypeNo:"' + sampleTypeNo + '",formMemo:"'+formMemo+'",isPatientOrDoctorWriteZanCun:"'
+			+isPatientOrDoctorWriteZanCun+'",id:"'+reportFormforRemoteId+'",collecter:"'+collecter+'"}';
+}
+
+checkReport.prototype.getCheckReportList = function(){
+    var reportList = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+    var temp = "[";
+    for(var i = 0; i < reportList.length; i++){
+    	temp = temp + "{projectname:'" + reportList[i].data.projectname + "',result:'" + reportList[i].data.result + "',refvalue:'" + reportList[i].data.refvalue + "',unit:'" + reportList[i].data.unit + "',id:'"+reportList[i].data.id+"'},";
+    }
+    var retReport = "";
+    if(temp.length > 1){
+    	retReport = temp.substr(0, temp.length - 1);
+    }else{
+    	retReport = temp;
+    }
+    return retReport + "]";
+}
+
+checkReport.prototype.selectRows = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var recordArray=selectModel.getSelections() ;
+	return  recordArray;
+}	
+
+
+checkReport.prototype.selectRow = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var record=selectModel.getSelected();
+	this.currRecord=record;
+	return record;
+}	
+
+checkReport.prototype.init = function() {
+
+	var check_report = this;
+	
+	var checkReportRcd = Ext.data.Record.create([
+			{name : 'projectname'},
+			{name : 'esname'},
+			{name : 'result'},
+			{name : 'refvalue'},
+			{name : 'unit'},
+			{name : 'historyResult'},
+			{name : 'historyRatio'},
+			{name : 'id'},
+			{name : 'updateResult'},
+			{name : ''}	
+			]
+		);
+	
+	var sm = new Ext.grid.CheckboxSelectionModel({
+		sigleSelect : true
+	});
+	var modelData = [
+		new Ext.grid.RowNumberer(), sm, {
+			header : '项目名称',
+			dataIndex : 'projectname',
+			width : 170
+		}, {
+			header : '英文缩写',
+			dataIndex : 'esname',
+			width : 100
+		}, {
+			header : '录入结果',
+			dataIndex : 'result',
+			width : 160,
+			editor:new Ext.grid.GridEditor(new Ext.form.TextField({allowBlank:true}))
+//			editor:{xtype:"textfield"}
+		}, {
+			header : '参考值',
+			dataIndex : 'refvalue',
+			width : 120
+		}, {
+			header : '单位',
+			dataIndex : 'unit',
+			width : 80
+		}
+		/*
+		, {
+			header : '历史结果',
+			dataIndex : 'historyResult',
+			width : 100
+		}, {
+			header : '历史比值',
+			dataIndex : 'historyRatio',
+			width : 110
+		}
+		*/
+		,{
+			header : '是否矫正修改',
+			dataIndex : 'updateResult',
+			renderer: function(value, meta, record, rowIndex, colIndex, store){
+				var lastResult ="";
+				Ext.Ajax.request({
+					url:App.App_Info.BasePath+'/CheckReport/checkreport.do',
+					params:{
+						method:'findUpdateRecordList',
+						itemId:record.data.id
+					},
+					scope:this,
+					sync:true,
+					success:function(_response){
+						var lists = Ext.util.JSON.decode(_response.responseText);
+						if(lists != "" && lists.length ==1)
+						{
+							if(lists[0].oldValue != lists[0].newValue){
+								lastResult= "<a href='###' onclick='lookUpdateRecord("+record.data.id+")'>"+record.data.updateResult+"</a>";
+							}
+						}else if(lists != "" && lists.length >1){
+							lastResult= "<a href='###' onclick='lookUpdateRecord("+record.data.id+")'>"+record.data.updateResult+"</a>";
+						}
+					}
+				});
+				return lastResult;
+			},
+			width : 110
+		}
+	];
+	var tableModel = new Ext.grid.ColumnModel(modelData);
+	var checkReportUrl = App.App_Info.BasePath + '/CheckReport/checkreport.do';
+	this.store = new Ext.data.Store({ 
+		 proxy : new Ext.data.HttpProxy({ url : checkReportUrl}), 
+		 baseParams:{method:'getCheckReportListLu',receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo,parItemNo:parItemNo},
+		 reader : new Ext.data.JsonReader({root :''}, checkReportRcd) 
+	 });
+
+	clinicType = [
+        ['221', '血液'],
+        ['2', '尿液'],
+        ['122', '大便'],
+        ['4', '胸水'],
+        ['5', '腹水'],
+        ['9', '脑脊液'],
+        ['10', '痰液'],
+        ['222', '组织'],
+        ['223', '其他']
+    ];
+	var clinicTypeList = new Ext.data.SimpleStore({
+        fields: ['clinicTypeValue', 'showClincType'],
+        data : clinicType 
+    });
+    
+    home_foreign = [
+        ['0', '国产'],
+        ['1', '进口']
+    ];
+	var homeForeignList = new Ext.data.SimpleStore({
+        fields: ['homeForeignValue', 'showHomeForeign'],
+        data : home_foreign 
+    });
+    
+    var section = [     
+    ];
+	var sectionList = new Ext.data.SimpleStore({
+        fields: ['sectionValue', 'showsection'],
+        data : section 
+    });
+    var toolbar ="";
+    if(isAllowUpdate != "21" && chexiao != 1){
+    	if(isAllowUpdate == "11"){
+    		if(top.USER != undefined && top.USER.Flag !="管理员" && guiDangDate == ""){
+    			toolbar = [
+					{
+						xtype:"tbfill"
+					},{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:' 审核不通过 ',
+						handler:function(){
+								if(window.confirm("您确定此化验单审核不通过吗？")){
+										var checkReportInfo = checkreport.getCheckReportDataT();
+										var url='';
+										receiveDate = Ext.getCmp('receiveDate').getValue();
+										url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=shenHeNotPassCheckReport';
+										$.post(url,{
+											checkReportInfo:checkReportInfo,
+											receiveDate:receiveDate,
+											sectionNo:sectionNo,
+											testTypeNo:testTypeNo,
+											sampleNo:sampleNo,
+											patientId:patientId,
+											doctorId:top.USER.id
+											},
+											function(data){
+												alert(data[0].isSuccess);
+											},
+											"json"
+										);
+									}
+							}
+					},{
+						xtype:"tbseparator"
+					}
+					,{
+						pressed:true,
+						text:' 归档 ',
+						handler:function(){
+								if(window.confirm("您确定将此化验单归档吗？")){
+										Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+										var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+										if(Ext.getCmp('hospitalName').getValue().length <=0){
+									        alert("请输入外部医院的名称");
+									        return;
+									    }
+										if(Ext.getCmp('age').getValue() == ""){
+											alert("年龄不能为空");
+											return;
+										}	
+																				
+										if(Ext.getCmp('receiveDate').getValue() == ""){
+											alert("检验日期不能为空");
+											return;
+										}
+										
+										if(Ext.getCmp('sampleTypeNo').getValue()==""){
+											alert("标本种类不能为空");
+											return;
+										}
+										//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+										if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+											if(Ext.getCmp('formMemo').getValue()==""){
+												alert("当前标本种类选择《其他》，则特殊说明不能为空");
+												return;
+											}
+										}
+										var j=0;
+										for(var i=0;i<temp.length;i++){
+											if(temp[i].data.result==""){
+												j++;
+											}
+										}
+										if(j == temp.length){
+											alert("下面检查结果的值必须有一项不能为空，否则此化验单无效！");
+											return;
+										}
+										var checkReportInfo = checkreport.getCheckReportDataT();
+										var reportList = checkreport.getCheckReportList();	
+										var url='';
+										receiveDate = Ext.getCmp('receiveDate').getValue();
+										url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+										$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+											function(data){
+												alert(data[0].isSuccess);
+												if(data[0].isSuccess == "操作成功"){
+													receiveDate = Ext.getCmp('receiveDate').getValue();
+												}										
+											},
+											"json"
+										);
+										isSave = true;
+									}
+							}
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    		}else if(top.USER == undefined){
+    			if(chexiao==1 && cheXiaoTrue !=2){
+    				toolbar = [
+					{
+						xtype:"tbfill"
+					},{
+						xtype:"tbseparator"
+					}
+					,{
+						pressed:true,
+						text:' 提交 ',
+						handler:function(){
+								if(window.confirm("您确定将此化验单直接提交给责任医生审核吗？")){
+										Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+										var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+										if(Ext.getCmp('hospitalName').getValue().length <=0){
+									        alert("请输入外部医院的名称");
+									        return;
+									    }
+										if(Ext.getCmp('age').getValue() == ""){
+											alert("年龄不能为空");
+											return;
+										}	
+																			
+										if(Ext.getCmp('receiveDate').getValue() == ""){
+											alert("检验日期不能为空");
+											return;
+										}
+										
+										if(Ext.getCmp('sampleTypeNo').getValue()==""){
+											alert("标本种类不能为空");
+											return;
+										}
+										//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+										if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+											if(Ext.getCmp('formMemo').getValue()==""){
+												alert("当前标本种类选择《其他》，则特殊说明不能为空");
+												return;
+											}
+										}
+										var j=0;
+										for(var i=0;i<temp.length;i++){
+											if(temp[i].data.result==""){
+												j++;
+											}
+										}
+										if(j == temp.length){
+											alert("下面检查结果的值必须有一项不能为空，否则此化验单无效！");
+											return;
+										}
+										var checkReportInfo = checkreport.getCheckReportDataT();
+										var reportList = checkreport.getCheckReportList();	
+										var url='';
+										receiveDate = Ext.getCmp('receiveDate').getValue();
+											
+										url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+										$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+											function(data){
+												alert(data[0].isSuccess);
+												if(data[0].isSuccess == "操作成功"){
+													receiveDate = Ext.getCmp('receiveDate').getValue();
+												}										
+											},
+											"json"
+										);
+										
+										isSave = true;
+									}
+							}
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    			}else{
+	    			toolbar = [
+						{
+							xtype:"tbfill"
+						},{
+							xtype:"tbseparator"
+						}
+						,{
+							pressed:true,
+							text:'返回',
+							handler:function(){
+								window.history.back();
+							}
+						}
+					];
+    			}
+    		}else{
+    			toolbar = [
+					{
+						xtype:"tbfill"
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    		}
+    	}else if(isAllowUpdate == 20 && top.USER.Flag !="管理员" && guiDangDate == ""){
+	    	 toolbar = [
+					{
+						xtype:"tbfill"
+					},{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:' 保存 ',
+						handler:function(){
+							if(window.confirm("您确定将此化验单暂存吗？")){
+								Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+								if(Ext.getCmp('hospitalName').getValue().length <=0){
+							        alert("请输入外部医院的名称");
+							        return;
+							    }
+								if(Ext.getCmp('age').getValue() == ""){
+									alert("年龄不能为空");
+									return;
+								}										
+								if(Ext.getCmp('receiveDate').getValue() == ""){
+									alert("检验日期不能为空");
+									return;
+								}
+								
+								if(Ext.getCmp('sampleTypeNo').getValue()==""){
+									alert("标本种类不能为空");
+									return;
+								}
+								//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+								if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+									if(Ext.getCmp('formMemo').getValue()==""){
+										alert("当前标本种类选择《其他》，则特殊说明不能为空");
+										return;
+									}
+								}
+							
+									var checkReportInfo = checkreport.getCheckReportData();
+									var reportList = checkreport.getCheckReportList();	
+									var url='';
+									
+									receiveDate = Ext.getCmp('receiveDate').getValue();
+										
+									url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+									$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+										function(data){
+											alert(data[0].isSuccess);
+											if(data[0].isSuccess == "操作成功"){
+												receiveDate = Ext.getCmp('receiveDate').getValue();
+											}										
+										},
+										"json"
+									);
+									isSave = true;
+								}
+						}
+					},{
+						xtype:"tbseparator"
+					}
+					,{
+						pressed:true,
+						text:' 归档 ',
+						handler:function(){
+								if(window.confirm("您确定将此化验单归档吗？")){
+										Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+										var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+										if(Ext.getCmp('hospitalName').getValue().length <=0){
+									        alert("请输入外部医院的名称");
+									        return;
+									    }
+										if(Ext.getCmp('age').getValue() == ""){
+											alert("年龄不能为空");
+											return;
+										}	
+																			
+										if(Ext.getCmp('receiveDate').getValue() == ""){
+											alert("检验日期不能为空");
+											return;
+										}
+										
+										if(Ext.getCmp('sampleTypeNo').getValue()==""){
+											alert("标本种类不能为空");
+											return;
+										}
+										//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+										if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+											if(Ext.getCmp('formMemo').getValue()==""){
+												alert("当前标本种类选择《其他》，则特殊说明不能为空");
+												return;
+											}
+										}
+										var j=0;
+										for(var i=0;i<temp.length;i++){
+											if(temp[i].data.result==""){
+												j++;
+											}
+										}
+										if(j == temp.length){
+											alert("下面检查结果的值必须有一项不能为空，否则此化验单无效！");
+											return;
+										}
+										var checkReportInfo = checkreport.getCheckReportDataT();
+										var reportList = checkreport.getCheckReportList();	
+										var url='';
+										receiveDate = Ext.getCmp('receiveDate').getValue();
+											
+										url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+										$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+											function(data){
+												alert(data[0].isSuccess);
+												if(data[0].isSuccess == "操作成功"){
+													receiveDate = Ext.getCmp('receiveDate').getValue();
+												}										
+											},
+											"json"
+										);
+										
+										isSave = true;
+									}
+							}
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    	}else if(isAllowUpdate == 10 && top.Member != undefined && guiDangDate == ""){
+    	    toolbar = [
+					{
+						xtype:"tbfill"
+					},{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:' 保存 ',
+						handler:function(){
+							if(window.confirm("您确定将此化验单暂存吗？")){
+								Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+								if(Ext.getCmp('hospitalName').getValue().length <=0){
+							        alert("请输入外部医院的名称");
+							        return;
+							    }
+								if(Ext.getCmp('age').getValue() == ""){
+									alert("年龄不能为空");
+									return;
+								}										
+								if(Ext.getCmp('receiveDate').getValue() == ""){
+									alert("检验日期不能为空");
+									return;
+								}
+								
+								if(Ext.getCmp('sampleTypeNo').getValue()==""){
+									alert("标本种类不能为空");
+									return;
+								}
+								//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+								if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+									if(Ext.getCmp('formMemo').getValue()==""){
+										alert("当前标本种类选择《其他》，则特殊说明不能为空");
+										return;
+									}
+								}
+							
+										
+									var checkReportInfo = checkreport.getCheckReportData();
+									var reportList = checkreport.getCheckReportList();	
+									var url='';
+									
+									receiveDate = Ext.getCmp('receiveDate').getValue();
+									url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+									$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+										function(data){
+											alert(data[0].isSuccess);
+											if(data[0].isSuccess == "操作成功"){
+												receiveDate = Ext.getCmp('receiveDate').getValue();
+											}										
+										},
+										"json"
+									);
+									isSave = true;
+								}
+						}
+					},{
+						xtype:"tbseparator"
+					}
+					,{
+						pressed:true,
+						text:' 提交 ',
+						handler:function(){
+								if(window.confirm("您确定将此化验单直接提交给责任医生审核吗？")){
+										Ext.getCmp("checkReportList_table").getSelectionModel().selectAll();
+										var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+										if(Ext.getCmp('hospitalName').getValue().length <=0){
+									        alert("请输入外部医院的名称");
+									        return;
+									    }
+										if(Ext.getCmp('age').getValue() == ""){
+											alert("年龄不能为空");
+											return;
+										}	
+																			
+										if(Ext.getCmp('receiveDate').getValue() == ""){
+											alert("检验日期不能为空");
+											return;
+										}
+										
+										if(Ext.getCmp('sampleTypeNo').getValue()==""){
+											alert("标本种类不能为空");
+											return;
+										}
+										//如果患者或者病人在录入化验单时，在标本种类中选择其他，那么 特殊说明 必须填写
+										if(Ext.getCmp('sampleTypeNo').getValue()=="223"){
+											if(Ext.getCmp('formMemo').getValue()==""){
+												alert("当前标本种类选择《其他》，则特殊说明不能为空");
+												return;
+											}
+										}
+										var j=0;
+										for(var i=0;i<temp.length;i++){
+											if(temp[i].data.result==""){
+												j++;
+											}
+										}
+										if(j == temp.length){
+											alert("下面检查结果的值必须有一项不能为空，否则此化验单无效！");
+											return;
+										}
+										var checkReportInfo = checkreport.getCheckReportDataT();
+										var reportList = checkreport.getCheckReportList();	
+										var url='';
+										receiveDate = Ext.getCmp('receiveDate').getValue();
+											
+										url = App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=updateCheckReport';
+										$.post(url,{checkReportInfo:checkReportInfo,reportList:reportList,receiveDate:receiveDate,sectionNo:sectionNo,testTypeNo:testTypeNo,sampleNo:sampleNo},
+											function(data){
+												alert(data[0].isSuccess);
+												if(data[0].isSuccess == "操作成功"){
+													receiveDate = Ext.getCmp('receiveDate').getValue();
+												}										
+											},
+											"json"
+										);
+										
+										isSave = true;
+									}
+							}
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    	}else{
+    		toolbar = [
+					{
+						xtype:"tbfill"
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    	}
+    }else if(chexiao == 1){
+    	toolbar = [
+					{
+						xtype:"tbfill"
+					}
+					,{
+						pressed:true,
+						text:'撤销归档',
+						handler:function(){
+							window.history.back();
+						}
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    }else{
+    	toolbar = [
+					{
+						xtype:"tbfill"
+					}
+					,{
+						xtype:"tbseparator"
+					},{
+						pressed:true,
+						text:'返回',
+						handler:function(){
+							window.history.back();
+						}
+					}
+				];
+    }
+    
+
+	var panel = new Ext.Viewport({
+		layout:"border",
+		defaults:{border:true},
+		autoScroll:true,
+		items:[
+			new Ext.form.FormPanel({
+				region:"north",
+				height:230,
+				frame:true,
+				labelAlign:'right',
+				labelWidth:80,
+				defaults:{border:false},
+				tbar:toolbar,
+				items:[
+					{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: 1,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'0%',
+									labelWidth:0,
+									labelSeparator:''
+								}]
+							}
+						]
+					},{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: .15,
+								layout:'form',								
+								items:[{
+									xtype:'label'
+								}]
+							},{
+								columnWidth: .5,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									fieldLabel:'外院名称',
+									xtype:'textfield',
+									anchor:'98%',
+									labelWidth:0,
+									labelSeparator:'',
+									name:'hospitalName',
+									id:'hospitalName',
+									readOnly:true
+								}]
+							},{
+								columnWidth: .35,
+								layout:'form',								
+								items:[{
+									xtype:'label',
+									labelAlign:'left',
+									html:'<p style="font-size:18px">检&nbsp&nbsp验&nbsp&nbsp报&nbsp&nbsp告&nbsp&nbsp单</p>'
+								}]
+							}
+						]
+					},{
+						xtype:'panel',
+						layout:'column',
+						items:[
+							{
+								columnWidth: 1,
+								anchor:'98%',
+								layout:'form',								
+								items:[{
+									xtype:'textfield',
+									anchor:'0%',
+									labelWidth:0,
+									labelSeparator:''
+								}]
+							}
+						]
+					},{
+						layout:'column',
+						items:[
+							{
+								columnWidth: .33,
+								layout:'form',
+								items:[{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'姓&nbsp&nbsp&nbsp名',
+									name:'cname',
+									id:'cname',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'性&nbsp&nbsp&nbsp别',
+									name:'genderNo',
+									id:'genderNo',
+									readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'年&nbsp&nbsp&nbsp龄',
+									name:'age',
+									id:'age'
+									//readOnly:true
+								},{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'病历号',
+									name:'patNo',
+									id:'patNo',
+									readOnly:true
+								}]
+							},{
+								columnWidth: .33,
+								layout:'form',
+								items:[
+								
+									{
+										xtype:'datefield',
+										anchor:'80%',
+										fieldLabel:'检验日期',
+										name:'receiveDate',
+										id:'receiveDate',
+										disabled:false
+									},{
+										xtype:'textfield',
+										anchor:'80%',
+										fieldLabel:'检验项目',
+										name:'checkProject',
+										id:'checkProject',
+										readOnly:true
+									},
+									{
+										xtype : "combo",
+										anchor:'80%',	
+										fieldLabel:'标本种类',								
+										name:'sampleTypeNo',
+										id:'sampleTypeNo', 
+										store: clinicTypeList,
+	                                    displayField:'showClincType',
+	                                    valueField:'clinicTypeValue',
+	                                    typeAhead: true,
+	                                    mode: 'local',
+	                                    triggerAction: 'all',
+										disabled:false
+						
+									},
+								
+								{
+									xtype:'textfield',
+									anchor:'100%',
+									fieldLabel:'特殊说明',
+									name:'formMemo',
+									id:'formMemo'
+								}
+								]
+							}
+							,{
+								columnWidth: .33,
+								layout:'form',
+								items:[
+								{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'录入者',
+									name:'doctor',
+									id:'doctor',
+									readOnly:true
+								}
+								
+								,
+								{
+									xtype:'textfield',
+									anchor:'80%',
+									fieldLabel:'归档者',
+									name:'collecter',
+									id:'collecter',
+									readOnly:true
+								}
+								
+								]
+							}
+						]
+					}
+				]
+			}),{
+			region:"center",
+			items:[
+					{
+						id:"checkReportList_table",
+						xtype : "editorgrid",
+						width:800,
+    					height:235,
+    					autoScroll:true,
+						cm : tableModel,
+						sm : sm,
+						ds : check_report.store
+					}
+				]
+		}]
+	});
+	this.store.load();
+	return panel;
+}
+
+
+checkReport.prototype.setCheckReportData = function(data){
+	Ext.getCmp('receiveDate').setValue(receiveDate);
+	Ext.getCmp('checkProject').setValue(itemName);
+	/*
+	Ext.getCmp('testTypeNo').setValue(testTypeNo);
+	Ext.getCmp('sampleNo').setValue(sampleNo);
+	
+	if(data.home_foreign != -1){
+		Ext.getCmp('home_foreign').setValue(data.home_foreign);
+	}else if(itemName.search('进口') != -1){
+		Ext.getCmp('home_foreign').setValue(1);
+	}else{
+		Ext.getCmp('home_foreign').setValue(0);
+	};
+	*/
+	Ext.getCmp('hospitalName').setValue(data.hospitalName);
+	
+	Ext.getCmp('patNo').setValue(data.patNo);
+	Ext.getCmp('cname').setValue(data.cname);
+	Ext.getCmp('genderNo').setValue(data.genderNo);	
+	//Ext.getCmp('deptNo').setValue(data.deptNo);
+	Ext.getCmp('age').setValue(data.age);
+	Ext.getCmp('doctor').setValue(data.doctor);
+	//Ext.getCmp('testDate').setValue(data.testDate);
+	//Ext.getCmp('collectDate').setValue(data.collectDate);
+	Ext.getCmp('sampleTypeNo').setValue(data.sampleTypeNo);
+	Ext.getCmp('formMemo').setValue(data.formMemo);
+	if(data.collecter != 'undefined'){
+		Ext.getCmp('collecter').setValue(data.collecter);
+	}else{
+		Ext.getCmp('collecter').setValue("");
+	}
+	
+	isAllowUpdate = data.isCheckFlag;
+}
+
+checkReport.prototype.selectRows = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var recordArray=selectModel.getSelections() ;
+	return  recordArray;
+}	
+
+
+checkReport.prototype.selectRow = function(){
+    var selectModel =this.checkReportListTable.getSelectionModel();
+	var record=selectModel.getSelected();
+	this.currRecord=record;
+	return record;
+}	
+
+function linkPlan() {
+   
+   var url = "../../../../module/plan/selectPlan.html?paId=" + patientId + "&type=checkReport&receiveDate=" + 
+   receiveDate + "&sectionNo=" + sectionNo + "&testTypeNo=" + testTypeNo + "&sampleNo=" + sampleNo + "&parItemNo=" + parItemNo + "&itemName=" + itemName;
+	   window.open(url, 'plan', 'toolbar=no,scrollbar=yes, top=200, left=100,width=1200,height=500');
+}
+
+//关联检查结果
+function linkCheckReport() {
+					  Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/plan.do',
+							params:{
+								method:'linkReport',
+								flag:flag,
+							    data:data,
+							    paId:patientId,
+							    type:'checkReport',
+							    receiveDate:receiveDate,
+							    sectionNo:sectionNo,
+							    testTypeNo:testTypeNo,
+							    sampleNo:sampleNo,
+							    parItemNo:parItemNo,
+							    itemName:itemName
+							},
+							success:function(_response){
+								if(confirm("关联成功")){   
+									window.opener.opener.refreshItem();
+									window.opener.close();
+									window.close();
+								}
+							}
+						});
+	   
+}
+
+function lookUpdateRecord(_thisId){
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/CheckReport/checkreport.do',
+		params:{
+			method:'findUpdateRecordList',
+			itemId:_thisId
+		},
+		scope:this,
+		sync:true,
+		success:function(_response){
+			var lists = Ext.util.JSON.decode(_response.responseText);
+			if(lists != "" && lists.length > 0)
+			{
+				
+				var createDia ='<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>'
+					+'<tr><td class="t1"><center>修改时间</center></td><td class="t1"><center>修改者</center></td><td class="t1"><center>修改前内容</center></td>'
+					+'<td class="t1"><center>修改后内容</center></td></tr>';	
+				for(var i=0,size = lists.length;i<size;i++)
+				{
+					var oldValue =lists[i].oldValue;
+					if(oldValue == "null"){
+						oldValue ="";
+					}
+					createDia+='<tr><td class="t1"><center>'+lists[i].updateDate+'</center></td><td class="t1"><center>'+lists[i].updateAuthor+'<center></td><td class="t1"><center>'+oldValue+'<center></td>'
+						+'<td class="t1"><center>'+lists[i].newValue+'<center></td></tr>';
+				}
+				createDia+='</table>';
+				document.getElementById("dialog1").innerHTML = createDia;
+			}
+		}
+	});
+	FormUtil.showJqueryDialog('dialog1');
+}
+
+
+function importData(){
+	var temp = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+	
+	var checkProject = Ext.getCmp('checkProject').getValue();
+	var hospitalName = Ext.getCmp('hospitalName').getValue();	
+	if(temp.length == 0){
+		alert('请选择要导入的记录');
+		return;
+	}
+	
+	window.returnValue={
+		obj:temp,
+		checkProject:checkProject,
+		reportDate:receiveDate,
+		hospitalName:hospitalName
+	};
+	window.close();
+}
+
+</script>
+
+  </head>
+  
+  <body><div id='checkReport'></div><div id="dialog1">
+</div></body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>组合项目</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript">
+		var flag = 0;//标志是哪个TreePanel进行了操作
+		var store;
+		var relatingRecord;
+		var patientId = " ";
+		var assayNewRecTree=new Ext.tree.TreePanel({
+				id:'assayNewRecTree',
+				title:'新增化验检查',
+				autoScroll:true,
+				containerScroll:true,
+				height:300,
+				width:180,
+				copyNode:null,
+				hidden:true,
+				dataUrl:App.App_Info.BasePath+'/CheckReport/combinationProject.do?method=getCombinationProject&is_check_add=add&patientId='+patientId,
+				root:{
+					nodeType:'async',
+					text:'组合项目',
+					draggable:false,
+					id:-1
+				},
+				rootVisible:false,
+				listeners:{
+					expandnode:function(node){
+						Ext.each(node.childNodes,function(){
+							this.expand();
+						});
+					},
+					click:function(_node){	
+						pushToStore(_node.text);
+					}
+				}
+		});
+
+		var assistanceNewRecTree=new Ext.tree.TreePanel({
+				id:'assistanceNewRecTree',
+				title:'新增辅助检查及病理',
+				autoScroll:true,
+				containerScroll:true,
+				height:300,
+				width:180,
+				copyNode:null,
+				hidden:true,
+				dataUrl:App.App_Info.BasePath+'/CheckReport/combinationProject.do?method=getAssistanceProject&is_check_add=add&patientId='+patientId,
+				root:{
+					nodeType:'async',
+					text:'组合项目',
+					draggable:false,
+					id:-1
+				},
+				rootVisible:false,
+				listeners:{
+					expandnode:function(node){						
+						Ext.each(node.childNodes,function(){
+							this.expand();
+						});
+					},
+					click:function(_node){	
+						pushToStore(_node.text);
+					}
+				}
+		});
+
+		Ext.onReady(function(){
+			relatingRecord=Ext.data.Record.create([
+				{name:'checkProject'}
+			]);
+			store=new Ext.data.Store({
+				proxy:new Ext.data.MemoryProxy(),
+				reader:new Ext.data.ArrayReader({},relatingRecord)
+			});
+			var sm=new Ext.grid.CheckboxSelectionModel({
+				sigleSelect : true
+			});   
+			new Ext.Viewport({
+				layout:"border",
+				items:[
+					{
+						region:"west",
+						width:180,
+						title:"关联检查报告",
+						html:'<div style="width:180px;overflow:auto" id="div1"></div>',
+						tbar:createToolbar()
+					},{
+						region:"center",
+						title:"已经关联的历史记录",
+						width:200,											
+						items:[
+							{
+								xtype:'panel',
+								layout:'column',
+								tbar:[
+									{
+										pressed:true,
+										text:'从列表中删除',
+										handler:function(){		
+											var rows = Ext.getCmp("checkReportList_table").getSelectionModel().getSelections();
+											for(i = 0; i < rows.length; i++){
+												store.remove(rows[i]);
+											}									
+										}
+									},{
+										xtype:"tbfill"
+									},{
+										pressed:true,
+										text:'确定',
+										handler:function(){
+											var retValue = "";
+											for(var i = 0; i < store.getCount(); i++){
+												retValue = retValue + store.getAt(i).data.checkProject + "*~^";				
+											}
+											retValue = retValue.substr(0, retValue.length - 3);
+											window.returnValue={
+												retValue:retValue
+											};
+											window.close();
+										}
+									},{
+										xtype:"tbseparator"
+									},{
+										pressed:true,
+										text:'取消',
+										handler:function(){
+											window.close();
+										}
+									}
+								],
+								items:[
+									{
+										id:"checkReportList_table",
+										xtype: "editorgrid",	
+										height:600,										
+										sm:sm,
+										store:store,
+									    columns: [
+									    	sm,
+									        {header: "检查项目", dataIndex: 'checkProject',width:200}
+									    ]
+									}
+								]
+							}
+						]
+					}
+				]
+			});																							
+		})
+
+		function createToolbar(){
+			return new Ext.Toolbar({items:[
+				{
+					xtype:'tbseparator'
+				},{
+					text:'刷新',
+					tooltip:'刷新当前住院记录',
+					handler:function(){											
+						if(flag != 0){
+							if(flag == 1){
+								assayNewRecTree.root.reload();
+							}else{
+								assistanceNewRecTree.root.reload();
+							}
+						}
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'新增',
+					menu:[{
+							text:'新增化验检查',
+							handler:function(){
+								flag = 1;
+								assayNewRecTree.render('div1');
+								assistanceNewRecTree.render('div1');
+								assistanceNewRecTree.hide();
+								assayNewRecTree.show();				
+							}
+						},{
+							text:'新增辅助检查及病理',
+							handler:function(){
+								flag = 2;
+								assayNewRecTree.render('div1');
+								assistanceNewRecTree.render('div1');
+								assayNewRecTree.getRootNode().reload();																
+								assayNewRecTree.hide();	
+								assistanceNewRecTree.show();			
+							}
+						}
+					]
+				}]
+			});
+		}
+		
+		function pushToStore(checkProject){
+			if(store.getCount() > 0){
+				var i = 0;
+				while(i < store.getCount()){
+					if(store.getAt(i).data.checkProject == checkProject) break;
+					i++;
+				}
+				if(i == store.getCount())
+					store.add(new relatingRecord({checkProject:checkProject}));																
+			}else{
+				store.add(new relatingRecord({checkProject:checkProject}));
+			}						
+		}
+	</script>
+
+  </head>
+  
+  <body>
+  </body>
+</html>

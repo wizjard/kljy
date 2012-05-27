@@ -1,0 +1,392 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>病理标本检查申请单</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+	var KID = null;
+	var PID = null;
+	var PageCode='EMR-liver-Diagnosis';
+	$(function(){
+		KID=App.util.getHtmlParameters('kid');
+		PID=App.util.getHtmlParameters('pid');
+		$('input[name="patientId"]').val(PID);
+		$('input[name="historyCaseId"]').val(KID);
+		$('input[name="id"]').val(App.util.getHtmlParameters('this'));
+		initPage();
+		find();
+	});
+	function initPage(){
+		//引入标题
+	registrationPageHead(KID,'病理标本检查申请单','#header');
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="acceptDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="menarche"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="lastMenstrual"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="laborTreatDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="collectionDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	//医生字典选择
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="doctorName"]')
+		});
+		//科室字典
+		$.ajax({
+		url:App.App_Info.BasePath+'/common/CommonAction.do',
+		data:{
+			method:'QueryMyBelongs',
+			timestamp:new Date().getTime()
+		},
+		async:false,
+		dataType:'json',
+		success:function(_data){
+			var _fld=$('input[name="sickBay"]');
+			_fld.data('options',_data);
+			FormUtil.toCombobox({el:_fld});
+		}
+	});
+		var id=$('input[name="id"]').val();
+		if(id == "-1"){
+			setMainValue();
+			return;
+		}else{
+			setValue(id);
+		}
+	}
+	
+//单选框点击事件
+function find(){
+	$('input[name="cancerShift"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="有"){
+				$("#ht1").show();
+				$("#ht").show();
+			}else{
+				$("#ht1").hide();
+				$("#ht").hide();
+				$('input[name="shiftPosition"]').val("");
+			}
+		})
+	});
+	
+	$('input[name="laborTreat"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="是"){
+				$("#ht2").show();
+			}else{
+				$("#ht2").hide();
+				$('input[name="laborTreatDate"]').val("");
+				$('input[name="dose"]').val("");
+			}
+		});
+	});
+	
+	$('input[name="everCheck"]').each(function(){
+		$(this).click(function(){
+			if($(this).val()=="是"){
+				$("#ht3").show();
+				$("#ht4").show();
+			}else{
+				$("#ht3").hide();
+				$("#ht4").hide();
+				$('input[name="specimenCheckNum"]').val("");
+			}
+		});
+	});
+}
+
+//获取病人基本信息
+function setMainValue(){
+	$.post(
+		App.App_Info.BasePath+'/SpecimenCheckApplyAction.do',
+		{
+			method:'get_Main_Info',
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+			});
+			}
+		},
+		'json'
+	)
+}
+
+//获取申请单信息
+function setValue(id){
+	$.post(
+		App.App_Info.BasePath+'/SpecimenCheckApplyAction.do',
+		{
+			method:'get_Patient_Info',
+			id:id
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('textarea').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('input[type="radio"]').each(function(){
+					if(($(this).attr("value")) == json[this.name]){
+						$(this).attr("checked",true);
+						if($(this).attr("checked")){
+							$(this).click();
+						}
+					}
+				});
+				setMainValue();
+				FormUtil.valueTool.setComboValue($('input[name="sickBay"]'),json.sickBay);
+			}
+		},
+		'json'
+	)
+}
+
+//保存和修改信息
+function SaveData(){
+	var data=JSON.stringify(FormUtil.getFormValues('form'));
+	var id = $('input[name="id"]').val();
+	$.post(
+		App.App_Info.BasePath+'/SpecimenCheckApplyAction.do',
+		{
+			method:'saveOrUpdate',
+			data:data,
+			id:id
+		},
+		function(data){
+			$('input[name="id"]').val(data.id);
+			alert("保存成功");
+			parent.createIndex();
+		},
+		'json'
+	)
+}
+
+//删除一条信息
+function deleteData(){
+	var id=$('input[name="id"]').val();
+	if(id="-1"){
+		alert("请保存后在删除");
+		return;
+	}
+	var yrn = confirm("确定删除?");
+	if(!yrn){
+		return;
+	}
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	$.post(
+		App.App_Info.BasePath+'/SpecimenCheckApplyAction.do',
+		{
+			method:'deleteData',
+			data:data
+		}
+	)
+	parent.location.reload();
+}
+
+function print(){
+	var checkdate = $('input[name="checkDate"]').val();
+	var doctorname =$('input[name="doctorName"]').val();
+	if(doctorname == null || doctorname == ""){
+		alert("请先填写医师项并保存");
+		return;
+	}
+	if(checkdate == null || checkdate == ""){
+		alert("请先填写日期项并保存");
+		return;
+	}
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/Apply/print/SpecimenCheckApplyPrint.html?id='+id+'&&'+'kid='+KID);
+}
+
+</script>
+</head>
+<body>
+	<div id="header" style="width:600px;position:relative;"></div>
+		<form>
+			<input type="hidden" name="id" value="-1"/>
+			<input type="hidden" name="patientId"/>
+			<input type="hidden" name="historyCaseId"/>
+			<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="125">姓名：</td>
+					<td class="t2" width="175"><input type="text" name="patientName" readonly="readonly"/></td>
+					<td class="t1" width="125">籍贯：</td>
+					<td class="t2" width="175"><input type="text" name="nativePlace" readonly="readonly"/></td>
+				</tr>
+				<tr>
+					<td class="t1">职业：</td>
+					<td class="t2"><input type="text" name="career" readonly="readonly"/></td>
+					<td class="t1">年龄：</td>
+					<td class="t2"><input type="text" name="age" readonly="readonly"/></td>
+				</tr>
+				<tr>
+					<td class="t1">性别：</td>
+					<td class="t2"><input type="text" name="gender" readonly="readonly"/></td>
+					<td class="t1">病区：</td>
+					<td class="t2"><input type="text" name="sickBay" class="select"/></td>
+				</tr>
+				<tr>
+					<td class="t1">病房：</td>
+					<td class="t2"><input type="text" name="ward"/></td>
+					<td class="t1">病历号：</td>
+					<td class="t2"><input type="text" name="patientCaseNum"/></td>
+				</tr>
+				<tr>
+					<td class="t1">病理号：</td>
+					<td class="t2"><input type="text" name="pathologyNum"/></td>
+					<td class="t1">收取日期：</td>
+					<td class="t2"><input type="text" name="acceptDate"/></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top" width="125">病历摘要与临床所见：</td>
+					<td class="t2" colspan="3" width="575">
+						<textarea class="textarea" name="clinicSummary" style="width:98%"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top" width="125">手术所见：</td>
+					<td class="t2" colspan="3" width="575">
+						<textarea class="textarea" name="operationFindings" style="width:98%"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" colspan="4" style="text-align:left">如系肿瘤请填写下列各项：</td>
+				</tr>
+				<tr>
+					<td class="t1">肿瘤生长时间：</td>
+					<td class="t2"><input type="text" name="cancerGrowTime"/></td>
+					<td class="t1">肿瘤大小：</td>
+					<td class="t2"><input type="text" name="cancerSize"/></td>
+				</tr>
+				<tr>
+					<td class="t1">肿瘤位置：</td>
+					<td class="t2"><input type="text" name="cancerPosition"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="t1">有无转移性瘤：</td>
+					<td class="t2">
+						<input type="radio" name="cancerShift" value="有"/>有
+						<input type="radio" name="cancerShift" value="无" checked="checked"/>无
+					</td>
+					<td class="t1" id="ht1" style="display: none">在何处：</td>
+					<td class="t2" id="ht"  style="display: none"><input type="text" name="shiftPosition"/></td>
+				</tr>
+				<tr>
+					<td class="t1" colspan="4" style="text-align:left">如系子宫内膜请填下列各项:</td>
+				</tr>
+				<tr>
+					<td class="t1">月经历：</td>
+					<td class="t2"><input type="text" name="mensesCalender"/></td>
+					<td class="t1">初潮：</td>
+					<td class="t2"><input type="text" name="menarche"/></td>
+				</tr>
+				<tr>
+					<td class="t1">月经量：</td>
+					<td class="t2"><input type="text" name="mensesQuantity"/></td>
+					<td class="t1">周期及持续时间：</td>
+					<td class="t2"><input type="text" name="periodPersistTime"/></td>
+				</tr>
+				<tr>
+					<td class="t1">末次月经：</td>
+					<td class="t2"><input type="text" name="lastMenstrual"/></td>
+					<td class="t1">出血量：</td>
+					<td class="t2"><input type="text" name="hemorrhageQuantity"/></td>
+				</tr>
+				<tr>
+					<td class="t1" colspan="2" style="text-align:left">曾否施行人工周期治疗：</td>
+					<td class="t2" colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>	
+					<td class="t2" colspan="3">
+						<input type="radio" name="laborTreat" value="是"/>是
+						<input type="radio" name="laborTreat" value="否" checked="checked"/>否
+					</td>
+				</tr>
+				<tr id="ht2" style="display: none">
+					<td class="t1">时间：</td>
+					<td class="t2"><input type="text" name="laborTreatDate"/></td>
+					<td class="t1">剂量：</td>
+					<td class="t2"><input type="text" name="dose"/></td>
+				</tr>
+				<tr>
+					<td class="t1">标本采取时间：</td>
+					<td class="t2"><input type="text" name="collectionDate"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="t1">标本来源：</td>
+					<td class="t2"><input type="text" name="specimenSource"/></td>
+					<td class="t1">固定液：</td>
+					<td class="t2"><input type="text" name="stationaryLiquid"/></td>
+				</tr>
+				<tr>
+					<td class="t1">取材部位：</td>
+					<td class="t2"><input type="text" name="biopsyPart"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="t1" colspan="2" style="text-align:left">以前曾做过病理标本检查：</td>
+					<td class="t2" colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<input type="radio" name="everCheck" value="是"/>是
+						<input type="radio" name="everCheck" value="否" checked="checked"/>否
+					</td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td id="ht3" class="t1" style="display:none;">病理标本检查号</td>
+					<td id="ht4" class="t2" style="display:none"><input type="text" name="specimenCheckNum"/></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">临床诊断</td>
+					<td class="t2" colspan="3" width="575"><textarea class="textarea" name="clinicalDiagnosis" style="width:98%"></textarea></td>
+				</tr>
+				<tr>
+					<td class="t1">送检医师：</td>
+					<td class="t2"><input type="text" name="doctorName"/></td>
+					<td class="t1">送检日期：</td>
+					<td class="t2"><input type="text" name="checkDate"/></td>
+				</tr>
+				<tr>
+					<td class="t1" style="text-align:left" colspan="4" align="left">
+						<p align="center"><font>注意</font></p><br/>
+						  一、新鲜标本须从速固定于10%福尔马林内，瓶口宜大，以利取出。<br/>
+						  二、手术取下之标本请勿自行切开，请全部送来检查，如贵科须留作材料，可于我科检查完后商议处理。<br/>
+						  三、为了辅助诊断，务请将病理详为填写。<br/>
+						  四、痰、胸水、腹水、尿、胃液、等体液，请勿加固定液，从速送来。<br/>
+					</td>
+				</tr>
+		</table>
+	</form>
+</body>
+</html>

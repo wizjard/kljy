@@ -1,0 +1,84 @@
+#PatSimInfo-DIV{
+	top:0;
+	left:0;
+	width:100%;
+	background:url(../../PUBLIC/images/label_line_bg.gif) center repeat;
+}
+.application_form_add {
+	background: url(images/application_form_add.png) left center
+		no-repeat !important;
+}
+
+.application_form_delete {
+	background: url(images/application_form_delete.png) left center
+		no-repeat !important;
+}
+
+.application_form_edit {
+	background: url(images/application_form_edit.png) left center
+		no-repeat !important;
+}
+.application_link {
+	background: url(images/application_link.png) left center
+		no-repeat !important;
+}
+.arrow_left {
+	background: url(images/arrow_left.png) left center
+		no-repeat !important;
+}
+.arrow_right {
+	background: url(images/arrow_right.png) left center
+		no-repeat !important;
+}
+.page_save {
+	background: url(images/page_save.png) left center
+		no-repeat !important;
+}
+.printer {
+	background: url(images/printer.png) left center
+		no-repeat !important;
+}
+.hand{
+	cursor:pointer;
+}
+.table{
+	width:100%;
+	background:#000;
+}
+.table td{
+	background:#fff;
+}
+.table td.label{
+	text-align:right;
+	line-height:1.8em;
+	font-size:14px;
+	color:blue;
+	width:120px;
+	vertical-align:top;
+}
+.table input{
+	width:150px;
+}
+.table a{
+	text-decoration:none;
+	color:blue;
+	font-size:14px;
+}
+.ul{
+	background:url(images/li_bg.jpg);
+}
+.ul li{
+	font-size:13px;
+	line-height:24px;
+	height:24px;
+	overflow:hidden;
+	cursor:default;
+}
+.ul li.select{
+	background:url(images/li_select_bg.jpg) left top repeat-x;
+}
+#code{
+	font-size:12px;
+	line-height:24px;
+	color:red;
+}

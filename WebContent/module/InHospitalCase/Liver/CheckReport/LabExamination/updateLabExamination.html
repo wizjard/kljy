@@ -1,0 +1,497 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实验室与辅助检查</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-LabExamination';
+var patientId = App.util.getHtmlParameters('patientId');
+var content = App.util.getHtmlParameters('itemName');
+var patientName = App.util.getHtmlParameters('patientName');
+var doctorName = App.util.getHtmlParameters('doctorName');
+var id = App.util.getHtmlParameters("id");
+var isPatientOrDoctorWriteZanCun = App.util.getHtmlParameters("isPatientOrDoctorWriteZanCun");
+var checkItem = App.util.getHtmlParameters('checkItem');
+var guiDangDate = App.util.getHtmlParameters('guiDangDate');
+var sheHeDate = App.util.getHtmlParameters('sheHeDate');
+var guanliyuan = App.util.getHtmlParameters("guanliyuan");
+var reportDate = "";
+var birthday="";
+var patientHisId="";
+Ext.onReady(function(){	
+	initPage();
+	dictEvents();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-LabExamination'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//时间选择框
+	$('input.text').filter(function(){
+		return $(this).attr('name').indexOf('checkDate')!=-1;
+	}).each(function(){
+		FormUtil.toDateField({el:$(this)});
+	});
+	//按钮
+	FormUtil.initBtnCss();
+	setValue();
+	if(guanliyuan != 1){
+		if(guiDangDate == null || guiDangDate == ""){
+			if(top.USER !=undefined){
+				if(isPatientOrDoctorWriteZanCun ==11 && guiDangDate ==""){
+					document.getElementById("shenHeFlag").style.display="block";
+					document.getElementById("guiDangFlag").style.display="block";
+				}else if(isPatientOrDoctorWriteZanCun ==20){
+					document.getElementById("saveFlag").style.display="block";
+					document.getElementById("guiDangFlag").style.display="block";
+				}
+			}else if(top.Member != undefined){
+				if(isPatientOrDoctorWriteZanCun == 10){
+					document.getElementById("saveFlag").style.display="block";
+					document.getElementById("tijiaoFlag").style.display="block";
+				}
+			}
+		}
+	}
+}
+function setValue(){
+	//FormUtil.setFormValues('form',json);
+	//获取病人基本信息
+	if(isPatientOrDoctorWriteZanCun != null){
+		$.getJSON(App.App_Info.BasePath+'/checkReport.do'+'?method=getPacsByPatientId',
+		{
+			patientId:patientId,
+			pacsId:id
+		},function(data){
+			var _json=JSON.parse(data.data);
+			document.getElementById("name").value= _json.patientName;
+			if(1 == _json.gender){
+				document.getElementById("sex").value = "男";
+			}else{
+				document.getElementById("sex").value = "女";
+			}
+			document.getElementById("patientNo").value = _json.patientNo;	
+			document.getElementById("checkItem").value = _json.checkItem;
+			document.getElementById("age").value = _json.age;
+			
+			document.getElementById('luRuAuthor').value=_json.luRuAuthor;
+			if(_json.duiDangAuthor != null){
+				document.getElementById('duiDangAuthor').value=_json.duiDangAuthor;
+			}			
+			document.getElementById('id').value=_json.id;
+			document.getElementById('check_danwei').value=_json.check_danwei;
+			document.getElementById('checkDate').value=_json.checkDate;
+			document.getElementById('reportResult').value=_json.reportResult;
+			checkItem = _json.checkItem;
+			patientHisId = _json.patientId;
+			birthday = _json.birthday;
+		});
+	}else{
+		$.getJSON(App.App_Info.BasePath + '/CheckReport/checkreport.do'+'?method=getCheckReportInfoForAdd',{patientId:patientId},function(data){
+			document.getElementById("name").value= data.patientName;
+			if(1 == data.gender){
+				document.getElementById("sex").value = "男";
+			}else{
+				document.getElementById("sex").value = "女";
+			}
+			document.getElementById("patientNo").value = data.patientNo;	
+			document.getElementById("checkItem").value = content;
+			birthday = data.birthday;
+			if(doctorName != "null"){
+				document.getElementById('luRuAuthor').value=doctorName;
+			}else if(patientName != "null"){
+				document.getElementById('luRuAuthor').value=patientName;
+			}
+			patientHisId = data.patientId;
+		});	
+	}
+}
+	
+function dictEvents(){
+	$('*[name="image"]').click(function(){
+		var _pre = $(this).prev();
+		var _preName = "";
+		if(content =="X线平片" || checkItem =="X线平片"){
+			_preName = "xline_checkResult";
+		}else if(content =="CT" || checkItem =="CT"){
+			_preName = "ct_checkResult";
+		}else if(content =="MRI" || checkItem =="MRI"){
+			_preName = "mri_checkResult";
+		}else if(content =="消化道造影" || checkItem =="消化道造影"){
+			_preName = "xhd_checkResult";
+		}else if(content =="结肠镜" || checkItem =="结肠镜"){
+			_preName = "jiechang_checkResult";
+		}else if(content =="十二指肠镜" || checkItem =="十二指肠镜"){
+			_preName = "zhichang_checkResult";
+		}else if(content =="胶囊内镜" || checkItem =="胶囊内镜"){
+			_preName = "jiaon_checkResult";
+		}else if(content =="尿素呼气试验" || checkItem =="尿素呼气试验"){
+			_preName = "niaosu_checkResult";
+		}
+		var _sql = '';
+		_sql = 'select itemValue,itemText from ZD_DictItem where indexId=(select max(indexId) from ZD_DictIndex where fldCode='
+			     + '\'' + _preName + '\'' + ') order by orderNo';
+		ShowDictWinEx(_pre,_sql);
+	});
+}
+	
+
+function ShowDictWinEx(_display,_sql){
+	var returnObj=window.showModalDialog('../../../publicDictPage/MulitSelect.html',{sql:_sql},'dialogWidth=300px;dialogHeight=500px');
+	if (returnObj) {
+		if(returnObj.cls){
+			returnObj.text='';
+			returnObj.value='';
+		}
+		if (_display){ 
+			$(_display).val(returnObj.text);
+		}
+	}
+}
+	
+function closeWindow(){
+	if(document.getElementById("check_danwei").value.length <=0){
+		alert("外院名称不能为空");
+		return;
+	}
+	if(document.getElementById("checkDate").value.length<=0){
+		alert("检查日期不能为空");
+		return;
+	}
+	if(document.getElementById("age").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+	if(document.getElementById("reportResult").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+	var _value=FormUtil.getFormValues('form');
+	var pacsInfo;
+	if(top.USER !=undefined && isPatientOrDoctorWriteZanCun ==20){
+	 	pacsInfo = '{check_danwei:"' + _value.check_danwei + '",checkDate:"' + _value.checkDate 
+			+ '",age:"'+_value.age+'",luRuAuthor:"'+_value.luRuAuthor+
+			'",reportResult:"'+_value.reportResult+'",isPatientOrDoctorWriteZanCun:"20",patientId:"'
+			+patientHisId+'",checkItem:"'+_value.checkItem+'",id:"'+_value.id+'"}';
+	}else{
+		pacsInfo = '{check_danwei:"' + _value.check_danwei + '",checkDate:"' + _value.checkDate 
+			+ '",age:"'+_value.age+'",luRuAuthor:"'+_value.luRuAuthor+
+			'",reportResult:"'+_value.reportResult+'",isPatientOrDoctorWriteZanCun:"10",patientId:"'
+			+patientHisId+'",checkItem:"'+_value.checkItem+'",id:"'+_value.id+'"}';
+	}
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/checkReport.do',
+		params:{
+			method:'savePacs',
+			pacsInfo:pacsInfo
+		},
+		sync:true,
+		success:function(response){
+			var resObj=Ext.decode(response.responseText);
+			if(resObj.success){
+				alert("操作成功");
+				window.close();
+				return ;
+			}else{
+				alert("操作失败");
+				return;
+			}
+		}
+	});
+}
+
+//自动计算年龄
+function execuResultAge(_this){
+	var d = birthday.split("-");  
+	var birthYear= d[0];   
+	var birthMonth= d[1];   
+	var birthDay= d[2];  
+	var strBirthday = _this.value;
+	var returnAge;   
+	var strBirthdayArr=strBirthday.split("-");   
+	var nowYear = strBirthdayArr[0];   
+	var nowMonth = strBirthdayArr[1];   
+	var nowDay = strBirthdayArr[2];   
+												 
+	if(nowYear == birthYear){   
+		returnAge = 0;//同年 则为0岁   
+	}else{   
+		var ageDiff = nowYear - birthYear ; //年之差   
+		if(ageDiff > 0){   
+			if(nowMonth == birthMonth){   
+				var dayDiff = nowDay - birthDay;//日之差   
+				if(dayDiff < 0){   
+					returnAge = ageDiff - 1;   
+				} else {   
+					returnAge = ageDiff ;   
+				}   
+			} else {   
+				var monthDiff = nowMonth - birthMonth;//月之差   
+				if(monthDiff < 0) {   
+					returnAge = ageDiff - 1;   
+				}else{   
+					returnAge = ageDiff ;   
+				}   
+			}   
+		} else {   
+			returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天   
+		}   
+	}   
+	document.getElementById("age").value=returnAge;//返回周岁年龄  
+}
+
+function goBack(){
+	window.history.back();
+}
+
+function tiJiao(){
+	if(document.getElementById("check_danwei").value.length <=0){
+		alert("外院名称不能为空");
+		return;
+	}
+	if(document.getElementById("checkDate").value.length<=0){
+		alert("检查日期不能为空");
+		return;
+	}
+	if(document.getElementById("age").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+	if(document.getElementById("reportResult").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+	var _value=FormUtil.getFormValues('form');
+	var pacsInfo = '{check_danwei:"' + _value.check_danwei + '",checkDate:"' + _value.checkDate 
+			+ '",age:"'+_value.age+'",luRuAuthor:"'+_value.luRuAuthor+
+			'",reportResult:"'+_value.reportResult+'",isPatientOrDoctorWriteZanCun:"11",patientId:"'
+			+patientHisId+'",checkItem:"'+_value.checkItem+'",id:"'+_value.id+'"}';
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/checkReport.do',
+		params:{
+			method:'updatePacsTi',
+			pacsInfo:pacsInfo
+		},
+		sync:true,
+		success:function(response){
+			var resObj=Ext.decode(response.responseText);
+			if(resObj.success){
+				alert("操作成功");
+				window.close();
+				return ;
+			}else{
+				alert("操作失败");
+				return;
+			}
+		}
+	});
+}
+
+
+function cancelPacs(){
+	if(window.confirm("您确定此化验单审核不通过吗？")){
+		var url=App.App_Info.BasePath + '/checkReport.do'+'?method=shenHeNotPassCheckReport';
+		var pacsId = document.getElementById("id").value;
+		$.post(url,{
+			pacsId:pacsId,
+			patientId:patientId,
+			doctorId:top.USER.id
+			},
+			function(data){
+				alert(data[0].isSuccess);
+			},"json"
+		);
+	}
+}
+
+function executeGuiDang(){
+	if(window.confirm("您确定将此化验单归档吗？")){
+		if(document.getElementById("check_danwei").value.length <=0){
+			alert("外院名称不能为空");
+			return;
+		}
+		if(document.getElementById("checkDate").value.length<=0){
+			alert("检查日期不能为空");
+			return;
+		}
+		if(document.getElementById("age").value.length<=0){
+			alert("年龄不能为空");
+			return;
+		}
+		if(document.getElementById("reportResult").value.length<=0){
+			alert("年龄不能为空");
+			return;
+		}
+		var _value=FormUtil.getFormValues('form');
+		var pacsInfo;
+		if(sheHeDate == ""){
+			pacsInfo = '{check_danwei:"' + _value.check_danwei + '",checkDate:"' + _value.checkDate 
+				+ '",age:"'+_value.age+'",luRuAuthor:"'+_value.luRuAuthor+
+				'",reportResult:"'+_value.reportResult+'",isPatientOrDoctorWriteZanCun:"21",patientId:"'
+				+patientHisId+'",checkItem:"'+_value.checkItem+'",id:"'+_value.id+'",duiDangAuthor:"'+top.USER.name+'"}';
+		}else{
+			pacsInfo = '{check_danwei:"' + _value.check_danwei + '",checkDate:"' + _value.checkDate 
+				+ '",age:"'+_value.age+'",luRuAuthor:"'+_value.luRuAuthor+
+				'",reportResult:"'+_value.reportResult+'",isPatientOrDoctorWriteZanCun:"11",patientId:"'
+				+patientHisId+'",checkItem:"'+_value.checkItem+'",id:"'+_value.id+'",duiDangAuthor:"'+top.USER.name+'"}';
+		}
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath+'/checkReport.do',
+			params:{
+				method:'updatePacsT',
+				pacsInfo:pacsInfo
+			},
+			sync:true,
+			success:function(response){
+				var resObj=Ext.decode(response.responseText);
+				if(resObj.success){
+					alert("操作成功");
+					window.close();
+					return ;
+				}else{
+					alert("操作失败");
+					return;
+				}
+			}
+		});
+	}
+}
+
+function validateForm(){
+	if(document.getElementById("check_danwei").value.length <=0){
+		alert("外院名称不能为空");
+		return;
+	}
+	if(document.getElementById("checkDate").value.length<=0){
+		alert("检查日期不能为空");
+		return;
+	}
+	if(document.getElementById("age").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+	if(document.getElementById("reportResult").value.length<=0){
+		alert("年龄不能为空");
+		return;
+	}
+}
+</script>
+<style type="text/css">
+body,form{
+	width:600px;
+	margin:0;
+	padding:0;
+}
+.text{
+	width:75%;
+	margin-right:2px;
+}
+.select{
+	width:75%;
+}
+.check_mark{
+	font-size:14px;
+	color:#800040;
+}
+.textarea{
+	width:95%;
+}
+legend { 
+	width:675px; 
+} 
+
+</style>
+</head>
+<body>
+
+<form>
+	<input type="hidden" name="id" value=""/>
+	<div id="content" class="">
+		<fieldset>
+			<div style="text-align:right;width:600px">
+			<ul style="text-align:right;width:600px">
+				<li style="float:left"><input id="saveFlag"  style="display:none" class="btn_mouseout" type="button" value="保存" onclick="closeWindow()"/></li>
+				<li style="float:left"><input id="tijiaoFlag" style="display:none" class="btn_mouseout" type="button" value="提交" onclick="tiJiao()"/></li>
+				<li style="float:left"><input id="shenHeFlag"  style="display:none" class="btn_mouseout" type="button" value="审核不通过" onclick="cancelPacs()"/></li>
+				<li style="float:left"><input id="guiDangFlag" style="display:none" class="btn_mouseout" type="button" value="归档" onclick="executeGuiDang()"/></li>
+				<li style="float:left"><input class="btn_mouseout"  type="button" value="返回" onclick="goBack()"/></li>
+			</ul>
+			</div>
+			<br/>
+			<p style="font-size:18px;text-align:center;" >&nbsp;检&nbsp;验&nbsp;报&nbsp;告&nbsp;单</p>
+			<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="85">外院名称：</td>
+					<td class="t2" colspan="3"><input type="text" name="check_danwei" style="width:55%"/></td>
+				</tr>
+			</table>
+		</fieldset>
+
+		<fieldset>
+			<table width="600" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="85">姓名：</td>
+					<td class="t2"><input name="name" id="name" type="text" class="text" readonly style="width:100%"/></td>
+					<td class="t2">&nbsp</td>
+					<td class="t1" width="85">检查日期：</td>
+					<td class="t2"><input name="checkDate" id="checkDate" type="text" class="text" style="width:35.5%" onchange="execuResultAge(this)"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="85">性别：</td>
+					<td class="t2"><input name="sex" type="text" id="sex" class="text" readonly style="width:100%"/></td>
+					<td class="t2">&nbsp</td>
+					<td class="t1" width="85">检查项目：</td>
+					<td class="t2"><input name="checkItem" id="checkItem" type="text" class="text" readonly style="width:35.5%"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="85">年龄：</td>
+					<td class="t2"><input name="age" type="text" id="age" class="text" style="width:100%"/></td>
+					<td class="t2">&nbsp</td>
+					<td class="t1" width="85">录入者：</td>
+					<td class="t2">
+						<input name="luRuAuthor" id="luRuAuthor" type="text" class="text" style="width:35.5%" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" width="85">病历号：</td>
+					<td class="t2">
+						<input name="patientNo" id="patientNo" type="text" class="text" readonly style="width:100%"/>
+					</td>
+					<td class="t2">&nbsp</td>
+					<td class="t1" >归档者：</td>
+					<td class="t2">
+						<input name="duiDangAuthor" id="duiDangAuthor" type="text" class="text"  style="width:35.5%" readonly/>
+					</td>
+				</tr>
+			</table>
+		<table width="600" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" valign="top" width="85">检查结果：</td>
+					<td class="t2" colspan="3">
+						<textarea name="reportResult" id="reportResult" class="textarea" style="width:300px;overflow-y:visible" onscroll="this.rows++;" rows="1"></textarea>
+						<img src="../../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+	</div>	
+</form>
+</body>
+</html>

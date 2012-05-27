@@ -1,0 +1,54 @@
+body{
+	font-size:12px;
+	margin:0;
+	padding:0;
+	font-family:"宋体";
+}
+.home-icon{
+	background:url(images/home.gif) center no-repeat;
+}
+h1.index-top-title{
+	font-size:22px;
+	color:#966;
+	font-weight:bold;
+	line-height:36px;
+	text-align:center;
+}
+.left-menu-item-title{
+	text-align:center;
+	font-size:12px;
+	font-weight:bold;
+	color:#636;
+}
+.left-menu-item-con{
+	text-align:center;
+	padding-top:10px;
+}
+.left-menu-item-con TD.dropShadow{
+	filter:DropShadow(Color=#333333, OffX=3, OffY=2, Positive=true);
+	text-align:center;
+}
+.left-menu-item-con IMG.img-normal{
+	border:solid 1px #666;
+	cursor:pointer;
+	margin-top:0;
+	margin-left:0;
+	width:35px;
+	height:35px;
+}
+.left-menu-item-con IMG.img-over{
+	border:solid 1px #666;
+	cursor:pointer;
+	margin-top:1px;
+	margin-left:2px;
+	width:35px;
+	height:35px;
+}
+.left-menu-item-con p{
+	margin-top:2px;
+	padding:0;
+	color:#636;
+	padding-top:4px;
+	font-weight:bold;
+	font-size:12px;
+}

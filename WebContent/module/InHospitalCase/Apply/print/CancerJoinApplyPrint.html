@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>肿瘤肝胆介入治疗中心介入诊断治疗申请单</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	
+
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		
+		$(function(){
+				KID=App.util.getHtmlParameters('kid');
+				PID=App.util.getHtmlParameters('pid');
+				LODOP = document.getElementById("LODOP");
+				singlePageTableInfo(KID,'介入诊断治疗申请单','#page-header');
+				setValue('CancerJoinApplyPrint','CancerJoinApplyAction','get_Main_Info','CancerJoinApplyAction');
+		
+			$('#PRINT').click(function(){
+				PREVIEW('介入诊断治疗申请单');
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button id="PRINT">打印预览</button>
+	</div>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+	<div id="page-con">
+		<div id="page-header"></div>
+		<p></p>
+		<div id="table-div">
+		<p></p>
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<style type="text/css">
+			.ts td{
+				border:1px solid black;
+				border-top:none;
+				border-right:none;
+			}
+			.ts{
+				border:1px solid black;
+				border-bottom:none;
+				border-left:none;
+			}
+			.ts1{
+				border:1px solid black;
+				border-bottom:none;
+				border-right:none;
+				border-top:none;
+			}
+			.ts1 td{
+				border:1px solid black;
+				border-top:none;
+				border-left:none;
+			}
+		</style>
+		<table class="conTable ts" border=1 width="100%" cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="85" class="td1">姓名：</td>
+				<td width="100" class="td2"><span name="patientName"></span>&nbsp;</td>
+				<td width="85" class="td1">性别：</td>
+				<td width="*" class="td2"><span name="gender"></span>&nbsp;</td>
+				<td width="85" class="td1">年龄：</td>
+				<td width="100" class="td2"><span name="age"></span>&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1">病案号：</td>
+				<td class="td2"><span name="patientCaseId"></span>&nbsp;</td>
+				<td class="td1">科别：</td>
+				<td class="td2" width="145"><span name="officeAssort"></span>&nbsp;</td>
+				<td class="td1">床号：</td>
+				<td class="td2"><span name="bedNum"></span>&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1">CT号：</td>
+				<td class="td2"><span name="ctNum"></span>&nbsp;</td>
+				<td class="td1">MR号：</td>
+				<td class="td2"><span name="mrNum"></span>&nbsp;</td>
+				<td class="td1">介入号：</td>
+				<td class="td2"><span name="joinNum"/></span>&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1" width="85">诊断：</td>
+				<td colspan="5" width="515"><span name="diagnose"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 width="100%" style="border:1px solid black;border-top:none" cellpadding=0 cellspacing=0>
+			<tr valign="top">
+				<td width="85" class="td1" rowspan="13" style="border-bottom-style:none;">申请项目：</td>
+			</tr>
+			<tr>
+				<td width="515" class="td2"><input type="Checkbox" name="one" value="肝动脉造影"/>1、肝动脉造影</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="two" value="DSA下超选择动脉导管介入治疗"/>2、DSA下超选择动脉导管介入治疗</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="three" value="脾动脉栓塞"/>3、脾动脉栓塞</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="four" value="上、下腔静脉造影"/>4、上、下腔静脉造影</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="five" value="DSA下胆道内、外引流"/>5、DSA下胆道内、外引流</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="six" value="DSA下胆道内支架植入"/>6、DSA下胆道内支架植入</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="seven" value="DSA下经颈静脉内门、体静脉支架分流"/>7、DSA下经颈静脉肝内门、体静脉支架分流(TIPS)</td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="Checkbox" name="eight" value="DSA下经颈静脉肝内门、体静脉支架分流(TIPS)"/>8、DSA下经皮经肝胃冠状静脉栓塞</td>
+			</tr>
+			<tr>
+				<td class="td2">
+					<input type="Checkbox" name="nine" value="CT引导下射频电极消融"/>9、CT引导下射频电极消融
+				</td>
+			</tr>
+			<tr>
+				<td class="td2">
+					<input type="Checkbox" name="ten" value="CT导引下化学消融"/>10、CT导引下化学消融
+				</td>
+			</tr>
+			<tr>
+				<td class="td2">
+					<input type="Checkbox" name="eleven" value="CT引导下脓肿抽吸术、肿物组织活检"/>11、CT引导下脓肿抽吸术、肿物组织活检
+				</td>
+			</tr>
+			<tr>
+				<td class="td2" style="border-bottom-style:none;"><input type="Checkbox" name="twelve" value="其他"/>12、其他</td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 style="border:1px solid black;border-top:none" cellpadding=0 cellspacing=0>	
+			<tr>
+				<td width="85" class="td2" valign="top" style="border-top-style:none;">其他申请项</td>
+				<td class="td2" width="*" style="border-top-style:none;">目：</br><span name="otherText"></span></td>
+			</tr>
+			<!--  <tr>
+				<td class="td1">&nbsp;</td>
+				<td colspan="5" width="512" class="td2"></td>
+			</tr>-->
+			<tr>
+				<td class="td1" valign="top">主诉：</td>
+				<td class="td2"><span name="mainTell"></span>&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">现病史：</td>
+				<td class="td2"><span name="nowHistory"></span>&nbsp;</td>
+			</tr>	
+			<tr>
+				<td class="td1" valign="top">既往史：</td>
+				<td class="td2"><span name="pastHistory"></span>&nbsp;</td>
+			</tr>
+		</table>
+		<table class="conTable ts1" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td colspan="6">主要体征:</td>
+			</tr>
+			<tr align="center">
+				<td width="100">面色</td>
+				<td width="100"><span name="face"></span>&nbsp;</td>
+				<td width="100">肝掌</td>
+				<td width="100"><span name="liverPalms"></span>&nbsp;</td>
+				<td width="100">蜘蛛痣</td>
+				<td width="100"><span name="spider"></span>&nbsp;</td>
+			</tr>
+			<tr align="center">
+				<td>皮肤巩膜黄染</td>
+				<td><span name="skin"></span></td>
+				<td>双肺呼吸音：</td>
+				<td><span name="lungSound"></span></td>
+				<td>胸水：</td>
+				<td><span name="bosomWater"></span></td>
+			</tr>
+			<tr align="center">
+				<td>心率</td>
+				<td><span name="heartSpeed"></span>次/分</td>
+				<td>心律</td>
+				<td><span name="heartLaw"></span></td>
+				<td>杂音</td>
+				<td><span name="noisy"></span></td>
+			</tr>
+			<tr align="center">
+				<td>腹部包快</td>
+				<td><span name="belly"></span></td>
+				<td>肝肋下</td>
+				<td><span name="liverRib"></span>cm</td>
+				<td>剑下</td>
+				<td><span name="sword"></span>cm</td>
+			</tr>
+			<tr align="center">
+				<td>脾肋下</td>
+				<td><span name="spleenRib"></span>cm</td>
+				<td>腹水</td>
+				<td><span name="bellyWater"></span></td>
+				<td>双下肢</td>
+				<td><span name="legs"></span></td>
+			</tr>
+		</table>
+		<table class="conTable ts1" border=0 width="100%" cellpadding=0 cellspacing=0>
+			<tr>
+				<td colspan="6">主要化验：</td>
+			</tr>
+			<tr align="center">
+				<td width="100">谷丙转氨酶<br/>(ALT)</td>
+				<td width="100"><span name="guBing"/></span></td>
+				<td width="100">总蛋白<br/>(TP)</td>
+				<td width="100"><span name="zongDanBai"/></span></td>
+				<td width="100">血红蛋白测定<br/>(HGB)</td>
+				<td width="100"><span name="xueHong"/></span></td>
+			</tr>
+			<tr align="center">
+				<td>谷草转氨酶<br/>(AST)</td>
+				<td><span name="guCao"/></span></td>
+				<td>白蛋白<br/>(ALB)</td>
+				<td><span name="baiDanBai"/></span></td>
+				<td>血小板计数<br/>(PLT)</td>
+				<td><span name="xueXiaoBan"/></span></td>
+			</tr>
+			<tr align="center">
+				<td>总胆红素<br/>(TBiL)</td>
+				<td><span name="zongDanHong"/></span></td>
+				<td>甲胎蛋白<br/>(AFP)</td>
+				<td><span name="jiaTaiDanBai"/></span></td>
+				<td>胆碱酯酶<br/>(CHE)</td>
+				<td><span name="danJianZhiMei"/></span></td>
+			</tr>
+			<tr align="center">
+				<td>直接胆红素<br/>(DBiL)</td>
+				<td><span name="zhiDanHong"/></span></td>
+				<td>白细胞计数<br/>(WBC)</td>
+				<td><span name="baiXiBao"/></span></td>
+				<td>凝血酶原时间<br/>(PT)</td>
+				<td><span name="ningXue"/></span></td>
+			</tr>
+		</table>
+		<table class="conTable" width="100%"border=0 style="border:1px solid black;border-top:none;" cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="85" class="td1">特殊检查：</td>
+				<td class="td2" colspan="3"><span name="specialCheck"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">申请医师：</td>
+				<td class="td2"><span name="doctorName"></span></td>
+				<td class="td1">&nbsp;</td>
+				<td class="td2"><span name="checkDate"></span></td>
+			<tr>	
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

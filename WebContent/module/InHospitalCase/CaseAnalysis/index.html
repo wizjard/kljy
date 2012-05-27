@@ -1,0 +1,227 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>病人病历分析首页</title>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/JQuery/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/JsUtil.js"></script>
+		<link rel="stylesheet" type="text/css"
+			href="../../../PUBLIC/Scripts/dTree/css/dtree.css" />
+		<link rel="stylesheet" type="text/css" href="LINKCSS.CSS" />
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/dTree/js/dtree.js"></script>
+		<script type="text/javascript"src="../../../PUBLIC/Scripts/json2.js"></script>
+		<script language="javascript">
+	var dtree=null;
+	var type='EMR-liver';
+	Ext.Ajax.request({
+		url:App.basePath+'../../../../../caseHistory/casehistoryAction.do?method=findTreeByType&type='+type,
+		success:function(_response,_options){
+			var responseJson=Ext.util.JSON.decode(_response.responseText);
+				if(responseJson.success){
+				var nodes=Ext.util.JSON.decode(responseJson.data);
+				dtree=new dTree('dtree');
+				dtree.add(0,
+							  -1,
+							  '<span  style="font-weight:bold">康乐家园病历分析</span>',
+							 'javascript:',
+							  '_self');
+				for(var i=0,len=nodes.length;i<len;i++){
+					var node=nodes[i];
+					if(node.pid==0){
+						dtree.add(node.id,
+							  node.pid,
+							  '<span  style="font-weight:bold">'+node.name+'</span>',
+							 'javascript:',
+							  '_self');
+						}else{
+							  dtree.add(node.id,
+							  node.pid,
+							  '<input style=" height:14px; vertical-align:top" type="checkbox" onClick=selected(this,'+node.id+'); name="checkname" id='+node.id+' pid='+node.pid+' dataName='+node.dataName+' value='+node.name+'><span class="STYLE3" style="vertical-align:top">'+node.name+'</span>',
+							   'javascript:',
+							  '_self');
+						}
+					}
+				document.getElementById('dtree').innerHTML=dtree;
+				    dtree.closeAll();
+				    
+			}else{
+				Ext.Msg.alert('Error','获取字典树信息出错。');
+			}
+		}
+	});
+//反选
+function nuselected(){
+	var elements=document.getElementsByName('checkname');
+for(var i=0,len=elements.length;i<len;i++){
+elements[i].checked=false;
+}
+	}
+//选择	
+function selected(a,id){
+var elements=document.getElementsByName('checkname');
+for(var i=0,len=elements.length;i<len;i++){
+if(a.checked){
+		if(elements[i].pid==id){
+		elements[i].checked=true;
+		var eid=elements[i].id;
+		selected(elements[i],eid);
+			}
+				}else{
+	if(elements[i].pid==id){
+	elements[i].checked=false;
+	eid=elements[i].id;
+	selected(elements[i],eid);
+				}
+			}
+	}
+	}
+	
+	function queryData(){
+	var fieldnameArr=new Array();
+	var fielddataNameArr=new Array();
+	var elements=document.getElementsByName('checkname');
+	for(var i=0,len=elements.length;i<len;i++){
+		if(elements[i].checked){
+		if(elements[i].dataName!=-1){
+			var fieldname=elements[i].value;//名称
+			var dataName=elements[i].dataName;//字段名
+			fieldnameArr.push(fieldname);
+			fielddataNameArr.push(dataName);
+			}
+		}
+	}
+	if(fieldnameArr.length==0){
+		alert('请至少选择一个字段。');
+		return;
+	}
+	initExtGrid(fieldnameArr,fielddataNameArr);
+	}
+	
+function initExtGrid(fieldnameArr,fielddataNameArr){
+	//DIV
+	var wheresql=document.getElementById('wheresql').innerText;//条件
+	var mainDiv=document.getElementById('mainDiv');
+	for(var i=0,len=mainDiv.childNodes.length;i<len;i++){
+		mainDiv.removeChild(mainDiv.childNodes[0]);
+	}
+	var cmArr=new Array();
+	var nameArr=new Array();
+	cmArr.push(new Ext.grid.RowNumberer());
+	for(var i=0,len=fieldnameArr.length;i<len;i++){
+	var fieldName=fielddataNameArr[i].split(".")[1];
+		//动态创建表格列 列名 实体类属性 排序
+		cmArr.push({header:fieldnameArr[i],dataIndex:fieldName,sortable:true});
+		nameArr.push({name:fieldName});
+	}
+	//定义列
+	var cm = new Ext.grid.ColumnModel(cmArr);
+	//获取数据
+	var ds = new Ext.data.Store({
+				//baseParams:{fielddataNameArr:fielddataNameArr,datavalue:datavalue},
+				proxy:new Ext.data.HttpProxy({url:App.basePath+'../../../../../caseHistory/casehistoryAction.do?method=findcaseHistoryinfo&fielddataNameArr='+fielddataNameArr+'&wheresql='+wheresql}),
+				reader:new Ext.data.JsonReader({totalProperty:'total',root:'root'},nameArr)});
+		ds.load({params:{start:0,limit:20}});
+		var grid = new Ext.grid.GridPanel({
+									  	  id:'grid',
+										  el: 'mainDiv',    
+										  ds: ds,   
+										  cm: cm,
+										  tbar: new Ext.PagingToolbar({
+												pageSize:20,
+												store:ds,
+												displayInfo: true,
+												displayMsg:'显示第<font color="red"> {0} </font>条'+
+															'到<font color="red"> {1} </font>条记录，'+
+															'一共<font co	lor="red"> {2} </font>条',
+												emptyMsg:"没有记录"})
+										  });
+		
+		grid.render();
+}
+	function getFilter(){
+	var ReturnValue = window.showModalDialog("getfilter.html", null, "dialogWidth=550px;dialogHeight=500px");
+	if(ReturnValue){
+  Ext.fly('wheresql').update(ReturnValue[0]);
+  var wheresql='';
+  if(ReturnValue[1]==''){
+  wheresql='未设置病人过滤';
+  }else{
+   wheresql='过滤条件:'+ReturnValue[1];
+  }
+  Ext.fly('showDate').update(wheresql)
+	}
+	}
+function printExcel(){
+var wheresql=document.getElementById('wheresql').innerText;//条件
+var fieldnameArr=new Array();
+	var fielddataNameArr=new Array();
+	var elements=document.getElementsByName('checkname');
+	for(var i=0,len=elements.length;i<len;i++){
+		if(elements[i].checked){
+		if(elements[i].dataName!=-1){
+			var fieldname=elements[i].value;
+			var dataName=elements[i].dataName;
+			fieldnameArr.push(fieldname);
+			fielddataNameArr.push(dataName);
+			}
+		}
+	}
+	if(fieldnameArr.length==0){
+		alert('请至少选择一个字段。');
+		return;
+		};
+	 var _myForm=document.getElementById("myform");  
+	 $('#fielddataNameArr').val(fielddataNameArr) 
+	 $('#titlename').val(fieldnameArr) 
+	 $('#sqlwhere').val(wheresql) 
+	_myForm.action=App.basePath+'../../../../../caseHistory/printCase.do?method=printCase';  
+	_myForm.submit();
+}
+		
+</script>
+	</head>
+	<body>
+		<table width="100%" height=95% border="1">
+			<tr>
+				<td width="25%">
+					<!-- 数据分析表左边 -->
+					<div class="pageDiv" style="height: 25px">
+						<input type="button" value="取消选择" class="btn_compact"
+							onClick="nuselected();" />
+						&nbsp;&nbsp;&nbsp;
+						<input type="button" value="查询" class="btn_compact"
+							onClick="queryData()" />
+					</div>
+					<div id="dtree"
+						style="display: block; padding-left: 0; padding-top: 0; height: 100%; width:auto; overflow: scroll overflow-x:hidden;overflow-y:scroll;">
+					</div>
+				</td>
+				<td width="75%">
+					<div class="pageDiv" style="height: 25px; TEXT-ALIGN: left;">
+					<form id="myform" method="post">  
+					<input type="hidden" name="fielddataNameArr"id="fielddataNameArr" value="">
+					<input type="hidden" name="titlename"id="titlename" value="">
+					<input type="hidden" name="sqlwhere"id="datavalue" value="">
+					<input type="button" value="导出Excel" class="btn_compact"
+							onClick="printExcel();" />
+						<input type="button" value="病人过滤" class="btn_compact"
+							onClick="getFilter();" />
+							
+						<div style="display: inline" id="showDate">
+							未设置病人过滤
+						</div>
+						</form>
+						<div style="display: none" id="wheresql"></div>
+					</div>
+					<!-- 数据表分析主体内容 -->
+					<div id="mainDiv"
+						style="display: block; padding-left: 0; padding-top: 0; width: 800; height: 93%; overflow: scroll">
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

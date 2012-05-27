@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/dTree/js/dtree.js"></script>
+<script type="text/javascript">
+/*
+ * 从服务端获取会诊记录信息并显示到页面上
+ */
+ Ext.onReady(function(){
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/EMR/register.do?method=initPageValue',
+		params:{id:3},
+		success:function(_response,_options){
+			var nodes=Ext.util.JSON.decode(_response.responseText);
+				//var nodes = Ext.util.JSON.decode(responseJson);
+			
+			var	dtree=new dTree('dtree');
+				/*dtree.add(
+							  -1,
+							  'root',
+							  '',
+							  '_self');*/
+							 if(nodes){
+				for(var i=0,len=nodes.length;i<len;i++){
+					var node=nodes[i];//对象
+					var date=node.dateTime;
+					var _date=date.split(" ")[0];
+					dtree.add(node.id,
+							  -1,
+							  _date,
+							  'javascript:loadRecordIndex('+node.id+')',
+							  '_self');
+				}
+				}
+				dtree.config.useSelection=true;
+				dtree.config.folderLinks=false;	
+				dtree.config.useCookies=false;
+				document.getElementById('dtree').innerHTML = dtree;
+				dtree.openAll();
+	}
+	});
+});
+
+/*
+ * 加载后查看某条记录的信息
+ */
+function loadRecordIndex(_treeNodeId){
+	document.getElementById("courseRecord").src="cyzhiLiao.html";
+}
+
+</script>
+<title>CRF表管理</title>
+</head>
+<body>
+<div id="dtree"></div>
+</body>
+</html>

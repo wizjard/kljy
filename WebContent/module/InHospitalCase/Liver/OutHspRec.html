@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>出院记录</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/fckeditor/fckeditor.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/fckeditor/fckeditor.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<!-- 打印  -->
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript" src="../scripts/OutHspRec.js"></script>
+<link type="text/css" rel="stylesheet" href="../css/InHspRec.css"/>
+<script type="">
+	var currOutIll = null;
+	function showOutIlls(){
+		if(currOutIll){
+			currOutIll = currOutIll.next();
+		}else{
+			$('textarea[flag="hide"]').each(function(){
+				if(currOutIll == null && $(this).val() == ""){
+					currOutIll = $(this).parent().parent();
+				}
+			});
+		}
+		currOutIll.show();
+	}
+</script>
+</head>
+<body>
+<div id="toolbar">
+	<table width="100%" border=0 cellpadding=0 cellspacing=0>
+		<tr>
+			<td class="verify" width="120" style="line-height:25px;font-size:12px"><img id="verify-img" alt="未提交审核" src="../../../PUBLIC/images/3D_ball_gray.png"/><button id="view-verify-btn" class="btn">审核状态</button></td>
+			<td width="95"><button id="verify-btn" class="btn">审核签名</button></td>
+			<td width="*" class="case-title">出院记录</td>
+			<td width="60"><button id="save-btn" class="btn">保&nbsp;存</button></td>
+			<td width="60"><button id="print-btn" class="btn">打&nbsp;印</button></td>
+			<td width="60"><button id="back-btn" class="btn">返&nbsp;回</button></td>
+		</tr>
+	</table>
+</div>
+<div id="pat-info-div"></div>
+<div style="border-top:solid 1px #000">
+<div id="header" style="position:absolute;top:50px;"></div>
+<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+<form style="margin:0;padding:0">
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="oldOperation" id="oldOperation" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<input type="hidden" name="memberGroupId" value=""/>
+<input type="hidden" name="inhspDoctorId" value=""/>
+<input type="hidden" name="treatDoctorId" value=""/>
+<input type="hidden" name="directorDoctorId" value=""/>
+		<div class="tabs-content" id="tabs-0">
+			<table width="610" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">出院日期：</td>
+					<td class="t2" colspan="3"><input name="outHspDate" type="text" class="text" style="width:34%"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="80">入院科室：</td>
+					<td class="t2" width="230"><input name="inHspWard" type="text" class="select"/></td>
+					<td class="t1" width="70">出院科室：</td>
+					<td class="t2" width="230"><input name="outHspWard" type="text" class="select"/></td>
+				</tr>
+				<tr>
+					<td class="t1">X线号：</td>
+					<td class="t2"><input name="xNo" type="text" class="text"/></td>
+					<td class="t1">CT号：</td>
+					<td class="t2"><input name="ctNo" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t1">MRI号：</td>
+					<td class="t2"><input name="mriNo" type="text" class="text"/></td>
+					<td class="t1">病理号：</td>
+					<td class="t2"><input name="blNo" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t1">过敏史：</td>
+					<td class="t2" colspan="3"><textarea name="allergyHistory" class="textarea" style="width:91.5%;height:40"></textarea></td>
+				</tr>
+				<tr>
+					<td class="t1">出院诊断：</td>
+					<td class="t2" colspan="3"><input name="outIlls1" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls2" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls3" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls4" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls5" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls6" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls7" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls8" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls9" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls10" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls11" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls12" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3"><input name="outIlls13" type="text" class="text" style="width:91.5%;"/></td>
+				</tr>
+				<tr>
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls14" class="textarea" style="width:91.5%;"></textarea>
+						<input type="button" value="继续添加诊断" onclick="showOutIlls()">
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls15" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls16" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls17" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls18" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls19" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls20" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls21" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls22" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls23" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls24" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls25" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls26" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls27" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls28" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls29" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td class="t1">&nbsp;</td>
+					<td class="t2" colspan="3">
+						<textarea name="outIlls30" class="textarea" style="width:91.5%;" flag="hide"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">入院情况：</td>
+					<td class="t2" colspan="3"><textarea name="inHspStatu" class="textarea" style="width:91.5%;height:expression(this.scrollHeight);"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<div class="tabs-content" id="tabs-1">
+			<table width="610" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80" valign="top">化验检查：</td>
+					<td class="t2" colspan="3">
+						<textarea name="labExaminationResult" style="width:91.5%;height:120px;height:expression(this.scrollHeight);"></textarea>
+						<img onclick="ShowLabEDialog()" class="hand" src="../../../PUBLIC/images/sign.gif"/>
+						<img onclick="RelateCheckReport()" class="hand" src="../../../PUBLIC/images/sign.gif"/>
+						第二张图片为新版化验检查
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">诊疗经过：</td>
+					<td class="t2" colspan="3"><textarea name="treatProcess" style="width:91.5%;height:expression(this.scrollHeight);"></textarea></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">出院情况：</td>
+					<td class="t2" colspan="3"><textarea name="outHspStatu" style="width:91.5%;height:expression(this.scrollHeight);"></textarea></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">会员分组：</td>
+					<td class="t2" colspan="3"><input type="text" name="memberGroupId_show" readonly="readonly" style="width:91.5%"/><img onclick="ShowMemberGroupSelect()" class="hand" src="../../../PUBLIC/images/sign.gif"/></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">出院医嘱：</td>
+					<td class="t2" colspan="3"><textarea name="outHspOrders" style="width:91.5%;height:expression(this.scrollHeight);"></textarea><img onclick="ShowYiZhu()" class="hand" src="../../../PUBLIC/images/sign.gif"/></td>
+				</tr>
+				<tr>
+					<td class="t1">住院医师：</td>
+					<td class="t2"><input name="inhspDoctorId_show" type="text" class="text" style="width:150px"/></td>
+					<td class="t1" width="100">签字时间：</td>
+					<td class="t2"><input name="inhspSignDate" type="text" class="text" style="width:150px"/></td>
+				</tr>
+				<tr>
+					<td class="t1">主治医师：</td>
+					<td class="t2"><input name="treatDoctorId_show" type="text" class="text" style="width:150px"/></td>
+					<td class="t1">签字时间：</td>
+					<td class="t2"><input name="treatSignDate" type="text" class="text" style="width:150px"/></td>
+				</tr>
+				<tr>
+					<td class="t1">(副)主任医师：</td>
+					<td class="t2"><input name="directorDoctorId_show" type="text" class="text" style="width:150px"/></td>
+					<td class="t1">签字时间：</td>
+					<td class="t2"><input name="directorSignDate" type="text" class="text" style="width:150px"/></td>
+				</tr>
+			</table>
+		</div>
+	<!--/div-->
+</form>
+</body>
+</html>

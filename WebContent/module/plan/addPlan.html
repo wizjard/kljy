@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>随访计划</title>
+		<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript"
+			src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+		<script type="text/javascript"
+			src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<link type="text/css" rel="stylesheet"
+			href="../../PUBLIC/Scripts/MyJavascripts/tableform/table.css" />
+		<script type="text/javascript"
+			src="../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript"
+			src="../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript" src="./scripts/addPlan.js"></script>
+		<style type="text/css">
+.item-title {
+	padding-left: 1em;
+	line-height: 18px;
+	font-size: 14px;
+	font-weight: bold;
+}
+</style>
+	</head>
+	<body>
+		<form>
+			<input type="hidden" name="id" value="-1" />
+			<input type="hidden" name="createDate" value="" />
+			<input type="hidden" name="modifyDate" value="" />
+			<input type="hidden" name="deptname" value="" />
+			<input type="hidden" name="teamname" value="" />
+			<input name="patientId" type="hidden" />
+			<input name="planTime" type="hidden"   value="" />
+			<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff
+				cellPadding=2>
+				<tr>
+					<td colspan=7 class="title">
+					第 &nbsp;<span id="titleFlag" style="color:red"> </span>&nbsp;次随访计划信息
+					</td>
+				</tr>
+				<tr>
+
+					<td class="t1" width="10%">
+						姓名：
+					</td>
+
+					<td class="t2" width="40%">
+						<input name="patientName" type="text" class="text" readOnly="true" />
+					</td>
+
+					<td class="t1" width="18%">
+						性别：
+					</td>
+					<td class="t2" width="40%">
+						<input width=115  name="sex" type="text" class="text" readOnly="true" />
+					</td>
+					
+
+				</tr>
+				<tr>
+					<td class="t1">
+						病案号：
+					</td>
+					<td class="t2">
+						<input name="patientNo" type="text" class="text" readOnly="true" />
+					</td>
+					<td class="t1">
+						出生日期：
+					</td>
+					<td class="t2">
+						<input name="birthday" type="text" class="text" readOnly="true" />
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" width="18%">
+						随访计划设置日期：
+					</td>
+					<td class="t2" width="40%">
+						<input width=115 name="beginDate" id="beginDate" type="text"
+							class="text" />
+					</td>
+					
+					
+
+				</tr>
+				<tr>
+					<td class="t1" width="15%">
+						当前疾病分组：
+					</td>
+					<td class="t2" width="90%" colspan="3" >
+						<input width="220" name="diagGrounp" type="text" class="text"
+							style="width:570px" readOnly="true" />
+					</td>
+						
+				</tr>
+				<tr><td colspan="4" align="center" style="text-align:center;">
+					<input type="button" value="保存" 
+							style="width:60px;height:30px;"
+							onclick="SaveData()" />
+				</td></tr>
+
+			</table>
+		</form>
+
+
+
+	</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会诊记录打印</title>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+
+<script type="text/javascript" src="../../../../CasePrint/scripts/button.js"></script>
+<script type="text/javascript" src="../../../../CasePrint/scripts/init.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="print.js"></script>
+<script type="text/javascript">
+	var kid=App.util.getHtmlParameters('kid');//id
+	var cid=App.util.getHtmlParameters('cid');//kid
+$(function(){
+	singlePageInit(kid,1,'会诊记录');
+});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<!--<button onclick="PREVIEW('会 诊 记 录')">打印预览</button>-->
+		<button id="singlePage">打印预览</button>
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../css/print.css"/>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td2" width="200"><b>姓名：</b><span name="name">&nbsp;</span></td>
+				<td class="td2" width="200"><b>性别：</b><span name="gender">&nbsp;</span></td>
+				<td class="td2" width="200"><b>年龄：</b><span name="age">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">
+						<div style="float:left"><b>申请科室：</b></div>
+						<div style="float:left"><span name="ward">&nbsp;</span></div>
+				</td>
+				<td class="td2"><b>床号：</b><span name="bedNo">&nbsp;</span></td>
+				<td class="td2"><b>申请医师：</b><span name="appDoctors"></span></td>
+			</tr>
+			<tr>
+				<td class="td2"><b>上级医师：</b><span name="superDoctors"></span></td>
+				<td class="td2">
+					<div style="float:left"><b>被邀请科室：</b></div>
+					<div style="float:left"><span name="invitedWard"></span></div>
+				</td>
+				<td class="td2"><b>被邀请医师：</b><span name="invitedDoctors"></span></td>
+			</tr>
+			<tr>
+				<td class="td2"><b>会诊等级：</b><span name="conLv">&nbsp;</span></td>
+				<td class="td2" colspan="2"><b>申请日期：</b><span name="apptime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">
+					<div style="float:left"><b>病历摘要：</b></div>
+					<div style="float:left"><span name="simpleCase">&nbsp;</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">
+					<div style="float:left"><b>会诊目的：</b></div>
+					<div style="float:left"><span name="conTarget">&nbsp;</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">
+					<div style="float:left"><b>会诊意见：</b></div>
+					<div style="float:left"><span name="conAdv">&nbsp;</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="td2"><b>会诊医师：</b><span name="recName">&nbsp;</span></td>
+				<td class="td2" colspan="2"><b>日期：</b><span name="rectime">&nbsp;</span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

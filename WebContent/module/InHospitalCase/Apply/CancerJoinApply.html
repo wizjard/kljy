@@ -1,0 +1,420 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>肿瘤肝胆介入治疗中心介入诊断治疗申请单</title>	 
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			$('input[name="patientId"]').val(PID);
+			$('input[name="historyCaseId"]').val(KID);
+			$('input[name="id"]').val(App.util.getHtmlParameters('this'));
+			initPage();
+			find();
+		});
+		//为”其他“复选框绑定点击事件
+		function find(){
+			$('input[name="twelve"]').click(function(){
+				if($('input[name="twelve"]').attr("checked")){
+					$("#ht").show();
+				}else{
+					$("#ht").hide();
+					$('textarea[name="otherText"]').val("");
+				}
+			});
+		}
+		function initPage(){
+			//引入标题
+			registrationPageHead(KID,'介入诊断治疗申请单','#header');
+			//时间选择框
+			FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+			//医生字典选择
+				FormUtil.toDictSelect({
+					url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+					showEl:$('input[name="doctorName"]')
+			});
+			//科室字典
+				$.ajax({
+				url:App.App_Info.BasePath+'/common/CommonAction.do',
+				data:{
+					method:'QueryMyBelongs',
+					timestamp:new Date().getTime()
+				},
+				async:false,
+				dataType:'json',
+				success:function(_data){
+					var _fld=$('input[name="officeAssort"]');
+					_fld.data('options',_data);
+					FormUtil.toCombobox({el:_fld});
+				}
+			});
+			var id = $('input[name="id"]').val() 
+			if(id == -1){
+				setMainValue();
+				return;
+			}else{
+				setValue(id);
+			}
+		}
+		//初始化页面，查出申请单的信息
+		function setValue(id){
+			$.post(
+				App.App_Info.BasePath+'/CancerJoinApplyAction.do',
+				{
+					method:'get_Patient_Info',
+					id:id
+				},
+				function (data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						$('input[type="text"]').each(function(){
+							$(this).val(json[this.name]);
+						});
+						$('textarea').each(function(){
+							$(this).val(json[this.name]);
+						});
+						$('input[type="checkbox"]').each(function(){
+							if(("<"+$(this).val()+">") == json[this.name]){
+								$(this).attr("checked",true);
+								if(json[this.name] == "<其他>"){
+									$("#ht").show();
+								}
+							}
+						});
+						FormUtil.valueTool.setComboValue($('input[name="officeAssort"]'),json.officeAssort);
+						setMainValue();
+					}
+				},
+				'json'
+			)
+		}
+		//查询病人基本信息
+		function setMainValue(){
+			$.post(
+				App.App_Info.BasePath+'/CancerJoinApplyAction.do',
+				{
+					method:'get_Main_Info',
+					kid:KID
+				},
+				function(data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						$('input[type="text"]').each(function(){
+							$(this).val(json[this.name]);
+					});
+					}else{
+						alert("查询基本信息失败");
+					}
+				},
+				'json'
+			)
+		}
+		//保存和修改信息
+		function SaveData(){
+				
+			var data=JSON.stringify(FormUtil.getFormValues('form'));
+			var id = $('input[name="id"]').val();
+			$.post(
+				App.App_Info.BasePath+'/CancerJoinApplyAction.do',
+				{
+					method:'saveOrUpdate',
+					data:data,
+					id:id
+				},
+				function(data){
+					$('input[name="id"]').val(data.id);
+					alert("保存成功");
+					parent.createIndex();
+				},
+				'json'
+			)
+		}
+	
+		//删除一条信息
+		function deleteData(){
+			var id=$('input[name="id"]').val();
+			if(id=="-1"){
+				alert("请保存后再删除");
+				return;
+			}
+			var yrn = confirm("确定删除嘛？");
+			if(!yrn){
+				return;
+			}
+			var data = JSON.stringify(FormUtil.getFormValues('form'));
+			$.post(
+				App.App_Info.BasePath+'/CancerJoinApplyAction.do',
+				{
+					method:'deleteData',
+					data:data
+				}
+			)
+			parent.location.reload();
+		}
+		//打印
+		function print(){
+			var checkdate = $('input[name="checkDate"]').val();
+			var doctorname =$('input[name="doctorName"]').val();
+			if(doctorname == null || doctorname == ""){
+				alert("请先填写医师项并保存");
+				return;
+			}
+			if(checkdate == null || checkdate == ""){
+				alert("请先填写日期项并保存");
+				return;
+			}
+			var id=$('input[name="id"]').val();
+			if(id=="-1"){
+				alert('请先保存数据后再打印。');
+				return;
+			}
+			window.open(App.App_Info.BasePath+
+			'/module/InHospitalCase/Apply/print/CancerJoinApplyPrint.html?id='+id+'&&'+'kid='+KID);
+		}
+	  </script>
+  </head>
+<body>
+	<div id="header" style="width:600px;position:relative;"></div>
+	<form>
+		<input type="hidden" name="id" value="-1"/>
+		<input type="hidden" name="patientId"/>
+		<input type="hidden" name="historyCaseId"/>
+    	<table  width="600" border="1" cellSpacing="0" borderColorDark=#ffffff cellPadding="2">
+			<tr>
+				<td width="125" class="t1">姓&nbsp;&nbsp;名：</td>
+				<td width="175" class="t2"><input type="text" name="patientName" readonly="readonly"/></td>
+				<td width="125" class="t1">性&nbsp;&nbsp;别：</td>
+				<td width="175" class="t2"><input type="text" name="gender" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">年&nbsp;&nbsp;龄：</td>
+				<td  class="t2"><input type="text" name="age" readonly="readonly"/></td>
+				<td class="t1">病案号：</td>
+				<td class="t2"><input type="text" name="patientCaseId" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">科&nbsp;&nbsp;别：</td>
+				<td class="t2"><input type="text" name="officeAssort" class="select"/></td>
+				<td class="t1">床&nbsp;&nbsp;号：</td>
+				<td class="t2"><input type="text" name="bedNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">CT号：</td>
+				<td class="t2"><input type="text" name="ctNum"/></td>
+				<td class="t1">MR号：</td>
+				<td class="t2"><input type="text" name="mrNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">介入号：</td>
+				<td class="t2"><input type="text" name="joinNum"/></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1" width="125" valign="top">诊&nbsp;&nbsp;断：</td>
+				<td class="t2" colspan="3" width="475">
+					<textarea style="width:98%" class="textarea" name="diagnose"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" rowspan="13" valign="top">申请项目：</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3"><input type="Checkbox" name="one" value="肝动脉造影"/>1、肝动脉造影</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="two" value="DSA下超选择动脉导管介入治疗"/>2、DSA下超选择动脉导管介入治疗
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="three" value="脾动脉栓塞"/>3、脾动脉栓塞
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="four" value="上、下腔静脉造影"/>4、上、下腔静脉造影
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="five" value="DSA下胆道内、外引流"/>5、DSA下胆道内、外引流
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="six" value="DSA下胆道内支架植入"/>6、DSA下胆道内支架植入
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="seven" value="DSA下经颈静脉内门、体静脉支架分流"/>7、DSA下经颈静脉肝内门、体静脉支架分流(TIPS)
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="eight" value="DSA下经颈静脉肝内门、体静脉支架分流(TIPS)"/>8、DSA下经皮经肝胃冠状静脉栓塞
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="nine" value="CT引导下射频电极消融"/>9、CT引导下射频电极消融
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="ten" value="CT导引下化学消融"/>10、CT导引下化学消融
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="eleven" value="CT引导下脓肿抽吸术、肿物组织活检"/>11、CT引导下脓肿抽吸术、肿物组织活检
+				</td>
+			</tr>
+			<tr>
+				<td class="t2" colspan="3">
+					<input type="Checkbox" name="twelve" value="其他"/>12、其他
+				</td>
+			</tr>
+			<tr id="ht" style="display: none">
+				<td width="125" class="t1" valign="top">其他申请项目：</td>
+				<td width="475" class="t2" colspan="3">
+					<textarea style="width:98%" class="textarea" name="otherText"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td width="125" class="t1" valign="top">主&nbsp;&nbsp;诉：</td>
+				<td width="475" class="t2" colspan="3">
+					<textarea style="width:98%" class="textarea" name="mainTell"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td width="125" class="t1" valign="top">现病史：</td>
+				<td width="475" class="t2" colspan="3">
+					<textarea style="width:98%" class="textarea" name="nowHistory"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td width="125" class="t1" valign="top">既往史：</td>
+				<td width="475" class="t2" colspan="3">
+					<textarea style="width:98%" class="textarea" name="pastHistory" ></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="4" style="text-align:left">主要体征：</td>
+			</tr>
+			<tr>
+				<td class="t1" width="125">面&nbsp;&nbsp;色：</td>
+				<td class="t2" width="175"><input type="text" name="face"/></td>
+				<td class="t1" width="125">胸&nbsp;&nbsp;水：</td>
+				<td class="t2" width="175"><input type="text" name="bosomWater"/></td>
+			</tr>
+			<tr>
+				<td class="t1">肝&nbsp;&nbsp;掌：</td>
+				<td class="t2"><input type="text" name="liverPalms"/></td>
+				<td class="t1">蜘蛛痣：</td>
+				<td class="t2"><input type="text" name="spider"/></td>
+			</tr>
+			<tr>
+				<td class="t1">皮肤巩膜黄染：</td>
+				<td class="t2"><input type="text" name="skin"/></td>
+				<td class="t1">双肺呼吸音：</td>
+				<td class="t2"><input type="text" name="lungSound"/></td>
+			</tr>
+			<tr>
+				<td class="t1">心&nbsp;&nbsp;率(次/分)：</td>
+				<td class="t2"><input type="text" name="heartSpeed"/></td>
+				<td class="t1">杂&nbsp;&nbsp;音：</td>
+				<td class="t2"><input type="text" name="noisy" /></td>
+			</tr>
+			<tr>
+				<td class="t1">心&nbsp;&nbsp;律：</td>
+				<td class="t2"><input type="text" name="heartLaw" /></td>
+				<td class="t1">腹部包块：</td>
+				<td class="t2"><input type="text" name="belly" /></td>
+			</tr>
+			<tr>
+				<td class="t1">肝肋下：</td>
+				<td class="t2"><input type="text" name="liverRib" />cm</td>
+				<td class="t1">剑&nbsp;&nbsp;下：</td>
+				<td class="t2"><input type="text" name="sword" />cm</td>
+			</tr>
+			<tr>
+				<td class="t1">脾肋下：</td>
+				<td class="t2"><input type="text" name="spleenRib" />cm</td>
+				<td class="t1">腹&nbsp;&nbsp;水：</td>
+				<td class="t2"><input type="text" name="bellyWater" /></td>
+			</tr>
+			<tr>
+				<td class="t1">双下肢：</td>
+				<td class="t2"><input type="text" name="legs" /></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="4" style="text-align:left">主要化验：</td>
+			</tr>
+			<tr>
+				<td width="125" class="t1">谷丙转氨酶(ALT)：</td>
+				<td width="175" class="t2"><input type="text" name="guBing" /></td>
+				<td width="125" class="t1">总蛋白(TP)：</td>
+				<td width="175" class="t2"><input type="text" name="zongDanBai" /></td>
+			</tr>
+			<tr>
+				<td class="t1">血红蛋白测定(HGB)：</td>
+				<td class="t2"><input type="text" name="xueHong" /></td>	
+				<td class="t1">谷草转氨酶(AST)：</td>
+				<td class="t2"><input type="text" name="guCao" /></td>
+			</tr>
+			<tr>
+				<td class="t1">白蛋白(ALB)：</td>
+				<td class="t2"><input type="text" name="baiDanBai" /></td>
+				<td class="t1">血小板计数(PLT)：</td>
+				<td class="t2"><input type="text"name="xueXiaoBan" /></td>
+			</tr>
+			<tr>
+				<td class="t1">总胆红素(TBiL)：</td>
+				<td class="t2"><input type="text" name="zongDanHong" /></td>
+				<td class="t1">甲胎蛋白(AFP)：</td>
+				<td class="t2"><input type="text" name="jiaTaiDanBai" /></td>
+			</tr>
+			<tr>
+				<td class="t1">胆碱酯酶(CHE)：</td>
+				<td class="t2"><input type="text"name="danJianZhiMei" /></td>
+				<td class="t1">直接胆红素(DBiL)：</td>
+				<td class="t2"><input type="text" name="zhiDanHong" /></td>
+			</tr>
+			<tr>
+				<td class="t1">血细胞计数(WBC)：</td>
+				<td class="t2"><input type="text" name="baiXiBao"/></td>
+				<td class="t1">凝血酶原时间(PT)：</td>
+				<td class="t2"><input type="text" name="ningXue"/></td>
+			</tr>
+			<tr>
+				<td width="125" class="t1" valign="top">特殊检查：</td>
+				<td width="475" class="t2" colspan="3">
+					<textarea class="textarea" name="specialCheck" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1">申请医师：</td>
+				<td class="t2"><input type="text" name="doctorName"/></td>
+				<td class="t1">申请时间：</td>
+				<td class="t2"><input type="text" name="checkDate"/></td>
+			</tr>
+		</table>
+	</form>
+  </body>
+
+ </html>

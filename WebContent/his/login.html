@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>《康乐家园》登录</title>
+<script type="text/javascript" src="../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var currentWard='';
+Ext.onReady(function(){
+	var sm=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var ds=new Ext.data.Store({
+		proxy:new Ext.data.HttpProxy({url:'action/patient.jsp'}),
+		reader:new Ext.data.JsonReader({root:'root'},[
+			{name:'PATIENTID'},
+			{name:'PATIENTNO'},
+			{name:'PATIENTNAME'},
+			{name:'SEXID'},
+			{name:'AGE'},
+			{name:'BIRTHDAY'},
+			{name:'SOCIETYNO'},
+			{name:'NATIONALITYID'},
+			{name:'PEOPLEID'},
+			{name:'HOMEADDR'},
+			{name:'HOMEPOSTCODE'},
+			{name:'HOMETEL'},
+			{name:'WORKORG'},
+			{name:'ORGADDR'},
+			{name:'ORGPOSTCODE'},
+			{name:'CONTACTNAME'},
+			{name:'CONTACTTEL'},
+			{name:'ADMSEQNO'},
+			{name:'INDATE'},
+			{name:'INTIME'},
+			{name:'INILLS'},
+			{name:'DRCODE'},
+			{name:'INSTATUS'},
+			{name:'INWARDCODE'}
+		])
+	});
+	var cm = new Ext.grid.ColumnModel([
+    		new Ext.grid.RowNumberer(),//自动行号
+    		sm,
+            {header:'病人ID',dataIndex:'PATIENTID',width:70,hidden:true},
+			{header:'病案号',dataIndex:'PATIENTNO',width:70},
+			{header:'姓名',dataIndex:'PATIENTNAME',width:70},
+			{header:'性别',dataIndex:'SEXID',width:50},
+			{header:'年龄',dataIndex:'AGE',width:50,hidden:true},
+			{header:'出生日期',dataIndex:'BIRTHDAY',width:80,hidden:true},
+			{header:'身份证号',dataIndex:'SOCIETYNO',width:80,hidden:true},
+			{header:'国籍',dataIndex:'NATIONALITYID',width:50,hidden:true},
+			{header:'民族',dataIndex:'PEOPLEID',width:60,hidden:true},
+			{header:'家庭地址',dataIndex:'HOMEADDR',width:100,hidden:true},
+			{header:'家庭邮编',dataIndex:'HOMEPOSTCODE',width:70,hidden:true},
+			{header:'家庭电话',dataIndex:'HOMETEL',width:80,hidden:true},
+			{header:'工作单位',dataIndex:'WORKORG',width:80,hidden:true},
+			{header:'单位地址',dataIndex:'ORGADDR',width:100,hidden:true},
+			{header:'单位电话',dataIndex:'ORGPOSTCODE',width:80,hidden:true},
+			{header:'联系人姓名',dataIndex:'CONTACTNAME',width:70,hidden:true},
+			{header:'联系人电话',dataIndex:'CONTACTTEL',width:80,hidden:true},
+			{header:'住院次数',dataIndex:'ADMSEQNO',width:60},
+			{header:'住院日期',dataIndex:'INDATE',width:80},
+			{header:'住院时间',dataIndex:'INTIME',width:80},
+			{header:'住院科室',dataIndex:'INWARDCODE',width:60},
+			{header:'住院诊断',dataIndex:'INILLS',width:60},
+			{header:'负责医生',dataIndex:'DRCODE',width:60},
+			{header:'住院状态',dataIndex:'INSTATUS',width:60}
+		]);	
+	new Ext.Viewport({
+		layout:'fit',
+		items:{
+			xtype:'grid',
+			id:'grid',
+			title:'《康乐家园》登录',
+			ds:ds,
+			cm:cm,
+			sm:sm,
+			viewConfig:{
+				forceFit:true
+			},
+			tbar:[
+				'-','科室：',{
+					xtype:'combo',
+					id:'ward',
+					displayField:'text',
+					valueField:'value',
+					triggerAction:'all',
+					readOnly:true,
+					width:200,
+					store:new Ext.data.Store({
+						proxy:new Ext.data.HttpProxy({url:'action/ward.jsp'}),
+						reader:new Ext.data.JsonReader({root:''},[
+							{name:'value'},
+							{name:'text'}
+						])
+					}),
+					listeners:{
+						select:function(_this,_record,_index){
+							var ward=_record.data.value;
+							if(currentWard==ward){
+								
+							}else{
+								currentWard=ward;
+								var store=Ext.getCmp('grid').getStore();
+								store.baseParams.WARDCODE=ward;
+								store.load();
+								store=Ext.getCmp('doctor').getStore();
+								store.baseParams.WARDCODE=ward;
+								store.reload();
+								Ext.getCmp('doctor').setValue('');
+							}
+						}
+					}
+				},'-','用户：',{
+					xtype:'combo',
+					id:'doctor',
+					displayField:'text',
+					valueField:'value',
+					triggerAction:'all',
+					readOnly:true,
+					width:150,
+					store:new Ext.data.Store({
+						proxy:new Ext.data.HttpProxy({url:'action/doctor.jsp'}),
+						reader:new Ext.data.JsonReader({root:''},[
+							{name:'value'},
+							{name:'text'}
+						])
+					})
+				},'-',{
+					text:'登录',pressed:true,handler:function(){
+						var ward=Ext.getCmp('ward').getValue();
+						if(ward.length==0){
+							alert('请选择科室。');
+							return;
+						}
+						var doctor=Ext.getCmp('doctor').getValue();
+						if(doctor.length==0){
+							alert('请选择登录用户。');
+							return;
+						}
+						var patient='';
+						var ADMSEQNO='';
+						var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+						if(ss.length>0){
+							patient=ss[0].data.PATIENTID;
+							ADMSEQNO=ss[0].data.ADMSEQNO;
+						}
+						window.open('../dispatch.jsp?DoctorID='+doctor+'&OrgID='+ward+'&PatientID='+patient+'&Admseqno='+ADMSEQNO);
+					}
+				}
+			]
+		}
+	});
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>

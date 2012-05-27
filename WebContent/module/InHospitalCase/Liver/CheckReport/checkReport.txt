@@ -1,0 +1,40 @@
+本模块实现的功能：	根据病人id查找或新增病人的检查报告结果，并与其他相关记录进行关联
+
+
+
+数据库表的设计：1)	在要创建的数据库表中新增两个字段，一个为“导入”字段importData，一个为“关联”字段relateData。
+					可以设置未导入时值为“1”，导入时值为“0”；关联时值为“1”，为关联时值为“0”。
+						
+					1	当用户第一次进入combinationList.html页面时，importData=1和relateData=1的记录值在多行编辑框中显示；
+						当用户单击“关联”按钮时，所有导入的数据（即importData=1对应的数据）的relateData字段设置为1，并进行页面的销毁；
+						当用户关闭该页面时（包括直接关闭页面和单击取消按钮），把所有relateData=0对应的“导入”字段值importData设置为0；
+						
+					2	当页面进入checkReport.html或addCheckReport.html页面时，用户选择记录并进行导入操作时，设置所有导入字段值importData=1，并进行页面的销毁，选择的记录则导入到
+						combinationList.html页面的多行文本框中；
+						当页面进入checkReport.html或addCheckReport.html页面时，用户选择记录并进行未导入操作时，设置所有选择的记录对应的导入字段importData的值为0，并再次向后台发送ajax请求，取出所有
+						importData=1对应的记录
+					
+					3	每次导入数据之前，对多行文本框进行清空操作
+				
+				
+				
+				2)  testItem表：	
+					itemNo是该表的主键，组合项目和子项都存放到CName字段中，isProfile字段区分组合项和子项，0表示组合项，1表示子项
+					
+					GroupItem表：
+					该表用来关联组合项和子项的对应关系，PItemNo存放testItem表中组合项的id，ItemNo存放testItem表中子项的id
+					
+					ReportForm表：
+					和lis数据库表保持一样
+					
+					ReportItem表：
+					新增originalCName字段，用来记录该记录值原先对应的组合项名称；增加clinicType字段，用来记录是“急诊”等等；增加home_foreign字段，用来记录是“进口”等等
+					
+数据集成问题：  
+				1	根据病人id或病人病历id查询lis数据库，查询ReportForm表；
+				2	根据ReportForm表中的ItemNo字段的值，匹配testItem表中的itemNo字段，获得该字段对应记录中的CName的值，记为itemCN；	
+				3	根据ReportForm表中的ItemNo字段的值，查询GroupItem表中的PItemNo字段的值，根据获得的值匹配testItem表中的itemNo字段，获得该字段对应记录中的CName的值，记为PCN；		
+				4	考虑到我们本地数据库中两个组合项下的子项会存在重复，比如X组合项下游a、b、c子项，Y组合项下有a、m、n子项，用步骤2中的itemCN值查询出本地数据库表testItem
+					中相应的id值时将会存在多个值；分别用该组的每一个值（记为itemNo）查询本地数据库GroupItem表，得到相应的PItemNo值（记为PNo），根据PNo值再次查询本地数据库testItem表，得到对应的CName值，
+					查看该值是否是PCN的字串，如果是的话记下本次查询中的itemNo和PNo，停止查询
+				5	根据ReportForm表中的主键值，查询ReportItem表中相应的记录，在把该记录拷贝到本地数据库之前，修改ParItemNo和ItemNo的值分别为步骤4中的PNo和itemNo，并设置originalCName的值为PCN；

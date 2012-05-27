@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员列表</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var basePath=App.App_Info.BasePath+'/MemberAction.do';
+Ext.onReady(function(){
+	new Ext.Viewport({
+		layout:'fit',
+		items:createGrid()
+	});
+});
+function createGrid(){
+	var _sm=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var _cm_normal=[
+		new Ext.grid.RowNumberer(),
+		_sm,
+		{header:'姓名',dataIndex:'patientName'},
+		{header:'病案号',dataIndex:'patientNo'},
+		{header:'性别',dataIndex:'gender'},
+		{header:'出生日期',dataIndex:'birthday'},
+		{header:'籍贯',dataIndex:'province0'},
+		{header:'职业',dataIndex:'occupation0'},
+		{header:'婚姻状态',dataIndex:'marrageStatus0'},
+		{header:'家庭电话',dataIndex:'homeTel'},
+		{header:'联系人姓名',dataIndex:'contacterName'},
+		{header:'联系人电话',dataIndex:'contacterTel'}
+	];
+	var _ra_normal=[
+		{name:'id'},
+		{name:'patientNo'},
+		{name:'patientName'},
+		{name:'gender'},
+		{name:'birthday'},
+		{name:'idType'},
+		{name:'idType0'},
+		{name:'idNo'},
+		{name:'nationality'},
+		{name:'nationality0'},
+		{name:'people'},
+		{name:'people0'},
+		{name:'province'},
+		{name:'province0'},
+		{name:'occupation'},
+		{name:'occupation0'},
+		{name:'homeTel'},
+		{name:'homePostCode'},
+		{name:'homeAddr'},
+		{name:'marrageStatus'},
+		{name:'marrageStatus0'},
+		{name:'educationLv'},
+		{name:'educationLv0'},
+		{name:'mobilePhone'},
+		{name:'email'},
+		{name:'workUnit'},
+		{name:'workUnitAddr'},
+		{name:'workUnitTel'},
+		{name:'workUnitPostCode'},
+		{name:'contacterName'},
+		{name:'contacterRelationship'},
+		{name:'contacterRelationship0'},
+		{name:'contacterTel'},
+		{name:'createDate'},
+		{name:'modifyDate'},
+		{name:'currentWardCode'},
+		{name:'currentWardCode0'}
+	];
+	var _cm=new Ext.grid.ColumnModel(_cm_normal);
+	var _ds=new Ext.data.Store({
+		proxy:new Ext.data.HttpProxy({url:basePath}),
+		reader:new Ext.data.JsonReader({root:'root',totalProperty:'total'},_ra_normal)
+	});
+	_ds.baseParams={method:'mempat_findAll'};
+	_ds.load({params:{start:0,limit:20}});
+	var _grid=new Ext.grid.GridPanel({
+		id:'grid',
+		title:'会员列表',
+		border:false,
+		cm:_cm,
+		sm:_sm,
+		ds:_ds,
+		autoScroll: true,
+		viewConfig:{
+			forceFit:true
+		},
+		bbar:new Ext.PagingToolbar({
+            pageSize: 20,
+            store: _ds,
+            displayInfo: true,
+            displayMsg: '显示第<font color="red"> {0} </font>条' +
+            '到<font color="red"> {1} </font>条记录，' +
+            '一共<font color="red"> {2} </font>条',
+            emptyMsg: "没有记录"
+        }),
+        tbar:[
+              '-',{
+            	  text:'刷新',handler:function(){
+            	  	Ext.getCmp('grid').getStore().reload();
+              	  }
+              },'-',{
+            	  text:'全部会员',handler:function(){
+            	  	var _store=Ext.getCmp('grid').getStore();
+            	  	_store.baseParams={method:'mempat_findAll'};
+            	  	_store.load({params:{start:0,limit:20}});
+          	      }
+              },'-',{
+            	  text:'基本信息',handler:function(){
+            	  	var _ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+            	  	if(_ss.length>1||_ss.length==0){
+            	  		alert('请选择一条会员记录。');
+            	  		return;
+            	  	}
+            	  	App.util.addNewMainTab('/module/Patient/PatientInfo.html?id='+_ss[0].data.id,'基本信息');
+          	      }
+              },'-',{
+            	  text:'门诊登记',handler:function(){
+            	  	var _ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+            	  	if(_ss.length>1||_ss.length==0){
+            	  		alert('请选择一条病人记录。');
+            	  		return;
+            	  	}
+					location.href=App.App_Info.BasePath+'/module/Followup/Followup.html?id='+_ss[0].data.id;
+              	  }
+              },'->',{
+            	  xtype:'tbseparator'
+			  },{
+				xtype:'textfield',
+				width:150,
+				emptyText:'会员姓名或病案号',
+				id:'search-keyword'
+			  },{
+				text:'搜索会员',
+				tooltip:'根据会员姓名或病案号搜索病人',
+				handler:function(){
+					var _val=Ext.getCmp('search-keyword').getValue().trim();
+					if(_val.length==0){
+						alert('关键字不能为空。');
+						return;
+					}
+					var _store=Ext.getCmp('grid').getStore();
+					_store.baseParams={method:'mempat_search',keyword:_val};
+					_store.load();
+				}
+			  },{
+				xtype:'tbseparator'
+			  }
+        ]
+	});
+	return _grid;
+}
+function getSelectionRows(){
+	return Ext.getCmp('grid').getSelectionModel().getSelections();
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

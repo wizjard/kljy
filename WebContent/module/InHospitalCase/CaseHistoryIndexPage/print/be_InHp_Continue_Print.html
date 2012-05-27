@@ -1,0 +1,926 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>住院病案首页</title>
+		<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+		<link type="text/css" rel="stylesheet" href="../css/indexPageCss.css"/>
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript">
+			var kid=null;
+			var pid=null;
+			kid = App.util.getHtmlParameters('kid');
+			pid = App.util.getHtmlParameters('pid');
+			$(function(){
+				setValue();
+				$('#all-double').click(function(){
+					createPrintHead();
+					printData();
+				});
+			});
+			function createPrintHead(){
+				LODOP.PRINT_INIT("病案首页续页");
+				LODOP.SET_PRINT_PAGESIZE(1,0,0,"A4");
+	
+				LODOP.ADD_PRINT_TEXT(30,80,400,40,"医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1");
+				LODOP.SET_PRINT_STYLEA(1,"FontSize",9);
+				LODOP.SET_PRINT_STYLEA(1,"ItemType",0);
+				LODOP.SET_PRINT_STYLEA(1,"HOrient",3);
+				LODOP.SET_PRINT_STYLEA(1,"VOrient",0);
+					
+				LODOP.ADD_PRINT_IMAGE(45,80,50,67,'<img width="50" height="67" src="'+App.App_Info.BasePath+'/PUBLIC/images/youanLogo.jpg"/>');
+				LODOP.SET_PRINT_STYLEA(2,"ItemType",1);
+				LODOP.ADD_PRINT_TEXT(80,130,400,40,"首都医科大学附属北京佑安医院");
+				LODOP.SET_PRINT_STYLEA(3,"FontSize",15);
+				LODOP.SET_PRINT_STYLEA(3,"Bold",1);
+				LODOP.SET_PRINT_STYLEA(3,"ItemType",1);
+				LODOP.ADD_PRINT_TEXT(100,130,400,40,"BeiJing YouAn Hospital,Capital Medical University");
+				LODOP.SET_PRINT_STYLEA(4,"FontSize",7);
+				LODOP.SET_PRINT_STYLEA(4,"Bold",1);
+				LODOP.SET_PRINT_STYLEA(4,"ItemType",1);
+			}
+			
+			function printData(){
+				LODOP.ADD_PRINT_HTM(115,65,645,1100,$('#print1').html());
+					LODOP.SET_PRINT_STYLEA(5,"ItemType",0);
+					LODOP.SET_PRINT_STYLEA(5,"HOrient",3);
+					LODOP.SET_PRINT_STYLEA(5,"VOrient",0);
+					LODOP.NEWPAGE();
+					LODOP.ADD_PRINT_TEXT(30,80,400,40,"医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1");
+					LODOP.SET_PRINT_STYLEA(6,"FontSize",9);
+					LODOP.SET_PRINT_STYLEA(6,"ItemType",0);
+					LODOP.SET_PRINT_STYLEA(6,"HOrient",3);
+					LODOP.SET_PRINT_STYLEA(6,"VOrient",0);
+					LODOP.ADD_PRINT_HTM(115,65,645,1100,$('#print2').html());
+					LODOP.SET_PRINT_STYLEA(7,"ItemType",0);
+					LODOP.SET_PRINT_STYLEA(7,"HOrient",3);
+					LODOP.SET_PRINT_STYLEA(7,"VOrient",0);
+					LODOP.SET_PRINT_MODE("DOUBLE_SIDED_PRINT",true);
+					LODOP.PREVIEW();
+				
+			}
+//初始化页面赋值
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHosp.do',
+		{
+			method:'ContinuePage_Print',
+			caseId:kid,
+			patientId:pid
+		},
+		function(data){
+			if(data.success){
+				var data = JSON.parse(data.data);
+				var doctor = data.doctor
+				$('span[name="patientName"]').html(doctor.patientName);
+				$('span[name="gender"]').html(doctor.gender);
+				$('span[name="birthday"]').html(doctor.birthday);
+				$('span[name="age"]').html(doctor.age);
+				$('span[name="kezhuren_show"]').html(doctor.kezhuren_show);
+				$('span[name="directorDoctorId_show"]').html(doctor.directorDoctorId_show);
+				$('span[name="directorDoctorId_show"]').html(doctor.directorDoctorId_show);
+				 $('span[name="treatDoctorId_show"]').html(doctor.treatDoctorId_show);
+				 $('span[name="inhspDoctorId_show"]').html(doctor.inhspDoctorId_show);
+				 $('span[name="jinxiu_show"]').html(doctor.jinxiu_show);
+				 $('span[name="yanjiusheng_show"]').html(doctor.yanjiusheng_show);
+				 $('span[name="shixi_show"]').html(doctor.shixi_show);
+				 $('span[name="bianma"]').html(doctor.bianma);
+				 $('span[name="bingan"]').html(doctor.bingan);
+				 $('span[name="qcyishi"]').html(doctor.qcyishi);
+				 $('span[name="qchushi"]').html(doctor.qchushi);
+				 $('span[name="badate"]').html(doctor.badate);
+				 $('span[name="zycs"]').html(doctor.zycs);
+				 $('span[name="zyh"]').html(doctor.zyh);    
+				    
+				var tab99 = data.tab99;
+				var tab2 = $('.tab2');
+				tab2.find('span[name="age_months"]').html(tab99.age_months);
+				tab2.find('span[name="age_day"]').html(tab99.age_day);
+				tab2.find('span[name="province"]').html(tab99.province);
+				tab2.find('span[name="city"]').html(tab99.city);
+				tab2.find('span[name="area"]').html(tab99.area);
+				
+				tab2.find('span[name="occupation"]').html(tab99.occupation);
+				tab2.find('span[name="people"]').html(tab99.people);
+				tab2.find('span[name="nationality"]').html(tab99.nationality);
+				tab2.find('span[name="marrageStatus"]').html(tab99.marrageStatus);
+				tab2.find('span[name="birthplace"]').html(tab99.birthplace);
+				tab2.find('span[name="idNo"]').html(tab99.idNo);
+				tab2.find('span[name="workUnitAddr"]').html(tab99.workUnitAddr);
+				tab2.find('span[name="workUnitTel"]').html(tab99.workUnitTel);
+				tab2.find('span[name="workUnitPostCode"]').html(tab99.workUnitPostCode);
+				tab2.find('span[name="homeAddr"]').html(tab99.homeAddr);
+				tab2.find('span[name="homePostCode"]').html(tab99.homePostCode);
+				tab2.find('span[name="contacterName"]').html(tab99.contacterName);
+				tab2.find('span[name="contacterRelationship"]').html(tab99.contacterRelationship);
+				tab2.find('span[name="contacterAdd"]').html(tab99.contacterAdd);
+				tab2.find('span[name="contacterTel"]').html(tab99.contacterTel);
+				tab2.find('span[name="inHspDate"]').html(tab99.inHspDate);
+				tab2.find('span[name="inWardCode"]').html(tab99.inWardCode);
+				tab2.find('span[name="inWard"]').html(tab99.inWard);
+				tab2.find('span[name="creditWard"]').html(tab99.creditWard);
+				tab2.find('span[name="outHspDate"]').html(tab99.outHspDate);
+				tab2.find('span[name="outHspWard"]').html(tab99.outHspWard);
+				tab2.find('span[name="outWard"]').html(tab99.outWard);
+				tab2.find('span[name="hspDate2"]').html(tab99.hspDate2);
+				tab2.find('span[name="menzhen"]').html(tab99.menzhen);
+				tab2.find('span[name="inStatus"]').html(tab99.inStatus);
+				tab2.find('span[name="inIllsShow"]').html(tab99.inIllsShow);
+				tab2.find('span[name="queding_checkdate"]').html(tab99.queding_checkdate);
+
+
+				
+				var sysptom = data.sysptom;
+				var ztr = $(".tab3").find("tr");
+				$.each(sysptom,function(i){
+					var leaveHospital = this.leaveHospital;
+					ztr.filter(function(i){return i>1}).eq(i).find('*[name="sysptom"]').html(this.sysptom);
+					///ztr.filter(function(i){return i>1}).eq(i).find('*[name="id"]').val(this.id);
+					ztr.filter(function(i){return i>1}).eq(i).find('*[name="icd"]').html(this.icd);
+					ztr.filter(function(i){return i>1}).eq(i).find('input[name="leaveHospital"]').each(function(){
+						if($(this).attr("value")==leaveHospital){
+							$(this).attr("checked",true);
+						}
+					});
+				});
+				var ops = data.ops;
+				var str = $(".tab4").find("tr");
+				$.each(ops,function(i){
+					str.filter(function(i){return i>1}).eq(i).html().replaceAll('&nbsp;');
+					str.filter(function(i){return i>1}).eq(i).find('span[name="operationNo"]').html(this.operationNo);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="tdate"]').html(this.tdate);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="surgeryName"]').html(this.surgeryName);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="surgeryDocName"]').html(this.surgeryDocName);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="surgeryAssistant1"]').html(this.surgeryAssistant1);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="surgeryAssistant2"]').html(this.surgeryAssistant2);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="anesthesiaMode"]').html(this.anesthesiaMode);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="cut"]').html(this.cut);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="analgesist"]').html(this.analgesist);
+					str.filter(function(i){return i>1}).eq(i).find('*[name="id"]').html(this.id);
+				});
+				var ward = data.ward;
+				var jtr = $(".tab5").find("tr");
+				$.each(ward,function(i){
+					jtr.filter(function(i){return i>0}).eq(i).find('*[name="icuName"]').html(this.icuName);
+					jtr.filter(function(i){return i>0}).eq(i).find('*[name="icuTurnInto"]').html(this.icuTurnInto);
+					jtr.filter(function(i){return i>0}).eq(i).find('*[name="icuDropOut"]').html(this.icuDropOut);
+					jtr.filter(function(i){return i>0}).eq(i).find('*[name="id"]').html(this.id);
+				});
+			}
+		},
+		 'json'
+	)
+}
+</script>
+</head>
+<body>
+<!--  <div id="page-toolbar"></div>-->
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-toolbar">
+	<table border=0 cellpadding=0 cellspacing=0>
+		<tr>
+			<td><button id="all-double">全部打印(双面)</button></td>
+		</tr>
+	</table>
+</div>
+	<div>
+		<p>&nbsp;</p>
+		<table width="645" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td align="left">
+					<span>医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</span>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td align="center">
+					<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+				</td>	
+			</tr>
+		</table>
+		<p>&nbsp;</p>
+	</div>
+	<div id="data">
+		<div id="print1">
+			<style type="text/css">
+				.tab2 td{height:24px;}
+				.tab3 td{height:24px}
+				.tab2{border:1px solid black;border-bottom:0px;border-left:0px}
+				.tab2 td{border:1px solid black;border-top:0px;border-rigth:0px}
+				.tab3{border:1px solid black;border-bottom:0px;border-top:0px;boder-right:0px}
+				.tab3 td{border:1px solid black;border-top:0px;border-left:0px;}
+				.tab4{border:1px solid black;border-bottom:0px;border-right:0px;border-top:0px}
+				.tab4 td{border:1px solid black;border-left:0px;border-top:0px}
+				.cb{border:0px;line-height:10px;height:13px}
+				.pane{border:1px solid black;height:15px;width:13px;float:left;}
+				.nopane{float:left;}
+			</style>
+			<table width="645" style="font-size:13px;" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+				<tr>
+					<td colspan="2" align="center"><b style="font-size:22px;font-family:'黑体';line-height:22px";">住  院  病  案  续  页</b></td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right" style="width:350px">第&nbsp;<span class="nopanel" name="zycs"></span>&nbsp;次住院 </td>
+					<td align="left"><div style="margin-left:150px;">病案号：<span name="zyh">&nbsp;</span></div></td>
+				</tr>
+				
+			</table>
+		<form>
+			<table width="645" class="tab2" style="font-size:13px;" align="center" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=3>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:110px">姓名：<span name="patientName"></span></div>
+						<div class="nopane" style="margin-left:25px">性别：</div>
+						<div class="pane"><span name="gender"></span></div>
+						<div class="nopane">&nbsp;&nbsp;1.男&nbsp;2.女</div>
+						<div style="float:left;margin-left:25px;width:140px">出生日期：<span name="birthday"></span></div>
+						<div class="nopane" style="width:145px;padding-left:10px;margin-left:25px">
+							年龄：<span name="age">&nbsp;</span>
+							<span name="age_months">&nbsp;</span>月
+							<span name="age_day">&nbsp;</span>天
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div class="nopane">婚姻：</div>
+						<div class="pane"><span name="marrageStatus"></span></div>
+						<div class="nopane">&nbsp;1.未&nbsp;2.已&nbsp;3.离&nbsp;4.丧</div>
+						<div style="float:left;margin-left:35px;">
+							出生地：<span name="province">&nbsp;</span>省
+							<span name="city">&nbsp;</span>县(区)<span name="area">&nbsp;</span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:130px">职业：<span name="occupation"></span></div>
+						<div style="float:left;width:120px;margin-left:25px;">民族：<span name="people"></span></div>
+						<div style="float:left;width:110px;margin-left:25px;">国籍：<span name="nationality"></span></div>
+						<div style="float:right;width:200px;margin-left:25px;">身份证号：<span name="idNo"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:380px">工作单位及地址：<span name="workUnitAddr"></span></div>
+						<div style="float:left;width:140px">电话：<span name="workUnitTel" ></span></div>
+						<div style="float:left;">邮政编码：<span name="workUnitPostCode"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:520px">户口地址/现住址：<span name="homeAddr"></span></div>
+						<div style="float:left;">邮政编码：<span name="homePostCode"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:150px">联系人姓名：<span name="contacterName">&nbsp;</span></div>
+						<div style="float:left;width:90px">关系：<span name="contacterRelationship">&nbsp;</span></div>
+						<div style="float:left;width:270px">地址：<span name="contacterAdd">&nbsp;</span></div>
+						<div style="float:left;">电话：<span name="contacterTel">&nbsp;</span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:180px;">入院日期：<span name="inHspDate">&nbsp;</span></div>
+						<div style="float:left;width:170px;">入院科别：<span name="inWardCode">&nbsp;</span></div>
+						<div style="float:left;width:125px;">病室：<span name="inWard">&nbsp;</span></div>
+						<div style="float:right;width:155px;">转科科别：<span name="creditWard">&nbsp;</span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" colspan="2">
+						<div style="float:left;width:180px">出院日期：<span name="outHspDate">&nbsp;</span></div>
+						<div style="float:left;width:190px">出院科别：<span name="outHspWard">&nbsp;</span></div>
+						<div style="float:left;width:145px">病室：<span name="outWard">&nbsp;</span></div>
+						<div style="float:left;width:100px;">实际住院：<span name="hspDate2">&nbsp;</span>天</div>
+					</td>
+				</tr>
+				<!--<tr>
+					<td class="td" colspan="2">
+						<div style="border:solid 1px #000;width:300px;">
+							门(急)诊诊断：<span name="menzhen">&nbsp;</span>	
+						</div>
+						<div style="float:right;">
+							<div class="nopane">入院时情况：</div>
+							<div class="pane"><span name="inStatus"></span></div>
+							<div class="nopane">1.危2.急3.一般</div>
+						</div>
+					</td>
+				</tr>-->
+				<tr>	
+					<td class="td" style="border-right-style:none;">
+						门(急)诊诊断：<span name="menzhen">&nbsp;</span>
+					</td>
+					<td class="td" style="border-left:none;float:right;">	
+						<div class="nopane">入院时情况：</div>
+						<div class="pane"><span name="inStatus"></span></div>
+						<div class="nopane">1.危2.急3.一般</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="td" style="border-right-style:none;width:350px;"> 
+						入院诊断：<span name="inIllsShow"></span>
+					</td>
+					<td class="td" style="border-left:none;float:right;">	
+						<div style="">
+							入院后确诊日期：<span name="queding_checkdate">&nbsp;</span>
+						</div>
+					</td>
+				</tr>
+	</table>
+	<table width="645" class="tab3" style="font-size:12px;" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=3>
+		<tr>
+			<td rowspan="2" align="center" width="350"><span>出院诊断</span></td>
+			<td colspan="5" align="center">出院时情况</td>
+			<td rowspan="2" width="50">ICD-10</td>
+		</tr>
+		<tr align="center">
+			<td>1.治愈</td>
+			<td>2.好转</td>
+			<td>3.未愈</td>
+			<td>4.死亡</td>
+			<td>5.其他</td>
+		</tr>
+		<tr>
+			<td align="left" style="width:250px;line-heigth:13px;height:13px">其它诊断:<span name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"     name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"     name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"     name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"     name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"     name="leaveHospital" value="5"/></td>
+			<td style="width:50px">&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left"><span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1" /></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2" /></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3" /></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4" /></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5" /></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td> &nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<!-- <tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td> &nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td><input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td> &nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td> &nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr> -->
+		<!-- <tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td> &nbsp;<span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>
+		<tr>
+			<td align="left">&nbsp;<span style="line-heigth:13px;height:13px" name="sysptom"></span></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="1"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="2"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="3"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="4"/></td>
+			<td> <input class="cb" type="checkbox"    name="leaveHospital" value="5"/></td>
+			<td>&nbsp; <span style="line-heigth:13px;height:13px" name="icd"></span></td>
+		</tr>-->
+	</table>
+	</div>
+	<div id="print2">
+	<style type="text/css">
+		.tab4{border:1px solid black;border-bottom:0px;border-right:0px;}
+		.tab4 td{border:1px solid black;border-left:0px;border-top:0px;height:28px}
+		.tab5{border:1px solid black;border-bottom:0px;border-right:0px;border-top:0px}
+		.tab5 td{border:1px solid black;border-left:0px;border-top:0px;height:28px}
+		.tab6{border:1px solid black;border-top:0px;border-right:0px;border-bottom:0px}
+		.tab6 td{border:1px solid black;border-top:0px;border-left:0px;height:28px}
+	</style>
+	<table width="645" class="tab4" style="font-size:11px" style="font-size:11px" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<!--<tr align="center" height="30">
+				<td rowspan="2" width="40">手术操作编码</td>
+				<td rowspan="2" width="120">手术操作日期</td>
+				<td rowspan="2" width="170">手术操作名称</td>
+				<td colspan="3" width="120">手术操作医师</td>
+				<td rowspan="2" width="70">麻醉方式</td>
+				<td rowspan="2" width="45">切口愈合等级</td>
+				<td rowspan="2" width="55">麻醉医师</td>
+			</tr>
+			<tr align="center">
+				<td style="width:10%">术者</td>
+				<td style="width:10%">Ⅰ助</td>
+				<td style="width:10%">Ⅱ助</td>
+			</tr>-->
+			<tr style="font-size:11px" align="center">
+				<td rowspan="2" >手术操作<br>编码</td>
+				<td rowspan="2" >手术操作<br>日期</td>
+				<td rowspan="2">手术操作<br>名称</td>
+				<td colspan="3">手术操作医师</td>
+				<td rowspan="2">麻醉方式</td>
+				<td rowspan="2">切口愈合<br>等级</td>
+				<td rowspan="2">麻醉医师</td>
+			</tr>
+			<tr align="center">
+				<td style="width:10%">术者</td>
+				<td style="width:10%">Ⅰ助</td>
+				<td style="width:10%">Ⅱ助</td>
+			</tr>
+			<tr>
+				<td width="40px"><span name="operationNo"></span></td>
+				<td width="75px" align="center"><span name="tdate"></span></td>
+				<td width="150px"><span name="surgeryName"></span></td>
+				<td width="40px"><span name="surgeryDocName"></span></td>
+				<td width="40px"><span name="surgeryAssistant1"></span></td>
+				<td width="40px"><span name="surgeryAssistant2"></span></td>
+				<td width="70px"><span name="anesthesiaMode"></span></td>
+				<td width="30"><span name="cut"></span></td>
+				<td width="55"><span name="analgesist"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span>&nbsp;</td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span>&nbsp;</td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+			<tr style="font-size:11px">
+				<td>&nbsp;<span name="operationNo"></span></td>
+				<td align="center">&nbsp;<span name="tdate" align="center"></span></td>
+				<td>&nbsp;<span name="surgeryName"></span></td>
+				<td>&nbsp;<span name="surgeryDocName"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+				<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+				<td>&nbsp;<span name="anesthesiaMode"></span></td>
+				<td>&nbsp;<span name="cut"></span></td>
+				<td>&nbsp;<span name="analgesist"></span></td>
+			</tr>
+	</table>
+			<table width="645" class="tab5" style="font-size:13px;" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr align="center">
+				<td>重症监护室名称</td>
+				<td>进入时间(年_月_日_时_分_)</td>
+				<td>退出时间(年_月_日_时_分_)</td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp; <span name="icuName"></span></td>
+				<td>&nbsp; <span name="icuTurnInto"></span></td>
+				<td>&nbsp; <span name="icuDropOut"></span></td>
+			</tr>
+		</table>
+		<table width="645" class="tab6" style="font-size:13px;" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td width="235">科主任：<span name="kezhuren_show"></span></td>
+				<td width="215">主(副)主任医师：<span name="directorDoctorId_show"></span></td>
+				<td width="215">主治医师：<span name="treatDoctorId_show"></span></td>
+			</tr>
+			<tr>
+				<td>住院医师：<span name="inhspDoctorId_show"></span></td>
+				<td>进修医师：<span name="jinxiu_show"></span></td>
+				<td>研究生实习医师：<span name="yanjiusheng_show"></span></td>
+			</tr>
+			<tr>	
+				<td>实习医师：<span name="shixi_show"></span></td>
+				<td>编码员：<span name="bianma"></span><br></td>
+				<td>质控医师：<span name="qcyishi"></span></td>
+			</tr>
+			<tr>
+				<td><div style="float:left">病案质量：</div><div style="border:1px solid black;float:left;width:15px;height:20px"><span name="bingan"></span></div><div style="float:left">&nbsp;1.甲&nbsp;2.乙&nbsp;3.丙</div></td>
+				<td>质控护师：<span name="qchushi"></span></td>
+				<td>日期：<span name="badate"></span></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</body>
+</html>

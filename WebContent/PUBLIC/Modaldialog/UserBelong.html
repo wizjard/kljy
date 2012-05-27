@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户机构单位选择窗口</title>
+<link type="text/css" rel="stylesheet" href="dialog.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../PUBLIC/Scripts/dTree/css/dtree.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/dTree/js/checkTree.js"></script>
+<style type="text/css">
+#dtree{
+	width:300px;
+	height:400px;
+	border:solid #ccc 1px;
+	overflow:scroll;
+}
+</style>
+<script type="text/javascript">
+/**
+ * 用户机构单位选择窗口
+ * dialogWidth=302px;dialogHeight=424px
+ * window.returnValue={
+		text:'',
+		value:''
+	}
+ */
+var dtree = new dTree('dtree');
+dtree.add('1','-1','机构单位总表','root','_self');
+$(function(){
+	$.post(
+		App.App_Info.BasePath+'/common/CommonAction.do',
+		{
+			method:'GetIndependentDictionaryList',
+			code:'belong'
+		},
+		function(data){
+			$.each(data,function(){
+				var _pid=this[2];
+				if(!_pid||_pid=='null'||_pid.length==0){
+					_pid='1';
+				}
+				dtree.add(this[0],_pid,this[1],this[0],this[1],'_self');
+			});
+			dtree.config.useSelection=true;
+			dtree.config.folderLinks=false;	
+			dtree.config.useCookies=false;
+			document.getElementById('dtree').innerHTML+=dtree.toString();
+			dtree.openAll();
+			$.each($('input[type="checkbox"]'),function(){
+				if(this.value=='null'){
+					this.parentNode.removeChild(this);
+				}else{
+					$(this).click(function(){
+						var _checked=this.checked;
+						$('input[type="checkbox"]').attr('checked',false);
+						if(_checked){
+							this.checked=true;
+						}else{
+							this.checked=false;
+						}
+					});
+				}
+			});
+		},
+		'json'
+	);
+});
+function OkBtnClick(){
+	var _val='';
+	var _txt='';
+	$.each($('input[type="checkbox"]'),function(){
+		if(this.checked){
+			_val=this.value;
+			_txt=$(this).parent().text();
+			return false;
+		}
+	});
+	if(_val.length>0){
+		$.ajax({
+			url:App.App_Info.BasePath+'/common/CommonAction.do',
+			data:{
+				method:'GetIndependentDictionaryText',
+				code:'parent_belong',
+				value:_val
+			},
+			async:false,
+			dataType:'text',
+			success:function(txt){
+				window.returnValue={
+					text:txt+'->'+_txt,
+					value:_val
+				}
+				window.close();
+			}
+		});
+	}else{
+		window.returnValue={
+			text:'',
+			value:''
+		}
+		window.close();
+	}
+}
+</script>
+</head>
+<body>
+<div id="dtree">
+	<div class="toolbar">
+		<input type="button" class="btn" value="确定" onclick="OkBtnClick()"/>
+		<input type="button" class="btn" value="关闭" onclick="window.close()"/>
+	</div>
+</div>
+</body>
+</html>

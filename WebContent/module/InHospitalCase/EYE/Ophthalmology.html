@@ -1,0 +1,1781 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="ophthalmology.js"></script>
+<title>专科检查</title>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	/*
+	var right = $('.left').clone();
+	right.find('.re').remove();
+	right.find('img').eq(0).parent().html('左眼<img src="zuo_yan.JPG" width="100" height="80" />');
+    right.appendTo($('td[name="left"]'));
+    $('td[name="left"]').find('input,select').each(function(){
+    	$(this).attr('flag',$(this).attr('flag')+'2');
+    });
+    */
+    initPage();
+});
+
+function initPage(){
+	$.post(
+		App.App_Info.BasePath+'/eye.do',
+		{
+			method:'eye_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var json=JSON.parse(data.data);
+				if(json){
+					SetFormValues('form',json);
+					if(json.sgn_sl_jz <=0.02){
+						document.getElementById("showSeRight1").style.display="block";
+						document.getElementById("showSeRight2").style.display="block";
+						document.getElementById("showSeRight3").style.display="block";
+					}
+					if(json.sgn_sl_jz2 <=0.02){
+						document.getElementById("showSeLeft1").style.display="block";
+						document.getElementById("showSeLeft2").style.display="block";
+						document.getElementById("showSeLeft3").style.display="block";
+					}
+					if(json.ys_yanjian =="自定义"){
+						document.getElementById("yanjian_zidingyiRight").style.display="block";
+					}
+					if(json.ys_yanjian2 =="自定义"){
+						document.getElementById("yanjian_zidingyiLeft").style.display="block";
+					}
+					if(json.lq_chongxi =="自定义"){
+						document.getElementById("leiqi_chongxiRight").style.display="block";
+					}
+					if(json.lq_chongxi2 =="自定义"){
+						document.getElementById("leiqi_chongxiLeft").style.display="block";
+					}
+					if(json.jm_jm == "自定义"){
+						document.getElementById("jiemo_jiemoRight").style.display="block";
+					}
+					if(json.jm_jm2 == "自定义"){
+						document.getElementById("jiemo_jiemoLeft").style.display="block";
+					}
+					if(json.jm_kp == "自定义"){
+						document.getElementById("kpRight").style.display="block";
+					}
+					if(json.jm_kp2 == "自定义"){
+						document.getElementById("kpLeft").style.display="block";
+					}
+					
+					if(json.qf_zyqf == "自定义"){
+						document.getElementById("qianfang_zhongyangqianfangRight").style.display="block";
+					}
+					if(json.qf_zyqf2 == "自定义"){
+						document.getElementById("qianfang_zhongyangqianfangLeft").style.display="block";
+					}
+					if(json.hm_ln =="(+)"){
+						document.getElementById("zhanlianweizhiRight").style.display="block";
+					}
+					if(json.hm_ln2 =="(+)"){
+						document.getElementById("zhanlianweizhiLeft").style.display="block";
+					}
+					if(json.hm_wl== "自定义"){
+						document.getElementById("hongmo_wenliRight").style.display="block";
+					}
+					if(json.hm_wl2== "自定义"){
+						document.getElementById("hongmo_wenliLeft").style.display="block";
+					}
+					if(json.tk_nl== "自定义"){
+						document.getElementById("tongkong_zhanlianRight").style.display="block";
+					}
+					if(json.tk_nl2== "自定义"){
+						document.getElementById("tongkong_zhanlianLeft").style.display="block";
+					}
+					if(json.tk_yw== "自定义"){
+						document.getElementById("tongkong_yiweiRight").style.display="block";
+					}
+					if(json.tk_yw2== "自定义"){
+						document.getElementById("tongkong_yiweiLeft").style.display="block";
+					}
+					if(json.jzt_jzttw== "自定义"){
+						document.getElementById("zh_jzttwRight").style.display="block";
+					}
+					if(json.jzt_jzttw2== "自定义"){
+						document.getElementById("zh_jzttwLeft").style.display="block";
+					}
+					if(json.jzt_hlhz== "自定义"){
+						document.getElementById("zh_hnhzRight").style.display="block";
+					}
+					if(json.jzt_hlhz2== "自定义"){
+						document.getElementById("zh_hnhzLeft").style.display="block";
+					}
+					
+					if(json.jzt_bzsxygb== "自定义"){
+						document.getElementById("zh_qizhiRight").style.display="block";
+					}
+					if(json.jzt_bzsxygb2== "自定义"){
+						document.getElementById("zh_qizhiLeft").style.display="block";
+					}
+					
+					if(json.yd_sp== "自定义"){
+						document.getElementById("yd_shipanRight").style.display="block";
+					}
+					if(json.yd_sp2== "自定义"){
+						document.getElementById("yd_shipanLeft").style.display="block";
+					}
+					if(json.yd_hb_zxagfs== "自定义"){
+						document.getElementById("yd_huangbanRight").style.display="block";
+					}
+					if(json.yd_hb_zxagfs2== "自定义"){
+						document.getElementById("yd_huangbanLeft").style.display="block";
+					}
+					if(json.jzt_xz_hz != "" && json.jzt_xz_hz!="透明"){
+						document.getElementById("jintuoweiRight").style.display="block";
+					}
+					if(json.jzt_xz_hz2 != "" && json.jzt_xz_hz2!="透明"){
+						document.getElementById("jintuoweiLeft").style.display="block";
+					}
+					if(json.blt_hz != "" && json.blt_hz!="清亮"){
+						document.getElementById("bolitiRight").style.display="block";
+					}
+					if(json.blt_hz2 != "" && json.blt_hz2!="清亮"){
+						document.getElementById("bolitiLeft").style.display="block";
+					}
+					
+				}
+			}else{
+				alert('初始化页面失败');
+			}
+		},
+		'json'
+	 );
+}
+
+function SaveData(){
+	var value = GetFormValues('form');
+	$.post(
+		App.App_Info.BasePath+'/eye.do',
+		{
+			method:'eye_SaveorUpdate',
+			data:JSON.stringify(value)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功');
+				var json=JSON.parse(data.data);
+				$('input[name="id"]').val(json.id);
+				SetFormValues('form',json);
+				
+				if(json.sgn_sl_jz <=0.02){
+					document.getElementById("showSeRight1").style.display="block";
+					document.getElementById("showSeRight2").style.display="block";
+					document.getElementById("showSeRight3").style.display="block";
+				}
+				if(json.sgn_sl_jz2 <=0.02){
+					document.getElementById("showSeLeft1").style.display="block";
+					document.getElementById("showSeLeft2").style.display="block";
+					document.getElementById("showSeLeft3").style.display="block";
+				}
+				
+			}
+		},
+		'json'
+	 );
+}
+
+function GetFormValues(_sp){
+	var _values={};
+	var _prxFlag='';
+	$.each($(_sp+' input'),function(){
+		//提取input类型
+		var _inputType=this.type;
+		if(_inputType=='button'||_inputType=='submit'||_inputType=='reset')
+			return;
+		//提取class类型
+		var _class=this.className;
+		//处理重名字段
+		var _flag=this.id||this.flag;
+		if(_prxFlag==_flag){
+			return true;
+		}else{
+			_prxName=_flag;
+		}
+		if(_inputType=='radio'){//Radio字段
+			$(_sp+' input[flag="'+_flag+'"]').each(function(){
+				if(this.checked){
+					_values[_flag]=this.value;
+					return false;
+				}
+			});
+		}else if(_inputType=='checkbox'){//Checkbox字段
+			var _temp='';
+			$.each($(_sp+' input[flag="'+_flag+'"][checked]'),function(){
+				_temp+='<'+$(this).val()+'>';
+			});
+			_values[_flag]=_temp;
+		}else if(_inputType=='text'){//text字段
+			if (_class == 'select') {
+				if(($(this).val()+'').length==0)
+					_values[_flag]='';
+				else
+					_values[_flag] = $(this).attr('inputValue');
+			}else 
+				_values[_flag] = $(this).val();
+		}else{//其它字段
+			_values[_flag]=$(this).val();
+		}
+	});
+	$.each($(_sp+' textarea'),function(){
+		_values[this.id||this.flag]=$(this).val();
+	});
+	$.each($(_sp+' select'),function(){
+		_values[this.id||this.flag]=$(this).val();
+	});
+	return _values;
+}
+
+function SetFormValues(_sp,_values){
+	//textarea赋值
+	$.each($(_sp+' textarea'),function(){
+		var _val=_values[this.id||this.flag];
+		$(this).val(_val?_val:'');
+	});
+	var _prxFlag='';
+	$.each($(_sp+' input'),function(){
+		//提取input类型
+		var _inputType=this.type;
+		if(_inputType=='button'||_inputType=='submit'||_inputType=='reset')
+			return;
+		//提取class类型
+		var _class=this.className;
+		//处理重名字段
+		var _flag=this.id||this.flag;
+		if(_prxFlag==_flag){
+			return true;
+		}else{
+			_prxFlag=_flag;
+		}
+		var _val=_values[_flag]+'';
+		if(_val=='undefined'||_val=='null'){
+			_val='';
+		}
+		if(_inputType=='radio'){//Radio字段
+			if((_val+'').length>0)
+				$('input[flag="'+_flag+'"]').each(function(){
+					if(this.value==_val){
+						this.checked=true;
+						return false;
+					}
+				});
+		}else if(_inputType=='checkbox'){
+			if(_val.length>0){
+				$('input[flag="'+_flag+'"]').attr("checked", true);
+			}
+		}else if(_inputType=='text'){
+			if (_class == 'select') {
+				var _input=$(this);
+				$.each($(this).data('options'),function(){
+					if(this[0]==_val){
+						_input.attr('inputValue',_val);
+						_input.val(this[1]);
+						if(this[1]=='其他'||this[1]=='其它')
+							$('input[flag="'+_flag+'0"]').show();
+					}
+				});
+			}else{
+				$(this).val(_val);
+			}
+		}else{
+			$(this).val(_val);
+		}
+	});
+	//select 初始化2011-03-04修改
+	$.each($(_sp+' select'),function(){
+		var _val=_values[this.id||this.flag];
+		$(this).val(_val?_val:'');
+	});
+}
+
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+	
+</script>
+<style type="text/css">
+textarea{
+	width:98%;
+	height:80px;
+}
+h1{
+	text-align:center;
+	font-size:12px;
+	margin:0;
+	padding:2px 0;
+}
+ .red {
+ 	color:red;
+ }
+.t4{ 
+  font-size: 12px;
+	padding-top: 1px;
+    text-align: right;
+	padding-bottom: 1px;
+	
+}
+.t5{ 
+  font-size: 12px;
+	padding-top: 1px;
+	background-color: #f5f5f5;
+	text-align: right;
+	padding-bottom: 1px;
+	text-align:left;
+}
+
+</style>
+</head>
+   <body>
+   <form>
+   	<input type="hidden" name="id" flag="id" value="-1" />
+   	<input type="hidden" name="caseId" flag="caseId" value="-1" />
+	<table width="600" class="big" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		<tr>
+			<td class="title" colspan=4>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<table width="300" height="2500" class="left" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				 <tr>
+					<td width="13" rowspan="2" class="re"><b style="font-size:14px">眼部位置</b></td>
+					<td colspan="3"></td>
+				 </tr>
+				  <tr>
+					<td  colspan="3" align="center"><b>右眼<img src="you_yan.JPG" width="100" height="85" /></b></td>
+					<td  colspan="3" align="center"><b>左眼<img src="zuo_yan.JPG" width="100" height="85" /></b></td>
+				  </tr>
+				   <tr >
+					<td class="re"><b style="font-size:14px">&nbsp</b></td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   <td colspan="3"><textarea style="height:50px" name="eyeLeftRightContent" flag="eyeLeftRightContent"></textarea></td>
+						  
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   <td colspan="3"><textarea style="height:50px" name="eyeLeftRightContent2" flag="eyeLeftRightContent2"></textarea></td>
+						  
+						   </tr>
+						</table>
+					</td>
+				  </tr>
+				  <tr>
+					<td width="13"  class="re"><b style="font-size:14px">视功能</b></td>
+					<td height="59" colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						  <tr>
+							<td width="80"   class="t1" align="right">远视力</td>
+							<td width="150"  class="t2"><input type="text" style="width:120px;" name="sgn_sl_ys" flag="sgn_sl_ys"/></td>
+							</tr>
+							<tr>
+							<td width="80"  class="t1" align="right">近视力</td>
+							<td width="100"  class="t2"><input type="text" style="width:120px;" name="sgn_sl_js" flag="sgn_sl_js"/></td>
+							</tr>
+							<tr>
+							<td width="80"  class="t1"  align="right">矫正视力</td>
+							<td width="100"  class="t2"><input type="text" style="width:120px;"  name="sgn_sl_jz" flag="sgn_sl_jz" onblur="showSeJueRight(this)"/></td>
+						   </tr>
+							<tr id="showSeRight1" style="display:none">
+								<td width="80" class="t4">光定位&nbsp;</td>
+								<td class="t2"><table>
+									<tr>
+										<td>
+											<select name="sgn_gdwr1"  flag="sgn_gdwr1">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr2"  flag="sgn_gdwr2">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr3"  flag="sgn_gdwr3">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<select name="sgn_gdwr4"  flag="sgn_gdwr4">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr5"  flag="sgn_gdwr5">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr6"  flag="sgn_gdwr6">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<select name="sgn_gdwr7"  flag="sgn_gdwr7">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr8"  flag="sgn_gdwr8">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwr9"  flag="sgn_gdwr9">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+								</table></td>
+							
+							</tr>
+							<tr id="showSeRight2" style="display:none">
+								<td width="80" align="left"  class="t4">色觉&nbsp;</td>
+								<td class="t2" width="150"  class="t5">
+									<select name="sgn_gg" style="width:120px;" flag="sgn_gg">
+										<option value=""></option>
+										<option value="(-)">(-)</option>
+										<option value="(+)">(+)</option>
+									</select>红
+								</td>
+							
+							</tr>
+							<tr id="showSeRight3" style="display:none">
+								<td>&nbsp;</td>
+								<td class="t2" width="150"  class="t5">
+									<select name="sgn_gdw_l" style="width:120px;" flag="sgn_gdw_l">
+										<option value=""></option>
+										<option value="(-)">(-)</option>
+										<option value="(+)">(+)</option>
+									</select>绿
+								</td>
+							</tr>
+						   <tr>
+						    <td colspan="3"><textarea style="height:50px" name="shigongnengRightContent" flag="shigongnengRightContent"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td height="59" colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						  <tr>
+							<td width="80"   class="t1" align="right">远视力</td>
+							<td width="150"  class="t2"><input type="text" style="width:120px;" name="sgn_sl_ys2" flag="sgn_sl_ys2"/></td>
+							</tr>
+							<tr>
+							<td width="80"  class="t1" align="right">近视力</td>
+							<td width="100"  class="t2"><input type="text" style="width:120px;" name="sgn_sl_js2" flag="sgn_sl_js2"/></td>
+							</tr>
+							<tr>
+							<td width="80"  class="t1"  align="right">矫正视力</td>
+							<td width="100"  class="t2"><input type="text" style="width:120px;"  name="sgn_sl_jz2" flag="sgn_sl_jz2" onblur="showSeJueLeft(this)"/></td>
+						   </tr>
+							<tr id="showSeLeft1" style="display:none">
+								<td width="80" class="t4">光定位&nbsp;</td>
+								<td class="t2"><table>
+									<tr>
+										<td>
+											<select name="sgn_gdwl1"  flag="sgn_gdwl1">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl2"  flag="sgn_gdwl2">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl3"  flag="sgn_gdwl3">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<select name="sgn_gdwl4"  flag="sgn_gdwl4">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl5"  flag="sgn_gdwl5">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl6"  flag="sgn_gdwl6">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<select name="sgn_gdwl7"  flag="sgn_gdwl7">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl8"  flag="sgn_gdwl8">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+										<td>
+											<select name="sgn_gdwl9"  flag="sgn_gdwl9">
+												<option value=""></option>
+												<option value="-">-</option>
+												<option value="+">+</option>
+											</select>
+										</td>
+									</tr>
+								</table></td>
+	
+							</tr>
+						  	<tr id="showSeLeft2" style="display:none">
+							    <td width="80" align="left"  class="t4">色觉&nbsp;</td>
+							    <td class="t2" width="150"  class="t5">
+								    <select name="sgn_gg2" style="width:120px;" flag="sgn_gg2">
+									    <option value=""></option>
+									  	<option value="(-)">(-)</option>
+										<option value="(+)">(+)</option>
+									</select>红
+								</td>
+								
+						  </tr>
+						  <tr id="showSeLeft3" style="display:none">
+							 <td>&nbsp;</td>
+							 <td class="t2" width="150"  class="t5">
+								 <select name="sgn_gdw_l2" style="width:120px;" flag="sgn_gdw_l2">
+									<option value=""></option>
+									<option value="(-)">(-)</option>
+									<option value="(+)">(+)</option>
+								</select>绿
+							 </td>
+						</tr>
+						<tr>
+						    <td colspan="3"><textarea style="height:50px" name="shigongnengLeftContent" flag="shigongnengLeftContent"></textarea></td>
+					   </tr>
+					</table>
+					</td>
+				  </tr>
+				  <tr>
+					<td width="13" class="re"><b style="font-size:14px" >眼压</b></td>
+					<td colspan="3" >
+					<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+					   <td width="80" align="right" class="t1">眼压</td>
+					   <td width="150" height="20"  class="t2"><input type="text" style="width:120px;" name="yy_yanya" flag="yy_yanya"></td>
+					   <td class="t2">mmHg</td>
+					   </tr>
+					</table>
+					</td>
+					<td colspan="3">
+					<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+					   <td width="80" align="right" class="t1">眼压</td>
+					   <td width="150" height="20"  class="t2"><input type="text" style="width:120px;" name="yy_yanya2" flag="yy_yanya2"></td>
+					   <td class="t2">mmHg</td>
+					   </tr>
+					</table>
+					</td>
+				  </tr>
+				  
+				  <tr>
+					<td class="re"><b style="font-size:14px">眼睑</b></td>
+					<td colspan="3" width="300">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+						 <td width="80" align="right" class="t1">眼睑</td>
+						 <td  class="t2"  height="30">
+							 <select name="ys_yanjian" style="width:120px;" flag="ys_yanjian" onchange ="showZidingyi_yanjianRight(this)">
+								<option value=""></option>
+								<option value="正常">正常</option>
+								<option value="内翻">内翻</option>
+								<option value="外翻">外翻</option>
+								<option value="上睑倒睫">上睑倒睫</option>
+								<option value="下睑到睫">下睑到睫</option>
+								<option value="自定义">自定义</option>
+							</select>
+						 </td>
+						 <td class="t2">&nbsp;</td>
+					   </tr>
+					   <tr id="yanjian_zidingyiRight" style="display:none">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3"><textarea name="yanjian_zidingyi" flag="yanjian_zidingyi" class="textarea" style="width:92%"></textarea></td>
+					   </tr>
+					 </table>
+					</td>
+					<td colspan="3" width="300">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+						 <td width="80" align="right" class="t1">眼睑</td>
+						 <td  class="t2"  height="30">
+							 <select name="ys_yanjian2" style="width:120px;" flag="ys_yanjian2" onchange ="showZidingyi_yanjianLeft(this)">
+								<option value=""></option>
+								<option value="正常">正常</option>
+								<option value="内翻">内翻</option>
+								<option value="外翻">外翻</option>
+								<option value="上睑倒睫">上睑倒睫</option>
+								<option value="下睑到睫">下睑到睫</option>
+								<option value="自定义">自定义</option>
+							</select>
+						 </td>
+						 <td class="t2">&nbsp;</td>
+					   </tr>
+					   <tr id="yanjian_zidingyiLeft" style="display:none">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3"><textarea name="yanjian_zidingyi2" flag="yanjian_zidingyi2" class="textarea" style="width:92%"></textarea></td>
+					   </tr>
+					 </table>
+					</td>
+				  </tr>
+				  
+				  <tr>
+					<td rowspan="2" class="re"><b style="font-size:14px">泪器</b></td>
+					<td colspan="3">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						<tr>
+						   <td width="80" align="right"  class="t4">冲洗</td>
+						   <td height="30"  class="t5">
+							   <select name="lq_chongxi" style="width:120px;" flag="lq_chongxi" onchange ="showleiqi_chongxiRight(this)">
+								   <option value=""></option>
+								   <option value="冲洗通畅">冲洗通畅</option>
+								   <option value="下冲上返，加压原返">下冲上返，加压原返</option>
+								   <option value="原冲原返">原冲原返</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   </td>
+						   <td   class="t5">&nbsp;</td>
+						</tr>
+						 <tr id="leiqi_chongxiRight" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="leiqi_chongxi" flag="leiqi_chongxi" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					 </table> 
+					</td>
+					<td colspan="3">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						<tr>
+						   <td width="80" align="right"  class="t4">冲洗</td>
+						   <td height="30"  class="t5">
+							   <select name="lq_chongxi2" style="width:120px;" flag="lq_chongxi2" onchange ="showleiqi_chongxiLeft(this)">
+								   <option value=""></option>
+								   <option value="冲洗通畅">冲洗通畅</option>
+								   <option value="下冲上返，加压原返">下冲上返，加压原返</option>
+								   <option value="原冲原返">原冲原返</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   </td>
+						   <td   class="t5">&nbsp;</td>
+						</tr>
+						 <tr id="leiqi_chongxiLeft" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="leiqi_chongxi2" flag="leiqi_chongxi2" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					 </table> 
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t4">分泌物</td>
+						   <td height="30"  class="t5">
+							   <select name="lq_fenmiwu" style="width:120px;" flag="lq_fenmiwu">
+								   <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td   class="t5">&nbsp;</td>
+						</tr>
+						 <tr>
+						    <td colspan="3"><textarea style="height:50px" name="leiqiRightContent" flag="leiqiRightContent"></textarea></td>
+					     </tr>
+					  </table>
+					</td>
+					<td colspan="3">
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t4">分泌物</td>
+						   <td height="30"  class="t5">
+							   <select name="lq_fenmiwu2" style="width:120px;" flag="lq_fenmiwu2">
+								  <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td   class="t5">&nbsp;</td>
+						</tr>
+						<tr>
+						    <td colspan="3"><textarea style="height:50px" name="leiqiLeftContent" flag="leiqiLeftContent"></textarea></td>
+					     </tr>
+					  </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td  class="re"><b style="font-size:14px">结膜</b></td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1" >结膜</td>
+						   <td  class="t2" height="30">
+							   <select name="jm_jm" style="width:120px;" flag="jm_jm" onchange ="showZidingyi_jm_jmRight(this)">
+								   <option value=""></option>
+								   <option value="无充血">无充血</option>
+								   <option value="结膜充血">结膜充血</option>
+								   <option value="睫状充血">睫状充血</option>
+								   <option value="混合充血">混合充血</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   <td  class="t4">&nbsp;</td>
+						</tr>
+						 <tr id="jiemo_jiemoRight" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="jiemo_jiemo" flag="jiemo_jiemo" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					  </table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1" >结膜</td>
+						   <td  class="t2" height="30">
+							   <select name="jm_jm2" style="width:120px;" flag="jm_jm2" onchange ="showZidingyi_jm_jmLeft(this)">
+								   <option value=""></option>
+								   <option value="无充血">无充血</option>
+								   <option value="结膜充血">结膜充血</option>
+								   <option value="睫状充血">睫状充血</option>
+								   <option value="混合充血">混合充血</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   <td  class="t4">&nbsp;</td>
+						</tr>
+						 <tr id="jiemo_jiemoLeft" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="jiemo_jiemo2" flag="jiemo_jiemo2" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					  </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td rowspan="6"  class="re"><b style="font-size:14px">巩膜</b></td>
+					<td height="17" colspan="3">
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="85"  class="t1">&nbsp;</td>
+						   <td width="100"  class="t2"><input name="gm_cbs" type="checkbox"  value="瓷白色" flag="gm_cbs">瓷白色</td>
+						   <td width="100"  class="t5"><input name="gm_hr"  type="checkbox"  value="黄染" flag="gm_hr">黄染</td>
+						   <td width="90">&nbsp;</td>
+						</tr>
+					  </table>
+					</td>
+					<td height="17" colspan="3">
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="85"  class="t1">&nbsp;</td>
+						   <td width="100"  class="t2"><input name="gm_cbs2" type="checkbox"  value="瓷白色" flag="gm_cbs2">瓷白色</td>
+						   <td width="100"  class="t5"><input name="gm_hr2"  type="checkbox"  value="黄染" flag="gm_hr2">黄染</td>
+						   <td width="90">&nbsp;</td>
+						</tr>
+					  </table>
+							   
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+					   <td width="80"  class="t4"> 葡萄肿</td>
+					   <td width="150"  class="t5">
+					   		<select name="gm_ptz" style="width:120px;" flag="gm_ptz">
+								  <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+						    </select>
+					   </td>
+					   <td class="t5">&nbsp;</td>
+					   </tr>
+					</table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+					   <td width="80"  class="t4"> 葡萄肿</td>
+					   <td width="150"  class="t5">
+					   		<select name="gm_ptz2" style="width:120px;" flag="gm_ptz2">
+								   <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+						    </select>
+					   </td>
+					   <td class="t5">&nbsp;</td>
+					   </tr>
+					</table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4">充血</td>
+						   <td  class="t5">
+							   <select name="gm_cx" style="width:120px;" flag="gm_cx">
+								   <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t5">&nbsp;</td>
+						</tr>
+					  </table>
+				  </td>
+				  <td colspan="3">
+					 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4">充血</td>
+						   <td  class="t5">
+							   <select name="gm_cx2" style="width:120px;" flag="gm_cx2">
+								 <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t5">&nbsp;</td>
+						</tr>
+					  </table>
+				  </td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right" class="t1" > 结节</td>
+						   <td  class="t2">
+							   <select name="gm_jj" style="width:120px;" flag="gm_jj">
+								  <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+						</tr>
+					  </table>
+					</td>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right" class="t1" > 结节</td>
+						   <td  class="t2">
+							   <select name="gm_jj2" style="width:120px;" flag="gm_jj2">
+								  <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+						</tr>
+					  </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right" class="t1"> 压痛</td>
+						   <td  class="t2">
+							   <select name="gm_yt" style="width:120px;" flag="gm_yt">
+								 <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t2"> &nbsp;</td>
+						</tr>
+					  </table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right" class="t1"> 压痛</td>
+						   <td  class="t2">
+							   <select name="gm_yt2" style="width:120px;" flag="gm_yt2">
+								 <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+							   </select>
+						   </td>
+						   <td  class="t2"> &nbsp;</td>
+						</tr>
+					  </table>
+					</td>
+				  </tr>
+				   <tr>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						  <td colspan="3"><textarea style="height:50px" name="gongmoRightContent" flag="gongmoRightContent"></textarea></td>
+						</tr>
+					  </table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						 <td colspan="3"><textarea style="height:50px" name="gongmoLeftContent" flag="gongmoLeftContent"></textarea></td>
+						</tr>
+					  </table>
+					</td>
+				  </tr>
+				  
+				  <tr>
+					<td rowspan="2" class="re" ><b style="font-size:14px">角膜</b></td>
+					<td  colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4">角膜</td>
+						   <td  class="t5">
+							   <input  name="jm_jm_tm"   type="checkbox"   value="透明" flag="jm_jm_tm">透明
+							   <input  name="jm_jm_hz"   type="checkbox"   value="混浊" flag="jm_jm_hz">混浊
+							   <input  name="jm_jm_yy"   type="checkbox"   value="云翳" flag="jm_jm_yy">云翳</br>
+							   <input  name="jm_jm_by"   type="checkbox"   value="斑翳" flag="jm_jm_by">斑翳
+							   <input  name="jm_jm_bb"   type="checkbox"   value="白斑" flag="jm_jm_bb">白斑
+							   <input  name="jm_jm_xsxg" type="checkbox"   value="新生血管" flag="jm_jm_xsxg">新生血管</td>
+						</tr>
+					  </table>
+					</td>
+					<td  colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4">角膜</td>
+						   <td  class="t5">
+							   <input  name="jm_jm_tm2"   type="checkbox"   value="透明" flag="jm_jm_tm2">透明
+							   <input  name="jm_jm_hz2"   type="checkbox"   value="混浊" flag="jm_jm_hz2">混浊
+							   <input  name="jm_jm_yy2"   type="checkbox"   value="云翳" flag="jm_jm_yy2">云翳</br>
+							   <input  name="jm_jm_by2"   type="checkbox"   value="斑翳" flag="jm_jm_by2">斑翳
+							   <input  name="jm_jm_bb2"   type="checkbox"   value="白斑" flag="jm_jm_bb2">白斑
+							   <input  name="jm_jm_xsxg2" type="checkbox"   value="新生血管" flag="jm_jm_xsxg2">新生血管</td>
+						</tr>
+						
+					  </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">  	 
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+						   <td width="80" align="right"  class="t1"> KP:</td>
+						   <td  class="t2">
+							   <select name="jm_kp" style="width:90px;" flag="jm_kp" onchange="showKPRight(this)"> 
+								   <option value=""></option>
+								   <option value="灰白色">灰白色</option>
+								   <option value="棕色">棕色</option>
+								   <option value="羊脂状">羊脂状</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+							   <select name="jm_kpRight" style="width:90px;" flag="jm_kpRight">
+								   <option value=""></option>
+								   <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+								   <option value="(++)">(++)</option>
+								   <option value="(+++)">(+++)</option>
+								   <option value="(++++)">(++++)</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+					   </tr>
+					   <tr id="kpRight" style="display:none">
+							<td class="t2" colspan="3"><textarea name="kpRightContent" flag="kpRightContent" class="textarea" style="width:92%"></textarea></td>
+					  </tr>
+					   <tr>
+						    <td colspan="3"><textarea style="height:50px" name="jiaomoRightContent" flag="jiaomoRightContent"></textarea></td>
+					   </tr>
+					</table>
+					   </td>
+					   <td colspan="3">  	 
+					  
+					  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					   <tr>
+						   <td width="80" align="right"  class="t1"> KP:</td>
+						   <td  class="t2">
+							   <select name="jm_kp2" style="width:90px;" flag="jm_kp2" onchange="showKPLeft(this)">
+								   <option value=""></option>
+								   <option value="灰白色">灰白色</option>
+								   <option value="棕色">棕色</option>
+								   <option value="羊脂状">羊脂状</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+							   <select name="jm_kpRight2" style="width:90px;" flag="jm_kpRight2">
+								   <option value=""></option>
+								  <option value="(-)">(-)</option>
+								   <option value="(+)">(+)</option>
+								   <option value="(++)">(++)</option>
+								   <option value="(+++)">(+++)</option>
+								   <option value="(++++)">(++++)</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+					   </tr>
+					   <tr id="kpLeft" style="display:none">
+							<td class="t2" colspan="3"><textarea name="kpLeftContent" flag="kpLeftContent" class="textarea" style="width:92%"></textarea></td>
+					  </tr>
+					   <tr>
+						    <td colspan="3"><textarea style="height:50px" name="jiaomoLeftContent" flag="jiaomoLeftContent"></textarea></td>
+					   </tr>
+					</table>
+					   </td>
+				  </tr>
+				  <tr>
+					<td rowspan="5"  class="re"><b style="font-size:14px">前房</b></td>
+					<td colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1"> 中央前房</td>
+						   <td  class="t2">
+							   <select name="qf_zyqf" style="width:120px;" flag="qf_zyqf" onchange="showqf_zyqfRight(this)">
+								   <option value=""></option>
+								   <option value="深">深</option>
+								   <option value="中深">中深</option>
+								   <option value="浅">浅</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+						 </tr>
+						  <tr id="qianfang_zhongyangqianfangRight" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="qianfang_zhongyangqianfang" flag="qianfang_zhongyangqianfang" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					</table>
+				
+					</td>
+					<td colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1"> 中央前房</td>
+						   <td  class="t2">
+							   <select name="qf_zyqf2" style="width:120px;" flag="qf_zyqf2" onchange="showqf_zyqfLeft(this)">
+								   <option value=""></option>
+								   <option value="深">深</option>
+								   <option value="中深">中深</option>
+								   <option value="浅">浅</option>
+								   <option value="自定义">自定义</option>
+							   </select>
+						   </td>
+						   <td  class="t2">&nbsp;</td>
+						 </tr>
+						  <tr id="qianfang_zhongyangqianfangLeft" style="display:none">
+							<td class="t1">&nbsp;</td>
+							<td class="t2" colspan="3"><textarea name="qianfang_zhongyangqianfang2" flag="qianfang_zhongyangqianfang2" class="textarea" style="width:92%"></textarea></td>
+					  	 </tr>
+					</table>
+				
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4"> 周边前房</td>
+						   <td class="t5"><input type="text" style="width:120px;"  name="qf_zbqf" flag="qf_zbqf"></td>
+						   <td class="t5">&nbsp;</td>
+						 </tr>
+					</table>
+				</td>
+				<td colspan="3">
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80"  class="t4"> 周边前房</td>
+						   <td class="t5"><input type="text" style="width:120px;"  name="qf_zbqf2" flag="qf_zbqf2"></td>
+						   <td class="t5">&nbsp;</td>
+						 </tr>
+					</table>
+				</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">  房水闪光</td>
+							   <td   class="t5">
+								   <select name="qf_fssg" style="width:120px;" flag="qf_fssg">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+									    <option value="(±)">(±)</option>
+									    <option value="(+)">(+)</option>
+									    <option value="(++)">(++)</option>
+									    <option value="(+++)">(+++)</option>
+									    <option value="(++++)">(++++)</option>
+								   </select>
+							   </td>
+							   <td class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">  房水闪光</td>
+							   <td   class="t5">
+								   <select name="qf_fssg2" style="width:120px;" flag="qf_fssg2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+									    <option value="(±)">(±)</option>
+									    <option value="(+)">(+)</option>
+									    <option value="(++)">(++)</option>
+									    <option value="(+++)">(+++)</option>
+									    <option value="(++++)">(++++)</option>
+								   </select>
+							   </td>
+							   <td class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">积脓</td>
+							   <td   class="t2">
+								   <select name="qf_jl" style="width:120px;" flag="qf_jl">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t2">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">积脓</td>
+							   <td   class="t2">
+								   <select name="qf_jl2" style="width:120px;" flag="qf_jl2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t2">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr> 
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">积血</td>
+							   <td  class="t2">
+								    <select name="qf_jx" style="width:120px;" flag="qf_jx">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+							 <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="jixueRightContent" flag="jixueRightContent"></textarea></td>
+					   		  </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">积血</td>
+							   <td  class="t2">
+								    <select name="qf_jx2" style="width:120px;" flag="qf_jx2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+							  <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="jixueLeftContent" flag="jixueLeftContent"></textarea></td>
+					   		  </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td rowspan="6"  class="re"><b style="font-size:14px">虹膜</b></td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4" >纹理</td>
+							   <td  class="t5">
+								   <select name="hm_wl" style="width:120px;" flag="hm_wl" onchange="showhm_wlRight(this)">
+								  	     <option value=""></option>
+								  	    <option value="清">清</option>
+								  	    <option value="不清">不清</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+							 <tr id="hongmo_wenliRight" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="hongmo_wenli" flag="hongmo_wenli" class="textarea" style="width:92%"></textarea></td>
+						  	 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4" >纹理</td>
+							   <td  class="t5">
+								   <select name="hm_wl2" style="width:120px;" flag="hm_wl2" onchange="showhm_wlLeft(this)">
+								  	     <option value=""></option>
+								  	    <option value="清">清</option>
+								  	    <option value="不清">不清</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+							 <tr id="hongmo_wenliLeft" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="hongmo_wenli2" flag="hongmo_wenli2" class="textarea" style="width:92%"></textarea></td>
+						  	 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" class="t4">萎缩</td>
+							   <td  class="t5">
+								   <select name="hm_ws" style="width:120px;" flag="hm_ws">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" class="t4">萎缩</td>
+							   <td  class="t5">
+								   <select name="hm_ws2" style="width:120px;" flag="hm_ws2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">新生血管</td>
+							   <td   class="t2">
+								   <select name="hm_xsxg" style="width:120px;" flag="hm_xsxg">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t4">&nbsp;</td>
+							 </tr>
+						 </table>
+					  </td>
+					  <td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">新生血管</td>
+							   <td   class="t2">
+								   <select name="hm_xsxg2" style="width:120px;" flag="hm_xsxg2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t4">&nbsp;</td>
+							 </tr>
+						 </table>
+					  </td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">缺损</td>
+							   <td   class="t2">
+								   <select name="hm_qs" style="width:120px;" flag="hm_qs">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t4">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">缺损</td>
+							   <td   class="t2">
+								   <select name="hm_qs2" style="width:120px;" flag="hm_qs2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td   class="t4">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">粘连</td>
+							   <td  class="t5">
+								   <select name="hm_ln" style="width:120px;" flag="hm_ln" >
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+						 <!-- onchange="showhm_lnwzRight(this)" -->
+					</td>
+					<td colspan="3">
+						  <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">粘连</td>
+							   <td  class="t5">
+								   <select name="hm_ln2" style="width:120px;" flag="hm_ln2" >
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3" id="zhanlianweizhiLeft" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						   <tr>
+						   <td width="80"  class="t4">粘连位置</td>
+						   <td width="150"  class="t5"><input type="text" style="width:120px;"  name="hm_lnwz2" flag="hm_lnwz2"></td>
+						   <td   class="t5">&nbsp;</td>
+						   </tr>
+						   <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="zhanlianLeftContent" flag="zhanlianLeftContent"></textarea></td>
+					   	   </tr>
+						</table>
+				   </td>
+					<td colspan="3" id="zhanlianweizhiRight" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						   <tr>
+						   <td width="80"  class="t4">粘连位置</td>
+						   <td width="150"  class="t5"><input type="text" style="width:120px;"  name="hm_lnwz" flag="hm_lnwz"></td>
+						   <td   class="t5">&nbsp;</td>
+						   </tr>
+						    <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="zhanlianRightContent" flag="zhanlianRightContent"></textarea></td>
+					   		</tr>
+						</table>
+				   </td>
+				   
+				  </tr>
+				  <tr>
+					<td rowspan="6"  class="re"><b style="font-size:14px">瞳孔</b></td>
+						<td colspan="3">
+							<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1">瞳孔</td>
+						   <td  class="t2">
+								  <input type="checkbox" name="tk_tk_y"   value="圆" flag="tk_tk_y">圆&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								  <input type="checkbox" name="tk_tk_ywxsx"  value="药物性缩小" flag="tk_tk_ywxsx">药物性缩小<br>
+								  <input type="checkbox" name="tk_tk_by"   value="不圆" flag="tk_tk_by">不圆 
+								  <input type="checkbox" name="tk_tk_ywxkd"  value="药物性散大" flag="tk_tk_ywxkd" >药物性散大	
+						   </td>
+						</tr>
+					  </table>
+					</td>
+					<td colspan="3">
+							<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						 <tr>
+						   <td width="80" align="right"  class="t1">瞳孔</td>
+						   <td  class="t2">
+								  <input type="checkbox" name="tk_tk_y2"   value="圆" flag="tk_tk_y2">圆&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								  <input type="checkbox" name="tk_tk_ywxsx2"  value="药物性缩小" flag="tk_tk_ywxsx2">药物性缩小<br>
+								  <input type="checkbox" name="tk_tk_by2"   value="不圆" flag="tk_tk_by2">不圆 
+								  <input type="checkbox" name="tk_tk_ywxkd2"  value="药物性散大" flag="tk_tk_ywxkd2" >药物性散大	
+						   </td>
+						</tr>
+					  </table>
+					</td>		   
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							   <tr>
+							   <td width="80" align="right"  class="t1">直径</td>
+							   <td width="70"  class="t2"> <input type="text" style="width:120px;" name="tk_zj" flag="tk_zj"></td>
+							   <td   class="t2">mm</td>
+							   </tr>
+						</table>
+				 
+					</td>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							   <tr>
+							   <td width="80" align="right"  class="t1">直径</td>
+							   <td width="70"  class="t2"> <input type="text" style="width:120px;" name="tk_zj2" flag="tk_zj2"></td>
+							   <td   class="t2">mm</td>
+							   </tr>
+						</table>
+				 
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						  <tr> 
+							 <td width="80"  class="t4">粘连</td>
+							 <td  class="t5"> 
+								  <select name="tk_nl" style="width:120px;" flag="tk_nl" onchange="showtk_nlRight(this)">
+								  	    <option value=""></option>
+								  	    <option value="前粘连">前粘连</option>
+								  	    <option value="后粘连">后粘连</option>
+								  	    <option value="前后粘连">前后粘连</option>
+								  	    <option value="无粘连">无粘连</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							 </td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr id="tongkong_zhanlianRight" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="tongkong_zhanlian" flag="tongkong_zhanlian" class="textarea" style="width:92%"></textarea></td>
+						  </tr>
+						   <tr> 
+							 <td width="80" class="t4">位置</td>
+							 <td  class="t5"><input type="text" style="width:120px;" name="tk_wz" flag="tk_wz" ></td>
+							 <td>&nbsp;</td>
+						  </tr>
+					   </table>
+					</td>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+						  <tr> 
+							 <td width="80"  class="t4">粘连</td>
+							 <td  class="t5"> 
+								  <select name="tk_nl2" style="width:120px;" flag="tk_nl2" onchange="showtk_nlLeft(this)">
+								  	    <option value=""></option>
+								  	    <option value="前粘连">前粘连</option>
+								  	    <option value="后粘连">后粘连</option>
+								  	    <option value="前后粘连">前后粘连</option>
+								  	    <option value="无粘连">无粘连</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							 </td>
+							 <td>&nbsp;</td>
+						  </tr>
+						   <tr id="tongkong_zhanlianLeft" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="tongkong_zhanlian2" flag="tongkong_zhanlian2" class="textarea" style="width:92%"></textarea></td>
+						  	</tr>
+						   <tr> 
+							 <td width="80" class="t4">位置</td>
+							 <td  class="t5"><input type="text" style="width:120px;" name="tk_wz2" flag="tk_wz2" ></td>
+							 <td>&nbsp;</td>
+						  </tr>
+					   </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right" class="t1">移位</td>
+							   <td  class="t2">
+								   <select name="tk_yw" style="width:120px;" flag="tk_yw" onchange="showtk_ywRight(this)">
+								  	    <option value=""></option>
+								  	    <option value="无">无</option>
+								  	    <option value="有">有</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+							  <tr id="tongkong_yiweiRight" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="tongkong_yiwei" flag="tongkong_yiwei" class="textarea" style="width:92%"></textarea></td>
+						  	</tr>
+						 </table>
+				   </td>
+				   <td colspan="3">
+					   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right" class="t1">移位</td>
+							   <td  class="t2">
+								   <select name="tk_yw2" style="width:120px;" flag="tk_yw2" onchange="showtk_ywLeft(this)">
+								  	    <option value=""></option>
+								  	    <option value="无">无</option>
+								  	    <option value="有">有</option>
+								  	    <option value="自定义">自定义</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+							 <tr id="tongkong_yiweiLeft" style="display:none">
+								<td class="t1">&nbsp;</td>
+								<td class="t2" colspan="3"><textarea name="tongkong_yiwei2" flag="tongkong_yiwei2" class="textarea" style="width:92%"></textarea></td>
+						  	</tr>
+						 </table>
+				   </td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">直接光反射</td>
+							   <td  class="t2">
+								   <select name="tk_zjdgfs" style="width:120px;" flag="tk_zjdgfs">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+					<td colspan="3">
+						 <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80" align="right"  class="t1">直接光反射</td>
+							   <td  class="t2">
+								   <select name="tk_zjdgfs2" style="width:120px;" flag="tk_zjdgfs2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t2">&nbsp;</td>
+							 </tr>
+						 </table>
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="3">
+						   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">间接光反射</td>
+							   <td  class="t5">
+								   <select name="tk_jjdgfs" style="width:120px;" flag="tk_jjdgfs">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+							 <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="tongkongRightContent" flag="tongkongRightContent"></textarea></td>
+					   	   </tr>
+						 </table>
+				
+					</td>
+					<td colspan="3">
+						   <table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+							 <tr>
+							   <td width="80"  class="t4">间接光反射</td>
+							   <td  class="t5">
+								   <select name="tk_jjdgfs2" style="width:120px;" flag="tk_jjdgfs2">
+								  	    <option value=""></option>
+								  	    <option value="(-)">(-)</option>
+								  	    <option value="(+)">(+)</option>
+								   </select>
+							   </td>
+							   <td  class="t5">&nbsp;</td>
+							 </tr>
+							  <tr>
+						   		 <td colspan="3"><textarea style="height:50px" name="tongkongLeftContent" flag="tongkongLeftContent"></textarea></td>
+					   	   </tr>
+						 </table>
+				
+					</td>
+				  </tr>
+				  <tr>
+					<td class="re"><b style="font-size:14px">晶状体</b></td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="jingzhuangtiRight" value="" flag="jingzhuangtiRight" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="jingzhuangtiLeft" value="" flag="jingzhuangtiLeft" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+				  </tr>
+				
+				  <tr>
+				  	<td class="re"><b style="font-size:14px">眼球</b></td>
+				  	<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yanqiu" value="" flag="yanqiu" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yanqiu2" value="" flag="yanqiu2" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+				  </tr>
+				  
+				  <tr>
+				  	<td class="re"><b style="font-size:14px">眼球运动</b></td>
+				  	<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yanqiuyd" value="" flag="yanqiuyd" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yanqiuyd2" value="" flag="yanqiuyd2" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+				  </tr>
+				  <tr>
+					<td class="re"><b style="font-size:14px">玻璃体</b></td>
+					 
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="bolitiRight" value="" flag="bolitiRight" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="bolitiLeft" value="" flag="bolitiLeft" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					
+				  </tr>
+				 
+				  <tr>
+					<td class="re"><b style="font-size:14px">眼底</b></td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yandiRight" value="" flag="yandiRight" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+					<td colspan="3" >
+						<table width="300" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 >
+						   <tr>
+						   	<td colspan="3"><textarea name="yandiLeft" value="" flag="yandiLeft" style="height:50px;"></textarea></td>
+						   </tr>
+						</table>
+					</td>
+				  </tr>
+				</table>
+			</td>
+			<td name="left"></td>
+		</tr>
+	</table>
+</form>
+ </body>
+</html>

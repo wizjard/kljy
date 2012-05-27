@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>死亡病历讨论</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript">
+$(function(){
+	initPage('DeathCaseDiscuss_findById');	
+});
+function before_init(){
+	registrationPageHead(kid,'死亡病历讨论','#header');
+	FormUtil.toDateField({el:$('*[name="time"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="discussTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+}
+function initPage_callback(json){
+	json.title='死亡病历讨论('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'DeathCaseDiscuss_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'死亡病历讨论'
+	}
+}
+function isValid(data){
+	if(data.time.length==0){
+		alert('记录时间不能为空。');
+		return false;
+	}
+	return true;
+}
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/CourseRecord/sigle/iframes/print/DeathCaseDiscuss.html?kid='+
+	id+'&cid='+kid);
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="60">记录日期：</td>
+		<td class="t2" widht="240"><input name="time" type="text" class="text"/></td>
+		<td class="t2" colspan="2"> <span style="color:red">*</span> 本次记录的日期，用以区分病程内的多次记录</td>
+	</tr>
+	<tr>
+		<td class="t1">姓名：</td>
+		<td class="t2"><input name="name" type="text" class="text"/></td>
+		<td class="t1" width="60">病案号：</td>
+		<td class="t2" width="240"><input name="patientNo" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">性别：</td>
+		<td class="t2"><input name="gender" type="text" class="text"/></td>
+		<td class="t1">年龄：</td>
+		<td class="t2"><input name="age" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">讨论日期：</td>
+		<td class="t2"><input name="discussTime" type="text" class="text"/></td>
+		<td class="t1">科室：</td>
+		<td class="t2"><input name="ward" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">参加者：</td>
+		<td class="t2" colspan="3"><textarea name="joinPerson" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">讨论地点：</td>
+		<td class="t2" colspan="3"><textarea name="discussPlace" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">主持者：</td>
+		<td class="t2" colspan="3"><textarea name="chairPerson" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan=4 style="text-align:left;line-height:26px">主管医师简述病历：</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="caseSummary" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan=4 style="text-align:left;line-height:26px">讨论发言主要内容：（分别记录每位发言医师的技术职称，主要观点）</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="discussContent" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan=4 style="text-align:left;line-height:26px">临床死亡原因：</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathReason" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan=4 style="text-align:left;line-height:26px">临床死亡诊断：</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="deathDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan=4 style="text-align:left;line-height:26px">参照本例应借鉴的问题：</td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="discussResult" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+		<td class="t1">记录者：</td>
+		<td class="t2"><input name="recName" type="text" class="text"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

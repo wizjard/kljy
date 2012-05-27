@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>呕吐</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+function closeWindow(){
+	var getValues = new Array();
+	var sum='';
+		getValues[0] = document.getElementById("vomitingCharacter").value;
+		getValues[1] = document.getElementById("vomitingContent").value;
+		getValues[2] = document.getElementById("vomPday").value;
+		getValues[3] = document.getElementById("volumePtime").value;
+		getValues[4] = document.getElementById("vomTotal").value;
+		getValues[5] = document.getElementById("volumeTotal").value;
+		
+		for(var i=0;i<getValues.length;i++){
+			if(getValues[i]!="" && getValues[i]!=null){
+				sum +=getValues[i]+",";
+			}
+		}
+		
+		//查询最后一个','的下标位置
+		var _num = sum.lastIndexOf(",");
+		//从第0个下标开始截取长度为_num的字符串
+		sum = sum.slice(0,_num);
+		window.returnValue = sum;
+		window.close();
+	}
+</script>
+	
+</head>
+
+<body>
+<table width="563" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="87" align="right">呕吐性状：</td>
+        <td width="169">
+            <select name="vomitingCharacter" id="vomitingCharacter">
+                <option value=""></option>
+                <option value="喷射状">喷射状</option>
+                <option value="非喷射状">非喷射状</option>
+            </select>
+        </td>
+        <td width="88" align="right">呕吐物：</td>
+        <td width="203">
+            <select name="vomitingContent" id="vomitingContent">
+                <option value=""></option>
+                <option value="淘米水样内容">淘米水样内容</option>
+                <option value="胃内容物">胃内容物</option>
+                <option value="咖啡色内容物" >咖啡色内容物</option>
+                <option value="咖啡色内容物伴血块样" >咖啡色内容物伴血块样</option>
+                <option value="暗红色内容物" >暗红色内容物</option>
+                <option value="暗红色内容物伴血块样">暗红色内容物伴血块样</option>
+             </select>
+        </td>
+  </tr>
+  <tr>
+        <td align="right">每天次数：</td>
+        <td><input type="text" name="vomPday" id="vomPday"/></td>
+        <td align="right">每次量(ml)：</td>
+        <td><input type="text" name="volumePtime" id="volumePtime"/></td>
+  </tr>
+  <tr>
+		<td align="right">总次数：</td>
+		<td><input type="text" class="input-text" name="vomTotal" id="vomTotal"/></td>
+		<td align="right">总量(ml)：</td>
+		<td><input type="text" class="input-text" name="volumeTotal" id="volumeTotal"/></td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+
+</body>
+</html>

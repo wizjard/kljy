@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>病案首页(续)</title>
+		<link type="text/css" rel="stylesheet" href="css/IndexHosptialCss.css"/>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+		<script>
+			var pid = null,kid = null;
+			$(function(){
+				kid = App.util.getHtmlParameters('kid');
+				pid = App.util.getHtmlParameters('pid');
+				initTable();
+				setValues();
+			});
+			
+			function initTable(){
+				$('.outFollow').find('td').css('border-right','solid 1px #000');
+				$('.outFollow').find('input[name="leaveHospital"]').css('border','0px');
+				$('.outFollow').find('tr').each(function(){
+					$(this).find('input[type="checkbox"]').click(function(){
+						var s = $(this).parent().parent().find('input[type="checkbox"]');
+						var $checked=$(this).attr('checked');
+						$.each(s,function(i){
+							$(this).attr("checked",false);
+						});
+						if($checked){
+							$(this).attr("checked",true);
+						}else{
+							$(this).attr("checked",false);
+						}
+					});
+				});
+			}
+			
+			function setValues(){
+				$.post(
+					App.App_Info.BasePath+'/InHosp.do',
+					{
+						method:'getInHospFollowOne',
+						kid:kid
+					},function(data){
+						if(data.success){
+							if(data.data.length < 0){
+								alert("暂无数据！");
+								return;
+							}
+							var json = JSON.parse(data.data);
+							if(json){
+								var inHospInfo = json.inHospInfo;
+								var disCon = json.disCon;
+								if(disCon){
+									var outFollow = $('.outFollow').find('tr');
+									$.each(disCon,function(i){
+										outFollow.filter(function(i){return i> 1;}).eq(i).find('input[name="id"]').val(this.id);
+										outFollow.filter(function(i){return i>1}).eq(i).find('*[name="icd"]').val(this.icd);
+										outFollow.filter(function(i){return i> 1;}).eq(i).find('*[name="sysptom"]').val(this.sysptom);
+										var leaveHospital = this.leaveHospital;
+										outFollow.filter(function(i){return i> 1;}).eq(i).find('*[name="leaveHospital"]').each(function(){
+											if($(this).attr("value")==leaveHospital){
+												$(this).attr("checked",true);
+											}
+										});
+									});
+								}
+								if(inHospInfo){
+									FormUtil.setFormValues('#baseInfo',inHospInfo);
+								}
+								if($('input[name="birthplace"]').val() == ""){
+									$('input[name="birthplace"]').hide();
+									$('input[name="area"]').show();
+									if($('input[name="area"]').val() == "-1" || $('input[name="area"]').val() == ""){
+										$('input[name="area"]').hide();
+										if($('input[name="city"]').val() != "-1" && $('span[name="city"]').val() != ""){
+											$('input[name="city"]').show();
+										}else{
+											if($('input[name="province"]').val() != "-1" && $('input[name="province"]').val() != ""){
+												$('input[name="province"]').show();
+											}
+										}
+									}
+								}
+							}
+						}else{
+							alert("初始化页面失败！");
+						}
+					},'json'
+				);
+			}
+			
+			function SaveData(){
+				var json = {};
+				var data = [];
+				
+				var _tr = $('.outFollow').find('tr');
+				_tr.filter(function(i){return i>1}).each(function(){
+					var checkbox = '';
+					$.each($(this).children(),function(){
+						var checked = $(this).find('*[name="leaveHospital"]').attr('checked');
+						if(checked){
+							checkbox = $(this).find('*[name="leaveHospital"]').val();
+							return;
+						}
+					});
+					data.push({
+						id:$(this).find('*[name="id"]').val(),
+						caseId:kid,
+						sysptom:$(this).find('*[name="sysptom"]').val(),
+						leaveHospital:checkbox,
+						icd:$(this).find('input[name="icd"]').val()
+					});
+				});
+				json.disCon = data;
+				$.post(
+					App.App_Info.BasePath+'/InHosp.do',
+					{
+						method:'saveOrUpdateInHosptFollowOne',
+						data:JSON.stringify(json)
+					},function(data){
+						if(data.success){
+							alert("保存成功！");
+							setValues();
+						}else{
+							alert("保存失败！");
+						}
+					},'json'
+				);
+			}
+			
+			function printPage(){
+				//alert('打印(继正)');
+	//			location.href="print/InHospFollowOnePrint.html?kid=" + kid + "&pid=" + pid;
+				document.getElementById("printPage").src = "print/InHospFollowOnePrint.html?kid=" + kid + "&pid=" + pid;
+			}
+		</script>
+	</head>
+<body>
+	<IFRAME name="printPage" id="printPage" width=0px height=0px src=""></IFRAME>
+	<form>
+		  <div id="baseInfo">	
+			 <div>
+			      <p>&nbsp;</p>
+			      <p>&nbsp;</p>
+			      <table class="head" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			    	 <tr>
+			    		<td class="noTd">医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+						<td class="noTd">
+							医疗保险手册(卡)号：<input type="text" name="policymanualNo" readonly />
+						</td>
+			    	</tr>
+			    	<tr><td colspan="2" class="noTd">&nbsp;</td></tr>
+			    	<tr>
+						<td class="noTd" colspan="2" align="center">
+							<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+						</td>	
+					</tr>
+					<tr>
+						<td class="noTd" colspan="2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="noTd" colspan="2" align="center" width="550" style="line-height:27px;">
+							<b style="font-size:20px;font-family:'黑体'">住  院  病  案  首  页(续)</b>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">
+							<span style="color:red;font-size:11px;">医疗付款方式：</span>
+							<input type="text" style="width:50px" name="typeOfPayment" readonly />							
+						</td>
+						<td class="noTd" width="*" align="right">	
+							<div style="margin-right:50px;">病案号：<input type="text" name="patientNo" style="width:50px;" readonly/></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">	
+							<div>X 线号：<input type="text" name="xno" style="width:50px;" readonly /></div>
+						</td>
+						<td class="noTd" align="right">
+							<div style="margin-right:50px;">门诊号：<input type="text" name="menzhenhao" style="width:50px;" readonly /></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd">
+							<div>
+								C T 号：<input type="text" name="ctNo" style="width:50px;" readonly />
+								<span style="padding-left:25%">
+									第<input type="text" style="width:20px" name="inHspTimes" readonly />次住院
+								</span>
+							</div>
+						</td>
+						<td class="noTd" align="right">	
+							<div style="margin-right:50px;">MRI 号：<input type="text" name="mriNo" style="width:50px;" readonly /></div>
+						</td>
+					</tr>
+			    </table>
+			</div>
+			 <div>
+				<table class="info" align="center" border="0" style="border-bottom:none;" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+	    			<tr class="tr">
+	    				<td class="td">
+	    					姓名：<input type="text" name="patientName" style="width:65px;" readonly />
+	    					<span style="margin-left:15px;">性别：<input type="text" style="width:15px;" name="gender" readonly />&nbsp;&nbsp;1.男&nbsp;&nbsp;2.女</span>
+							<span style="margin-left:15px;">出生日期：<input type="text" name="birthday" style="width:68px;" readonly /></span>
+							<span style="margin-left:15px;">年龄：
+								<input type="text" style="width:100px;" name="age" maxlength="3" readonly />
+								<input type="text" style="width:25px;display:none;" name="age_months" maxlength="2" readonly />
+								<input type="text" style="width:25px;display:none;" name="age_day" maxlength="2" readonly />
+							</span>
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					婚姻：<input type="text" style="width:15px;" name="marrageStatus" readonly />&nbsp;1.未&nbsp;&nbsp;2.已&nbsp;&nbsp;3.离&nbsp;&nbsp;4.丧
+							<span style="margin-left:5px;">出生地：<input type="text" name="province" style="width:200px;display:none;" readonly />
+								<input type="text" name="city" style="width:200px;display:none;" readonly />
+								<input type="text" name="area" style="width:200px;display:none;" readonly />
+								<input type="text" name="birthplace" style="width:200px;" readonly />
+							</span>
+							<!--<span style="margin-left:5px;">国籍：<input type="text" name="nationality" style="width:60px;"/></span>-->
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					职业：<input type="text" name="occupation" style="width:85px;" readonly />
+							<span style="margin-left:15px;">民族：<input type="text" style="width:75px;" maxlength="5" name="people" readonly /></span>
+							<span style="margin-left:15px;">国籍：<input type="text" name="nationality" style="width:70px;" readonly /></span>
+							<span style="margin-left:15px;">身份证号：<input type="text" name="idNo" maxlength="18" style="width:135px;" readonly /></span>
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+							工作单位及地址：<input type="text" name="workUnitAddr" style="width:36%" readonly />
+							<span style="margin-left:10px;">电话：</span><input type="text" maxlength="13" name="workUnitTel" style="width:88px;" readonly />&nbsp;
+							<span style="margin-left:10px;">邮政编码：</span><input type="text" maxlength="6" name="workUnitPostCode" style="width:55px;" readonly />
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td">
+	    					户口地址/现住址：<input type="text" name="homeAddr" style="width:58%" readonly />
+							<span style="margin-left:15px;">邮政编码：</span><input type="text" maxlength="6" name="homePostCode" style="width:55px;" readonly />
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td class="td put">
+							联系人姓名：<input type="text" name="contacterName" maxlength="4" style="width:55px;" readonly />
+							<span style="margin-left:10px;">关系：</span><input type="text" name="contacterRelationship" style="width:60px;" readonly />
+							<span style="margin-left:10px;">地址：</span><input type="text" name="contacterAdd" style="width:28%" readonly />
+							<span style="margin-left:10px;">电话：</span><input type="text" maxlength="13" name="contacterTel" style="width:88px;" readonly />
+						</td>
+	    			</tr>
+	    		</table>
+			</div>
+		</div>	
+		 <div>
+				<table class="outFollow" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+					<tr align="center">
+						<td rowspan="2" width="250"><span style="font-size:20px;">出 院 诊 断</span></td>
+						<td colspan="5" width="175px;" align="center">出院时情况</td>
+						<td style="width:80px;" rowspan="2"><font color="red">ICD-10</font></td>
+					</tr>
+					<tr style="text-align:center">
+						<td style="width:35px;">治愈</td>
+						<td style="width:35px;">好转</td>
+						<td style="width:35px;">未愈</td>
+						<td style="width:35px;">死亡</td>
+						<td style="width:35px;">其他</td>
+					</tr>
+					<tr >
+						<td align="left"><span>其它诊断：</span><span><input maxlength="23" style="width:78%;" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td>
+							<input maxlength="18" type="text" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td>
+							<input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						     <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="42" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						<input type="hidden" name="id" value="-1"/></td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						<input type="hidden" name="id" value="-1"/></td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						<input type="hidden" name="id" value="-1"/></td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+							<input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>
+						<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						    <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd"><span style="margin-left:63px;"><input maxlength="23" style="width:78%" type="text" name="sysptom"/></span></td>				
+						<td class="noTd"><input type="checkbox" name="leaveHospital" value="1"/></td>
+						<td class="noTd"><input type="checkbox" name="leaveHospital" value="2"/></td>
+						<td class="noTd"><input type="checkbox" name="leaveHospital" value="3"/></td>
+						<td class="noTd"><input type="checkbox" name="leaveHospital" value="4"/></td>
+						<td class="noTd"><input type="checkbox" name="leaveHospital" value="5"/></td>
+						<td class="noTd"><input maxlength="18" style="width:80px;" type="text" name="icd"/>
+						   <input type="hidden" name="id" value="-1"/>
+						</td>
+					</tr>
+				</table>
+		 </div>
+	</form>
+</body>
+</html>

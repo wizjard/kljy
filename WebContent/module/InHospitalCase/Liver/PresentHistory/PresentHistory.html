@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>现病史</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+Ext.onReady(function(){
+	KID=App.util.getHtmlParameters('KID');
+	PID=App.util.getHtmlParameters('PID');
+	$('*[name="caseId"]').val(KID);
+	initPage();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-IllThis'),function(code){
+		$('*[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//体重事件
+	$('input[name="bodyWeight"]').unbind('click');
+	$('input[name="bodyWeight"]').click(function(){
+		var _val=$(this).val();
+		if(_val==1){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('增加');
+		}else if(_val==2){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('减轻');
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	
+	var response=null;
+	var data=null;
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/PresentHistoryAction.do',
+		params:{
+			method:'findContent',
+			caseId:KID
+		},
+		sync:false,
+		scope:this,
+		success:function(_response){
+			response=Ext.decode(_response.responseText);
+		}
+	});
+	if(response&&response.success){
+		data=Ext.decode(response.data);
+		if(!data){
+			data={
+				id:-1,
+				caseId:KID,
+				nxs:[
+					{
+						id:-1
+					}
+				]
+			};
+		}
+		FormUtil.setFormValues('#contentDiv',data);
+	}else{
+		alert('获取数据失败。');
+		return;
+	}
+	var panel=new Ext.Panel({
+		id:'panel',
+		title:'现病史',
+		width:650,
+		collapsed:false,
+		collapsible:true,
+		titleCollapse:true,
+		frame:true,
+		layout:'fit',
+	
+		items:[
+			{
+				xtype:'tabpanel',
+				height:280,
+				activeTab:0
+			},{
+				height:320,
+				bodyStyle:'background:#fff',
+				autoScroll:true,
+				listeners:{
+					render:function(){
+						$('#currentStatusDiv').appendTo($(this.body.dom));
+						FormUtil.setFormValues('#currentStatusDiv',data);
+						$('#currentStatusDiv input[type="radio"]').each(function(){
+							if(this.checked)
+								$(this).click();
+						});
+					}
+				}
+			}
+		],
+		buttonAlign:'right',
+		buttons:[
+			{
+				text:'新增',
+				handler:function(){
+					addNewTab({id:-1},Ext.getCmp('panel').items.get(0).items.getCount());
+				}
+			},{
+				text:'删除',
+				handler:function(){
+					if(Ext.getCmp('panel').items.get(0).items.getCount()==1){
+						alert('不能删除最后一个现病史。');
+						return;
+					}
+					if(!confirm('确定要删除当前显示的现病史？'))	return;
+					var tab=Ext.getCmp('panel').items.get(0).getActiveTab();
+					var deletef=true;
+					if(tab.getData().id>0){
+						Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/InHospitalCase/PresentHistoryAction.do',
+							params:{
+								method:'deletePresentIllnessHistoryNx',
+								id:tab.getData().id
+							},
+							sync:false,
+							scope:this,
+							success:function(_response){
+								var response=Ext.decode(_response.responseText);
+								if(!response.success){
+									alert('从数据库删除数据失败。');
+									deletef=false;
+								}
+							}
+						});
+					}
+					if(deletef){
+						tab.destroy();
+						Ext.getCmp('panel').items.get(0).remove(tab);
+						Ext.getCmp('panel').items.get(0).items.each(function(item,i){
+							this.setTitle('现病史'+(i+1));
+						});
+					}
+				}
+			},{text:'组合内容',handler:function(){
+				var value=getData();
+				var rst='';
+				$.each(value.nxs,function(index,value){
+					var temp=value.casesDesc+value.mainSysptomDesc+value.sideSysptomDesc+value.treatmentDesc;
+					rst+=temp.length>0?((index==0?'    ':'    ')+temp+'\n'):'';
+				});
+				rst+=ComposeCurrentStatu(value)+'\n';
+				rst=rst.length>0?rst.substr(0,rst.length-1):'';
+				Ext.get('content').dom.value=rst;
+				Ext.getCmp('panel').toggleCollapse();
+			}}
+		]
+	});
+	panel.render('tab');
+	if (data.nxs.length == 0) {
+		addNewTab({id:-1}, 0);
+	}
+	else {
+		Ext.each(data.nxs, function(_item, _index){
+			addNewTab(_item, _index);
+		});
+	}
+	panel.items.get(0).setActiveTab(0);
+	//panel.toggleCollapse();
+}
+function addNewTab(_data,_index){
+	var id=Ext.id();
+	var panel=Ext.getCmp('panel');
+	var tab=new Ext.Panel({
+		title:'现病史'+(_index+1),
+		id:id,
+		getData:function(){
+			return _data;
+		},
+		html:'<iframe width="100%" height="100%" frameborder=0 scroll=no src="PresentHistoryX.html?elId='+id+'"></iframe>'
+	});
+	panel.items.get(0).add(tab);
+	panel.items.get(0).doLayout();
+}
+function getData(){
+	var value=FormUtil.getFormValues('#contentDiv');
+	$.extend(value,FormUtil.getFormValues('#currentStatusDiv'));
+	var nxs=[];
+	Ext.getCmp('panel').items.get(0).items.each(function(){
+		if(this.body){
+			nxs.push(this.body.query('iframe')[0].contentWindow.getMyData());
+		}else{
+			nxs.push(this.getData());
+		}
+	});
+	value.nxs=nxs;
+	return value;
+}
+function SaveData(){
+	var value=getData();
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/PresentHistoryAction.do',
+		params:{
+			method:'saveOrUpdateContent',
+			data:JSON.stringify(value)
+		},
+		success:function(_reponse){
+			var res=Ext.decode(_reponse.responseText);
+			if(res.success){
+				alert('保存成功。');
+				location.reload();
+			}else{
+				alert('保存失败。');
+			}
+		}
+	});
+}
+function getMyData(elId){
+	return Ext.getCmp(elId).getData();
+}
+function ComposeCurrentStatu(value){
+	var rst='';
+	var tempValue='';
+	tempValue=getRowValue('spiritStatu',value.spiritStatu);
+	if(tempValue.length>0){
+		if(tempValue=='其它'){
+			tempValue='精神'+value.spiritStatu0+'，';
+		}else{
+			tempValue='精神'+tempValue+'，';
+		}
+		rst+=tempValue;
+	}
+	tempValue=getRowValue('eatVolume',value.eatVolume);
+	if(tempValue.length>0){
+		if(tempValue=='其它'){
+			tempValue=value.eatVolume0+'，';
+		}else{
+			tempValue=tempValue+'，';
+		}
+		rst+=tempValue;
+	}
+	tempValue=getRowValue('sleep',value.sleep);
+	if(tempValue.length>0){
+		if(tempValue=='其它'){
+			tempValue='睡眠'+value.sleep0+'，';
+		}else{
+			tempValue='睡眠'+tempValue+'，';
+		}
+		rst+=tempValue;
+	}
+	tempValue=getRowValue('piss',value.piss);
+	if(tempValue.length>0){
+		if(tempValue=='其它'){
+			tempValue='小便'+value.piss0+'，';
+		}else{
+			tempValue='小便'+tempValue+'，';
+		}
+		rst+=tempValue;
+	}
+	tempValue=getRowValue('excrement',value.excrement);
+	if(tempValue.length>0){
+		if(tempValue=='其它'){
+			tempValue='大便'+value.excrement0+'，';
+		}else{
+			tempValue='大便'+tempValue+'，';
+		}
+		rst+=tempValue;
+	}
+	tempValue=getRowValue('bodyWeight',value.bodyWeight);
+	if(tempValue.length>0){
+		if(tempValue=='无变化'){
+			rst+='体重无变化，';
+		}else if(tempValue=='增加'){
+			tempValue=value.bodyWeight_time+getRowValue('bodyWeight_timeUnit',value.bodyWeight_timeUnit)+'增加'+value.bodyWeight_kg+'Kg，';
+			rst+='体重'+tempValue;
+		}else if(tempValue=='减轻'){
+			tempValue=value.bodyWeight_time+getRowValue('bodyWeight_timeUnit',value.bodyWeight_timeUnit)+'减轻'+value.bodyWeight_kg+'Kg，';
+			rst+='体重'+tempValue;
+		}
+	}
+	tempValue = getRowValue('mainSysptomEve',value.mainSysptomEve);
+	rst += tempValue.length > 0 ? '主要症状' + tempValue  + '，': '';
+	tempValue = value.newSysptom;
+	rst += tempValue.length > 0 ? tempValue +'，' : ''; 
+	tempValue = value.otherCurrent;
+	rst += tempValue.length > 0 ? tempValue +  '，' : '';
+	rst=rst.length>0?('    患者自发病以来'+rst.substr(0,rst.length-1)+'。'+ '\n'):'';
+	/*获取其他疾病值*/
+	tempValue =  value.otherdesease;
+	rst += tempValue.length > 0 ? ('    其他疾病情况:' + tempValue + '。' ) : '';
+	return rst;
+}
+function viewOldPre(){
+	$.post(App.App_Info.BasePath+'/InHospitalCase/PresentHistoryAction.do',
+	{
+		method:'viewOldPre',
+		KID:KID
+	},
+	function(data){
+		var winoption ="dialogHeight:400px;dialogWidth:400px;status:yes;scroll:no;resizable:no;center:yes";
+		window.showModalDialog('viewOldPre.html',{data:data.data},winoption);
+	},
+	'json');
+}
+</script>
+</head>
+<body>
+<p><span style="color:red;font-size:12px;"><b>提示：</b>新入院的病人请使用此病史填写。旧现病史仅用于查看旧病历中现病史内容。(答疑电话：15210283563)</span></p>
+<div id="tab"></div>
+<div id="contentDiv">
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value="-1"/>
+<textarea id="content" name="content" class="textarea" style="width:650px" readOnly></textarea>
+<div id="currentStatusDiv">
+<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=2 class="title">目前状况</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">精神状态：</td>
+					<td class="t2"><input name="spiritStatu" type="text" class="select"/><br/><input name="spiritStatu0" type="text" class="text hidden"/></td>
+					<td class="t1" width="80">食量：</td>
+					<td class="t2"><input name="eatVolume" type="text" class="select"/><br/><input name="eatVolume0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">睡眠：</td>
+					<td class="t2"><input name="sleep" type="text" class="select"/><br/><input name="sleep0" type="text" class="text hidden"/></td>
+					<td class="t1">小便：</td>
+					<td class="t2"><input name="piss" type="text" class="select"/><br/><input name="piss0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">大便：</td>
+					<td class="t2"><input rel="piss" name="excrement" type="text" class="select"/><br/><input name="excrement0" type="text" class="text hidden"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="90">体重：</td>
+		<td class="t2" width="500"><input name="bodyWeight" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<p>体重<input name="bodyWeight_time" type="text" class="text" style="width:40px"/><span><input name="bodyWeight_timeUnit" type="radio" class="radio dict-fld"/></span>
+			<span id="bodyWeight-span">增加</span><input name="bodyWeight_kg" type="text" class="text" style="width:40px"/>Kg</p>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">主要症候演变：</td>
+		<td class="t2"><input name="mainSysptomEve" type="text" class="select" style="width:31.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">新发症状：</td>
+		<td class="t2"><input name="newSysptom" type="textarea" class="textarea" style="height:40px"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td>
+		<td class="t2"><textarea name="otherCurrent" class="textarea" style="height:40px"></textarea></td>
+	</tr>
+	<tr>
+		<td class="title" colspan="2">其他疾病情况(与本次疾病无紧密关系、仍需治疗的其它疾病在此记录)</td>
+	</tr>
+	<tr>
+		<td class="t1">其他疾病情况：</td>
+		<td class="t2"><textarea name="otherdesease" class="textarea" style="height:40px"></textarea></td>
+	</tr>
+</table>
+</div>
+</div>
+<p style="font-size:12px">【<a href="javascript:viewOldPre()" style="color:blue;font-size:12px">旧版现病史完整内容查看</a>】</p>
+</body>
+</html>

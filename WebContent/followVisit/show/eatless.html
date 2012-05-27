@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>食少</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+function closeWindow(){
+	var getValues = new Array();
+	var sum='';
+		getValues[0] = document.getElementById("eatLittleType").value;
+		getValues[1] = document.getElementById("eatLittleDegree").value;
+		
+		for(var i=0;i<getValues.length;i++){
+			if(getValues[i]!=""){
+				sum +=getValues[i]+",";
+			}
+		}
+		
+		//查询最后一个','的下标位置
+		var _num = sum.lastIndexOf(",");
+		//从第0个下标开始截取长度为_num的字符串
+		sum = sum.slice(0,_num);
+		window.returnValue = sum;
+		window.close();
+	}
+</script>
+	
+</head>
+
+<body>
+<table width="526" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="81" align="right">食少表现：</td>
+        <td width="125">
+            <select name="eatLittleType" id="eatLittleType">
+                <option value=""></option>
+                <option value="未进食">未进食</option>
+              	<option value="进小量流食">进小量流食</option>
+				<option value="进食略有减少">进食略有减少</option>
+            </select>
+        </td>
+        <td width="70" align="right">减少至：</td>
+        <td width="234">
+            <select name="eatLittleDegree" id="eatLittleDegree">
+                <option value=""></option>
+                <option value="1/2">1/2</option>
+                <option value="1/3">1/3</option>
+                <option value="1/4" >1/4</option>
+                <option value="2/3" >2/3</option>
+                <option value="3/4" >3/4</option>
+             </select>
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center"><input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>门诊记录</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="memberFollowup.js"></script>
+<script type="text/javascript" src="../../../../module/biomedical/MemberInfoForm.js"></script>
+<script type="text/javascript">
+var PID=null;
+var patientId = App.util.getHtmlParameters("id");
+if(patientId != null){
+	PID = patientId;
+}else{
+	PID = top.Member.patientId;
+}
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'border',
+		items:[
+			Ext.apply(Followup(),{
+				region:'center',
+				xtype:'grid',
+				border:true,
+				id:'case-list-grid', 
+				title:'门诊记录列表',
+				tbar:createToolbar(),
+				listeners:{
+					render:function(){
+						this.getStore().baseParams={method:'queryAll',id:PID};
+						this.getStore().load();
+					}
+				}
+			})
+		]
+	});
+});
+
+function createToolbar(){
+	return new Ext.Toolbar({items:[
+		{
+			xtype:'tbseparator'
+		},{
+			text:'门诊记录',
+			tooltip:'编辑门诊记录',
+			handler:function(){
+				var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+				if(_ss.length==0){
+					alert('请选择需要操作的门诊记录。');
+					return;
+				}
+				location.href ='outCaseMain.html?KID='+_ss[0].data.id+'&PID='+PID+'&outRegno='+_ss[0].data.outRegno;
+			}
+		}
+	]});
+}
+</script>
+</head>
+<body>
+</body>
+</html>

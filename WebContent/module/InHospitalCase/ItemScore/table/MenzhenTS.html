@@ -1,0 +1,335 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeadermenzhen.js"></script>
+
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<title>急诊中心急重病人综合评价(外)</title>
+<style type="text/css">
+.myLabel {
+	font-size:12px
+}
+.bottomTxt {
+	border:none;
+	border-bottom:solid #000 1px;
+}
+.scoreTxt{
+	border:none; 
+	width:30px; 
+	color:#F00; 
+	text-align:center;
+}
+.d { 
+    border-right: 1px solid #000;
+	border-right-color:#000;
+	border-left-color:#000;
+    padding: 6px 6px 6px 12px;  
+	}
+</style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		
+		$('select').change(function(){
+			if($(this).parent().next().find('input')){
+				$(this).parent().next().find('input').eq(0).val($(this).attr("value"));
+			}
+			setEcgsScore();
+			setTsScore();
+		});
+		
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+			$('input[type="checkbox"]').each(function(){
+				if(json[this.name]==1){
+					this.checked=true;
+				}else{
+					this.checked=false;
+				}
+			});
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		$('input[type="checkbox"]').each(function(){
+			if(this.checked){
+				data[this.name]=1;
+			}else{
+				data[this.name]=0;
+			}
+		});
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function setEcgsScore(){
+		var esc1 = $('input[name="eye"]').val();
+		var esc2 = $('input[name="language"]').val();
+		var esc3 = $('input[name="move"]').val();
+		if(esc1 != "" && esc2 != "" && esc3 != ""){
+			var ec = parseInt(esc1) + parseInt(esc2) + parseInt(esc3);
+			$('input[name="ec"]').val(ec);
+		}
+	}
+	
+	function setTsScore(){
+		var ac = $('input[name="huxi"]').val();
+		var bc = $('input[name="huxifudu"]').val();
+		var cc = $('input[name="shousuoya"]').val();
+		var dc = $('input[name="maoxi"]').val();
+		var ec = $('input[name="ec"]').val();
+		if(ac != "" && bc != "" && cc != "" && dc != "" && ec != ""){
+			var tc = parseInt(ac) + parseInt(bc) + parseInt(cc) + parseInt(dc) + parseInt(ec);
+			$('input[name="tc"]').val(tc);
+		}
+	}
+</script>
+</head>
+<body>
+	<form id="form">
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+		<table border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="700" height="100%">
+			 <tr>
+		        <td>
+			 	   <div style="border:solid 1px; padding:10px; width:690px">
+						<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="border:1px solid #000;font-size:12px">
+							 <tr>
+								 <td align="center" style="color:#000" width="30">危<br />重<br />综<br />合<br />症</td>
+								 <td width="270" class="d">
+									<table width="100%" border="0" cellpadding="0" cellspacing="0" style=" font-size:12px;">
+										  <tr>
+											<td width="50%"><input name="weizhong1" type="checkbox" id="weizhong1" value="1"/>休克</td>
+											<td><input name="weizhong2" type="checkbox" id="weizhong2" value="2"/>急性肝功能衰竭</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong3" type="checkbox" id="weizhong3" value="3"/>DIC</td>
+											<td><input name="weizhong4" type="checkbox" id="weizhong4" value="4"/>急性脑功能衰竭</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong5" type="checkbox" id="weizhong5" value="5"/>心脏骤停</td>
+											<td><input name="weizhong6" type="checkbox" id="weizhong6" value="6"/>急性消化功能衰竭</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong7" type="checkbox" id="weizhong7" value="7"/>急性呼吸衰竭</td>
+											<td><input name="weizhong8" type="checkbox" id="weizhong8" value="8"/>昏迷</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong9" type="checkbox" id="weizhong9" value="9"/>急性左心衰竭</td>
+											<td><input name="weizhong10" type="checkbox" id="weizhong10" value="10"/>大出血</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong11" type="checkbox" id="weizhong11" value="11"/>急性肾功能衰竭</td>
+											<td>&nbsp;</td>
+										  </tr>
+										</table>
+									 </td>
+									  <td align="center" width="30">危<br />重<br />症<br />分<br />类</td>
+									<td width="270" class="d">
+										<table width="100%" border="0" cellpadding="0" cellspacing="0" style=" font-size:12px;">
+										  <tr>
+											<td width="50%"><input name="weizhong12" type="checkbox" id="weizhong12" value="1"/>
+											  普外</td>
+											<td><input name="weizhong13" type="checkbox" id="weizhong13" value="2"/>
+											  妇科</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong14" type="checkbox" id="weizhong14" value="3"/>
+											  骨科</td>
+											<td><input name="weizhong15" type="checkbox" id="weizhong15" value="4"/>
+											  产科</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong16" type="checkbox" id="weizhong16" value="5"/>
+											  神外</td>
+											<td><input name="weizhong17" type="checkbox" id="weizhong17" value="6"/>
+											  五官</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong18" type="checkbox" id="weizhong18" value="7"/>
+											  泌尿</td>
+											<td><input name="weizhong19" type="checkbox" id="weizhong19" value="8"/>
+											  皮科</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong20" type="checkbox" id="weizhong20" value="9"/>
+											  胸外</td>
+											<td><input name="weizhong21" type="checkbox" id="weizhong21" value="10"/>
+											  介入</td>
+										  </tr>
+										  <tr>
+											<td width="50%"><input name="weizhong22" type="checkbox" id="weizhong22" value="11"/>心外</td>
+											<td>&nbsp;</td>
+										  </tr>
+									  </table>
+								  </td>
+							  </tr>
+						  </table>
+					 </div>
+		              
+		              
+		              <div style="margin:5px 0 5px 0;width:690px">
+		                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px" height="100">
+		                  <tr>
+		                    <td rowspan="2" bgcolor="#FFFFFF" width="20" align="center">诊<br/>
+		                      <br/>
+		                      断</td>
+		                    <td bgcolor="#FFFFFF" width="60" align="center">主要<br/>
+		                      诊断</td>
+		                    <td bgcolor="#FFFFFF" align="center">1、
+		                      <input name="zhuyao1" type="text" class="bottomTxt" id="zhuyao1" style="width:570px"/>
+		                      <br/>
+		                      2、
+		                      <input name="zhuyao2" type="text" class="bottomTxt" id="zhuyao2" style="width:570px"/></td>
+		                  </tr>
+		                  <tr>
+		                    <td bgcolor="#FFFFFF" align="center">合并<br/>
+		                      诊断</td>
+		                    <td bgcolor="#FFFFFF" align="center">1、
+		                      <input name="bebing1" type="text" class="bottomTxt" id="bebing1" style="width:570px"/>
+		                      <br/>
+		                      2、
+		                      <input name="bebing2" type="text" class="bottomTxt" id="bebing2" style="width:570px"/></td>
+		                  </tr>
+		                </table>
+		              </div>
+		              <div style="margin:5px 0 5px 0;width:690px">
+		                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" width="20" rowspan="6">T<br/>
+		                      <br/>
+		                      S<br/>
+		                      <br/>
+		                      总<br/>
+		                      <br/>
+		                      积<br/>
+		                      <br/>
+		                      分</td>
+		                    <td bgcolor="#CCCCCC" height="30"  width="247">检验项目</td>
+		                    <td bgcolor="#CCCCCC">检验结果</td>
+		                    <td bgcolor="#CCCCCC" width="80">积分</td>
+		                  </tr>
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" height="40">A.&nbsp; 呼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 吸</td>
+		                    <td bgcolor="#FFFFFF"><select name="huxi0" style="width:120px">
+		                        <option value=""></option>
+		                        <option value="0">0</option>
+		                        <option value="1">&lt;10</option>
+		                        <option value="4">10-24</option>
+		                        <option value="3">25-35</option>
+		                        <option value="2">&gt;35</option>
+		                    </select></td>
+		                    <td bgcolor="#FFFFFF"><input name="huxi" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" height="40">B.&nbsp; 呼&nbsp; 吸&nbsp; 幅&nbsp; 度</td>
+		                    <td bgcolor="#FFFFFF"><select name="huxifudu0" style="width:120px">
+		                        <option value=""></option>
+		                        <option value="1">正常</option>
+		                        <option value="0">浅或困难</option>
+		                    </select></td>
+		                    <td bgcolor="#FFFFFF"><input name="huxifudu" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" height="40">C. 收&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 缩&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 压</td>
+		                    <td bgcolor="#FFFFFF"><select name="shousuoya0" style="width:120px">
+		                        <option value=""></option>
+		                        <option value="0">0</option>
+		                        <option value="1">&lt;50</option>
+		                        <option value="2">50-69</option>
+		                        <option value="3">70-90</option>
+		                        <option value="4">&gt;90</option>
+		                    </select></td>
+		                    <td bgcolor="#FFFFFF"><input name="shousuoya" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" height="40">D.毛细血管充盈</td>
+		                    <td bgcolor="#FFFFFF"><select name="maoxi0" style="width:120px">
+		                        <option value=""></option>
+		                        <option value="0">无</option>
+		                        <option value="2">正常</option>
+		                        <option value="1">迟缓</option>
+		                    </select></td>
+		                    <td bgcolor="#FFFFFF"><input name="maoxi" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                  <tr align="center">
+		                    <td bgcolor="#FFFFFF" height="40">E. G C S&nbsp;&nbsp;&nbsp; 总&nbsp;&nbsp; 分</td>
+		                    <td bgcolor="#FFFFFF"><table width="100%" border="0" cellpadding="0" cellspacing="1" style="font-size:12px" bgcolor="#666666">
+		                        <tr align="center">
+		                          <td height="25" bgcolor="#CCCCCC">项目</td>
+		                          <td bgcolor="#CCCCCC">结果</td>
+		                          <td bgcolor="#CCCCCC">积分</td>
+		                        </tr>
+		                        <tr align="center">
+		                          <td bgcolor="#FFFFFF" height="30">睁&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 眼</td>
+		                          <td bgcolor="#FFFFFF"><select name="eye0" style="width:120">
+		                              <option value=""></option>
+		                              <option value="4">自动睁眼</option>
+		                              <option value="3">呼唤睁眼</option>
+		                              <option value="2">刺疼睁眼</option>
+		                              <option value="1">不睁眼</option>
+		                          </select></td>
+		                          <td bgcolor="#FFFFFF"><input name="eye" class="scoreTxt" value="" readonly/></td>
+		                        </tr>
+		                        <tr align="center">
+		                          <td bgcolor="#FFFFFF" height="30">语言反应</td>
+		                          <td bgcolor="#FFFFFF"><select name="language0" style="width:120">
+		                              <option value=""></option>
+		                              <option value="5">回答切题</option>
+		                              <option value="4">回答不切题</option>
+		                              <option value="3">答非所问</option>
+		                              <option value="2">只能发音</option>
+		                              <option value="1">不能言语</option>
+		                          </select></td>
+		                          <td bgcolor="#FFFFFF"><input name="language" class="scoreTxt" value="" readonly/></td>
+		                        </tr>
+		                        <tr align="center">
+		                          <td bgcolor="#FFFFFF" height="30">运动反应</td>
+		                          <td bgcolor="#FFFFFF"><select name="move0" style="width:120">
+		                              <option value=""></option>
+		                              <option value="6">按吩咐动作</option>
+		                              <option value="5">刺痛能定位</option>
+		                              <option value="4">刺痛能躲避</option>
+		                              <option value="3">刺痛肢体屈曲</option>
+		                              <option value="2">刺痛肢体伸展</option>
+		                              <option value="1">不能活动</option>
+		                          </select></td>
+		                          <td bgcolor="#FFFFFF"><input name="move" class="scoreTxt" value="" readonly/></td>
+		                        </tr>
+		                      </table></td>
+		                    <td bgcolor="#FFFFFF"><input name="ec" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                </table>
+		              </div>
+		              <div style="margin:5px 0 5px 0;width:690px">
+		                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+		                  <tr>
+		                    <td bgcolor="#FFFFFF" height="30" width="268" align="center">&nbsp;&nbsp; TS总积分</td>
+		                    <td bgcolor="#FFFFFF" align="center"><input name="tc" class="scoreTxt" value="" readonly/></td>
+		                  </tr>
+		                </table>
+		              </div></td>
+		          </tr>
+		        </table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('input[name="hcbismuth"]').click(function(){
+			$('input[name="bismuthRst"]').val($(this).val());
+		});
+		$('input[name="hct"]').click(function(){
+			$('input[name="hctRst"]').val($(this).val());
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="2" style="font-size:20px;color:red;height:30px" align="center"><B>肝门部胆管癌分型</B></td></tr>
+		<tr>
+			<td bgcolor="#D4D4D4" width="600" align="left" style="color:red"><B>肝门部胆管癌Bismuth分型</B></td>
+			<td bgcolor="#D4D4D4" width="100" align="center">分型</td>
+		</tr> 
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅠ型" /></div><div style="float:left;">肿瘤位于肝总管，未侵犯汇合部</div></div></td>
+			<td rowspan="5"><input type="text" name="bismuthRst" style="width:90px;" /></td>
+		</tr>	
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅡ型" /></div><div style="float:left;">肿瘤已累及汇合部,但未侵犯左右肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅢa型" /></div><div style="float:left;">肿瘤已侵犯右肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅢb型" /></div><div style="float:left;">肿瘤已侵犯左肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅣ型" /></div><div style="float:left;">肿瘤已侵犯左右肝管</div></div></td>
+		</tr>
+		
+		<tr>
+			<td bgcolor="#D4D4D4" align="left" style="color:red"><B>肝门部胆管癌T分期</B></td>
+			<td bgcolor="#D4D4D4" align="center">分期</td>
+		</tr> 
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T1" /></div><div style="float:left;">肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管</div></div></td>
+			<td rowspan="3"><input type="text" name="hctRst" style="width:90px;" /></td>
+		</tr>	
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T2" /></div><div style="float:left;">肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管合并同侧门静脉受侵和（或）同侧肝叶萎缩</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T3" /></div><div style="float:left;">肿瘤累及肝管汇合部并扩展到双侧二级胆管；或扩展到单侧二级胆管合并对侧门静脉受侵；或扩展到单侧二级胆管合并对侧肝叶萎缩；或门静脉主干受侵</div></div></td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

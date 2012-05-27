@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>本科室医生选择</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/prototype/chineseascii_pack.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/prototype/prototype.js"></script>
+<link type="text/css" rel="stylesheet" href="dialog.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<style type="text/css">
+#con{
+	width:285px;
+	height:550px;
+	border:solid #ccc 1px;
+	overflow:scroll;
+}
+</style>
+<script type="text/javascript">
+/**
+ * 本科室医生选择窗口
+ * dialogWidth=302px;dialogHeight=424px
+ * window.returnValue={
+		text:'',
+		value:''
+	}
+ */
+$(function(){
+	$.post(
+		App.App_Info.BasePath+'/common/CommonAction.do',
+		{
+			method:'QueryMyDoctorsNew'
+		},
+		function(data){
+			LayoutItemsDiv(data);
+		},
+		'json'
+	);
+});
+function LayoutItemsDiv(data){
+	var _div=$('#items-div');
+	$.each(data,function(){
+		var _item='<div class="dict-item"><input type="checkbox" value="'+this[0]+'"><span>'+this[1]+'</span></div>';
+		$(_item).appendTo(_div);
+	});
+	$.each($('div.dict-item'),function(){
+		$(this).mouseover(function(){
+			this.className='dict-item-over';
+		}).mouseout(function(){
+			this.className='dict-item';
+		}).click(function(){
+			var _thisCheckbox=$(this).find('input');
+			var _thisChecked=_thisCheckbox.attr('checked');
+			$.each($('input[type="checkbox"]'),function(){
+				$(this).attr('checked',false);
+			});
+			if(_thisChecked){
+				_thisCheckbox.attr('checked',false);
+			}else{
+				_thisCheckbox.attr('checked',true);
+			}
+		});
+	});
+	$.each($('div.dict-item').find('input'),function(){
+		$(this).click(function(){
+			var _thisChecked = $(this).attr('checked');
+			if(_thisChecked){
+				$(this).attr('checked',false);
+			}else{
+				$(this).attr('checked',true);
+			}
+		});
+	});
+	$('#filter-text').keyup(function(){
+		doFilter($(this).val());
+	});
+}
+function doFilter(_val){
+	_val=_val.toLowerCase();
+	var eles = $('div.dict-item');
+	$.each(eles,function(){
+		var _spanTxt=$(this).find('span').text();
+		var _index=_spanTxt.indexOf('(');
+		if(_index>0){
+			_spanTxt=_spanTxt.substr(0,_index);
+		}
+		var _spanPY='';
+		if(_spanTxt&&_spanTxt.length>0){
+			_spanPY=getPY(_spanTxt);
+		}
+		if ((_spanTxt.indexOf(_val) >= 0) || (_spanPY.indexOf(_val) >= 0)) {
+			$(this).show();
+		}else{
+			$(this).hide();
+		}
+	});
+}
+function getPY(_str){
+	var rstValue='';
+	_str=_str.replaceAll(' ','');
+	var temp=_str.split(''),
+	i=-1,
+	len=_str.length,
+	rst=_str.split('');
+	while(++i<len){
+		temp[i]=(temp[i].charCodeAt()<1000||temp[i].charCodeAt()>60000)?temp[i]:lookUpWord(temp[i]);
+		rstValue=rstValue+temp[i].charAt(0); 
+	}
+	return rstValue;
+}
+function OkBtnClick(){
+	var eles = $('div.dict-item');
+	var _text='';
+	var _value='';
+	$.each(eles,function(){
+		var _checkbox=$(this).find('input');
+		if(_checkbox.attr('checked')){
+			_text=$(this).find('span').text();
+			var _index=_text.indexOf('(');
+			if(_index>0){
+				_text=_text.substr(0,_index);
+			}
+			_value=_checkbox.val();
+			return false;
+		}
+	});
+	if(_text.length==0&&_value.length==0){
+		alert('未选择任何记录。');
+		return;
+	}
+	window.returnValue={
+		text:_text,
+		value:_value
+	};
+	window.close();
+}
+function ClsBtnClick(){
+	window.returnValue={
+		value:'',
+		text:''
+	};
+	window.close();
+}
+</script>
+</head>
+<body>
+<div id="con">
+	<div class="toolbar">
+		<input type="button" class="btn" value="确定" onclick="OkBtnClick()"/>
+		<input type="button" class="btn" value="清空" onclick="ClsBtnClick()"/>
+		<input type="button" class="btn" value="关闭" onclick="window.close()"/>
+	</div>
+	<div class="filterbar">
+		<span>过滤：</span><input id="filter-text" type="text" name="keyword"/>
+	</div>
+	<div id="items-div"></div>
+</div>
+</body>
+</html>

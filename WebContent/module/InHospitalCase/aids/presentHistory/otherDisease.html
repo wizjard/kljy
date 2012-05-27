@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>现病史</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan;
+Ext.onReady(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('#currentStatusDiv',JSON.parse(spanContent));
+	}
+});
+function initPage(){
+	var panel=new Ext.Panel({
+		id:'panel',
+		title:'',
+		width:820,
+		frame:true,
+		layout:'fit',
+		tbar:[
+			{
+				pressed:false,
+				text:'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其他疾病情况(与本次疾病无紧密关系、仍需治疗的其它疾病在此记录)'
+			},{
+				xtype:"tbfill"
+			},{
+				pressed:true,
+				text:'确定',
+				handler:function(){
+					var value=getData();
+					var oldOperation = JSON.stringify(value);
+					var rst='';
+					$.each(value.nxs,function(index,value){
+						var temp=value.casesDesc+value.mainSysptomDesc+value.sideSysptomDesc+value.treatmentDesc;
+						rst+=temp.length>0?((index==0?'':' ')+temp):'';
+					});
+					rst+=ComposeCurrentStatu(value);
+										
+					if(rst.length > 0){
+						rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hideAidsHis();parent.symptomInfoIfr('otherDisease.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+						var iframe = parent.document.getElementById('aidsHistory');
+						iframe.contentWindow.itemValue = rst;
+						if(iframe.contentWindow.dbclickedSpan){
+							iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+						}else{
+							iframe.contentWindow.setReturnValue();
+						}
+					}
+					backToPreIllWindow();
+				}
+			},{
+				xtype:"tbseparator"
+			},{
+				pressed:true,
+				text:'取消',
+				handler:function(){
+					backToPreIllWindow();
+				}
+			}
+		],
+		items:[
+			{
+				height:350,
+				bodyStyle:'background:#fff',
+				autoScroll:true,
+				listeners:{
+					render:function(){
+						$('#currentStatusDiv').appendTo($(this.body.dom));
+						$('#currentStatusDiv input[type="radio"]').each(function(){
+							if(this.checked)
+								$(this).click();
+						});
+					}
+				}
+			}
+		]
+	});
+	panel.render('tab');
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showAidsHis();	
+}
+
+function getData(){
+	var value=FormUtil.getFormValues('#currentStatusDiv');
+	var nxs=[];
+	value.nxs=nxs;
+	return value;
+}
+
+function getMyData(elId){
+	return Ext.getCmp(elId).getData();
+}
+/*目前状况组合值*/
+function ComposeCurrentStatu(value){
+	var rst='';
+	var tempValue='';
+	tempValue =  value.otherdesease;
+	leftInputItem = '<input name="lrotherdesease" type="text" value="" />';
+	rightInputItem = '<input name="lrotherdesease" type="text" value="。" />';
+	if($('input[name="lrotherdesease"]').size() > 0){
+		$('input[name="lrotherdesease"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrotherdesease"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst += tempValue.length > 0 ? leftInputItem + tempValue + rightInputItem : '';
+	
+	return rst;
+}
+
+</script>
+</head>
+<body>
+<div id="tab"></div>
+<div id="currentStatusDiv">
+<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1">其他疾病情况：</td>
+		<td class="t2"><textarea name="otherdesease" class="textarea" style="width:700px;height:60px"></textarea></td>
+	</tr>
+</table>
+</div>
+<div id="composeInfo" style="display:none"></div>	
+</body>
+</html>

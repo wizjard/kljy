@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>肿瘤肝胆介入治疗中心介入诊断、治疗预约单</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+.tx1{border-top:0px;border-left:0px;border-right:0px;border-bottom:1px solid black;}
+</style>
+
+<script type="text/javascript">
+var KID = null;
+var PID = null;
+$(function(){
+	KID=App.util.getHtmlParameters('kid');
+	PID=App.util.getHtmlParameters('pid');
+	$('input[name="patientId"]').val(PID);
+	$('input[name="historyCaseId"]').val(KID);
+	$('input[name="id"]').val(App.util.getHtmlParameters('this'));
+	initPage();
+});
+
+function initPage(){
+	registrationPageHead(KID,'介入诊断治疗预约单','#header');
+	var _input=$('input');
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="songDate"]'),dateFormat:'yyyy-MM-dd HH:mm'})
+	//医生字典选择
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="doctorName"]')
+	});
+	//科室字典
+		$.ajax({
+		url:App.App_Info.BasePath+'/common/CommonAction.do',
+		data:{
+			method:'QueryMyBelongs',
+			timestamp:new Date().getTime()
+		},
+		async:false,
+		dataType:'json',
+		success:function(_data){
+			var _fld=$('input[name="officeAssort"]');
+			_fld.data('options',_data);
+			FormUtil.toCombobox({el:_fld});
+		}
+	});
+	var id = $('input[name="id"]').val();
+	if(id==-1){
+		getMainInfo();
+		return;
+	}else{
+		setValue(id);
+	}
+}
+//查询信息到页面
+function setValue(id){
+	$.post(
+		App.App_Info.BasePath+'/CancerTreatBespokeAction.do',
+		{
+			method:'get_Patient_Info',
+			id:id
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+				$('textarea[name="diagnose"]').val(json.diagnose);
+				getMainInfo();
+				FormUtil.valueTool.setComboValue($('input[name="officeAssort"]'),json.officeAssort);
+			}
+		},
+		'json'
+	)
+}
+//如果表中没有信息。查询基本信息到页面
+function getMainInfo(){
+	$.post(
+		App.App_Info.BasePath+'/CancerTreatBespokeAction.do',
+		{
+			method:'get_Main_Info',
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+			}
+		},
+		'json'
+	)
+}
+//保存和修改信息
+function SaveData(){
+	
+	var data=JSON.stringify(FormUtil.getFormValues('form'));
+	var id=$('input[name="id"]').val();
+	$.post(
+		App.App_Info.BasePath+'/CancerTreatBespokeAction.do',
+		{
+			method:'saveOrUpdate',
+			data:data,
+			pid:PID,
+			id:id
+		},
+		function(data){
+			$('input[name="id"]').val(data.id)
+			alert("保存成功");
+			parent.createIndex();
+		},
+		'json'
+	)
+}
+function deleteData(){
+	var yrn = confirm("确认删除么？");
+	if(!yrn){
+		return;
+	}
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert("请保存后再删除");
+		return;
+	}
+	var data=JSON.stringify(FormUtil.getFormValues('form'));
+	$.post(
+		App.App_Info.BasePath+'/CancerTreatBespokeAction.do',
+		{
+			method:'deleteData',
+			data:data
+		}
+	)
+	parent.location.reload();
+}
+function print(){
+	var songDate = $('input[name="songDate"]').val();
+	var doctorname =$('input[name="doctorName"]').val();
+	if(doctorname == null || doctorname == ""){
+		alert("请先填写医师项并保存");
+		return;
+	}
+	if(songDate == null || songDate == ""){
+		alert("请先填写申请日期项并保存");
+		return;
+	}
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/Apply/print/CancerTreatBesopkePrint.html?id='+id+'&&'+'kid='+KID);
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+	<input type="hidden" name="id" value="-1"/>
+	<input type="hidden" name="patientId"/>
+	<input type="hidden" name="historyCaseId"/>
+	<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td width="85" class="t1">姓名：</td>
+			<td width="200" class="t2"><input type="text" name="patientName" readonly="readonly"/></td>
+			<td width="100" class="t1">&nbsp;</td>
+			<td width="*" class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="85" class="t1">性别：</td>
+			<td width="215" class="t2"><input type="text" name="gender" readonly="readonly"/></td>	
+			<td width="90" class="t1">年龄：</td>
+			<td width="*" class="t2"><input type="text" name="age" readonly="readonly"/></td>
+		</tr>
+		<tr>
+			<td class="t1">病案号：</td>
+			<td class="t2"><input type="text" name="patientCaseId" readonly="readonly"/></td>
+			<td class="t1">科别：</td>
+			<td class="t2"><input type="text" name="officeAssort" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">床号：</td>
+			<td class="t2"><input type="text" name="bedNum"/></td>
+			<td class="t1">CT号：</td>
+			<td class="t2"><input type="text" name="ctNum"/></td>
+		</tr>
+		<tr>
+			<td class="t1">MR号：</td>
+			<td class="t2"><input type="text" name="mrNum"/></td>
+			<td class="t1">介入号：</td>
+			<td class="t2"><input type="text" name="joinNum"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">诊断：</td>
+			<td class="t2" colspan="5"><textarea class="textarea" name="diagnose" style="width:98%"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">介入手术项目：</td>
+			<td colspan="3" class="t2">
+			<input class="tx1"type="text" name="joinItemName"/>定于 <input class="tx1"type="text" name="checkDate"/>开始手术，请做好准备:<br/>
+				<span>
+				1、术前六小时禁食、水<br/>
+				2、备皮(胆道系统治疗不需作备皮)<br/>
+				3、碘过敏试验(CT导引射频消化、化学消融术不作碘过敏试验)<br/>
+				4、签署手术知情同意书(手术当天必须有家属陪同)<br/>
+				5、请携带预约单、病历、CT片、MR片、患者备静脉通路一组，由医护人员陪同到导管室
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">医师：</td>
+			<td class="t2"><input type="text" name="doctorName"/></td>
+			<td class="t1">时间：</td>
+			<td class="t2"><input type="text" name="songDate"/></td>
+		</tr>
+	</table>
+</form>
+</body>
+</html>

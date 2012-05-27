@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户登录</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var errCode={
+	0:'用户不存在',
+	1:'用户名或密码错误',
+	2:'身份验证失败',
+	3:'登录超时,请重新登录',
+	5:'用户名不能为空',
+	6:'密码不能为空',
+	7:'身份不能为空',
+	9:''
+};
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	Ext.form.Field.prototype.msgTarget='side';
+	var _panel=new Ext.Panel({
+		title:'康乐家园—用户登录',
+		frame:true,
+		width:280,
+		autoHeight:true,
+		layout:'fit',
+		items:{
+			xtype:'form',
+			layout:'form',
+			id:'form',
+			autoHeight:true,
+			labelWidth:60,
+			labelAlign:'right',
+			items:[
+				{
+					html:"<div id='errorDiv' class='errorDiv'></div>"
+				},{
+					xtype:'textfield',
+					anchor:'90%',
+					fieldLabel:'用户名',
+					allowBlank:false,
+					listeners:{
+						blur:function(){
+							var _value=this.getValue().trim();
+							if(_value.length==0){
+								setErrorMsg(5);
+								return false;
+							}else{
+								getIDType();
+								return true;
+							}
+						}
+					},
+					name:'name'
+				},{
+					xtype:'textfield',
+					anchor:'90%',
+					fieldLabel:'密&nbsp;&nbsp;&nbsp;码',
+					inputType:'password',
+					allowBlank:false,
+					listeners:{
+						blur:function(){
+							var _value=this.getValue().trim();
+							if(_value.length==0){
+								setErrorMsg(6);
+								return false;
+							}
+						}
+					},
+					name:'password'
+				},{
+					xtype:'combo',
+					anchor:'90%',
+					fieldLabel:'身份识别',
+					allowBlank:false,
+					name:'idType',
+					mode:'local',
+					triggerAction:'all',
+					displayField:'text',
+					valueField:'value',
+					readOnly:true,
+					store:new Ext.data.SimpleStore({
+						data:[],
+						fields:['value','text']
+					}),
+					listeners:{
+						blur:function(){
+							var _value=this.getValue().trim();
+							if(_value.length==0){
+								setErrorMsg(7);
+								return false;
+							}
+						}
+					}
+				},{
+					xtype:'combo',
+					anchor:'90%',
+					fieldLabel:'Cookie',
+					name:'cookieTime',
+					mode:'local',
+					triggerAction:'all',
+					displayField:'text',
+					valueField:'value',
+					value:0,
+					readOnly:true,
+					store:new Ext.data.SimpleStore({
+						data:[[0,'不保存'],
+							  [7*24*3600*1000,'保存一周'],
+							  [30*24*3600*1000,'保存一月'],
+							  [365*24*3600*1000,'保存一年']],
+						fields:['value','text']
+					})
+				},new Ext.form.CheckboxGroup({
+					defaults:{autoWidth:true},
+					anchor:'90%',
+					fieldLabel:'记&nbsp;&nbsp;&nbsp;住',
+					name:'remPassword',
+					getValue:function(){
+						var _val=0;
+						this.items.each(function(_item){
+							if(_item.checked){
+								_val=1;
+							}
+						});
+						return _val;
+					},
+					items:[
+						{boxLabel:'密码',inputValue:'1',name:'remPassword'}
+					]
+				})
+			],
+			buttons:[
+				{
+					text:'登录',handler:function(){
+						login(this.ownerCt.form);
+					}
+				},{
+					text:'重置',handler:function(){
+						this.ownerCt.form.reset();
+						setErrorMsg(9);
+					}
+				}
+			]
+		}
+	});
+	_panel.render(Ext.getBody());
+});
+function login(_form){
+	if(_form.isValid()){
+		var _params={};
+		_params.name=_form.findField('name').getValue().trim();
+		_params.password=_form.findField('password').getValue().trim();
+		_params.idType=_form.findField('idType').getValue();
+		_params.cookieTime=_form.findField('cookieTime').getValue();
+		_params.remPassword=_form.findField('remPassword').getValue();
+		Ext.Ajax.request({
+			url:'security.jsp?method=login',
+			params:_params,
+			success:function(_response,_options){
+				var _res=Ext.util.JSON.decode(_response.responseText);
+				if(_res.success){
+					window.open('');
+				}else{
+					alert('登录失败。');
+					setErrorMsg(_res.msg);
+				}
+			}
+		});
+	}else{
+		alert('登录信息未通过验证，请重新填写。');
+	}
+}
+function setErrorMsg(_errorCode){
+	var _div=document.getElementById('errorDiv');
+	_div.innerHTML=errCode[_errorCode];
+}
+function getIDType(_name){
+	Ext.Ajax.request({
+		url:'security.jsp',
+		params:{
+			method:'findBelongRoleByName',
+			name:_name
+		},
+		success:function(_response,_options){
+			var _res=Ext.util.JSON.decode(_response.responseText);
+			if(_res.success){
+				var _data=Ext.util.JSON.decode(_res.data);
+				if(_data.length==0){
+					setErrorMsg(0);
+					return;
+				}
+				var _store=Ext.getCmp('form').form.findField('idType').getStore();
+				_store.removeAll();
+				Ext.each(_data,function(_item,_index){
+					var _record=new Ext.data.Record().create({
+						value:_item[0],
+						text:_item[1]
+					});
+					_store.add(_record);
+				});
+			}else{
+				setErrorMsg(0);
+			}
+		}
+	});
+}
+</script>
+<style type="text/css">
+body{
+	margin:3px;
+}
+.errorDiv{
+	text-align:center;
+	line-height:18px;
+	font-size:12px;
+	height:18px;
+	color:red;
+}
+</style>
+</head>
+<body>
+
+</body>
+</html>

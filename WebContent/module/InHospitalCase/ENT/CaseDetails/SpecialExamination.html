@@ -1,0 +1,1099 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../Liver/Js/validData.js"></script>
+<script type="text/javascript" src="dicitJs/valiData.js"></script>
+<title>专科检查</title>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+var eventArray = ['erkou_zhongwu','waierdao_zhongwu','waierdao_fenbiwu','gumo_chuankong','biqiang_zhongwu','bidao_fenbiwu','bidao_zhongwu',
+                  'bidao_chuankong','yanyinwo_xinshengwu','yggyz_xinshengwu','biyandingbi_xinshengwu','ruane_xinshengwu','btti_xinshengwu',
+                  'huiyan_chongxue','huiyan_xinshengwu','shidai_chongxue','shidai_xiachu','shidai_feihou','shidai_xinshengwu','houshi_qingxi',
+                  'houshi_xinshengwu','shaozhuang_yundong','shaozhuang_xinshengwu','lizhuang_nianmo','lizhuang_zhongwu'
+				 ];	
+	
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+	
+	function initPage(){
+		//初始化公共字典值
+		$.each(FormUtil.getPageDictionary('EMR-erbih-specExam'),function(code){
+			$('*[name="'+code+'"]').data('options',this);
+		});
+		//Select
+		$('input.select').each(function(){
+			FormUtil.toCombobox({el:$(this)});
+		});
+		//Radio初始化
+		$('input.dict-fld').each(function(){
+			FormUtil.initDictRadio($(this));
+		});
+		//Radio事件
+		$.each(eventArray,function(){
+			$('input[name="'+this+'"]').each(function(){
+				$(this).click(function(){
+					if($(this).val()!=1){
+						$(this).parent().parent().next().show();
+					}else{
+						$(this).parent().parent().next().hide();
+					}
+				});
+			});
+		});
+	}
+	
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+		{
+			method:'se_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					$.each(eventArray,function(){
+						$('input[name="'+this+'"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					});
+				}else{
+					setDefaultValue();
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function setDefaultValue(){
+	$('input.select').each(function(){
+		var value=$(this).attr('inputValue');
+		if(value){
+			return true;
+		}
+		var options=$(this).data('options');
+		if(options.length>0){
+			var value=options[0];
+			$(this).val(value[1]);
+			$(this).attr('inputValue',value[0]);
+		}
+	});
+}
+
+function SaveData(){
+	//if(ValidFormSpecial(FormUtil.getFormValues('form'),'form')== false)	return;
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+		{
+			method:'se_saveOrUpdate',
+			data:JSON.stringify(FormUtil.getFormValues('form'))
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('#id').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+<style type="text/css">
+textarea{
+	width:98%;
+	height:80px;
+}
+h1{
+	text-align:center;
+	font-size:12px;
+	margin:0;
+	padding:2px 0;
+}
+	.red {
+		 color:red;
+	 }
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" id="id" value=""/>
+	<input type="hidden" name="caseId" value=""/>
+	<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或选项！</span></p>
+	<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="title" colspan=2>专科检查</td>
+		</tr>
+		<tr>
+			<td width="100"><img src="specail_erl.jpg"/></td>
+			<td width="500" rowspan="2" valign="top">
+				<table width="100%" height="120%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4" align="left"><b style="font-size:14px">耳廓：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150">
+							<input type="text" class="select" name="erkou_chongxue" />
+						</td>
+						<td class="t1" width="100">水肿：</td>
+						<td class="t2" width="150">
+							<input type="text" class="select" rel="erkou_chongxue" name="erkou_shuizhong" />
+						</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>肿物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" name="erkou_zhongwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" cellSpacing=0 cellPadding=2>
+								<tr>
+									<td class="t3" width="70">位置：</td>
+									<td width="130">
+										<input type="text" class="select" name="erkou_weizhi" />
+									</td>
+									<td class="t3" width="70">肿物表面：</td>
+									<td width="130">
+										<input type="text" class="select" name="erkou_biaomian" />
+									</td>
+								</tr>
+								<tr>
+									<td class="t3">肿物大小：</td>
+									<td colspan="3"><input type="text" class="text" name="erkou_daxiao" style="width:80px;"/>&nbsp;cm</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="erkou_other" /></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td><img src="specail_err.jpg"/></td>
+		</tr>
+		<tr>
+			<td width="100"><img src="specail_waierl.jpg"/></td>
+			<td width="500" rowspan="2">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">外耳道：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150">
+							<input type="text" class="select" rel="erkou_chongxue" name="waierdao_chongxue" />
+						</td>
+						<td class="t1" width="100">水肿：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="waierdao_shuizhong" /></td>
+					</tr>
+					<tr>
+						<td class="t1">肿物：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" name="waierdao_zhongwu"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">表面：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="waierdao_biaomian" /></td>
+						<td class="t1">大小：</td>
+						<td class="t2"><input type="text" class="text" name="waierdao_daxiao" />&nbsp;cm</td>
+					</tr>
+					<tr>
+						<td class="t1">疖肿：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_zhongwu" name="waierdao_jiezhong" /></td>
+						<td class="t1">瘘口：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_zhongwu" name="waierdao_loukou" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>狭窄：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_zhongwu" name="waierdao_xiazhai" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>分泌物：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" name="waierdao_fenbiwu"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">气味：</td>
+						<td class="t2"><input type="text" class="select" name="waierdao_qiwei"/></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="waierdao_other" /></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td><img src="specail_waierr.jpg"/></td>
+		</tr>
+		<tr>
+			<td width="100"><img src="specail_gumol.jpg"/></td>
+			<td width="500" rowspan="2">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼓膜：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">颜色：</td>
+						<td class="t2" width="150"><input type="text" class="select" name="gumo_yanse" /></td>
+						<td class="t1" width="100">标志：</td>
+						<td class="t2" width="150"><input type="text" class="select" name="gumo_biaozhi" /></td>
+					</tr>
+					<tr>
+						<td class="t1">充血：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_chongxue" /></td>
+						<td class="t1">肿胀：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_zhongzhang" /></td>
+					</tr>
+					<tr>
+						<td class="t1">内陷：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_neixian" /></td>
+						<td class="t1">增厚：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_zenghou" /></td>
+					</tr>
+					<tr>
+						<td class="t1">鼓室积液：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_jiye" /></td>
+						<td class="t1">鼓室内肉芽：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_rouya" /></td>
+					</tr>
+					<tr>
+						<td class="t1">胆脂瘤：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="gumo_danzhiliu" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>	
+						<td class="t1">穿孔：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" rel="erkou_chongxue" name="gumo_chuankong"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">&nbsp;
+							<table width="100%" cellSpacing=0 cellPadding=2>
+								<tr>
+									<td class="t3" width="70">位于鼓膜：</td>
+									<td width="130"><input type="text" class="select" name="gumo_weiyu" /></td>
+									<td class="t3" width="70">类型：</td>
+									<td width="130"><input type="text" class="select" name="gumo_type" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" name="gumo_xingzhuang"/></td>
+									<td class="t3">&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="gumo_other" /></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td><img src="specail_gumor.jpg"/></td>
+		</tr>
+		<tr>
+			<td width="100"><img src="specail_biqiang.jpg"/></td>
+			<td width="500">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">外鼻：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>皮肤：</td>
+						<td class="t2" width="150"><input type="text" class="select" name="waibi_pifu" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>鼻梁歪曲：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="waibi_waiqu" /></td>
+					</tr>
+					<tr>
+						<td class="t1">鞍鼻：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="waibi_anbi" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻前庭：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>红肿：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="biqianting_hongzhong" /></td>
+						<td class="t1" width="100">隆起：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="biqianting_longqi" /></td>
+					</tr>
+					<tr>
+						<td class="t1" ><span class="red">*&nbsp;</span>皮肤增厚粗糙：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="biqianting_cucao" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻腔：</b></td>
+					</tr>
+					<tr>
+						<td class="t1">肿物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="erkou_chongxue" name="biqiang_zhongwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" height="100%" cellSpacing=0 cellPadding=2>
+								<tr>
+									<td class="t3" width="70">数量：</td>
+									<td width="130"><input type="text" class="select" name="biqiang_shulian" /></td>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" name="biqiang_biaomian" /></td>
+								</tr>
+								<tr>
+									<td class="t3">颜色：</td>
+									<td><input type="text" class="select" name="biqiang_yanse" /></td>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" name="biqiang_xingzhuang" /></td>
+								</tr>
+								<tr>
+									<td class="t3">探触：</td>
+									<td><input type="text" class="select" name="biqiang_tanzhongwu" /></td>
+									<td class="t3">基底：</td>
+									<td><input type="text" class="select" name="biqiang_jidi" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="biqian_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻甲：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>肿胀：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="bijia_zhongzhang" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="bijia_chongxue" /></td>
+					</tr>
+					<tr>
+						<td class="t1">水肿：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="bijia_shuizhong" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>颜色：</td>
+						<td class="t2"><input type="text" class="select" name="bijia_yanse" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>表面：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="bijia_biaomian" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>形态：</td>
+						<td class="t2"><input type="text" class="select" name="bijia_xingtai" /></td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="bijia_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻道：</b></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>分泌物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="erkou_chongxue" name="bidao_fenbiwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" height="100%" cellSpacing=0 cellPadding=2>
+								<tr>
+									<td class="t3" width="70">位置：</td>
+									<td width="130"><input type="text" class="select" name="bidao_fenbiwu_weizhi" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" name="bidao_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">性质：</td>
+									<td><input type="text" class="select" name="bidao_xingzhi" /></td>
+									<td class="t3">&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<!-- 
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>肿物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="erkou_chongxue" name="bidao_zhongwu"/>
+						</td>
+					</tr>
+					 -->
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" height="100%" cellSpacing=0 cellPadding=2>
+								<tr>
+									<td class="t3" width="70">数量：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_shulian" name="bidao_shulian" /></td>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_biaomian" name="bidao_biaomian" /></td>
+								</tr>
+								<tr>
+									<td class="t3">颜色：</td>
+									<td><input type="text" class="select" rel="biqiang_yanse" name="bidao_zhongwu_yanse" /></td>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="bidao_xingzhuang" /></td>
+								</tr>
+								<tr>
+									<td class="t3">探触：</td>
+									<td><input type="text" class="select" rel="biqiang_tanzhongwu" name="bidao_tanzhongwu" /></td>
+									<td class="t3">基底：</td>
+									<td><input type="text" class="select" rel="biqiang_jidi" name="bidao_jidi" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">钩突肥大：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="bidao_feida" /></td>
+						<td class="t1">泡状中甲：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="bidao_zhongjia" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>骨嵴/骨棘：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="bidao_guji" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜糜烂：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="bidao_milan" /></td>
+					</tr>
+					<tr>	
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜溃疡：</td>
+						<td class="t2" ><input type="text" class="select" rel="erkou_chongxue" name="bidao_kuiyang" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>鼻中隔穿孔：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="bidao_chuankong"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" height="100%" cellSpacing=0 cellPadding=2 >
+								<tr>
+									<td class="t3" width="70">大小：</td>
+									<td width="130"><input type="text" class="text" name="bidao_chuankong_daxiao" />cm</td>
+									<td class="t3" width="70">位置：</td>
+									<td width="130"><input type="text" class="select" name="bidao_chuankong_weizhi" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻中隔偏曲：</b></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>鼻中隔偏曲：</td>
+						<td class="t2"><input type="text" class="select" name="bidao_pianqu" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="bizhongge_other" /></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td><img src="specail_houbi.jpg"/></td>
+			<td>
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻咽部：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="yanyinwo_chongxue" /></td>
+						<td class="t1" width="100">水肿：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="yanyinwo_shuizhong" /></td>
+					</tr>
+					<tr>
+						<td class="t1">粘膜：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="yanyinwo_nianmo" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="yanyinwo_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="yanyinwo_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="yanyinwo_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="yanyinwo_xingzhuang" /></td>
+									<td class="t3">&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="biyanbu_other" /></td>
+					</tr>
+					<!-- 
+					<tr>
+						<td colspan="4"><b style="font-size:14px">咽鼓管圆枕：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="yggyz_chongxue" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>水肿：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="yggyz_shuizhong" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="yggyz_nianmo" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="yggyz_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="yggyz_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="yggyz_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="yggyz_xingzhuang" /></td>
+									<td class="t3">&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">鼻咽顶壁：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="biyandingbi_chongxue" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>水肿：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="biyandingbi_shuizhong" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="biyandingbi_nianmo" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="biyandingbi_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="biyandingbi_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="biyandingbi_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" name="biyandingbi_xingzhuang" /></td>
+									<td class="t3">&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					 -->
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td><img src="specail_yanbu.jpg"/></td>
+			<td>
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">软腭：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>瘫痪：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="ruane_tanhuan" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="ruane_chuongxue" /></td>
+					</tr>
+					<tr>
+						<td class="t1">溃疡：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="ruane_kuiyan" /></td>
+						<td class="t1">缺损：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="ruane_quesun" /></td>
+					</tr>
+					<tr>
+						<td class="t1">疤痕：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="ruane_bahen" /></td>
+						<td class="t1">膨隆：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="ruane_penglong" /></td>
+					</tr>
+					<tr>
+						<td class="t1">新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="ruane_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="ruane_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="ruane_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="ruane_xingzhuang" /></td>
+									<td class="t3">大小：</td>
+									<td><input type="text" class="text" name="ruane_daxiao" />cm</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="ruane_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">悬雍垂：</b></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>悬雍垂：</td>
+						<td class="t2"><input type="text" class="select" name="ruane_xuanyongchui"></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">腭扁桃体：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>肿大：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_chongxue" name="btti_zhongda" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>大小：</td>
+						<td class="t2" width="150"><input type="text" class="select" name="btti_daxiao" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="btti_chongxue" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>脓点：</td>
+						<td class="t2"><input type="text" class="select" name="btti_nongdian" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>溃疡：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="btti_kuiyang" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>角化物：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_chongxue" name="btti_jiaohuawu" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>新生物：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" rel="erkou_chongxue" name="btti_xinshengwu" /></td>	</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" name="btti_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="btti_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="btti_xingzhuang" /></td>
+									<td class="t3">大小：</td>
+									<td><input type="text" class="text" name="btti_xinsheng_daxiao" />cm</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4"><b style="font-size:14px">咽后壁：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="yhb_chongxue" /></td>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>淋巴滤泡：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="yhb_linba" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜：</td>
+						<td class="t2"><input type="text" class="select" name="yhb_nianmo" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>咽侧索：</td>
+						<td class="t2"><input type="text" class="select" name="yhb_cesuo" /></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td width="100"><img src="specail_houbu.jpg"/></td>
+			<td width="500">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">会厌：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100"><span class="red">*&nbsp;</span>充血：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="huiyan_chongxue"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1" width="100">程度：</td>
+						<td class="t2" width="150"><input type="text" class="select" name="huiyan_chongxue_chengdu" /></td>
+						<td class="t1" width="100">&nbsp;</td>
+						<td class="t2" width="150">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>肿胀：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="huiyan_zhongzhang" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜：</td>
+						<td class="t2"><input type="text" class="select" rel="erkou_biaomian" name="huiyan_nianmo" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>抬举：</td>
+						<td class="t2"><input type="text" class="select" name="huiyan_taiju" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>新生物：</td>
+						<td class="t2"  colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="huiyan_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="huiyan_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="huiyan_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="huiyan_xingzhuang" /></td>
+									<td class="t3">大小：</td>
+									<td><input type="text" class="text" name="huiyan_daxiao" />cm</td>
+								</tr>
+								<tr>
+									<td class="t3">位置：</td>
+									<td><input type="text" class="select" name="huiyan_weizhi" /></td>
+									<td class="t3">侧别：</td>
+									<td><input type="text" class="select" name="huiyan_cebie" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">声带：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">粘膜：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_biaomian" name="shidai_nianmo" /></td>
+						<td class="t1" width="100">&nbsp;</td>
+						<td class="t2" width="150">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">充血：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="shidai_chongxue"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">侧别：</td>
+						<td class="t2"><input type="text" class="select" name="shidai_chongxue_cebie" /></td>
+						<td class="t1">程度：</td>
+						<td class="t2"><input type="text" class="select" rel="huiyan_chongxue_chengdu" name="shidai_chongxue_chengdu" /></td>
+					</tr>
+					<tr>
+						<td class="t1">粘膜下出：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="shidai_xiachu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">程度：</td>
+						<td class="t2"><input type="text" class="select" rel="huiyan_chongxue_chengdu" name="shidai_xiachu_chengdu" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>	
+						<td class="t1">声带肥厚：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="shidai_feihou"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">程度：</td>
+						<td class="t2"><input type="text" class="select" rel="huiyan_chongxue_chengdu" name="shidai_feihou_chengdu" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">声带新生物：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="shidai_xinshengwu" /></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="shidai_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="shidai_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="shidai_xingzhuang" /></td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="shengdai_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">喉室：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">清晰：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" name="houshi_qingxi"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">侧别：</td>
+						<td class="t2"><input type="text" class="select" rel="shidai_chongxue_cebie" name="houshi_cebie" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>	
+						<td class="t1">粘膜：</td>
+						<td class="t2">
+							<input type="text" class="select" rel="erkou_biaomian" name="houshi_nianmo" />
+						</td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="houshi_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="houshi_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="houshi_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="houshi_xingzhuang" /></td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="houshi_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">杓状软骨：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">运动：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" name="shaozhuang_yundong"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">侧别：</td>
+						<td class="t2"><input type="text" class="select" rel="shidai_chongxue_cebie" name="shaozhuang_cebie" /></td>
+						<td class="t1">运动对称性：</td>
+						<td class="t2"><input type="text" class="select" name="shaozhuang_duichen" /></td>
+					</tr>
+					<tr>	
+						<td class="t1">充血：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="shaozhuang_chongxue"/></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="t1">新生物：</td>
+						<td class="t2" colspan="3">
+							<input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="shaozhuang_xinshengwu"/>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="shaozhuang_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" rel="biqiang_yanse" name="shaozhuang_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3" width="70">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="shaozhuang_xingzhuang" /></td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="shaozhuang_other" /></td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">梨状窝：</b></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>粘膜：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" rel="erkou_biaomian" name="lizhuang_nianmo"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">侧别：</td>
+						<td class="t2"><input type="text" class="select" rel="shaozhuang_cebie" name="lizhuang_cebie" /></td>
+						<td class="t1">&nbsp;</td>
+						<td class="t2">&nbsp;</td>	
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>积液：</td>
+						<td class="t2"><input type="text" class="select" rel="waierdao_qiwei" name="lizhuang_jiye" /></td>
+						<td class="t1"><span class="red">*&nbsp;</span>形态：</td>
+						<td class="t2"><input type="text" class="select" name="lizhuang_xingtai" /></td>
+					</tr>
+					<tr>
+						<td class="t1"><span class="red">*&nbsp;</span>肿物：</td>
+						<td class="t2" colspan="3"><input type="radio" class="radio dict-fld" rel="waierdao_qiwei" name="lizhuang_zhongwu"/></td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1">&nbsp;</td>
+						<td class="t2" colspan="3">
+							<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+								<tr>
+									<td class="t3" width="70">表面：</td>
+									<td width="130"><input type="text" class="select" rel="erkou_biaomian" name="lizhuang_biaomian" /></td>
+									<td class="t3" width="70">颜色：</td>
+									<td width="130"><input type="text" class="select" name="lizhuang_yanse" /></td>
+								</tr>
+								<tr>
+									<td class="t3">形状：</td>
+									<td><input type="text" class="select" rel="biqiang_xingzhuang" name="lizhuang_xingzhuang" /></td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4"><b style="font-size:14px">环后隙：</b></td>
+					</tr>
+					<tr>
+						<td class="t1" width="100">粘膜：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="erkou_biaomian" name="huanhou_nianmo" /></td>
+						<td class="t1" width="100">积液：</td>
+						<td class="t2" width="150"><input type="text" class="select" rel="waierdao_qiwei" name="huanhou_jiye" /></td>
+					</tr>
+					<tr>
+						<td class="t1">形态：</td>
+						<td class="t2"><input type="text" class="select" rel="lizhuang_xingtai" name="huanhou_xingtai" /></td>
+						<td class="t1">声门下区：</td>
+						<td class="t2"><input type="text" class="select" name="huanhou_shengmen" /></td>
+					</tr>
+					<tr>
+						<td class="t1">其他异常：</td>
+						<td class="t2" colspan="3"><input type="text" class="text public" name="huanhouxi_other" /></td>
+					</tr>
+					<tr>
+						<td class="t1">其他：</td>
+						<td class="t2" colspan="3"><textarea name="zuihou_other" style="width:310px;overflow-y:visible" onscroll="this.rows++;" rows="1"></textarea></td>
+					</tr>
+				</table>	
+			</td>
+		</tr>
+	</table>
+</form>
+</body>
+</html>

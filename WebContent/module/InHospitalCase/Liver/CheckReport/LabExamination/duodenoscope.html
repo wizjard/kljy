@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实验室与辅助检查</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-LabExamination';
+var reportDate = "";
+$(function(){
+	initPage();
+	dictEvents();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-LabExamination'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//时间选择框
+	$('input.text').filter(function(){
+		return $(this).attr('name').indexOf('checkdate')!=-1;
+	}).each(function(){
+		FormUtil.toDateField({el:$(this)});
+	});
+	//Checkbox事件
+	$('input[type="checkbox"]').click(function(){
+		if(this.name=='auxi_check'){
+			if(this.checked){
+				$('#content').show();
+			}else{
+				$('#content').hide();
+			}
+		}else{
+			if(this.checked){
+				$(this).parent().parent().next().show();
+			}else{
+				$(this).parent().parent().next().hide();
+			}
+		}
+	});
+	
+	$('select[name="check_danwei"]').change(function(){
+		var _va = $(this).val();
+		if(_va==2){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	
+	//按钮
+	FormUtil.initBtnCss();
+	setValue();
+}
+function setValue(){
+	var json=window.dialogArguments;
+	if(!json)	return;
+	FormUtil.setFormValues('form',json);
+	$('input[type="checkbox"]').each(function(){
+		var _name = this.name;
+		if(_name=='auxi_check'){
+			if(json[_name]==1){
+				$(this).attr('checked',true);
+				$('#content').show();
+			}
+		}else{
+			var _val=json[_name];
+			if(_val==1){
+				$(this).attr('checked',true);
+				$(this).parent().parent().next().show();
+			}
+		}
+	});
+	
+	$('select[name="check_danwei"]').val(json.check_danwei);
+	if(json.check_danwei==2){
+		$('select[name="check_danwei"]').parent().parent().next().show();
+	}
+}
+	
+	function dictEvents(){
+		$('*[name="image"]').click(function(){
+			var _pre = $(this).prev();
+			var _preName = $(_pre).attr('name');
+			var _sql = '';
+			_sql = 'select itemValue,itemText from ZD_DictItem where indexId=(select max(indexId) from ZD_DictIndex where fldCode='
+			     + '\'' + _preName + '\'' + ') order by orderNo';
+			ShowDictWinEx(_pre,_sql);
+		});
+	}
+	
+
+function ShowDictWinEx(_display,_sql){
+	var returnObj=window.showModalDialog('../../../publicDictPage/MulitSelect.html',{sql:_sql},'dialogWidth=300px;dialogHeight=500px');
+	if (returnObj) {
+		if(returnObj.cls){
+			returnObj.text='';
+			returnObj.value='';
+		}
+		if (_display){ 
+			$(_display).val(returnObj.text);
+		}
+	}
+}
+	
+function closeWindow(){
+	var _value=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			_value[this.name]=1;
+		}else{
+			_value[this.name]=0;
+		}
+	});
+	$.extend(_value,{check_danwei:$('select[name="check_danwei"] option[selected]').val()});
+	
+	var hospitalName = check_danweiValues(_value);
+	var checkProject = "";
+	var result = ComposeData(_value);
+	if(result != ""){
+		if(hospitalName == ""){
+			alert("检查单位不能为空");
+			return;
+		}
+		if(reportDate == ""){
+			alert("检查日期不能为空");
+			return;
+		}
+		window.returnValue={
+			obj:result,
+			checkProject:checkProject,
+			reportDate:reportDate,
+			hospitalName:hospitalName
+		};
+	}
+	
+	window.close();
+}
+function ComposeData(_value){
+
+	var rst = '';
+	rst=ComposeData_AuxiliaryPathology(_value);
+	return rst;
+}
+
+function check_danweiValues(_value){
+	var rst = "";
+	if(_value.check_danwei==1){
+		rst = "本院";
+	}else if(_value.check_danwei==2){
+		rst = _value.check_danwei0.length > 0 ? _value.check_danwei0 + '' :'外院'; 
+	}
+	return rst;
+}
+	
+
+function ComposeData_AuxiliaryPathology(_compose){
+	var rst='';
+	var tempRst='';
+	var flag=false;
+	var tempValue='';
+	/*十二指肠镜*/
+	flag=document.getElementsByName('zhichang_mark')[0].checked;
+	if (flag) {
+		reportDate=_compose.zhichang_checkdate;
+		tempValue=_compose.zhichang_checkResult;
+		rst+=tempValue.length>0?tempValue:'';
+	}
+	return rst;
+}
+
+</script>
+<style type="text/css">
+body,form{
+	width:600px;
+	margin:0;
+	padding:0;
+}
+.text{
+	width:75%;
+	margin-right:2px;
+}
+.select{
+	width:75%;
+}
+.check_mark{
+	font-size:14px;
+	color:#800040;
+}
+.textarea{
+	width:95%;
+}
+legend { 
+	width:675px; 
+} 
+
+</style>
+</head>
+<body>
+<div style="text-align:right;width:695px">
+	<input class="btn_mouseout" type="button" value="确定" onclick="closeWindow()"/>
+	<input class="btn_mouseout" type="button" value="关闭" onclick="window.close()"/>
+</div>
+<form>
+	<input type="hidden" name="id" value=""/>
+	<table width="690" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr class="hidden">
+			<td class="t1" width="85">辅助检查：</td>
+			<td class="t2"><input type="checkbox" name="auxi_check" /></td>
+		</tr>
+	</table>
+	<div id="content" class="">
+		<fieldset>
+			<legend><p class="check_mark">&nbsp;</p></legend>
+			<table width="690" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="85">检查单位：</td>
+					<td class="t2" colspan="3">
+						<select name="check_danwei" style="width:100%">
+							<option value="0"></option>
+							<option value="1">本院</option>
+							<option value="2">外院</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1" width="85">单位名称：</td>
+					<td class="t2" colspan="3"><input type="text" name="check_danwei0" style="width:90%"/></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend><p class="check_mark"><input name="zhichang_mark" type="checkbox"/><span>十二指肠镜</span></p></legend>
+			<table class="hidden" width="690" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="85">检查日期：</td>
+					<td class="t2"><input name="zhichang_checkdate" type="text" class="text" style="width:31.5%"/></td>
+				</tr>
+				<tr>
+					<td class="t1" valign="top">检查结果：</td>
+					<td class="t2">
+						<textarea name="zhichang_checkResult" class="textarea"></textarea>
+						<img src="../../../../../PUBLIC/images/sign.gif" class="hand" name="image"/>
+					</td>
+				</tr>
+			</table>	
+		</fieldset>
+	</div>	
+</form>
+</body>
+</html>

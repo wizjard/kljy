@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>时间与诱因</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+$(function(){
+	initPage();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(window.dialogArguments.dict,function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==0){
+				tr.hide();
+			}else{
+				tr.show();
+			}
+		});
+	});
+	$('input[name="causesFlag"]').unbind('click');
+	$('input[name="causesFlag"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//赋值
+	if(window.dialogArguments&&window.dialogArguments.value){
+		FormUtil.setFormValues('form',window.dialogArguments.value);
+		$('input[type="radio"][checked]').click();
+	}
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value=FormUtil.getFormValues('form');
+		var text=Compose(value);
+		window.returnValue={
+			value:value,
+			text:text
+		};
+		window.close();
+	});
+}
+function Compose(value){
+	var rst='';
+	var temp='';
+	//时间诱因
+	if(value.otherTimeCausesFlag&&value.otherTimeCausesFlag!=0){
+		rst+=value.otherTimeCauses;
+	}else{
+		rst+=value.time.length>0?value.time:'';
+		temp=getRowValue('timeUnit',value.timeUnit);
+		rst+=temp.length>0?temp:'';
+		temp=getRowValue('timeUnitSuffix',value.timeUnitSuffix);
+		rst+=temp.length>0?temp:'';
+		temp=getRowValue('causesFlag',value.causesFlag);
+		if(temp=='无明显诱因'){
+			temp=temp+'出现';
+		}else if(temp=='体检时发现'){
+			temp='体检时发现';
+		}else{
+			temp=value.causes+'后出现';
+		}
+		rst+=temp;
+	}
+	return rst;
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:600px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form>
+<table id="table-con" width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="80">发病时间：</td>
+		<td class="t2" width="500"><input name="time" type="text" class="text" style="width:80px"/>
+					   <input name="timeUnit" type="text" class="select" style="width:60px"/>
+					   <input name="timeUnitSuffix" type="text" class="select" style="width:60px"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">发病诱因：</td>
+		<td class="t2">
+			<input type="radio" name="causesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="causes" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它事件：</td>
+		<td class="t2">
+			<input type="radio" name="otherTimeCausesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="otherTimeCauses" class="textarea"></textarea></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

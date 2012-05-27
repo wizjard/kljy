@@ -1,0 +1,43 @@
+@CHARSET "GB18030";
+
+	input{
+		border:none;
+		border-bottom:solid #000 1px;
+		font-size:12px;
+	}
+	
+	textarea{
+			height:30px;
+			width:105px;
+			overflow-y:hidden
+		}
+	
+	/*Ò½ÁÆ´úÂë*/	
+	.medicalCode{
+		font-size:11px;
+		padding-left:20%
+	}
+	
+	.titleTabe{
+		font-size:11px;
+	}
+	
+	.line5{
+		width:35px;
+		height:12px;
+	}
+	
+	.row{
+		padding-left:4%;
+	}
+	
+	.chu{
+			width:50px;
+			border:0;
+			text-align:center;
+		}
+	.line{
+			width:35px;
+			height:12px;
+		}	
+		

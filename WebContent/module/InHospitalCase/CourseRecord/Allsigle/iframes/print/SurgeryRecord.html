@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>手术记录打印</title>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="print.js"></script>
+<script type="text/javascript">
+$(function(){
+	LODOP=document.getElementById("LODOP");
+	CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+	var r=new RepoertHeader();
+	r.basePath=App.App_Info.BasePath;
+	r.el=document.getElementById('page-header');
+	r.config.title='手术记录';
+	r.cid=cid;
+	r.create();
+	setValue('SurgeryRecord_print');
+});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<button onclick="PREVIEW('手 术 记 录')">打印预览</button>
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../css/print.css"/>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td2" width="35%">姓&nbsp;&nbsp;名：<span name="name">&nbsp;</span></td>
+				<td class="td2" width="33%">性别：<span name="gender">&nbsp;</span></td>
+				<td class="td2" width="32%">年龄：<span name="age">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">病床号：<span name="bedNo">&nbsp;</span></td>
+				<td class="td2" colspan="2">手术间号：<span name="operatingRoom">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">术前临床诊断：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="previousSurgeryDiag">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">术后临床诊断：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="afterSurgeryDiag">&nbsp;</td>
+			</tr>
+			<tr style="display:none">
+				<td class="td2" colspan="3">手术适应症：<span name="surgeryAdapt"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">手术名称：<span name="surgeryName"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">手术医师&nbsp;术者：<span name="surgeryDocName">&nbsp;</span></td>
+				<td class="td2">一助：<span name="surgeryAssistant1">&nbsp;</span></td>
+				<td class="td2">二助：<span name="surgeryAssistant2">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3"><div>手术时间：</div>&nbsp;&nbsp;&nbsp;&nbsp;<span name="surgeryTime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">麻醉方式：<span name="anesthesiaMode">&nbsp;</span></td>
+				<td class="td2">洗手护士：<span name="washNurse">&nbsp;</span></td>
+				<td class="td2">巡回护士：<span name="aroundNurse">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">出血量：<span name="bleedingVolumn">&nbsp;</span></td>
+				<td class="td2" colspan="2">输血量：<span name="transBloodVolumn">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">手术经过：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="surgeryProcess">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">手术结果(标本肉眼所见)：<span name="surgeryResultSample"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">手术中标本送病理：<span name="sample2Pathology">&nbsp;</span></td>
+				<td class="td2" colspan="2">标本件数：<span name="sampleNum">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">对麻醉效果：<span name="anesthesiaEffect"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">注：手术记录由手术者书写，交复写件存入门诊病案中&nbsp;&nbsp;&nbsp;&nbsp;手术医生签字：<span name="surgeryDocSign"></span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员分组列表</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="MemberGroupSelect.js"></script>
+<style type="text/css">
+ul{
+	margin:0;
+	padding:0;
+}
+li{
+	font-size:14px;
+	font-weight:bold;
+	color:#004080;
+}
+.sub-div{
+	display:none;
+	border:solid 1px #627097;
+	margin-left:25px;
+}
+table.datagrid{
+	width:100%;
+	border-collapse: collapse; 
+}
+table.datagrid th{
+	color:#000;
+	font-size:14px;
+	text-align: left;
+	background: #9cf;
+	padding: 3px;
+	border: 1px #333 solid;
+}
+table.datagrid td{
+	font-size:12px;
+	color:#000;
+	cursor:default;
+	padding: 3px;
+	font-weight:normal;
+	border: none;
+	border:1px #333 solid;
+}
+table.datagrid tr.odd{
+	background: #fff;
+}
+table.datagrid tr.even{
+	background: #eee;
+}
+table.datagrid tr.hover{
+	background: #9cf;
+}
+</style>
+</head>
+<body>
+<button onclick="viewTpl()">查看模板</button>
+<button onclick="window.returnValue={id:'',name:''},window.close()">清空</button>
+<button onclick="OkClick()">确定</button>
+<button onclick="window.close()">关闭</button>
+<div id="content-div"></div>
+<div id="content-dialog"></div>
+<div id="tpl-dialog"></div>
+</body>
+</html>

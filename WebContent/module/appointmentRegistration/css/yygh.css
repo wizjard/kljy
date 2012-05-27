@@ -1,0 +1,213 @@
+.yhzc_2 {
+	float: left;
+	width: 100%;
+	height: 27px;
+	background-image: url(../image/yhzc_bj.jpg);
+	background-repeat: repeat-x;
+	padding-bottom: 5px;
+}
+.yhzc_3 {
+	height: 20px;
+	width: 194px;
+	background-image: url(../image/yhzc_bt.jpg);
+	background-repeat: no-repeat;
+	float: left;
+	font-family: "����";
+	font-size: 13px;
+	font-weight: bold;
+	color: #FFFFFF;
+	padding-left: 30px;
+	padding-top: 7px;
+}
+.yhzc_5 {
+	height: 27px;
+	width: 9px;
+	float: right;
+}
+.yhzc_6 {
+    width: 300px;
+	padding-top: 2px;
+	height: 25px;
+	float: left;
+}
+.tylb {
+    white-space:nowrap;
+	text-overflow:ellipsis;
+	text-decoration: none;
+	border-top-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-left-style: solid;
+	border-top-color: #DCDCDC;
+	border-left-color: #DCDCDC;
+}
+.jclb {
+	background-image: url(../image/lb_bj2.jpg);
+	background-repeat: repeat-x;
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+	text-align: center;
+	background-position: bottom;
+}
+.jclb_1 {
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #DCDCDC;
+	background-color: #FFFFFF;
+	text-align: left;
+	padding-left: 3px;
+	color: #0072B3;
+	font-weight: bold;
+}
+.jclb_2 {
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+	background-color: #FFFFFF;
+	text-align: left;
+	padding-left: 3px;
+	color: #0072B3;
+	font-weight: bold;
+}
+.jclb_3 {
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	background-color: #FFFFFF;
+	text-align: center;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+}
+.jclb_4 {
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	background-color: #F8F8F8;
+	text-align: center;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+}
+.jclb_5 {
+	font-family: "����";
+	font-size: 12px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+	padding-left: 2px;
+	background-color: #F8F8F8;
+	padding-top: 2px;
+	height: 23px;
+}
+.jclb_7 {
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+	padding-left: 2px;
+	background-color: #FFFFFF;
+}
+.jclb_8 {
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #DCDCDC;
+	border-bottom-color: #DCDCDC;
+	padding-left: 2px;
+	background-color: #F8F8F8;
+}
+.yygh {
+	width: 80%;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.yygh_1 {
+	width: 100%;
+	float: left;
+}
+.yygh_tb {
+	width: 100%;
+	float: left;
+	text-align: right;
+	padding-top: 5px;
+}
+.yygh_mk {
+	width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.yygh_banner {
+	float: left;
+	width: 700px;
+	height: 161px;
+	background-image: url(../image/yygh_banner.jpg);
+}
+.yygh_bj {
+	background-image: url(../image/yygh_bj.jpg);
+	background-repeat: repeat-y;
+	float: left;
+	width: 700px;
+}
+.yygh_text{
+	float: left;
+	width: 650px;
+	padding-right: 25px;
+	padding-left: 25px;
+	font-family: "����";
+	font-size: 12px;
+	line-height: 25px;
+	list-style-type:none;
+} 
+.yygh_an {
+	float: left;
+	width: 700px;
+	text-align: center;
+	padding-top: 15px;
+}
+
+.yygh_foot {
+	float: left;
+	width: 700px;
+}

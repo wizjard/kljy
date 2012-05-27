@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>内网监督</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="InMemberControl.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/JQuery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/JQuery/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript">
+var searchObj;
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'fit',
+		items:Ext.apply(CreateNotice(),{
+			xtype:'grid',
+			title:'内网统计列表',
+			tbar:[
+				{
+					text:'全院会员明细表(内网)',
+					tooltip:'全院会员明细表',
+					handler:function(){
+						var _store=Ext.getCmp('notice-list-grid').getStore();
+						_store.baseParams={method:'searchInMemberByCondition'};
+						_store.load({params:{start:0,limit:20}});
+					}
+				}
+				,
+				{
+					xtype:'tbseparator'
+				},{
+				    text:'会员监督统计表(内网)',
+					tooltip:'会员监督统计表',
+                    handler: function(){
+                       App.util.addNewMainTab('/module/control/InMemberSupervise.html','会员监督统计表(内网)');
+                      }
+					
+				},
+				{
+				    xtype:'tbseparator'
+				},
+				{
+				    text:'查询',
+				    handler: function() {
+				        var o = this;
+                        o.sw = new Ext.Window({
+                        draggable: false,
+                        resizable: false,
+                        width: 320,
+                        autoHeight: true,
+                        closable: false,
+                        buttonAlign: 'center',
+                        frame: true,
+                        items: {
+                            xtype: 'form',
+                            border: false,
+                            bodyStyle: 'padding-top:5px',
+                            labelAlign: 'right',
+                            labelWidth: 80,
+                            defaults: {
+                                xtype: 'textfield',
+                                anchor: '95%'
+                            },
+                            items: [
+                            {
+                                fieldLabel: '姓名',
+                                name: 'patientName'
+                            },{
+                                fieldLabel: '入会科室',  
+                                name: 'inWard'
+                            },{
+                                fieldLabel: '入会时间',
+                                name: 'inDate'
+                            }, {
+                                xtype: 'panel',
+                                border: false,
+                                html: '<p style="font-size:12px;color:red;text-align:center">时间格式例：2010-01-01或2010-01-01 2010-11-01</p>'
+                            }
+                            ]
+                        },
+                        buttons: [{
+                            text: '查询',
+                            handler: function() {
+                                var values = o.sw.items.get(0).getForm().getValues();
+                                var store = Ext.getCmp('notice-list-grid').getStore();
+                                searchObj = Ext.encode(values);
+                                store.baseParams.search = searchObj;
+                                store.load({
+                                    params: {
+                                        start: 0,
+                                        limit: 20
+                                    }
+                                });
+                                o.sw.items.get(0).getForm().reset();
+                                //alert(store.baseParams.search);
+                                o.sw.hide();
+                                }
+                            }, {
+                            text: '取消',
+                            handler: function() {
+                                o.sw.items.get(0).getForm().reset();
+                                o.sw.hide();
+                               }
+                           }]
+                        });
+                        
+                        o.sw.show();
+                        var el = this.el.dom;
+                        var pos = getElementPos(el);
+			            var oPos = [pos.x, pos.y];
+			            var oSize = {
+			                width: el.offsetWidth,
+			                height: el.offsetHeight
+			            };
+			            var bodySize = Ext.getBody().getSize();
+			            var sSize = this.sw.getSize();
+			            var x = oPos[0];
+			            var y = oPos[1] + oSize.height;
+			            if ((x + sSize.width) > bodySize.width) {
+			                x = x - sSize.width + oSize.width;
+			            }
+			            if ((y + sSize.height) > bodySize.height) {
+			                y = y - sSize.height - oSize.height;
+			            }
+			            this.sw.setPosition(x, y);
+				    }
+				},
+				'->',
+				{
+					xtype:'tbseparator'
+				},{
+					text:'导出所有会员',
+					tooltip:'导出所有会员',
+					handler:function(){
+						location.href=App.App_Info.BasePath + '/MemberSearchTotalAction.do?method=SearchmemberInDataAnalysisToExcel';
+                    }
+				}
+			],
+			listeners:{
+				render:function(){
+					this.getStore().load({params:{start:0,limit:20}});
+				}
+			}
+		})
+	});
+})
+function getSelections(){
+	var _ss=Ext.getCmp('notice-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}
+	return _ss[0];
+}
+function getEditSelect(){
+	var ss = Ext.getCmp('notice-list-grid').getSelectionModel().getSelections();
+	if(ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}else if(ss.length>1){
+		alert('只能选择一条记录进行编辑。');
+		return null;
+	}else{
+		return ss[0];
+	}
+}
+
+function reloadParent(){
+	Ext.getCmp('notice-list-grid').getStore().reload();
+}
+
+</script>
+</head>
+<body>
+	
+</body>
+</html>

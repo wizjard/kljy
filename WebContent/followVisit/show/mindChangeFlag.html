@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>神志改变</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _value = document.getElementById("mindChangeKind").value;
+		var _answer = document.getElementById("mindChangeAnswer").value;
+		var _sum="";
+		
+		if(_value!=null&&_value!="" && _answer!=null&&_answer!=""){
+			_sum=_value+","+_answer;
+		}else if(_value!=null&&_value!=""){
+			_sum = _value;
+		}else if(_answer!=null&&_answer!=""){
+			_sum=_answer;
+		}
+		window.returnValue = _sum;
+		window.close();
+}
+</script>
+</head>
+
+<body>
+	<table width="511" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="173" align="right">神志表现：</td>
+        <td width="84">
+        	<select name="mindChangeKind" id="mindChangeKind">
+            	<option value=""></option>
+                <option value="神志清楚">神志清楚</option>
+                <option value="昏睡">昏睡</option>
+                <option value="表情淡漠">表情淡漠</option>
+                 <option value="神志恍惚">神志恍惚</option>
+                <option value="反应迟钝">反应迟钝</option>
+                <option value="烦燥不安">烦燥不安</option>
+                 <option value="嗜睡">嗜睡</option>
+                <option value="浅昏迷">浅昏迷</option>
+                <option value="深昏迷">深昏迷</option>
+            </select>
+        
+        </td>
+        <td width="87" align="right">对答情况：</td>
+        <td width="151">
+        	<select name="mindChangeAnswer" id="mindChangeAnswer" >
+            	<option value=""></option>
+                <option value="呼之不应">呼之不应</option>
+                <option value="呼之能应">呼之能应</option>
+                <option value="回答切题">回答切题</option>
+                <option value="答非所问">答非所问</option>
+            </select>  
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!--生物医学中心全部会员索引页面 by xl 2010年12月10日9:19:42--> <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>会员索引</title>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/common.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js">
+        </script>
+		<script type="text/javascript" src="MemberInfoForm.js">
+        </script>
+        <script type="text/javascript">
+            Ext.onReady(function(){
+                layout();
+            });
+            function layout(){
+                var ds = new Ext.data.Store({
+                    proxy: new Ext.data.HttpProxy({
+                        url: App.App_Info.BasePath + '/biomedical.do'
+                    }),
+                    reader: new Ext.data.JsonReader({
+                        root: 'root',
+                        totalProperty: 'total'
+                    }, [{
+                        name: 'memberNo'
+                    }, {
+                        name: 'account'
+                    }, {
+                        name: 'password'
+                    }, {
+                        name: 'inDate'
+                    }, {
+                        name: 'inWard'
+                    }, {
+                        name: 'memberStatus'
+                    }, {
+                        name: 'memberType'
+                    }, {
+                        name: 'memo'
+                    }, {
+                        name: 'patient'
+                    }, {
+                        name: 'cm'
+                    },{
+											name: 'currentGroup'
+										},{
+											name: 'biaoben'
+										},{
+											name: 'currentWard'
+										},{
+											name: 'inDoctor'
+										}])
+                });
+                ds.baseParams = {
+                    method: 'getAllMembers',
+                    search: ''
+                };
+                ds.load({
+                    params: {
+                        start: 0,
+                        limit: 20
+                    }
+                });
+                var sm = new Ext.grid.RowSelectionModel({
+                    singleSelect: true
+                });
+                var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
+                    header: '姓名',
+                    dataIndex: 'patient',
+					renderer:function(value){
+						return value.patientName;
+					}
+                }, {
+                    header: '病案号',
+                    dataIndex: 'patient',
+					renderer:function(value){
+						return value.patientNo;
+					}
+                }, {
+                    header: '会员编号',
+                    dataIndex: 'memberNo'
+                }, {
+                    header: '用户名',
+                    dataIndex: 'account'
+                }, {
+                    header: '入会科室',
+                    dataIndex: 'inWard'
+                }, {
+                    header: '当前科室',
+                    dataIndex: 'currentWard',
+					renderer: function(value,meta,record,row,col){
+                        if (!value||value.length==0) {
+                            value=record.get('inWard');
+                        }
+						return value;
+                    }
+                },{
+                    header: '入会日期',
+                    dataIndex: 'inDate',
+                    renderer: function(value){
+                        if (value) {
+                            try {
+                                return new Date(value.time).format('Y/m/d')
+                            } 
+                            catch (err) {
+                            }
+                        }
+                    }
+                },/* {
+                    header: '会员类型',
+                    dataIndex: 'memberType'
+                }, {
+                    header: '会员状态',
+                    dataIndex: 'memberStatus'
+                }, */{
+                    header: '预留标本',
+                    dataIndex: 'biaoben',
+					renderer:function(value){
+						if(value==1){
+							return '是';
+						}
+						return '否';
+					}
+                },{
+                    header: '当前分组',
+                    dataIndex: 'currentGroup'
+                }]);
+                var SearchButton = Ext.extend(Ext.Button, {
+                    text: '查询',
+                    sw: null,
+                    toggleSw: function(){
+                        if (this.sw.isVisible()) {
+                            this.sw.hide();
+                        }
+                        else {
+                            this.sw.show();
+                            this.setSwPosition();
+                        }
+                    },
+                    /*Init Search Window*/
+                    initSw: function(){
+                        var o = this;
+                        o.sw = new Ext.Window({
+                            draggable: false,
+                            resizable: false,
+                            width: 300,
+                            autoHeight: true,
+                            closable: false,
+                            buttonAlign: 'center',
+                            frame: true,
+                            items: {
+                                xtype: 'form',
+                                border: false,
+                                bodyStyle: 'padding-top:5px',
+                                labelAlign: 'right',
+                                labelWidth: 60,
+                                defaults: {
+                                    xtype: 'textfield',
+                                    anchor: '95%'
+                                },
+                                items: [{
+                                    fieldLabel: '姓名/病案号',
+                                    name: 'name'
+                                }, {
+                                    fieldLabel: '入院日期',
+                                    name: 'inDate'
+                                }, {
+                                    xtype: 'panel',
+                                    border: false,
+                                    html: '<p style="font-size:10px;text-align:center">例：(2010/01/02)或(2010/01/01 2010/02/01)不包括括号。</p>'
+                                }, {
+                                    fieldLabel: '用户名',
+                                    name: 'account'
+                                }, {
+                                    fieldLabel: '当前分组',
+                                    name: 'currentGroup'
+                                }, {
+                                    xtype:'panel',
+									layout:'column',
+									border:false,
+									items:[
+										{
+											columnWidth:.9,
+											border:false,
+											layout:'form',
+											items:{
+												xtype:'textfield',
+												fieldLabel: '当前科室',
+												anchor:'100%',
+                                    			name: 'currentWard'
+											}
+										},{
+											columnWidth:.1,
+											border:false,
+											listeners:{
+												render:function(){
+													var panel=this;
+													var img=Ext.DomHelper.append(this.body,{
+														tag:'img',
+														src:App.App_Info.BasePath+'/PUBLIC/images/sign.gif',
+														style:'cursor:pointer'
+													});
+													Ext.get(img).on('click',function(){
+														var obj=window.showModalDialog(App.App_Info.BasePath+'/PUBLIC/Modaldialog/DictSelect.html',{
+															title:'入会科室选择',
+															sql:'SELECT CODE AS svalue, NAME AS stext FROM SYS_ZD_UserBelong WHERE (PCODE = \'40068648-6\')'
+														},'dialogWidth=400px;dialogHeight=400px');
+														if(obj){
+															panel.ownerCt.items.get(0).items.get(0).setValue(obj.text);
+														}
+													});
+												}
+											}
+										}
+									]
+                                }]
+                            },
+                            buttons: [{
+                                text: '查询',
+                                handler: function(){
+                                    var values = o.sw.items.get(0).getForm().getValues();
+                                    var store = Ext.getCmp('grid').getStore();
+                                    store.baseParams.search = Ext.encode(values);
+                                    store.load({
+                                        params: {
+                                            start: 0,
+                                            limit: 20
+                                        }
+                                    });
+                                    o.sw.hide();
+                                }
+                            }, {
+                                text: '取消',
+                                handler: function(){
+                                    o.sw.hide();
+                                }
+                            }]
+                        });
+                    },
+                    /*ReSet Window's Position*/
+                    setSwPosition: function(){
+                        var el = this.el.dom;
+                        var pos = getElementPos(el);
+                        var oPos = [pos.x, pos.y];
+                        var oSize = {
+                            width: el.offsetWidth,
+                            height: el.offsetHeight
+                        };
+                        var bodySize = Ext.getBody().getSize();
+                        var sSize = this.sw.getSize();
+                        var x = oPos[0];
+                        var y = oPos[1] + oSize.height;
+                        if ((x + sSize.width) > bodySize.width) {
+                            x = x - sSize.width + oSize.width;
+                        }
+                        if ((y + sSize.height) > bodySize.height) {
+                            y = y - sSize.height - oSize.height;
+                        }
+                        this.sw.setPosition(x, y);
+                    }
+                });
+                var grid = new Ext.grid.GridPanel({
+                    id: 'grid',
+                    title: '会员列表',
+                    sm: new Ext.grid.CheckboxSelectionModel({
+                        sigleSelect: true
+                    }),
+                    cm: cm,
+                    ds: ds,
+                    autoScroll: true,
+                    viewConfig: {
+                        forceFit: true
+                    },
+                    sm: sm,
+                    tbar: ['-', {
+                        text: '返回列表',
+                        handler: function(){
+                            var store = Ext.getCmp('grid').getStore();
+                            store.baseParams.search = '';
+                            store.load({
+                                params: {
+                                    start: 0,
+                                    limit: 20
+                                }
+                            });
+                        }
+                    }, '-', new SearchButton({
+                        handler: function(){
+                            if (!this.sw) {
+                                this.initSw();
+                            }
+                            this.toggleSw();
+                        }
+                    }),'-',{
+						text:'会员信息',
+						handler:function(){
+							var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+							if(ss.length==0){
+								alert('请先选择一个会员。');
+								return;
+							}
+							MemberInfo(Ext.getCmp('grid').getStore().indexOf(ss[0]));
+						}
+					},'-',{
+						text:'会员基本信息',
+						handler:function(){
+							var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+							if(ss.length==0){
+								alert('请先选择一个会员。');
+								return;
+							}
+							App.util.addNewMainTab('/module/Patient/PatientInfo.html?id='+ss[0].get('patient').id,'病人基本信息');
+						}
+					},'-',{
+						text:'会员转科',
+						handler:MemberChangeWard
+					},'-',{
+						text:'入会病历信息',
+						handler:function(){
+							var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+							if(ss.length==0){
+								alert('请先选择一个会员。');
+								return;
+							}
+							if(ss[0].cm){
+								App.util.addNewMainTab('/module/biomedical/MemberCase/InHspRec.html?PID='+ss[0].patient.id+'&KID='+ss[0].cm.id,'入会病历信息');
+							}else{
+								if(confirm('确定要编辑此病人的入会病历？')){
+									Ext.Ajax.request({
+										url: App.App_Info.BasePath + '/biomedical.do',
+										params:{
+											method:'saveMemberCase',
+											memberNo:ss[0].get('memberNo')					
+										},
+										success:function(response){
+											var res=Ext.decode(response.responseText);
+											if(res.success){
+												var cm=Ext.decode(res.data);
+												ss[0].set('cm',Ext.decode(res.data));
+												App.util.addNewMainTab('/module/biomedical/MemberCase/InHspRec.html?PID='+ss[0].get('patient').id+'&KID='+cm.id,'入会病历信息');
+											}else{
+												alert('会员入会病历初始化失败。');
+											}
+										}
+									});
+								}
+							}
+						}
+					}, '-', {
+                        text: '住院记录',
+                        handler: function(){
+							var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+							if(ss.length==0){
+								alert('请先选择一个会员。');
+								return;
+							}
+                        	App.util.addNewMainTab('/module/InHospitalCase/CaseList.html?id='+ss[0].get('patient').id,'住院记录');
+                        }
+                    },'-',{
+						text:'会员分组随访',
+						handler:function(){
+							var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+							if(ss.length==0){
+								alert('请先选择一个会员。');
+								return;
+							}
+                        	App.util.addNewMainTab('/module/biomedical/OutPatientRecordIndex.html?id='+ss[0].get('patient').id+'&memNo='+ss[0].get('memberNo'),'门诊随访记录');
+						}
+					},'-',{
+						text:'入会知情同意书',
+						handler:function(){
+							window.open(App.App_Info.BasePath+'/module/member/memberAgreePrint.html');
+						}
+					}],
+                    bbar: new Ext.PagingToolbar({
+                        pageSize: 20,
+                        store: ds,
+                        displayInfo: true,
+                        displayMsg: '显示第<font color="red"> {0} </font>条' +
+                        '到<font color="red"> {1} </font>条记录，' +
+                        '一共<font color="red"> {2} </font>条',
+                        emptyMsg: "没有记录"
+                    })
+                });
+                new Ext.Viewport({
+                    layout: 'fit',
+                    items: grid
+                });
+            }
+            
+            function MemberInfo(rowIndex){
+                var store = Ext.getCmp('grid').getStore();
+                var record = store.getAt(rowIndex);
+                var win = Ext.getCmp('MemberInfo-Window');
+                if (!win) {
+                    win = new Biomedical.MemberInfoWindow({
+                        id: 'MemberInfo-Window',
+                        saveCallback: function(res, w){
+                            record.set('memberNo', res.data);
+                            w.hide();
+                        }
+                    });
+                }
+                win.show();
+                var memberNo = record.get('memberNo');
+                var obj = {
+                    name: record.get('patient').patientName,
+                    patientNo: record.get('patient').patientNo,
+                    patientId: record.get('patient').id
+                };
+                if (memberNo && memberNo.length > 0) {
+                    Ext.Ajax.request({
+                        url: App.App_Info.BasePath + '/biomedical.do',
+                        params: {
+                            memberNo: memberNo,
+                            method: 'getMember'
+                        },
+                        success: function(response){
+                            var res = Ext.decode(response.responseText);
+                            if (res.success) {
+								win.items.get(0).getForm().reset();
+                                win.items.get(0).getForm().loadRecord(new Ext.data.Record(Ext.apply(obj, Ext.decode(res.data))));
+                                var _deptNameObjectValue=Ext.getCmp('deptNameObject');
+      							_deptNameObjectValue.setValue(obj.deptName);
+								var _storeValue=Ext.getCmp('grounp');
+      							_storeValue.setValue(obj.grounpName);
+                            }
+                            else {
+                                alert('获取会员信息失败。');
+                            }
+                        }
+                    });
+                }
+                else {
+					win.items.get(0).getForm().reset();
+                    win.items.get(0).getForm().loadRecord(new Ext.data.Record(obj));
+                }
+            }
+			
+			function MemberChangeWard(){
+				var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+				if(ss.length==0){
+					alert('请先选择一个会员。');
+					return;
+				}
+				var memNo=ss[0].get('memberNo');
+				var cm=new Ext.grid.ColumnModel([
+					new Ext.grid.RowNumberer(),
+					{header:'转科日期',dataIndex:'changeDate'},
+					{header:'转入科室',dataIndex:'ward'}
+				]);
+				var ds=new Ext.data.Store({
+					proxy:new Ext.data.HttpProxy({
+						url:App.App_Info.BasePath + '/biomedical.do?method=ChangeWard_GetByMemNo&memNo='+memNo
+					}),
+					reader:new Ext.data.JsonReader({root:''},[
+						{name:'id'},
+						{name:'memNo'},
+						{name:'changeDate'},
+						{name:'ward'},
+						{name:'memo'}
+					])
+				});
+				ds.load();
+				var editor=new Ext.Window({
+					title:'会员转科',
+					width: 450,
+		            autoHeight: true,
+		            buttonAlign: 'center',
+		            closable: false,
+		            layout: 'fit',
+					items:{
+						xtype:'form',
+						bodyStyle: 'padding:5px',
+			            border: false,
+			            autoHeight: true,
+			            labelAlign: 'right',
+			            labelWidth: 60,
+			            layout: 'form',
+						defaults:{
+							anchor:'98%'
+						},
+						items:[
+							{
+								xtype:'datefield',
+								readOnly:true,
+								format:'Y-m-d',
+								name:'changeDate',
+								allowBlank:false,
+								fieldLabel:'转科日期',
+								anchor:'45%'
+							},{
+								xtype: 'panel',
+								layout: 'column',
+								border: false,
+								defaults: {
+									border: false
+								},
+								anchor:'100%',
+								items:[
+									{
+										columnWidth:.9,
+										layout:'form',
+										items:{
+											xtype:'textfield',
+											fieldLabel: '转入科室',
+											readOnly:true,
+											allowBlank:false,
+						                    name: 'ward',
+											anchor:'98%'
+										}
+									},{
+										columnWidth:.1,
+										listeners:{
+											render:function(){
+												var panel=this;
+												var img=Ext.DomHelper.append(this.body,{
+													tag:'img',
+													src:App.App_Info.BasePath+'/PUBLIC/images/sign.gif',
+													style:'cursor:pointer'
+												});
+												Ext.get(img).on('click',function(){
+													var obj=window.showModalDialog(App.App_Info.BasePath+'/PUBLIC/Modaldialog/DictSelect.html',{
+														title:'科室选择',
+														sql:'SELECT CODE AS svalue, NAME AS stext FROM SYS_ZD_UserBelong WHERE (PCODE = \'40068648-6\')'
+													},'dialogWidth=400px;dialogHeight=400px');
+													if(obj){
+														panel.ownerCt.items.get(0).items.get(0).setValue(obj.text);
+													}
+												});
+											}
+										}
+									}
+								]
+							},{
+								xtype:'textarea',
+								name:'memo',
+								fieldLabel:'备注'
+							},{
+								xtype:'hidden',
+								name:'id'
+							},{
+								xtype:'hidden',
+								name:'memNo',
+								value:memNo
+							}
+						]
+					},
+					buttons:[
+						{
+							text:'保存',
+							handler:function(){
+								var form=editor.items.get(0).getForm();
+								if(form.isValid()){
+									Ext.Ajax.request({
+										url:App.App_Info.BasePath + '/biomedical.do',
+										params:{
+											method:'ChangeWard_SaveOrUpdate',
+											data:Ext.encode(form.getValues())
+										},
+										success:function(response){
+											var res=Ext.decode(response.responseText);
+											if(res.success){
+												win.items.get(0).getStore().reload();
+												alert('保存成功。');
+												editor.hide();
+											}else{
+												alert('保存失败。');
+											}
+										}
+									});
+								}else{
+									alert('表单未填写完整。');
+								}
+							}
+						},{
+							text:'关闭',
+							handler:function(){
+								editor.hide();
+							}
+						}
+					]
+				});
+				var win=new Ext.Window({
+					title:'会员转科列表',
+					width: 450,
+		            height: 300,
+		            buttonAlign: 'center',
+		            closable: false,
+		            layout: 'fit',
+		            items: {
+						xtype:'grid',
+						border:false,
+						autoScroll:true,
+						viewConfig:{
+							forceFit:true
+						},
+						cm:cm,
+						ds:ds,
+						tbar:[
+							{
+								text:'新增',
+								handler:function(){
+									editor.show();
+									editor.items.get(0).getForm().loadRecord(new Ext.data.Record({
+										id:'',
+										memNo:memNo,
+										changeDate:new Date(),
+										ward:'',
+										memo:''
+									}));
+								}
+							},'-',{
+								text:'编辑',
+								handler:function(){
+									var ss=win.items.get(0).getSelectionModel().getSelections();
+									if(ss.length==0){
+										alert('请选择记录。');
+									}else{
+										editor.show();
+										editor.items.get(0).getForm().loadRecord(new Ext.data.Record(ss[0].data));
+									}
+								}
+							},'-',{
+								text:'删除',
+								handler:function(){
+									var ss=win.items.get(0).getSelectionModel().getSelections();
+									if(ss.length==0){
+										alert('请选择记录。');
+									}else{
+										if(confirm('确定要删除？')){
+											Ext.Ajax.request({
+											url:App.App_Info.BasePath + '/biomedical.do',
+											params:{
+												method:'ChangeWard_Delete',
+												id:ss[0].get('id')
+											},
+											success:function(response){
+												var res=Ext.decode(response.responseText);
+												if(res.success){
+													win.items.get(0).getStore().reload();
+													alert('删除成功。');
+												}else{
+													alert('删除失败。');
+												}
+											}
+										});
+										}
+									}
+								}
+							}
+						]
+					},
+					buttons:[
+						{
+							text:'关闭',
+							handler:function(){
+								win.close();
+							}
+						}
+					]
+				});
+				win.show();
+			}
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

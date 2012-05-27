@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+body{
+	font-family:'宋体';
+	font-size:14px;
+}
+.printCon{
+	margin:0 auto;
+	width:794px;
+}
+.printCon .divMargin{
+	margin:0px 54px 0px 83px;
+	border-left:solid 2px;
+}
+.hrclass{
+	width:794px;
+}
+.headTitleCN{
+	margin:0;
+	padding:0;
+	font-size:22px;
+	line-height:30px;
+	font-weight:bold;
+}
+.headTitleEN{
+	margin:0;
+	padding:0;
+	font-weight:bold;
+	font-size:12px;
+	line-height:18px;
+	font-family:'Microsoft Sans Serif';
+}
+.headTitle{
+	font-size:26px;
+	line-height:35px;
+	font-weight:bold;
+}
+.smallFont{
+	font-size:13px;
+	line-height:13px;
+}
+.leftTitleSpan{
+	margin:0;
+	padding:0;
+	margin-top:8px;	
+}
+.sigleLineTD{
+	background:url(../../../images/line_bg.gif) left bottom repeat-x;
+	height:30px;
+	line-height:30px;
+}
+.multiLineTD{
+	background:url(../../../images/line_bg.gif) left top repeat;
+	line-height:30px;
+}
+.fieldContent{
+	
+}

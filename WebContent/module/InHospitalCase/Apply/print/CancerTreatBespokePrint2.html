@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Insert title here</title>
+	<title>肿瘤肝胆介入治疗中心介入诊断、治疗预约单副联</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print1.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		var height = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			height = App.util.getHtmlParameters('height');
+			LODOP=document.getElementById("LODOP");
+			
+			//singlePageTableInfo(KID,'介入诊断、治疗预约单副联','#page-header');
+			setValue('CancerTreatBespokePrint','CancerTreatBespokeAction','get_Main_Info','CancerTreatBespokeAction');
+		});
+		function getPrintTable(){
+			return $('#table-div').html();
+		}
+	</script>
+	<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+</head>
+<body>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+	
+	<div id="table-div" style="width:700px">
+		<style type="text/css">
+			.t td{
+				border:1px solid black;
+				border-left:none;
+			}
+		</style>
+		<h4 style="text-align:center;font-size:20"><b>介入诊断治疗预约单副联</b></h4>
+		<table class="conTable t" border="0" cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="85" class="td1">姓名：</td>
+				<td width="100" class="td2"><span name="patientName"></span></td>
+				<td width="85" class="td1">性别：</td>
+				<td width="*" class="td2"><span name="gender"></span></td>
+				<td width="85" class="td1">年龄：</td>
+				<td width="100" class="td2"><span name="age"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">病案号：</td>
+				<td class="td2"><span name="patientCaseId"></span></td>
+				<td class="td1">科别：</td>
+				<td class="td2"><span name="officeAssort"></span></td>
+				<td class="td1">床号：</td>
+				<td class="td2"><span name="bedNum"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">CT号：</td>
+				<td class="td2"><span name="ctNum"></span></td>
+				<td class="td1">MR号：</td>
+				<td class="td2"><span name="mrNum"></span></td>
+				<td class="td1">介入号：</td>
+				<td class="td2"><span name="joinNum"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-bottom-style:none;border-right-style:none;border-top-style:none;">诊断：</td>
+				<td class="td2" width="515" colspan="5" style="border-bottom-style:none;border-top-style:none;">
+					<span name="diagnose"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none;border-top-style:none;">介入手术项</td>
+				<td class="td2" colspan="5" style="border-top-style:none">
+					目：<span name="joinItemName"></span> 定于&nbsp;&nbsp;&nbsp;&nbsp;<span name="checkDate"></span>&nbsp;&nbsp;&nbsp;&nbsp;开始手术。<br/>
+				</td>
+			</tr>
+			<tr>
+				<td class="td1">医师：</td>
+				<td class="td2"><span name="doctorName"></span></td>
+				<td class="td1" colspan="4"><span name="songDate"></span>&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

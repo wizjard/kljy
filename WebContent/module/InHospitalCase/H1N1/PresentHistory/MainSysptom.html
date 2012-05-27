@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>主要症状</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+
+$(function(){
+	initPage();
+});
+function initPage(){
+	//单选按钮单击事件
+	$('input[type="radio"]').click(function(){
+		if($(this).val() == 1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	$('#ok-btn').click(function(){
+		var value = "";
+		var text = "";
+		var text=Compose(value);
+		window.returnValue={
+			value:value,
+			text:text
+		};
+		window.close();
+	});
+}
+function Compose(value){
+	var rst='';
+	return rst;
+}
+
+</script>
+
+</head>
+
+<body>
+<div id="toolbar" style="text-align:right;width:680px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form>
+	<table id="table-con" width="680" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr class="sorttd">
+		<td class="t1" width="80">发热：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td>&nbsp;</td>
+		<td>
+			<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td>表现</td>
+					<td>
+						<select name="" style="width:120px;">
+							<option></option>
+							<option value=""></option>
+							<option value=""></option>
+						</select>
+					</td>
+					<td>最高体温</td>
+					<td><input name="" type="text" style="width:120px;"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">流涕：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">打喷嚏：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">鼻塞：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">咽痛：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">喉痛：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">咳嗽：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">咳痰：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">气短：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">头痛：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">肌肉酸痛：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">身体疼痛：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">眼睛发红：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">乏力：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">畏光/流泪：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">厌油：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">食欲不振：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">恶心：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">呕吐：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">腹部不适：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">腹泻：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80">其它：</td>
+		<td class="t2" width="600">
+			<input name="" type="radio" value="1"/>是
+			<input name="" type="radio" value="0"/>否
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

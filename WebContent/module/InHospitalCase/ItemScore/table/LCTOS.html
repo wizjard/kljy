@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="N">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="4" style="font-size:20px;color:red;height:30px" align="center"><B>肝癌肝移植手术标准</B></td></tr>
+		<tr>
+			<td bgcolor="#D4D4D4" align="right" style="width:100px;">米兰标准：</td>
+			<td bgcolor="#D4D4D4" style="width:600px;"><div><div style="float:left;"><input type="radio" name="milanStandard" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">符合</div><div style="float:left;"><input type="radio" name="milanStandard" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">不符合</div></div></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>米兰标准要求：</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>1、单个肿瘤直径≤5 cm或多发肿瘤少于3个且最大直径≤3 cm，无大血管浸润</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>2、无淋巴结或肝外转移</td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" align="right">UCSF标准：</td>
+			<td bgcolor="#D4D4D4" ><div><div style="float:left;"><input type="radio" name="ucsfStandard" value="1" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">符合</div><div style="float:left;"><input type="radio" name="ucsfStandard" value="0" onclick="checkOrNotCheck(this)"/></div><div style="float:left;">不符合</div></div></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>UCSF标准要求：</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>1、单个肿瘤直径不超过6.5cm,或肿瘤数目不超过3个，最大直径不超过4.5cm，</br>总的肿瘤直径不超过8cm</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>2、不伴有血管及淋巴结的侵犯</td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

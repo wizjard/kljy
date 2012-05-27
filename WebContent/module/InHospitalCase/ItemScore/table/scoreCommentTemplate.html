@@ -1,0 +1,155 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+var caseId = App.util.getHtmlParameters('kid');
+	$(function(){
+		$('input[name="id"]').val(thisId);
+		$('input[name="ssmId"]').val(ssmId);
+		$('input[name="caseId"]').val(kid);
+		var array = [];
+		if(subScoreItems){
+			array = subScoreItems.split('*');
+		}
+		for(var i = 0; i < array.length; i++){
+			var str = '<input type="hidden" flag="'+array[i]+'" />';
+			$(str).appendTo('body');
+		}
+		
+		initST();
+		//获取住院时间
+		getInhspDate();
+	});
+	function initST(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'scoreItems_findByScidzhuyuan',
+				id:thisId,
+				subScoreItems:subScoreItems
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					$('input[name="id"]').val(thisId);
+					$('input[name="ssmId"]').val(ssmId);
+					$('input[name="caseId"]').val(kid);
+					initPage();
+					createSignField();
+					if(json.sc){
+						FormUtil.setFormValues('body',json.sc);
+						$.each(json,function(code){
+							if(json[code]){
+								setIframeValue(code,this);
+							}
+						});
+					}
+					var _longId=$('input[name="doc1"]').val()+'';
+					if(_longId.length>0){
+						$('input[name="doc1_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+					}
+					_longId=$('input[name="doc2"]').val()+'';
+					if(_longId.length>0){
+						$('input[name="doc2_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+					}
+					_longId=$('input[name="doc3"]').val()+'';
+					if(_longId.length>0){
+						$('input[name="doc3_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+					}
+				}
+			},'json'
+		);
+	}
+	/*签名字段*/
+	function createSignField(){
+		var labelStyle='text-align:right;width:140px;';
+		var $table=$('<table width="100%" border=0 cellpadding=0 cellspacing=3></table>');
+		var $tr=$('<tr><td style="'+labelStyle+'">住院医师：</td><td><input name="doc1" type="hidden"/><input name="doc1_show" type="text" size="18"/></td></tr>');
+		$table.append($tr);
+		$tr=$('<tr><td style="'+labelStyle+'">主治医师：</td><td><input name="doc2" type="hidden"/><input name="doc2_show" type="text" size="18"/></td></tr>');
+		$table.append($tr);
+		$tr=$('<tr><td style="'+labelStyle+'">主任/副主任医师：</td><td><input name="doc3" type="hidden"/><input name="doc3_show" type="text" size="18"/></td></tr>');
+		$table.append($tr);
+		$table.appendTo('body');
+		//医生字典选择
+		$table.find('input[type="text"]').each(function(){
+			FormUtil.toDictSelect({
+				url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+				hiddenEl:$('input[name="'+$(this).attr('name').replace('_show','')+'"]'),
+				showEl:$('input[name="'+$(this).attr('name')+'"]')
+			});
+		});
+	}
+	function getIframeValue(code){
+		return $('input[flag="'+code+'"]').data('options');
+	}
+	function setIframeValue(code,data){
+		$('input[flag="'+code+'"]').data('options',data);
+	}
+	function saveIframeData(code){
+		document.getElementById(code).contentWindow.SaveData();
+	}
+	function setParentCenterPanelIframe(){
+		//parent.document.getElementById("scoreItems").style.height=document.body.scrollHeight;
+	}
+	function getInhspDate(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+			{
+				method:'findById',
+				id:caseId
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					if(json != null){
+					  $('input[name="inHspTime"]').val(json.inHspDate);
+					}else{
+					  return;
+					}
+				}
+			},'json'
+		);
+	}
+</script>
+</head>
+<body>
+	<div id="header" style="width:700px"></div>
+	<div id="scoreTS" style="width:700px">
+		<input type="hidden" name="id" value="-1"/>
+		<input type="hidden" name="caseId" value=""/>
+		<input type="hidden" name="ssmId" value=""/>
+		<input type="hidden" name="fiag" value="N">
+		<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2">
+			<tr>
+				<td width="120" align="right">评价时间：</td>
+				<td width="230" ><input type="text" name="scoreTime"/></td>
+				<td width="120" align="right">评价阶段：住院</td>
+				<td width="230">
+				   <input type="text" name="inHspTime" readOnly="readOnly" style="width:100px"/>
+		        	<select name="scoreStage" class="input" id="scoreStage" style="width:120px">
+						<option value=""></option>
+						<option value="1">入院</option>
+						<option value="2">术前</option>
+						<option value="3">术后</option>
+						<option value="4">住院期间</option>
+						<option value="5">出院</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>神志改变</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _value = document.getElementById("dystropyKind").value;
+		window.returnValue = _value;
+		window.close();
+	}
+</script>
+</head>
+
+<body>
+	<table width="306" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="129" align="right">表现：</td>
+        <td width="169" colspan="3">
+        	<select name="dystropyKind" id="dystropyKind">
+            	<option value=""></option>
+                <option value="反复动作">反复动作</option>
+                <option value="随地便溺">随地便溺</option>
+                <option value="自言自语">自言自语</option>
+                 <option value="谵妄">谵妄</option>
+            </select>
+        
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

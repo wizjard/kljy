@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>我的病人</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="scripts/AllOutOrEmergencyPatients.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	
+	seek = [
+        ['0', '请选择过滤条件'],
+        ['1', '病人姓名'],
+        ['2', '门诊卡号'],
+        ['3', '科室'],
+        ['4', '在院病人'],
+        ['5', '出院病人'],
+        ['6','病人姓名或病案号'],
+        ['7','科室-在院病人'],
+        ['8','科室-出院病人']
+    ];
+	var seekList = new Ext.data.SimpleStore({
+        fields: ['seekValue', 'showSeek'],
+        data : seek 
+    });
+	
+	new Ext.Viewport({
+		layout:'fit',
+		items:Ext.apply(CreatePatientCard(),{
+			xtype:'grid',
+			title:'门(急)诊病人列表',
+			tbar:[
+				{
+					xtype:'tbseparator'
+				},{
+					text:'&nbsp;刷新&nbsp;',
+					tooltip:'刷新当前列表',
+					handler:function(){
+						Ext.getCmp('patient-list-grid').getStore().reload();
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'基本信息',
+					tooltip:'编辑病人基本信息',
+					handler:function(){
+						var _data=getSelections();
+						if(!_data)	return;
+						App.util.addNewMainTab('/module/outPatientOrEmergencyService/OutOrEmergencyPatientInfo.html?id='+_data.data.id,'基本信息('+_data.data.patientName+')');
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'门诊病历',
+					tooltip:'进入病人门诊病历记录页面',
+					handler:function(){
+						var _data=getSelections();
+						if(!_data)	return;
+						location.href='OutOrEmergencyCaseList.html?id='+_data.data.id;
+					}
+				},{
+					xtype:'tbseparator'
+				},'->',{
+					xtype:'tbseparator'
+				},{
+					xtype : "combo",
+					width:150,									
+					id:'seek',
+					store: seekList,
+                    displayField:'showSeek',
+                    valueField:'seekValue',
+                    typeAhead: true,
+                    mode: 'local',
+                    triggerAction: 'all',
+                    listeners:{
+                    	collapse:function(){
+                        	var temp = Ext.getCmp('seek').getValue();
+                        	if(temp == 0 || temp == 1 || temp == 2 || temp == 3 || temp == 6 || temp == 7 || temp == 8){
+                        		Ext.getCmp('search-keyword').setValue('请输入查询关键字');
+								Ext.getCmp('search-keyword').show();
+                        	}
+                        	if(temp == 4 || temp == 5){
+                        		Ext.getCmp('search-keyword').hide();
+                        		Ext.getCmp('search-keyword').setValue(0);
+                        	}
+                        }
+                    }
+				},{
+					xtype:'tbseparator'
+				},{
+					xtype:'textfield',
+					width:150,
+					emptyText:'请输入查询关键字',
+					id:'search-keyword',
+					listeners:{
+						focus:function(){
+							Ext.getCmp('search-keyword').setValue('');
+						}
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'搜索病人',
+					tooltip:'根据指定的条件搜索病人',
+					handler:function(){
+						var _condition = Ext.getCmp('seek').getValue();
+						if(_condition == 0){
+							alert('请选择过滤条件');
+							return;
+						}						
+						var _val=Ext.getCmp('search-keyword').getValue().trim();
+						if(_val.length==0 || _val.length=='请输入查询关键字'){
+							alert('关键字不能为空。');
+							return;
+						}
+						var _store=Ext.getCmp('patient-list-grid').getStore();
+						_store.baseParams={method:'searchByCondition',keyword:_val,condition:_condition,patientType:1};//搜索门急诊病人信息列表
+						_store.load({params:{start:0,limit:20}});						
+						Ext.getCmp('search-keyword').show();
+						if(_condition == 4 || _condition == 5){
+							Ext.getCmp('seek').setValue(0);
+							Ext.getCmp('search-keyword').setValue('');
+						}
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'&nbsp;全部&nbsp;',
+					tooltip:'显示全部门(急)诊病人',
+					handler:function(){
+						var _store=Ext.getCmp('patient-list-grid').getStore();
+						_store.baseParams={method:'queryAll',patientType:1};//加载门急诊病人信息列表
+						_store.load({params:{start:0,limit:20}});
+						Ext.getCmp('search-keyword').setValue("");
+						Ext.getCmp('seek').setValue(0);
+					}
+				},{
+					xtype:'tbseparator'
+				}
+			],
+			listeners:{
+				render:function(){
+					this.getStore().load({params:{start:0,limit:20}});
+				}
+			}
+		})
+	});
+	
+	Ext.getCmp('seek').setValue(0);
+})
+function getSelections(){
+	var _ss=Ext.getCmp('patient-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}
+	return _ss[0];
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

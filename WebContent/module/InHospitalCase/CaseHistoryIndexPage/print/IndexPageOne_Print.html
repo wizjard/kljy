@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>病案首页</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript" src="../Js/InHospitalPage.js"></script>
+	<script type="text/javascript">
+		var pid = null,kid = null;
+		$(function(){
+			kid = App.util.getHtmlParameters('kid');
+			pid = App.util.getHtmlParameters('pid');
+			$('#all-double').click(function(){
+				print();
+			});
+			setValues();		
+		});
+		
+		function setValues(){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do',
+				{
+					method:'getInHospOneByCaseId',
+					kid:kid
+				},function(data){
+					if(data.success){
+						if(data.data==""){
+							alert("暂无数据！");
+							return;
+						}
+						var json = JSON.parse(data.data);
+						if(json){
+							$('.out input').each(function(){
+								var type = $(this).attr('type');
+								if(type=='checkbox'){
+									$('input[type="checkbox"]').each(function(){
+										var _va = json[this.name];
+										if($(this).val()==_va){
+											$(this).attr('checked',true);
+										}					
+									});
+								}
+							});
+							
+							$.each(json,function(key){
+								if(typeof(json[key])=='number'){
+									json[key] = new String(json[key]);
+								}
+								if(key=='leaveHospital1'||key=='leaveHospital2'||key=='leaveHospital3'||key=='leaveHospital4'
+									||key =='leaveHospital5'||key=='leaveHospital6'||key=='leaveHospital7'||key=='leaveHospital8'||key=="id"||key=="caseId"
+								){
+									return;	
+								}
+								if(key=="birthday"||key=="queding_checkdate"||key=="badate"){
+									var temp = json[key];
+									json[key] = temp.length > 0 ? temp.substr(0,10) : '';
+								}
+								if(json[key]){
+									$('*[name="' + key + '"]').html(json[key].replaceAll(' ', '<span>&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));
+								}
+							});
+						}
+					}
+					if($('span[name="birthplace"]').html() == ""){
+						$('span[name="birthplace"]').hide();
+						$('span[name="area"]').show();
+						if($('span[name="area"]').html() == "-1" || $('span[name="area"]').html() == ""){
+							$('span[name="area"]').hide();
+							if($('span[name="city"]').html() != "-1" && $('span[name="city"]').html() != ""){
+								$('span[name="city"]').show();
+							}else{
+								if($('span[name="province"]').html() != "-1" && $('span[name="province"]').html() != ""){
+									$('span[name="province"]').show();
+								}
+							}
+						}
+					}
+					print();
+				},'json'
+			);
+		}
+		
+		function print(){
+			createHead('病案首页',$("#policymanualNo").text());
+			LODOP.ADD_PRINT_HTM(115,50,680,1100,$('#print').html());//第一个参数控制上边距，第二个参数控制左边距，第三个控制宽度，第四个控制高度
+			LODOP.SET_PRINT_STYLEA(5,"ItemType",0);
+			LODOP.SET_PRINT_STYLEA(5,"HOrient",3);
+			LODOP.SET_PRINT_STYLEA(5,"VOrient",0);
+			LODOP.PREVIEW();
+		}
+	</script>
+  </head>
+  
+  <body>
+  		<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+		<div id="page-toolbar">
+			<table border=0 style="border:0px;" cellpadding=0 cellspacing=0>
+				<tr>
+					<td style="border:0px;" align="center"><button id="all-double">打印预览</button></td>
+				</tr>
+			</table>
+		</div>
+    	<div>
+			<p>&nbsp;</p>
+			<table class="head" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0 width="675">
+				<tr>
+		    		<td class="noBottom" style="font-size:12px;"><b>医疗机构代码：</b>0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+					<td class="noBottom" style="line-height:19px;">
+						<b>医疗保险手册(卡)号：</b><span name="policymanualNo" id = "policymanualNo"></span>
+					</td>
+		    	</tr>
+		    	<tr><td colspan="2" class="noBottom">&nbsp;</td></tr>
+		    	<tr>
+					<td class="noBottom" colspan="2" align="center">
+						<span style="font-size:16px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+					</td>	
+				</tr>
+				<tr>
+					<td colspan="2" class="noBottom">&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<div id="print">
+			<link type="text/css" rel="stylesheet" href="../css/IndexHospticalPrint.css"/> 
+			<table style="width:675px;" class="head" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+				<tr height="25px">
+					<td colspan="2" class="noBottom">
+						<b style="font-size:23px;margin-left:34%;font-family:'黑体';">住  院  病  案  首  页</b>
+					</td>					
+				</tr>
+				<tr>										
+					<td class="noBottom" style="line-height:19px;">
+						<span style="color:red;"><b>医疗付款方式：</b></span>
+						<span class="span" name="typeOfPayment"></span>					
+					</td>
+					<td class="noBottom" width="150px;" valign="bottom" align="left"> 
+						<div style="margin-left:15px;"><b>病案号：</b><span name="patientNo"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="noBottom" style="line-height:19px;">
+						<div><b>X 线号：</b><span name="xno"></span></div>					
+					</td>				
+					<td class="noBottom" style="line-height:19px;" align="left">
+						<div style="margin-left:15px;"><b>门诊号：</b><span name="menzhenhao"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="noBottom" style="line-height:19px;">
+						<div>
+							<b>C T 号：</b><span name="ctNo"></span>
+							<span style="margin-left:190px;"><b>第</b></span>
+							<span class="span" name="inHspTimes"></span>&nbsp;<b>次住院</b>
+						</div>
+					</td>
+					<td class="noBottom" style="line-height:19px;" align="left">
+						<div style="margin-left:15px;"><b>MRI 号：</b><span name="mriNo"></span></div>
+					</td>
+				</tr>
+			</table>
+		
+			<table align="center" border="0" style="border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:120px;"><b>姓名：</b><span name="patientName"></span></div>
+						<div class="nopane" style="margin-left:25px;"><b>性别：</b></div>
+						<div class="pane"><span name="gender"></span></div>
+						<div class="nopane">&nbsp;<b>1.男&nbsp;2.女</b></div>
+						<div style="float:left;margin-left:25px;width:175px;"><b>出生日期：</b><span name="birthday"></span></div>
+						<div class="nopane" style="float:right;width:155px;margin-right:0px;">
+							<b>年龄：</b><span name="age">&nbsp;</span>
+								<span name="age_months" style="display:none;">&nbsp;</span>
+								<span name="age_day" style="display:none;">&nbsp;</span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div class="nopane" style="margin-left:1px;"><b>婚姻：</b></div>
+						<div class="pane"><span name="marrageStatus"></span></div>
+						<div class="nopane"><b>1.未&nbsp;2.已&nbsp;3.离&nbsp;4.丧</b></div>
+						<div style="float:left;margin-left:35px;">
+							<b>出生地：</b><span name="province" style="display:none"></span>
+							<span name="city" style="display:none"></span>
+							<span name="area" style="display:none"></span>
+							<span name="birthplace"></span>
+						</div>	
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:120px"><b>职业：</b><span name="occupation">&nbsp;</span></div>
+						<div style="float:left;width:130px;margin-left:30px;"><b>民族：</b><span name="people">&nbsp;</span></div>
+						<div style="float:left;width:130px;margin-left:25px;"><b>国籍：</b><span name="nationality">&nbsp;</span></div>
+						<div style="float:left;width:200px;"><b>身份证号：</b><span name="idNo">&nbsp;</span></div>					
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:380px;">
+							<div style="float:left"><b>工作单位及地址：</b></div>
+							<div style="float:left"><span name="workUnitAddr"></span></div>
+						</div>
+						<div style="float:left;width:140px;">&nbsp;&nbsp;&nbsp;<b>电话：</b><span name="workUnitTel" ></span></div>
+						<div style="float:left;width:110px;margin-left:3px;"><b>邮政编码：</b><span name="workUnitPostCode"></span></div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:525px;">
+							<div style="float:left"><b>户口地址/现住址：</b></div>
+							<div style="float:left"><span name="homeAddr"></span></div>
+						</div>
+						<div style="float:left;width:110px;"><b>邮政编码：</b><span name="homePostCode">&nbsp;</span></div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:135px;"><b>联系人姓名：</b><span name="contacterName">&nbsp;</span></div>
+						<div style="float:left;width:105px;">
+							<div style="float:left"><b>关系：</b></div>
+							<div style="float:left"><span name="contacterRelationship"></span></div>
+						</div>
+						<div style="float:left;width:250px;">
+							<div style="float:left;">&nbsp;&nbsp;&nbsp;<b>地址：</b></div>
+							<div style="float:left;"><span name="contacterAdd"></span></div>
+						</div>
+						<div style="float:left;width:130px;">&nbsp;&nbsp;<b>电话：</b><span name="contacterTel">&nbsp;</span></div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:165px;"><b>入院日期：</b><span name="inHspDate"></span></div>
+						<div style="float:left;width:186px;">
+							<div style="float:left"><b>入院科别：</b></div>
+							<div style="float:left"><span name="inWardCode"></span></div>
+						</div>
+						<div style="float:left;width:100px;">
+							<div style="float:left">&nbsp;&nbsp;<b>病室：</b></div>
+							<div style="float:left"><span name="inWard"></span></div>
+						</div>
+						<div style="float:left;width:185px;">
+							<div style="float:left"><b>转科科别：</b></div>
+							<div style="float:left"><span name="creditWard"></span></div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="rightTd">
+						<div style="float:left;width:165px"><b>出院日期：</b><span name="outHspDate"></span></div>
+						<div style="float:left;width:186px;">
+							<div style="float:left"><b>出院科别：</b></div>
+							<div style="float:left"><span name="outHspWard"></span></div>
+						</div>
+						<div style="float:left;width:100px">
+							<div style="float:left">&nbsp;&nbsp;<b>病室：</b></div>
+							<div style="float:left"><span name="outWard"></span></div>
+						</div>
+						<div style="float:left;width:185px;"><b>实际住院：</b><span name="hspDate2"></span><b>天</b></div>
+					</td>
+				</tr>
+				<tr>
+					<td style="border-right-style:none;">
+						<div style="float:left;">
+							<div style="float:left"><b>门(急)诊诊断：</b></div>
+							<div style="float:left"><span name="menzhen"></span></div>
+						</div>
+					</td>
+					<td style="border-left:none;" class="rightTd">	
+						<div class="nopane"><b>入院时情况：</b></div>
+						<div class="pane"><span name="inStatus"></span></div>
+						<div class="nopane"><b>1.危2.急3.一般</b></div>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:430px"> 
+						<div style="float:left;">
+							<div style="float:left"><b>入院诊断：</b></div>
+							<div style="float:left"><span name="inIllsShow"></span></div>
+						</div>
+					</td>
+					<td class="rightTd">	
+						<b>入院后确诊日期：</b><span name="queding_checkdate">&nbsp;</span>
+					</td>
+				</tr>
+			</table>
+			
+			<table style="width:675px;" class="out" align="center" border="0" cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+			         <td style="width:320px" rowspan="2" align="center"><span style="font-size:20px;"><b>出 院 诊 断</b></span></td>
+			         <td style="width:150" colspan="5" align="center"><b>出院情况</b></td>
+			         <td style="width:60px" rowspan="2" style="text-align:center">
+			            <span style="color:red;"><b>ICD-10</b></span>
+			         </td>
+			     </tr>
+			     <tr>
+			         <td align="center" style="width:30px"><b>治愈</b></td>
+			         <td align="center" style="width:30px"><b>好转</b></td>
+			         <td align="center" style="width:30px"><b>未愈</b></td>
+			         <td align="center" style="width:30px"><b>死亡</b></td>
+			         <td align="center"><b>其他</b></td>
+			     </tr>
+			     <tr>
+				         <td>
+			             	<div style="float:left"><b>主要诊断：</b></div><div style="float:left"><span name="outIlls1"></span></div>
+			             </td>
+			             <td width="30px;">
+			             	<input type="checkbox" name="leaveHospital1" value="1" style="border:0"/>
+			             </td>
+			             <td width="30px;">
+			             	<input type="checkbox" name="leaveHospital1" value="2" style="border:0"/>
+			             </td>
+			             <td width="30px;">
+			             	<input type="checkbox" name="leaveHospital1" value="3" style="border:0"/>
+			             </td>
+			             <td width="30px;">
+			             	<input type="checkbox" name="leaveHospital1" value="4" style="border:0"/>
+			             </td>
+			             <td width="30px;">
+			             	<input type="checkbox" name="leaveHospital1" value="5" style="border:0"/>
+			             </td>
+			             <td width="80px;">
+			             	<span name="icd1">&nbsp;</span>
+			             </td>
+			       </tr>
+			       <tr>	
+			            <td >
+			            	<div style="float:left"><b>其他诊断：</b></div><div style="float:left"><span name="outIlls2"></span></div>
+						</td>
+			             <td><input type="checkbox" name="leaveHospital2" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital2" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital2" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital2" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital2" value="5" style="border:0"/></td>
+			             <td><span name="icd2">&nbsp;</span></td>
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls3"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital3" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital3" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital3" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital3" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital3" value="5" style="border:0"/></td>
+			             <td><span name="icd3">&nbsp;</span></td>
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls4"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital4" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital4" value="5" style="border:0"/></td>
+			             <td><span name="icd4">&nbsp;</span></td>
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls5"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital5" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital5" value="5" style="border:0"/></td>
+			             <td><span name="icd5">&nbsp;</span></td>      	       	 
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls6"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital6" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital6" value="5" style="border:0"/></td>
+			             <td><span name="icd6">&nbsp;</span></td>      	       	 
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls7"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital7" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital7" value="5" style="border:0"/></td>
+			             <td><span name="icd7">&nbsp;</span></td>      	       	 
+			        </tr>
+			        <tr>
+			             <td>			    
+			             	<div style="float:left;width:65px;">&nbsp;</div>
+			             	<div style="float:left"><span name="outIlls8"></span></div>
+						 </td>
+			             <td><input type="checkbox" name="leaveHospital8" value="1" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital8" value="2" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital8" value="3" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital8" value="4" style="border:0"/></td>
+			             <td><input type="checkbox" name="leaveHospital8" value="5" style="border:0"/></td>
+			             <td><span name="icd8">&nbsp;</span></td>      	       	 
+			        </tr>
+					<tr>
+			            <td colspan="6" style="border-right:solid 1px #000;"><div style="float:left"><b>医院感染名称：</b></div><div style="float:left"><span name="ganran">&nbsp;</span></div></td>
+						<td class="rightTd"><span name="icd9">&nbsp;</span></td>
+			        </tr>
+			        <tr>
+						<td colspan="6" class="rightTd"><div style="float:left"><b>病理诊断：</b></div><div style="float:left"><span name="pathology"></span></div></td>
+						<td class="rightTd"><span name="icd10">&nbsp;</span></td>
+					</tr>
+				</table>
+				<table align="center" border="0" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="680">					
+					<tr>
+						<td colspan="2" class="rightTd"><div style="float:left"><b>损伤、中毒的外部因素：</b></div><div style="float:left"><span name="harm"></span></div></td>
+					</tr>
+					<tr>
+						<td class="border-right-style:none">
+							<div class="nopane" style="width:215px">
+								<div style="float:left"><span style="color:red;"><b style="font-size:16px;">药物过敏</b></span></div>							
+								<div style="float:left"><span name="drugAllergy" class="spanline">&nbsp;</span></div>
+							</div>
+						</td>
+						<td class="rightTd">
+							<div class="nopane" Style="color:red;margin-left:10px"><b>HBsAg</b></div>
+							<div class="pane"><span name="hbsag">&nbsp;</span></div>
+							<div class="nopane" style="color:red;margin-left:10px"><b>HCV-Ab</b></div>
+							<div class="pane"><span name="hcvab">&nbsp;</span></div>
+							<div class="nopane" style="color:red;margin-left:10px"><b>HIV-Ab</b></div>
+							<div class="pane"><span name="hivab">&nbsp;</span></div>
+							<div class="nopane" style="margin-left:10px;float:left"><span><b>0.未做1.阴性2.阳性3.待回报4.可疑阳性</b></span></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="rightTd" colspan="2">
+							<div class="nopane"><b>传染病：</b></div>
+							<div class="pane"><span name="contagion">&nbsp;</span></div>
+							<div class="nopane">&nbsp;&nbsp;<b>1.有&nbsp;&nbsp;2.无&nbsp;&nbsp;3.未确定</b></div>
+							<div class="nopane" style="margin-left:103px"><b>传染病报卡：</b></div>
+							<div class="pane"><span name="baoka">&nbsp;</span></div>
+							<div class="nopane" style="margin-left:20px"><b>1.未报&nbsp;2.已报&nbsp;3.订正&nbsp;4.不需上报</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="rightTd" colspan="2">
+							<div class="nopane"><b>诊断符合情况</b></div>
+							<div class="nopane" style="margin-left:30px;"><b>门诊与出院</b>&nbsp;</div>
+								<div class="pane" style="margin-top:0px;"><span name="menzhen_chuyuan">&nbsp;</span></div>
+							<div style="margin-left:20px" class="nopane"><b>入院与出院</b>&nbsp;</div>
+								<div class="pane"><span name="ruyuan_chuyuan">&nbsp;</span></div>
+							<div style="margin-left:20px" class="nopane"><b>术前与术后</b>&nbsp;</div>
+								<div class="pane"><span name="shuqian_shuhou">&nbsp;</span></div>
+							<div style="margin-left:20px" class="nopane"><b>临床与病理</b>&nbsp;</div>
+								<div class="pane"><span name="linchuang_bingli">&nbsp;</span></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="rightTd" colspan="2">
+							<div>
+								<div class="nopane" style="margin-left:53px"><b>放射与病理</b></div>
+								<div class="pane"><span name="fangshe_bingli">&nbsp;</span></div>
+								<div class="nopane" style="margin-left:20px"><span><b>0.未做&nbsp;&nbsp;1.符合&nbsp;&nbsp;2.不符合&nbsp;&nbsp;3.不肯定</b></span>&nbsp;&nbsp;</div>
+								<div class="nopane" style="margin-left:20px"><b>抢救</b>&nbsp;</div>
+								<div class="nopane" style="width:10px"><span class="spanline" name="qiangjiu">&nbsp;</span></div>
+								<div class="nopane"><b>次</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>成功</b>&nbsp;</div>
+								<div class="nopane" style="width:10px"><span class="spanline" name="succed">&nbsp;</span></div>
+								<div class="nopane"><b>次</b></div>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<table align="center" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=3 width="680">	
+					<tr>
+						<td><b>科主任：</b><span name="kezhuren_show">&nbsp;</span></td>
+						<td><b>主(副主)任医师：</b><span name="directorDoctorId_show">&nbsp;</span></td>
+						<td><b>主治医师：</b><span name="treatDoctorId_show">&nbsp;</span></td>
+						<td class="rightTd"><b>住院医师：</b><span name="inhspDoctorId_show">&nbsp;</span></td>
+					</tr>
+					<tr>
+						<td><b>进修医师：</b><span name="jinxiu_show">&nbsp;</span></td>
+						<td><b>研究生实习师：</b><span name="yanjiusheng_show">&nbsp;</span></td>
+						<td><b>实习医师：</b><span name="shixi_show">&nbsp;</span></td>
+						<td class="rightTd"><b>编码员：</b><span name="bianma">&nbsp;</span></td>
+					</tr>
+				</table>
+				<table align="center" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=4 width="680">	
+					<tr>
+						<td width="75px;"><b>病案质量：</b></td>
+						<td><div style="height:14px;" class="pane"><span name="bingan">&nbsp;</span></div></td>
+						<td><b>1.甲&nbsp;2.乙&nbsp;3.丙</b></td>
+						<td><b>质控医师：</b><span name="qcyishi">&nbsp;</span></td>
+						<td><b>质控护师：</b><span name="qchushi">&nbsp;</span></td>
+						<td style="border-right:solid 1px #000;"><b>日期：</b><span name="badate">&nbsp;</span></td>
+					</tr>
+			   </table>
+		</div>
+  </body>
+</html>

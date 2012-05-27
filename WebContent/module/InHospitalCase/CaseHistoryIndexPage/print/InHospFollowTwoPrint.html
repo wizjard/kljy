@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>病案首页(续二)</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+	    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript" src="../Js/InHospitalPage.js"></script>
+		<script>
+			var pid = null ,kid = null;
+			$(function(){
+				kid = App.util.getHtmlParameters('kid');
+				pid = App.util.getHtmlParameters('pid');
+				
+				$('#all-double').click(function(){
+					print();
+				});
+				
+				setValues();
+			});
+			
+			function setValues(){
+				$.post(
+					App.App_Info.BasePath+'/InHosp.do',
+					{
+						method:'getInHospFollowTwo',
+						kid:kid
+					},function(data){
+						if(data.success){
+							if(data.data.length < 0){
+								alert("暂无 数据！");
+								return;
+							}
+							var json = JSON.parse(data.data);
+							var ops = json.ops;
+							if(ops){
+								var op = $('.ops').find('tr');
+								$.each(ops,function(i){
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="operationNo"]').html(this.operationNo);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="tdate"]').html(this.tdate);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="surgeryName"]').html(this.surgeryName);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="surgeryDocName"]').html(this.surgeryDocName);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="surgeryAssistant1"]').html(this.surgeryAssistant1);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="surgeryAssistant2"]').html(this.surgeryAssistant2);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="anesthesiaMode"]').html(this.anesthesiaMode);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="cut"]').html(this.cut);
+									op.filter(function(i){return i>1;}).eq(i).find('span[name="analgesist"]').html(this.analgesist);
+								});
+							}
+							
+							var ward = json.ward;
+							if(ward){
+								var wa = $('.ward').find('tr');
+								$.each(ward,function(i){
+									wa.filter(function(i){return i> 0;}).eq(i).find('span[name="icuName"]').html(this.icuName);
+									wa.filter(function(i){return i> 0;}).eq(i).find('span[name="icuTurnInto"]').html(this.icuTurnInto);
+									wa.filter(function(i){return i> 0;}).eq(i).find('span[name="icuDropOut"]').html(this.icuDropOut);
+								});
+							}
+							
+							var inHospInfo = json.inHospInfo;
+							if(inHospInfo){
+								$('#info').find('tr').find('span').each(function(){
+									var name = $(this).attr('name');
+									if(name!="undefined"){
+										if(inHospInfo[name]){
+											$(this).html(inHospInfo[name]);
+										}
+									}
+								});
+							}
+						}else{
+							alert("初始化页面数据失败！");
+						}
+						print();
+					},'json'
+				);
+			}
+			
+			function print(){
+				createHeadTwo('病案首页(续[反])');
+				LODOP.ADD_PRINT_HTM(70,15,680,1100,$('#print').html());//第一个参数控制上边距，第二个参数控制左边距，第三个控制宽度，第四个控制高度
+				LODOP.SET_PRINT_STYLEA(5,"ItemType",0);
+				LODOP.SET_PRINT_STYLEA(5,"HOrient",3);
+				LODOP.SET_PRINT_STYLEA(5,"VOrient",0);
+				LODOP.PREVIEW();
+			}
+		</script>
+	</head>
+<body>
+	    <object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+		<div id="page-toolbar">
+			<table style="border:0px;" cellpadding=0 cellspacing=0>
+				<tr>
+					<td style="border:0px;" align="center"><button id="all-double">打印预览</button></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+		     <p>&nbsp;</p>
+		     <p>&nbsp;</p>
+		    <table style="width:675px;" class="head" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		    	<tr>
+		    		<td colspan="5" class="noBottom"><b>医疗机构代码：</b>0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+		    	</tr>
+		    	<tr><td colspan="5" class="noBottom">&nbsp;</td></tr>
+		    	<tr>
+					<td class="noBottom" colspan="5" align="center">
+						<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+					</td>	
+				</tr>
+				<tr><td class="noBottom" colspan="5">&nbsp;</td></tr>
+				<tr>
+					<td class="noBottom" align="center" colspan="5" style="line-height:27px;">
+						<b style="font-size:20px;font-family:'黑体'">住  院  病  案  首  页(续)</b>
+					</td>
+				</tr>
+		    </table>
+		 </div>
+		 <div id="print">
+		 	<link type="text/css" rel="stylesheet" href="../css/IndexHospticalPrint.css"/> 
+		 	 <table style="width:675px;" class="ops" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				 <tr align="center">
+						<td rowspan="2" width="60px;"><b>手术操<br>作编码</b></td>
+						<td rowspan="2" width="75px;"><b>手术操<br>作日期</b></td>
+						<td rowspan="2" width="165px;"><b>手术操<br>作名称</b></td>
+						<td colspan="3" width="153px;"><b>手术操作医师</b></td>
+						<td rowspan="2" width="100px;"><b>麻醉方式</b></td>
+						<td rowspan="2" width="45px;"><b>切口愈合等级</b></td>
+						<td rowspan="2" width="50px;"><b>麻醉<br>医师</b></td>
+				  </tr>
+				  <tr align="center">
+						<td width="50px;"><b>术者</b></td>
+						<td width="50px;"><b>Ⅰ助</b></td>
+						<td width="50px;"><b>Ⅱ助</b></td>
+				  </tr>
+				  <tr>
+					<td width="60px">&nbsp;<span name="operationNo"></span></td>
+					<td width="75px" align="center">&nbsp;<span name="tdate"></span></td>
+					<td width="165px">&nbsp;<span name="surgeryName"></span></td>
+					<td width="50px">&nbsp;<span name="surgeryDocName"></span></td>
+					<td width="50px">&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td width="50px">&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td width="100px">&nbsp;<span name="anesthesiaMode"></span></td>
+					<td width="45">&nbsp;<span name="cut"></span></td>
+					<td width="50">&nbsp;<span name="analgesist"></span></td>
+				 </tr>
+				 <tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="operationNo"></span></td>
+					<td align="center">&nbsp;<span name="tdate"></span></td>
+					<td>&nbsp;<span name="surgeryName"></span></td>
+					<td>&nbsp;<span name="surgeryDocName"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant1"></span></td>
+					<td>&nbsp;<span name="surgeryAssistant2"></span></td>
+					<td>&nbsp;<span name="anesthesiaMode"></span></td>
+					<td>&nbsp;<span name="cut"></span></td>
+					<td>&nbsp;<span name="analgesist"></span></td>
+				</tr>
+			</table>
+			<table style="width:675px;" class="ward" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr align="center">
+					<td width="250"><b>重症监护室名称</b></td>
+					<td width="185"><b>进入时间(年_月_日_时_分_)</b></td>
+					<td width="185"><b>退出时间(年_月_日_时_分_)</b></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;<span name="icuName"></span></td>
+					<td>&nbsp;<span name="icuTurnInto"></span></td>
+					<td>&nbsp;<span name="icuDropOut"></span></td>
+				</tr>
+			</table>
+			<div id="info">
+				<table align="center" style="border-top:none;border-bottom:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>	
+					<tr>
+						<td><b>科主任：</b><span name="kezhuren_show">&nbsp;</span></td>
+						<td><b>主(副主)任医师：</b><span name="directorDoctorId_show">&nbsp;</span></td>
+						<td><b>主治医师：</b><span name="treatDoctorId_show">&nbsp;</span></td>
+						<td class="rightTd"><b>住院医师：</b><span name="inhspDoctorId_show">&nbsp;</span></td>
+					</tr>
+					<tr>
+						<td><b>进修医师：</b><span name="jinxiu_show">&nbsp;</span></td>
+						<td><b>研究生实习师：</b><span name="yanjiusheng_show">&nbsp;</span></td>
+						<td><b>实习医师：</b><span name="shixi_show">&nbsp;</span></td>
+						<td class="rightTd"><b>编码员：</b><span name="bianma">&nbsp;</span></td>
+					</tr>
+				</table>
+				<table align="center" style="border-top:none;border-bottom:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=4>	
+					<tr>
+						<td width="70px;"><b>病案质量：</b></td>
+						<td><div style="height:14px;" class="pane"><span name="bingan">&nbsp;</span></div></td>
+						<td><b>1.甲&nbsp;2.乙&nbsp;3.丙</b></td>
+						<td><b>质控医师：</b><span name="qcyishi">&nbsp;</span></td>
+						<td><b>质控护师：</b><span name="qchushi">&nbsp;</span></td>
+						<td style="border-right:solid 1px #000;"><b>日期：</b><span name="badate">&nbsp;</span></td>
+					</tr>
+				</table>
+			</div>
+		 </div>
+</body>
+</html>

@@ -1,0 +1,1293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>现病史-起病</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+$(function(){
+	initPage();
+	var KID=App.util.getHtmlParameters('KID');
+	if(KID&&KID>0){
+		setPageValues(KID);
+	}
+	setInterval(function(){
+		parent.setPanelHeight($(document.body).height());
+	},500);
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-ENT-PresentIllness-Sysptom'),function(code){
+		$('*[name="'+code+'"]').data('options',this);
+	});
+	//Checkbox
+	$('input.checkbox,textarea.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this),columns:3});
+	});
+	//Select
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//checkbox事件
+	$('input[type="checkbox"]').filter(function(i){
+		return $(this).attr('class')!='noActive';
+	}).click(function(){
+		var _tr=$(this).parent().parent().next();
+		if(this.checked){
+			_tr.show();
+		}else{
+			_tr.hide();
+		}
+	});
+}
+function setPageValues(_id){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+		{
+			method:'PresentIllnessDetails_findById',
+			id:_id
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					$('input[type="checkbox"]').each(function(){
+						if(_json[this.name]==1){
+							$(this).attr('checked',true);
+							if($(this).attr('class')=='noActive'){
+							}
+							else
+								$(this).parent().parent().next().show();
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function getPageValues(){
+	var json=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			json[this.name]=1;
+		}else{
+			json[this.name]=0;
+		}
+	});
+	var composeContext=ComposeData1(json)+ComposeData2(json) + getOtherValues(json) ;
+	json.composeContent=composeContext;
+	return json;
+}
+	
+	function getOtherValues(json){
+		var _temp = '';
+		var rst = '';
+		temp = getRowValue('evolution',json.evolution);
+		if(temp.length > 0){
+			if(temp=='其它' || temp == '其他'){
+				rst = json.evolution0 + '，';
+			}else {
+				rst = temp + '，';
+			}
+		}
+		temp = getRowValue('seeDoct',json.seeDoct);
+		if(temp.length > 0){
+			if(temp=='其它'|| temp == '其他'){
+				rst += json.seeDoct0 + '，';
+			}else {
+				rst += temp + '，' ;
+			}
+		}
+		temp = json.examination;
+		rst += temp.length > 0 ? '检查结果:' + temp + '，' : ''; 
+		temp = getRowValue('diagnosis',json.diagnosis);
+		
+		if(temp.length > 0){
+			if(temp == '其它' || temp == '其他'){
+				rst += json.diagnosis0 + '，';
+			}else {
+				rst += temp + '，';
+			}
+		}
+		temp = json.treatment;
+		rst += temp.length > 0 ? '予以' + temp + '，' : '';
+		rst= rst.length> 0 ? rst.substr(0,rst.length-1)+ '。' : '';
+		return rst;
+	}
+		
+function ComposeData1(json){
+	var _temp='';
+	if(json.illTime.length>0)
+		_temp='患者于'+json.illTime + getRowValue('illTimeUnit',json.illTimeUnit);
+	if(json.causes.length>0){
+		if(json.causes=='无明显诱因'||json.causes=='体检时'){
+			_temp+=json.causes;
+		}else{
+			_temp+=json.causes+'后';
+		}
+	}
+	return _temp;
+}
+function ComposeData2(_value){
+	var rst = "";
+	var temp = "";
+	var tempValue = "";
+	var flag = false ;
+	/*耳*/
+	flag  = getCheckboxBloor(_value,'er');
+	if(flag){
+		flag = getCheckboxBloor(_value,'earache');
+		if(flag){
+			rst = '耳痛，';
+		}
+		flag = getCheckboxBloor(_value,'erCacesthesia');
+		if(flag){
+			temp = getRowValue('ecWeiZhi',_value.ecWeiZhi);
+			tempValue = temp.length > 0 ? temp : ''; 
+			temp = _value.ecXingZhi;
+			tempValue += temp.length > 0 ? temp + '，': '';
+			temp = getRowValue('ecFaZuo',_value.ecFaZuo);
+			tempValue += temp.length > 0 ? temp + '，': '';
+			rst +=  tempValue.length > 0 ? tempValue : '耳感觉异常，';
+			rst=rst.substr(0,rst.length-1)+ '；';
+			tempValue ='';
+		}
+		flag = getCheckboxBloor(_value,'otorrhea');
+		if(flag){
+			temp = getRowValue('eotWeiZhi',_value.eotWeiZhi);
+			tempValue = temp.length > 0 ? temp : '';
+			tempValue += '耳溢，';
+			temp = getRowValue('eotChengDu',_value.eotChengDu);
+			tempValue += temp.length >0 ? temp : '';
+			temp = getRowValue('eotXingZhi',_value.eotXingZhi);
+			tempValue += temp.length > 0 ? temp + '，': '';
+			
+			temp = getRowValue('eotYanSe',_value.eotYanSe);
+			tempValue += temp.length >0 ? temp + '，' : '';
+			temp = getRowValue('eotFaZuo',_value.eotFaZuo);
+			tempValue += temp.length >0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '耳溢液，';
+			rst=rst.substr(0,rst.length-1)+'；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'deaf');
+		if(flag){
+			temp = getRowValue('edXingZhi',_value.edXingZhi);
+			tempValue = temp.length >0 ? temp + '，' : "";
+			temp = getRowValue('edFaZuo',_value.edFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : "";
+			rst += tempValue.length > 0 ? tempValue : '耳聋，';
+			rst=rst.substr(0,rst.length-1)+'；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'tinnitus');
+		if(flag){
+			temp = getRowValue('etXingZhi',_value.etXingZhi);
+			tempValue = temp.length > 0 ? temp + '，' : "";
+			temp =getRowValue('etChengDu',_value.etChengDu);
+			tempValue += temp.length > 0 ? temp + '，' : "";
+			temp = _value.etFaZuo;
+			tempValue += temp.length > 0 ? temp + '，' : "";
+			rst += tempValue.length > 0 ? tempValue : '耳鸣，';
+			rst=rst.substr(0,rst.length-1)+'；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'dizziness');
+		if(flag){
+			temp = getRowValue('edizzXingZhi',_value.edizzXingZhi);
+			tempValue = temp.length > 0 ? temp + '，' : "";
+			temp = _value.edizzChengDu;
+			tempValue += temp.length > 0 ? temp + '，' : "";
+			temp =getRowValue('edizzFaZuo', _value.edizzFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : "";
+			rst += tempValue.length > 0 ? tempValue : '眩晕，';
+			rst=rst.substr(0,rst.length-1)+'；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'erOther');
+		if(flag){
+			temp = _value.erOtherValue;
+			tempValue = temp.length > 0 ? temp : "";
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1)+'；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'erConcomitant');
+		if(flag){
+			temp = _value.econcomitantSymptom;
+			tempValue += temp.length > 0 ? '伴' + temp +"，" : "";
+			rst += tempValue.length > 0 ? tempValue : '伴随症状，';
+			rst=rst.substr(0,rst.length-1)+'。';
+			tempValue = "";
+		}
+	}
+	/*鼻*/
+	flag  = getCheckboxBloor(_value,'nose');
+	if(flag){
+		flag = getCheckboxBloor(_value,'noBiSe');
+		if(flag){
+			temp = getRowValue('noXingZhi',_value.noXingZhi);
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('noChengDu',_value.noChengDu);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('noFaZuo',_value.noFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '鼻塞，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'snot');
+		if(flag){
+			temp = getRowValue('noWeiZhi',_value.noWeiZhi);
+			tempValue = temp.length > 0 ? temp : '';
+			temp =getRowValue('noseChengDu', _value.noseChengDu);
+			tempValue += temp.length > 0 ? temp : '';
+			temp = _value.noseXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = _value.noseZhengZhuang;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('nosnYanSe',_value.nosnYanSe);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('noQiWei',_value.noQiWei);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('nosnFaZuo',_value.nosnFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '鼻涕，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'sneeze');
+		if(flag){
+			temp = getRowValue('snXingZhi',_value.snXingZhi);
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('snFaZuo',_value.snFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '喷嚏，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'epistaxis');
+		if(flag){
+			temp = getRowValue('epWeiZhi',_value.epWeiZhi);
+			tempValue = temp.length > 0 ? temp : '';
+			temp = getRowValue('epXingZhi',_value.epXingZhi);
+			tempValue += temp.length > 0 ? temp +'，': '';
+			rst += tempValue.length > 0 ? tempValue : '鼻出血，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'headache');
+		if(flag){
+			temp = _value.heXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('heFaZuo',_value.heFaZuo);
+			tempValue = temp.length > 0 ? temp + '，': '';
+			rst += tempValue.length > 0 ? tempValue : '头痛，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'paraosmia');
+		if(flag){
+			temp = getRowValue('parWeiZhi',_value.parWeiZhi);
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('parXingZhi',_value.parXingZhi);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('parFaZuo',_value.parFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '嗅觉异常，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'noseCacesthesia');
+		if(flag){
+			temp = _value.noCaValue;
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '鼻感觉异常，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'snuffle');
+		if(flag){
+			temp = getRowValue('snuValue',_value.snuValue);
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '鼻音，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'noseOther');
+		if(flag){
+			temp = _value.noseOtherValue;
+			tempValue = temp.length > 0 ? temp +"" : "";
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'noSymptom');
+		if(flag){
+			temp = _value.noConcomitant;
+			tempValue = temp.length > 0 ? '伴' + temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+	}
+	/*咽喉*/
+	flag = getCheckboxBloor(_value,'throat');
+	if(flag){
+		flag = getCheckboxBloor(_value,'angina');
+		if(flag){
+			temp = getRowValue('anWeiZhi',_value.anWeiZhi);
+			tempValue = temp.length > 0 ? temp : '';
+			temp = getRowValue('anChengDu',_value.anChengDu);
+			tempValue += temp.length > 0 ? temp : '';
+			temp = getRowValue('anXingZhi',_value.anXingZhi);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = _value.anYanBian;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('anFaZuo',_value.anFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咽喉痛，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'thCacesthesia');
+		if(flag){
+			temp = _value.tchXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('thcFaZuo',_value.thcFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咽喉感觉异常，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'dysphagia');
+		if(flag){
+			temp = _value.dysXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '吞咽困难，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'articulation');
+		if(flag){
+			temp = _value.artXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '构音异常，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'yanPalateFanLiu');
+		if(flag){
+			temp = _value.ypflXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咽腭反流，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'trachyphonia');
+		if(flag){
+			temp = _value.trachXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = _value.trachFaZuo;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '声嘶，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'laryngealstridor');
+		if(flag){
+			temp = getRowValue('larXingZhi',_value.larXingZhi);
+			tempValue = temp.length > 0 ? temp + '，' : '';
+			temp = _value.larFaZuo;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '喉鸣音，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'dyspnea');
+		if(flag){
+			temp = _value.dyspneaXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '呼吸困难，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'hematemesis');
+		if(flag){
+			temp = getRowValue('hemaXingZhi',_value.hemaXingZhi);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = _value.hemaYanSe;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp =getRowValue('hemaFaZuo', _value.hemaFaZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '吐血，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'cough');
+		if(flag){
+			temp = _value.couXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			temp = getRowValue('couFanZuo',_value.couFanZuo);
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咳嗽，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'expectoration');
+		if(flag){
+			temp = _value.expXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咳痰，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'throatOther');
+		if(flag){
+			temp = _value.throatOtherValue;
+			tempValue = temp.length > 0 ? temp +"" : "";
+			rst += tempValue.length > 0 ? tempValue  : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'throSymptom');
+		if(flag){
+			temp = _value.throConcomitant;
+			tempValue += temp.length > 0 ? '伴' + temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+	}
+	/*头颈颅底*/
+	flag = getCheckboxBloor(_value,'neck');
+	if(flag){
+		flag = getCheckboxBloor(_value,'neCervicalMuscle');
+		if(flag){
+			rst +='颈肌无力，';
+		}
+		flag = getCheckboxBloor(_value,'impairedVision');
+		if(flag){
+			rst +='视力下降，';
+		}
+		flag = getCheckboxBloor(_value,'eyeballFacade');
+		if(flag){
+			rst +='眼球外观改变，';
+		}
+		flag = getCheckboxBloor(_value,'eyeballDyskinesia');
+		if(flag){
+			rst +='眼球运动障碍，';
+		}
+		flag = getCheckboxBloor(_value,'neckBoss');
+		if(flag){
+			rst +='发现颈部肿块，';
+			temp = _value.neboDescribe;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst= rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'neckStiff');
+		if(flag){
+			rst += '颈僵硬，';
+			temp = _value.nestDescribe;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'cervicodynia');
+		if(flag){
+			temp = _value.cerXingZhi;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '颈痛，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'neckLouDao');
+		if(flag){
+			rst += '发现颈部瘘道，';
+			temp = _value.neckDescribe;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'jujue');
+		if(flag){
+			temp = _value.jujueDescribe;
+			tempValue += temp.length > 0 ? temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '咀嚼障碍，';
+			rst=rst.substr(0,rst.length-1) + '；';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'neckOther');
+		if(flag){
+			temp = _value.neckOtherValue;
+			tempValue = temp.length > 0 ? temp +"" : "";
+			rst += tempValue.length > 0 ? tempValue : '';
+			tempValue = "";
+		}
+		flag = getCheckboxBloor(_value,'neckSymptom');
+		if(flag){
+			temp = _value.neckConcomitant;
+			tempValue += temp.length > 0 ? '伴' + temp + '，' : '';
+			rst += tempValue.length > 0 ? tempValue : '';
+			tempValue = "";
+		}
+	}
+	if(rst.length>0)
+		rst='出现'+rst;
+	return rst;
+}
+function getCheckboxBloor(_json,_name){
+	if(_json[_name]==1)
+		return true;
+	else 
+		return false;
+}
+</script>
+</head>
+<body>
+<form>
+<input id="id" name="id" type="hidden" value="-1"/>
+<table width="600" border=0 cellSpacing=2 cellPadding=3>
+	<tr>
+		<td class="t1" width="70">发病时间：</td>
+		<td class="t2">
+			<input name="illTime" type="text" class="text" style="width:50%"/>
+			<input name="illTimeUnit" type="text" class="select" style="width:39%"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">诱因：</td>
+		<td><input name="causes" type="text" class="checkbox" style="width:91%"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">主要症状：</td>
+		<td>
+			<table width="100%" border=0 cellSpacing=1 cellPadding=1>
+				<tr>
+					<td class="t2"><input type="checkbox" name="er" />耳</td>
+				</tr>
+				<tr class="hidden">
+					<td>
+						<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+							<tr>
+								<td class="t1" width="90">耳痛：</td>
+								<td class="t2"><input type="checkbox" class="noActive" name="earache"/></td>
+							</tr>
+							<tr>
+								<td class="t1">耳感觉异常：</td>
+								<td class="t2"><input type="checkbox" name="erCacesthesia" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="ecWeiZhi" /></td>
+											<td width="40" class="t1">发作：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="ecFaZuo" /></td>
+										</tr>
+										<tr>
+											<td class="t1">性质：</td>
+											<td colspan=3><input type="text" class="checkbox" name="ecXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">耳溢液：</td>
+								<td class="t2"><input type="checkbox" name="otorrhea" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="eotWeiZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="eotChengDu" /></td>
+										</tr>
+										<tr>
+											<td class="t1">性质：</td>
+											<td colspan=3><input type="text" class="checkbox" name="eotXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">颜色：</td>
+											<td class="t2"><input type="text" class="select" name="eotYanSe" /></td>
+											<td class="t1">发作：</td>
+											<td class="t2"><input type="text" class="select" name="eotFaZuo" /></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">耳聋：</td>
+								<td class="t2"><input type="checkbox" name="deaf" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="edXingZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="edFaZuo" /></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">耳鸣：</td>
+								<td class="t2"><input type="checkbox" name="tinnitus" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="etXingZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="etChengDu" /></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="checkbox" name="etFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">眩晕：</td>
+								<td class="t2"><input type="checkbox" name="dizziness" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="edizzXingZhi" /></td>
+											<td width="40" class="t1">发作：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="edizzFaZuo" /></td>
+										</tr>
+										<tr>
+											<td class="t1">程度：</td>
+											<td colspan=3><input type="text" class="checkbox" name="edizzChengDu" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">其它症状：</td>
+								<td class="t2"><input type="checkbox" name="erOther" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="erOtherValue" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">伴随症状：</td>
+								<td class="t2"><input type="checkbox" name="erConcomitant" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="econcomitantSymptom" class="checkbox" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t2"><input type="checkbox" name="nose" />鼻</td>
+				</tr>
+				<tr class="hidden">
+					<td>
+						<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+							<tr>
+								<td class="t1" width="90">鼻塞：</td>
+								<td class="t2"><input type="checkbox" name="noBiSe"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="noXingZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="noChengDu" /></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="noFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">鼻涕：</td>
+								<td class="t2"><input type="checkbox" name="snot"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="noWeiZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="noseChengDu" /></td>
+										</tr>
+										<tr>
+											<td class="t1">性质：</td>
+											<td colspan=3><input type="text" class="checkbox" name="noseXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">描述：</td>
+											<td colspan=3><input type="text" class="checkbox" name="noseZhengZhuang" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">颜色：</td>
+											<td class="t2"><input type="text" class="select" name="nosnYanSe" /></td>
+											<td class="t1">气味：</td>
+											<td class="t2"><input type="text" class="select" name="noQiWei" /></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="nosnFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">喷嚏：</td>
+								<td class="t2"><input type="checkbox" name="sneeze"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="snXingZhi" /></td>
+											<td width="40" class="t1">发作：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="snFaZuo" /></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">鼻出血：</td>
+								<td class="t2"><input type="checkbox" name="epistaxis"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="epWeiZhi" /></td>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="epXingZhi" /></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">头痛：</td>
+								<td class="t2"><input type="checkbox" name="headache"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="select" name="heXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="heFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">嗅觉异常：</td>
+								<td class="t2"><input type="checkbox" name="paraosmia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="parWeiZhi" /></td>
+											<td width="40" class="t1">性质：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="parXingZhi" /></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="parFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">鼻感觉异常：</td>
+								<td class="t2"><input type="checkbox" name="noseCacesthesia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="noCaValue" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">鼻音：</td>
+								<td class="t2"><input type="checkbox" name="snuffle"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="select" name="snuValue" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">其它症状：</td>
+								<td class="t2"><input type="checkbox" name="noseOther" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="noseOtherValue" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">伴随症状：</td>
+								<td class="t2"><input type="checkbox" name="noSymptom" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="noConcomitant" class="checkbox" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t2"><input type="checkbox" name="throat" />咽喉</td>
+				</tr>
+				<tr class="hidden">
+					<td>
+						<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+							<tr>
+								<td class="t1" width="90">咽喉痛：</td>
+								<td class="t2"><input type="checkbox" name="angina"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td width="40" class="t1">位置：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="anWeiZhi" /></td>
+											<td width="40" class="t1">程度：</td>
+											<td class="t2" width="150"><input type="text" class="select" name="anChengDu" /></td>
+										</tr>
+										<tr>
+											<td class="t1">性质：</td>
+											<td colspan=3><input type="text" class="select" name="anXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">演变：</td>
+											<td colspan=3><input type="text" class="checkbox" name="anYanBian" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="anFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">咽喉感觉异常：</td>
+								<td class="t2"><input type="checkbox" name="thCacesthesia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="tchXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="thcFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">吞咽困难：</td>
+								<td class="t2"><input type="checkbox" name="dysphagia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="dysXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">构音异常：</td>
+								<td class="t2"><input type="checkbox" name="articulation"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="artXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">咽腭反流：</td>
+								<td class="t2"><input type="checkbox" name="yanPalateFanLiu"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="ypflXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">声嘶：</td>
+								<td class="t2"><input type="checkbox" name="trachyphonia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="trachXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="checkbox" name="trachFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">喉鸣音：</td>
+								<td class="t2"><input type="checkbox" name="laryngealstridor"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="select" name="larXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="checkbox" name="larFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">呼吸困难：</td>
+								<td class="t2"><input type="checkbox" name="dyspnea"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="dyspneaXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">吐血：</td>
+								<td class="t2"><input type="checkbox" name="hematemesis"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="hemaXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="checkbox" name="hemaYanSe" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="hemaFaZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">咳嗽：</td>
+								<td class="t2"><input type="checkbox" name="cough"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="couXingZhi" style="width:91%"/></td>
+										</tr>
+										<tr>
+											<td class="t1">发作：</td>
+											<td colspan=3><input type="text" class="select" name="couFanZuo" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">咳痰：</td>
+								<td class="t2"><input type="checkbox" name="expectoration"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="expXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">其它症状：</td>
+								<td class="t2"><input type="checkbox" name="throatOther" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="throatOtherValue" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">伴随症状：</td>
+								<td class="t2"><input type="checkbox" name="throSymptom" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="throConcomitant" class="checkbox" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="t2"><input type="checkbox" name="neck" />头颈颅底</td>
+				</tr>
+				<tr class="hidden">
+					<td>
+						<table width="100%" border=0 cellSpacing=1 cellPadding=1 style="border:solid blue 1px">
+							<tr>
+								<td class="t1" width="90">颈肌无力：</td>
+								<td class="t2"><input type="checkbox" class="noActive" name="neCervicalMuscle"/></td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">视力下降：</td>
+								<td class="t2"><input type="checkbox" class="noActive" name="impairedVision"/></td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">眼球外观改变：</td>
+								<td class="t2"><input type="checkbox" class="noActive" name="eyeballFacade"/></td>
+							</tr>
+							<tr>
+								<td class="t1" width="90">眼球运动障碍：</td>
+								<td class="t2"><input type="checkbox" class="noActive" name="eyeballDyskinesia"/></td>
+							</tr>
+							<tr>
+								<td class="t1">发现颈部肿块：</td>
+								<td class="t2"><input type="checkbox" name="neckBoss"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="neboDescribe" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">颈僵硬：</td>
+								<td class="t2"><input type="checkbox" name="neckStiff"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="nestDescribe" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">颈痛：</td>
+								<td class="t2"><input type="checkbox" name="cervicodynia"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">性质：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="cerXingZhi" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">发现颈部瘘道：</td>
+								<td class="t2"><input type="checkbox" name="neckLouDao"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="neckDescribe" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">咀嚼障碍：</td>
+								<td class="t2"><input type="checkbox" name="jujue"/></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<table border="0" cellpadding="1" cellspacing="0">
+										<tr>
+											<td class="t1" width="40">描述：</td>
+											<td colspan=3 width="340"><input type="text" class="checkbox" name="jujueDescribe" style="width:91%"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">其它症状：</td>
+								<td class="t2"><input type="checkbox" name="neckOther" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="neckOtherValue" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="t1">伴随症状：</td>
+								<td class="t2"><input type="checkbox" name="neckSymptom" /></td>
+							</tr>
+							<tr class="hidden">
+								<td class="t1">&nbsp;</td>
+								<td class="t2">
+									<textarea name="neckConcomitant" class="checkbox" style="width:91%;height:40px"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">演变：</td>
+		<td><input name="evolution" type="text" class="select" style="width:91%"/>
+		<input name="evolution0" type="text" class="text hidden" style="width:91%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">就诊：</td>
+		<td><input name="seeDoct" type="text" class="select" style="width:91%"/>
+		<input name="seeDoct0" type="text" class="text hidden" style="width:91%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">检查：</td>
+		<td><textarea name="examination" style="width:91%;height:70"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">诊断：</td>
+		<td><input name="diagnosis" type="text" class="select" style="width:91%"/>
+			<input name="diagnosis0" type="text" class="text hidden" style="width:91%"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">治疗：</td>
+		<td><textarea name="treatment" style="width:91%;height:70px;"></textarea></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

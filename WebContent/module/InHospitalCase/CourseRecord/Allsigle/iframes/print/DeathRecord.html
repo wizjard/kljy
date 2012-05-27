@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>死亡记录打印</title>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="print.js"></script>
+<script type="text/javascript">
+$(function(){
+	LODOP=document.getElementById("LODOP");
+	CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+	var r=new RepoertHeader();
+	r.basePath=App.App_Info.BasePath;
+	r.el=document.getElementById('page-header');
+	r.config.title='死亡记录';
+	r.cid=cid;
+	r.create();
+	setValue('DeathRecord_print');
+});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<button onclick="PREVIEW('死 亡 记 录')">打印预览</button>
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../css/print.css"/>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td2" width="50%">姓&nbsp;&nbsp;&nbsp;&nbsp;名：<span name="name">&nbsp;</span></td>
+				<td class="td2" width="50%">性&nbsp;&nbsp;&nbsp;&nbsp;别：<span name="gender">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">年&nbsp;&nbsp;&nbsp;&nbsp;龄：<span name="age">&nbsp;</span></td>
+				<td class="td2">科&nbsp;&nbsp;&nbsp;&nbsp;别：<span name="ward">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">入院时间：<span name="inhspTime">&nbsp;</span></td>
+				<td class="td2">死亡时间：<span name="deathTime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">入院初步诊断：<span name="inhspDiag"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">临床死亡诊断：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3"><span name="deathDiag"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">病理诊断：<span name="pathologyDiag"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">病历摘要，主要检查结果，治疗抢救经过及死亡原因：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="caseSummary">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2">主治医师：<span name="treatDocName">&nbsp;</span></td>
+				<td class="td2">住院医师：<span name="inhspDocName">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;</td>
+				<td class="td2">日&nbsp;&nbsp;&nbsp;&nbsp;期：<span name="time">&nbsp;</span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

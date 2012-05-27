@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>中医药治疗慢性乙型肝炎科研基地</title>
+<link type="text/css" rel="stylesheet" href="resource/loginstyle.css"/>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript">
+$(function(){
+	//添加输入框事件
+	$.each($('input'),function(){
+		if(this.type!='text'&&this.type!='password') return;
+		$(this).focus(function(){
+			$(this).addClass('input-over');
+			$(this).effect('highlight',null,1000);
+		}).blur(function(){
+			$(this).removeClass('input-over');
+		});
+	});
+	//添加按钮事件
+	$('div.btn-login').mouseover(function(){
+		$(this).addClass('btn-login-over');
+	}).mouseout(function(){
+		$(this).removeClass('btn-login-over');
+	});
+	$('div.btn-register').mouseover(function(){
+		$(this).addClass('btn-register-over');
+	}).mouseout(function(){
+		$(this).removeClass('btn-register-over');
+	});
+});
+function UserLogin(){
+	var _name=$('#user-login-div input[name="name"]').val().trim();
+	var _password=$('#user-login-div input[name="password"]').val().trim();
+	if(_name.length==0){
+		alert('请输入账号。');
+		return;
+	}
+	if(_password.length==0){
+		alert('请输入密码。');
+		return;
+	}
+	$.post(
+		App.App_Info.BasePath+'/user.do',
+		{
+			method:'login',
+			account:_name,
+			password:_password
+		},function(data){
+			if(data.success){
+				location.href=App.App_Info.BasePath+'/mainface/main.html';
+			}else{
+				alert(data.msg);
+			}
+		},'json');
+}
+</script>
+</head>
+<body>
+<div id="bg-div">
+<div id="member-login-div">
+	<table border=0 cellpadding=1 cellspacing=1>
+		<tr>
+			<td width="60" align="right"><span class="field-label">账号:</span></td>
+			<td width="150">
+				<input type="text" name="name" class="input-normal">
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td align="right"><span class="field-label">密码:</span></td>
+			<td>
+				<input type="password" name="password" class="input-normal">
+			</td>
+			<td><div class="href-getpassword">&nbsp;</div></td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<table width="100%" border=0 cellpadding=0 cellspacing=3>
+					<tr>
+						<td width="58%" align="right"><div class="btn-login"></div></td>
+						<td><div class="btn-register" style="margin-left:25px"></div></td>
+					</tr>
+				</table>
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</div>
+<div id="user-login-div">
+	<table border=0 cellpadding=1 cellspacing=1>
+		<tr>
+			<td width="60" align="right"><span class="field-label">账号:</span></td>
+			<td width="150">
+				<input type="text" name="name" class="input-normal" value="allnef">
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td align="right"><span class="field-label">密码:</span></td>
+			<td>
+				<input type="password" name="password" class="input-normal" value="11111111">
+			</td>
+			<td><div class="href-getpassword">忘记密码</div></td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<table width="100%" border=0 cellpadding=0 cellspacing=3>
+					<tr>
+						<td width="58%" align="right"><div class="btn-login" onclick="UserLogin()"></div></td>
+						<td><div class="btn-register" style="margin-left:25px"></div></td>
+					</tr>
+				</table>
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</div>
+<div id="text-div">
+	<ul>
+		<li>专项名称：艾滋病和病毒性肝炎等重大传染病防治</li>
+		<li>课题名称：中医药治疗慢性乙型肝炎临床科研基地建设</li>
+		<li>责任单位：首都医科大学附属北京佑安医院</li>
+	</ul>
+</div>
+</div>
+</body>
+</html>

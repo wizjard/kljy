@@ -1,0 +1,1883 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>发热中医现病史  主要症状</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript" src="../Js/fever.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+	
+	<script type="text/javascript">
+	var itemName = App.util.getHtmlParameters('nodeText');
+	var KID=App.util.getHtmlParameters('KID');
+	var spanContent = parent.document.getElementById('FerverHistory').contentWindow.dbclickedSpan;
+	$(document).ready(function(){
+		$('*[name="caseId"]').val(KID);
+		initPage();
+		if(spanContent != null){
+			spanContent = $(spanContent).html();
+			jqueryObj = $('<div>' + spanContent + '</div>');
+			jqueryObj.appendTo($('#composeInfo'));
+			spanContent = jqueryObj.find("span").html();
+			FormUtil.setFormValues('form',JSON.parse(spanContent));//parse:把对象转换成字符串
+			
+		}
+			var content='{';
+			//给所有的单选按钮添加点击事件
+			$("input[type='radio']").click(function(){
+	              show();
+	        });	
+	        //给多选框添加点击事件
+	        $("input[type='checkbox']").click(function(){
+	              show();
+	        });	
+	        //给文本框添加失去焦点事件
+	         $("input[type='text']").blur(function(){
+	              show();
+	        });	
+	        $("select").change(function(){ 
+	              show();
+	       	 });
+	       	//获取病例id值
+	       	var id=App.util.getHtmlParameters('KID');
+			$("#caseId").attr('value',id);
+			//确定事件
+			$('#ok-btn').click(function(){
+				var value=FormUtil.getFormValues('form');
+				var oldOperation = JSON.stringify(value);
+				//alert("组合内容"+oldOperation);
+				var rst=show();
+				if(rst.length > 0){
+					rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hidePreHis();parent.symptomInfoIfr('feverMedicineMainSystom.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+					var iframe = parent.document.getElementById('FerverHistory');
+					iframe.contentWindow.itemValue = rst;
+					if(iframe.contentWindow.dbclickedSpan){
+						iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+					}else{
+						iframe.contentWindow.setReturnValue();
+					}
+				}
+				backToPreIllWindow();
+			});
+		});
+	var mainSymptomInfo = '';
+	function initPage(){
+	var dict=FormUtil.getPageDictionary('medicineMainSystom');
+	//初始化公共字典值
+	$.each(dict,function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==0){
+				tr.hide();
+			}else{
+				tr.show();
+			}
+	
+			$(this).parent().parent().find('input[type="radio"]').attr("disabled",false);  
+		});
+	});
+	
+	
+}
+	
+</script>
+  </head>
+  
+  <body>
+    <form>
+    <div id="toolbar" style="text-align:center;width:900px">
+	<button class="btn" id="ok-btn" >确定</button>
+	<button class="btn" id="cancel-btn" onClick="backToPreIllWindow()">取消</button>
+	</div>
+	<div id="contentDiv">
+	<div id="currentStatusDiv">
+   	<table id="table-con" width="900" border=1 cellSpacing=0 borderColorDark='#ffffff' cellPadding=2 height="47">
+		<tr>
+			<td colspan="2">发热					
+				<input type="hidden" name='caseId' value="0">
+			</td>
+		</tr>
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>发热</font>：</td>
+			<td class="t2"><input name="fare" type="radio" class="radio dict-fld"/></td>
+		</tr>
+		<tr class="hidden">				
+			<td class="t1" width="80"></td>
+			<td class="t2" width="800">
+				<table  width="90%">
+					<tr>
+						<td class="t3" >发热方式：</td>
+						<td class='t4'><input name="fareType" type="radio"  class='radio dict-fld'/>	</td>
+					</tr>
+					<tr>
+						<td class="t3" >热型：</td>
+						<td class='t4'>
+							<input name="fareXing" type="radio"  value="0"/>自定义
+							<input name="fareXingZdy" id="fareXingZdy" type="text" class="sa" width="10"/>
+							<input name="fareXing" type="radio"  class='radio dict-fld'/>	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" >体温:</td>
+						<td >
+							<input name="fareTemperature" type="radio" value="0"/>体温不祥
+							<input name="fareTemperature" type="radio" value="1"/>体温波动于<input name="temStart" id="temStart" type="text" class="sa1" />至<input name="temEnd" id="temEnd" type="text" class="sa1"/>摄氏度之间
+							<input name="fareTemperature" type="radio" value="2"/>最高体温<input name="temMax" id="temMax" type="text" class="sa1"/>摄氏度
+							<p><input name="fareTemperature" type="radio" value="3"/>发作特点:
+								体温高峰于:<input name="features" id='features' type="text"  class='select' style="width: 60px;"/>出现,
+									呈现:<input name="show" id='show' type="text"  class='select' style="width: 100px;"/>
+						</td>
+					</tr>		
+				</table>									
+			</td>
+		</tr>
+		<!-- 全身症状 -->
+		<tr>
+			<td colspan="2">全身症状</td>
+		</tr>
+		<tr class="sorttd" >
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>胃寒</font>：</td>
+			<td class="t2" width="500">
+				<input name="weihan" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<!-- 寒战 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>寒战</font>：</td>
+			<td class="t2">
+				<input name="hanzhan" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<tr class="hidden" id="tr2">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" >
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" >寒战持续：</td>
+						<td >
+							<input name="hanzhanContinue" type="radio"   class='radio dict-fld'/>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<!-- 大汗 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>大汗</font>：</td>
+			<td class="t2">
+				<input name="sweat" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<!-- 盗汗 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>盗汗</font>：</td>
+			<td class="t2">
+				<input name="daohan" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<tr class="hidden" id="tr3">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" >出现时间：</td>
+							<td class="t4">								
+								<input name="daohanShowTime"  type="text"  class="checkbox" style="width:35%"/>
+							</td>
+						</tr>
+					</table>
+			</td>
+		</tr>
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>乏力</font>：</td>
+			<td class="t2">
+				<input name="fali" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<tr class="hidden" id="tr4">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" >
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t1" ></td>
+							<td class="t2" >
+								<input name="faliShowTime" type="radio"   class='radio dict-fld'/>								
+							</td>
+						</tr>
+					</table>
+			</td>
+		</tr>
+		<!-- 全身不适 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>全身不适</font>：</td>
+			<td class="t2">
+				<input name="qsbs" type="radio"  class='radio dict-fld' rel='fare'/>				
+			</td>
+		</tr>
+		<tr class="hidden" id="tr5">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="2">
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" width="2%"></td>
+							<td class="t4" width="98%">
+								<input name="qsbsStatue" id="qsbsStatue" type="radio" class="radio dict-fld"  />								
+							</td>
+						</tr>
+					</table>				
+			</td>
+		</tr>	
+		<!-- 皮肤异常 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>皮肤异常</font>：</td>
+			<td class="t2">
+				<input name="pfex" type="radio"  class='radio dict-fld' rel='fare'/>
+			</td>
+		</tr>
+		<tr class="hidden" id="tr6">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" >
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t1" >异常部位：</td>
+						<td class="t2" >
+							<input name="pfexParts"  type="text"  class="checkbox" style="width:60%"/>					
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="8%">皮肤颜色：</td>
+						<td class="t2" width="92%">
+							<input name="pfexColor" id="pfexColor" type="radio"  value="0"/>苍白
+							<input name="pfexColor" id="pfexColor" type="radio"  value="1"/>发红 
+							<input name="pfexColor" id="pfexColor" type="radio"  value="2"/>其他：自定义
+							<input name="pfexColorZidingyi" id="pfexColorZidingyi" type="text" class="sa"/>								
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="8%">皮疹：</td>
+						<td class="t2" width="92%">
+							<input name="prexPizhen" type="radio"  class='radio dict-fld' rel='fare'/>												
+						</td>
+					</tr>
+					<tr class="hidden" id="tr6_1">
+						<td class="t1" width="8%"></td>
+						<td class="t4" width="92%">								
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class='t3'>部位:</td>							
+										<td class='t4'><input name="prexParts" id="prexParts" type="text" class="sa"/>颜色:<input name="prexColor" id="prexColor" type="text" class="sa"/></td>
+									</tr>					
+									<tr>
+										<td class="t3" width="10%">大小:</td>
+										<td class="t4" width="90%">
+											<input name="prexSize" id="prexSize" type="text" class="sa"/>
+										</td>
+									</tr>
+									<tr>
+										<td class="t3" width="10%">形态:</td>
+										<td class="t4" width="90%">
+											<input name="prexStatue" id="prexStatue" type="radio" value="0"/>充血性斑疹
+											<input name="prexStatue" id="prexStatue" type="radio" value="1"/>丘疹
+											<input name="prexStatue" id="prexStatue" type="radio" value="2"/>环形红斑
+											<input name="prexStatue" id="prexStatue" type="radio" value="3"/>游走性红斑
+											<input name="prexStatue" id="prexStatue" type="radio" value="4"/>疱疹
+											<input name="prexStatue" id="prexStatue" type="radio" value="5"/>脓疱疹
+											<input name="prexStatue" id="prexStatue" type="radio" value="6"/>瘀点瘀斑
+											<input name="prexStatue" id="prexStatue" type="radio" value="7"/>出血点
+											<input name="prexStatue" id="prexStatue" type="radio" value="8"/>水疱
+											<p><input name="prexStatue" id="prexStatue" type="radio" value="9"/>溃疡
+											<input name="prexStatue" id="prexStatue" type="radio" value="10"/>结痂
+											<input name="prexStatue" id="prexStatue" type="radio" value="11"/>其他:自定义
+											<input name="prexStatueZidingyi" id="prexStatueZidingyi" type="text" class="sa"/>
+										</td>
+									</tr>
+									<tr>
+										<td class="t3" width="10%">压之:</td>
+										<td class="t4" width="90%">
+											<input name="prexYazhi" type="radio"  class='radio dict-fld' />	
+										</td>
+									</tr>
+									<tr>
+										<td class="t3" width="10%">疹间皮肤:</td>
+										<td class="t4" width="90%">
+											<input name="prexZhenfu" type="radio"  class='radio dict-fld' rel='fare'/>								
+										</td>
+									</tr>
+									<tr>
+										<td class="t3" width="10%">伴随:</td>
+										<td class="t4" width="90%">		
+											<input name="prexBansui" type="radio"  class='radio dict-fld' />
+										</td>
+									</tr>
+									<tr>
+										<td class="t3" width="10%">出诊顺序:</td>
+										<td class="t4" width="90%">
+											<input name="prexSort" id="prexSort" type="text" class="sa"/>
+											规律:<input name="prexGuilv" id="prexGuilv" type="text" class="sa"/>
+										</td>
+									</tr>
+							</table>																			
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="8%">其他：</td>
+						<td class="t2" width="92%">
+							<input name="prexOther" id="prexOther" type="text"  class="sa"/>																				
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+		<td colspan="2">常见症状</td>
+		</tr>							
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>鼻塞</font>：</td>
+			<td class="t2">
+				<input name="bisai" type="radio"  class='radio dict-fld' rel='fare'/>	
+			</td>
+		</tr>
+		<tr class="hidden" id="tr7">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="2">				
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" width="10%">程度:</td>
+							<td class="t4" width="90%">
+								<table>
+									<tr>
+										<td><input name="bisaiStatue1" type="radio"  class='radio dict-fld' /></td>
+									</tr>
+									<tr>
+										<td><input name="bisaiStatue2" type="radio"  class='radio dict-fld' />	</td>
+									</tr>
+								</table>																						
+							</td>
+						</tr>
+					</table>			
+			</td>
+		</tr>
+		<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>流涕</font>：</td>
+		<td class="t2">
+			<input name="liuti" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr8">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="liutiStatue" type="radio"  class='radio dict-fld' />							
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>							
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*</font>流泪：</td>
+		<td class="t2">
+			<input name="liulei" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr9">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="liuleiStatue" type="radio"  class='radio dict-fld'/>
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>	
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>咽部不适</font>：</td>
+		<td class="t2">
+			<input name="yanhou" type="radio"  class='radio dict-fld' rel='fare'/>			
+		</td>
+	</tr>
+	<tr class="hidden" id="tr10">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">描述：</td>
+						<td class="t4" width="90%">
+							<input name="yanhouStatue" type="radio"  class='radio dict-fld'/>							
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>	
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>咳嗽</font>：</td>
+		<td class="t2">
+			<input name="kesou" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>	
+	<tr class="hidden" id="tr11">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">发作特点：</td>
+						<td class="t4" width="90%">
+							<input name="kesouFeature" type="radio"  class='radio dict-fld' />
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性质：</td>
+						<td class="t4" width="90%">
+							<input name="kesouNature" type="radio"  class='radio dict-fld' />						
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度：</td>
+						<td class="t4" width="90%">
+							<input name="kesouLevel" type="radio"  class='radio dict-fld' />
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">音色：</td>
+						<td class="t4" width="90%">
+							<input name="kesouSound" type="radio"  class='radio dict-fld' />
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作时间：</td>
+						<td class="t4" width="90%">
+							<input name="kesouTime" type="radio"  class='radio dict-fld' />
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>			
+		<!-- 咳痰 -->
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>咳痰</font>：</td>
+			<td class="t2">
+				<input name="ketan" type="radio"  class='radio dict-fld' rel='fare'/>				
+			</td>
+		</tr>
+		<tr class="hidden" id="tr12">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="2">
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" width="10%">频度：</td>
+							<td class="t4" width="90%">
+								<input name="ketanPd" type="radio"  class='radio dict-fld'/>	
+							</td>
+						</tr>
+						<tr>			
+							<td class="t3" width="10%">痰量：</td>
+							<td class="t4" width="90%">
+								<input name="kesouVolume" id="kesouVolume" type="radio"  value="0"/>少量,量约
+								<input name="kesouVolumeValue1" id="kesouVolumeValue1" type="text"  class="sa1"/>毫升/日 
+								<input name="kesouVolume" id="kesouVolume" type="radio"  value="1"/>中等量,量约
+								<input name="kesouVolumeValue2" id="kesouVolumeValue2" type="text"  class="sa1"/>毫升/日 
+								<input name="kesouVolume" id="kesouVolume" type="radio"  value="2"/>大量,量约
+								<input name="kesouVolumeValue3" id="kesouVolumeValue3" type="text"  class="sa1"/>毫升/日  
+							</td>
+						</tr>
+						<tr><td class="t3" width="10%">颜色：</td>
+							<td class="t4" width="90%">
+								<input name="kesouColor" id="kesouColor" type="radio"  value="12"/>其他（自定义）：
+								<input name="kesouColorValue" id="kesouColorValue" type="text"  class="sa"/>
+								<input name="kesouColor"  type="radio"  class='radio dict-fld'/>
+							</td>
+						</tr>
+						<tr>
+							<td class="t3" width="10%">性质：</td>
+							<td class="t4" width="90%">
+								<input name="kesouXz" id="kesouXz" type="radio"  value="13"/>其他（自定义）：
+								<input name="kesouXzValue" id="kesouXzValue" type="text"  class="sa"/>
+								<input name="kesouXz"  type="radio"  class='radio dict-fld'/>
+							</td>
+						</tr>
+						<tr>
+							<td class="t3" width="10%">气味异常：</td>
+							<td class="t4" width="90%">
+								<input name="kesouEx" class='radio dict-fld' type="radio"  rel='fare'/>
+								<input name="kesouEx" id="kesouEx" type="radio"  value="2"/>恶臭
+							</td>
+						</tr>
+						<tr>
+							<td class="t3" width="10%">咳出情况：</td>
+							<td class="t4" width="90%">
+								<input name="kesouKechu" type="radio" class='radio dict-fld'/>								
+							</td>
+						</tr>
+					</table>
+			</td>
+		</tr>	
+		<tr class="sorttd">
+			<td class="t1" width="80"><font color="red">*&nbsp;</font><font>心悸</font>：</td>
+			<td class="t2">
+				<input name="xinji" class='radio dict-fld' type="radio"  rel='fare'/>				
+			</td>
+		</tr>
+		<tr class="hidden" id="tr13">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" >
+					<table width="90%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" width="10%">诱因：</td>
+							<td class="t4" width="90%">
+								
+								<input name="xinjiBecause" id="xinjiBecause" type="radio"  value="10"/>应用
+								<input name="xinjiBecauseYy" id="xinjiBecauseYy" type="text"  class="sa"/>（药物等，具体自定义） 
+								<input name="xinjiBecause" id="xinjiBecause" type="radio"  value="11"/>其他：自定义
+								<input name="xinjiBecauseValue" id="xinjiBecauseValue" type="text"  class="sa"/>
+								<input name="xinjiBecause"  type="radio"  class='radio dict-fld'/>
+							</td>
+						</tr>
+						<tr>
+							<td class="t3" width="10%">程度：</td>
+							<td class="t4" width="90%">
+								<input name="xinjiLevel"  type="radio"  class='radio dict-fld'/>
+							</td>
+						</tr>
+						<tr>
+							<td class="t3" width="10%">频度：</td>
+							<td class="t4" width="90%">
+								<input name="xinjiPd" id="xinjiPd" type="radio"  value="0"/>偶有
+								<input name="xinjiPd" id="xinjiPd" type="radio"  value="1"/>经常
+								<input name="xinjiPd" id="xinjiPd" type="radio"  value="2"/>持续
+								<p>发作约持续<input name="xinjiPdContinueTime" id="xinjiPdContinueTime" type="text"  class="sa1"/>
+								<input type="text" class='select' name="continueTime" id='continueTime' style="width: 60px;">													
+							</td>
+						</tr>
+					</table>
+			</td>
+		</tr>	
+		<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>呼吸困难</font>：</td>
+		<td class="t2">
+			<input name="huxikunnan" class='radio dict-fld' type="radio"  rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr14">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">诱因：</td>
+						<td class="t4" width="90%">
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="0"/>劳累
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="1"/>生气
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="2"/>运动 
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="3"/>受凉
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="4"/>吸入异物
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="5"/>接触
+							<input name="huxikunnanBecauseValue" id="huxikunnanBecauseValue" type="text"  class="sa"/>（某致敏源）
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="6"/>外伤<p> 
+							<input name="huxikunnanBecause" id="huxikunnanBecause" type="radio"  value="7"/>其他：自定义
+							<input name="huxikunnanBecauseValue1" id="huxikunnanBecauseValue1" type="text"  class="sa"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作特点：</td>
+						<td class="t4" width="90%">
+							<input name="huxikunnanFeatures"  type="radio"  class='radio dict-fld'/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度：</td>
+						<td class="t4" width="90%">
+							<input name="huxikunnanLevel" id="huxikunnanLevel" type="radio"  value="3"/>自定义
+							<input name="huxikunnanLevelValue" id="huxikunnanLevelValue" type="text"  class="sa"/>
+							<input name="huxikunnanLevel"  class='radio dict-fld' type="radio"  />
+							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">类型：</td>
+						<td class="t4" width="90%">
+							<input name="huxikunnaType" class='radio dict-fld' type="radio" />
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作时间：</td>
+						<td class="t4" width="90%">
+							<input name="huxikunnanTime" class='radio dict-fld' type="radio"  />
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">加重、缓解因素：</td>
+						<td class="t4" width="90%">
+						多于<input type="text" class="select" name="yinsu1" id='yinsu1' style="width: 80px;">明显,于
+						<input type="text" class="select" name="yinsu2" id='yinsu2' style="width: 80px;" rel='yinsu1'>减轻,
+						与<input type="text" class="select" name="yinsu3" id='yinsu3' style="width: 80px;" rel='yinsu1'>有明显关系。
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>胸痛</font>：</td>
+		<td class="t2">
+			<input name="xiongtong" class='radio dict-fld' type="radio"  rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr15">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t1" width="10%">诱因：</td>
+						<td class="t4" width="90%">
+							<input name="xiongtongBecause" id="xiongtongBecause" type="radio"  value="14"/>其他：自定义
+							<input name="xiongtongBecauseValue" id="xiongtongBecauseValue" type="text"  class="sa"/>
+							<input name="xiongtongBecause"  type="radio"  class='radio dict-fld'/>							
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="10%">程度：</td>
+						<td class="t4" width="90%">
+							<input name="xiongtongLevel" id="xiongtongLevel" type="radio"  class='radio dict-fld'/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="10%">部位：</td>
+						<td class="t4" width="90%">
+							<input name="xiongtongParts" id="xiongtongParts" type="checkbox"  value="0"/>其他（自定义）	
+							<input name="xiongtongPartsZdy" id="xiongtongPartsZdy" type="text" class='sa'/>
+							<input name="xiongtongParts" id="xiongtongParts" type="text"  class='checkbox' style="width: 50%"/>			
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="10%">性质：</td>
+						<td class="t4" width="90%">							
+							<input name="xiongtongFeatures" id="xiongtongFeatures" type="radio"  value="24"/>自定义
+							<input name="xiongtongFeaturesZdy" id="xiongtongFeaturesZdy" type="text"  class="sa"/>
+							<input name="xiongtongFeatures" class='radio dict-fld' type="radio" />			
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="10%">位置：</td>
+						<td class="t4" width="90%">							
+							<input name="xiongtongLocation" class='radio dict-fld' type="radio" />				
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" width="10%">放射：</td>
+						<td class="t4" width="90%">
+							<input name="xiongtongFs" id="xiongtongFs" type="radio"  class='radio dict-fld' rel='fare'/>		
+						</td>
+					</tr>
+					<tr id="tr15_0" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3">放射部位:</td>
+										<td class="t4">
+											
+											<input name="xiongtongFsParts" id="xiongtongFsParts" type="radio"  value="8"/>其他（自定义）
+											<input name="xiongtongFsPartsZdy" id="xiongtongFsPartsZdy" type="text"  class="sa"/>
+											<input name="xiongtongFsParts"  type="radio"  class='radio dict-fld' />
+										</td>
+									</tr>
+									
+								</table>										
+						</td>
+					</tr>
+					<tr>
+						<td class="t3">发作特点:</td>
+						<td class="t4">
+							<input name="xiongtongFsTd" id="xiongtongFsTd" type="radio"  value="12"/>其他：自定义
+							<input name="xiongtongFsTdZdy" id="xiongtongFsTdZdy" type="text"  class="sa"/>
+							<input name="xiongtongFsTd" id="xiongtongFsTd" type="radio"  class='radio dict-fld'/>
+
+						</td>
+					</tr>
+					<tr>
+						<td class="t3">持续时间:</td>
+						<td class="t4">
+							<input name="xiongtongFsTime" id="xiongtongFsTime" type="text"  class="sa1"/>
+							<input type="text" class='select' name="xiongtongFsTimeValue" id='xiongtongFsTimeValue' rel='continueTime' style="width: 60px;">							
+																		
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">加重、缓解因素：</td>
+						<td class="t4" width="90%">
+							<input name='xtYinsu1' id='xtYinsu1' type="text" class='select' style="width: 60px;">
+							加重,
+							<input name='xtYinsu2' id='xtYinsu2' type="text" class='select' rel='xtYinsu1' style="width: 60px;">缓解
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>
+		<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>食欲减退</font>：</td>
+		<td class="t2">
+			<input name="syjt" type="radio"  class='radio dict-fld' rel='fare'/>	
+		</td>
+	</tr>
+	<tr class="hidden" id="tr16">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">程度：</td>
+						<td class="t4" width="90%">
+							<input name='syjtLevel' type="radio" class='radio dict-fld' rel='kesouLevel'>											
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">食量减少：</td>
+						<td class="t4" width="90%">
+							<input name="syjtDesc" id="syjtDesc" type="radio"  value="0"/>无 
+							<input name="syjtDesc" id="syjtDesc" type="radio"  value="1"/>有，进食量减少至原来的
+							<select id="slPer">
+								<option  value=""></option>
+								<option value="1/2">1/2</option>
+								<option value="1/3">1/3</option>
+								<option value="1/4">1/4</option>
+								<option value="2/3">2/3</option>
+								<option value="3/4">3/4</option>
+							</select>
+							<input name="syjtDesc" id="syjtDesc" type="radio"  value="2"/>略有减少
+							<input name="syjtDesc" id="syjtDesc" type="radio"  value="3"/>进少许流食
+							<input name="syjtDesc" id="syjtDesc" type="radio"  value="4"/>未进食						
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>恶心</font>：</td>
+		<td class="t2">
+			<input name="exin" type="radio"  class='radio dict-fld' rel='fare'/>				
+		</td>
+	</tr>
+	<tr class="hidden" id="tr17">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name='exinLevel' type="radio" class='radio dict-fld' rel='kesouLevel'>							
+						</td>
+					</tr>					
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>呕吐</font>：</td>
+		<td class="t2">
+			<input name="outu" type="radio"  class='radio dict-fld' rel='fare'/>				
+		</td>
+	</tr>
+	<tr class="hidden" id="tr18">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="13%">呕吐性质:</td>
+						<td class="t4" >
+							<input name="outuLevel"  type="radio"  class='radio dict-fld'/>						
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="13%">呕吐物为:</td>
+						<td class="t4">
+							<input name="outuThing" id="outuThing" type="radio"  class='radio dict-fld'/>						
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">量:</td>
+						<td class="t4" width="90%">
+							每次 
+							<input name="outC" id="outuC" type="text"  class="sa1"/>ml,
+							每天 
+							<input name="outuNum" id="outuNum" type="text"  class="sa1"/>次						
+						</td>
+					</tr>						
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>腹痛</font>：</td>
+		<td class="t2">
+			<input name="ft" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr19">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">诱因:</td>
+						<td class="t4" width="90%">
+							<input name='fBecause' type="radio" class="radio dict-fld" rel='fare'>				
+						</td>
+					</tr>
+					<tr id="ft19_0" class="hidden">
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="0"/>进食油腻食
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="1"/>酗酒
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="2"/>暴饮暴食
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="3"/>腹部手术后
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="4"/>腹部受暴力作用<p>
+											<input name="ftBecauseParts" id="ftBecauseParts" type="radio"  value="5"/>其他：自定义											
+											<input name="ftBecausePartsZdy" id="ftBecausePartsZdy" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作特点:</td>
+						<td class="t4" width="90%">						
+							<input name="ftFeature" id="ftFeature" type="radio"  value="13"/>其他：自定义
+							<input name="ftFeatureZdy" id="ftFeatureZdy" type="text"  class="sa"/>	
+							<input name="ftFeature" id="ftFeature" type="radio"  class='radio dict-fld' rel='xiongtongFsTd'/>			
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">							
+							<input name="ftPart" id="ftPart" type="checkbox"  value="左上腹	"/>左上腹	
+							<input name="ftPart" id="ftPart" type="checkbox"  value="右上腹"/>右上腹	
+							<input name="ftPart" id="ftPart" type="checkbox"  value="中上腹"/>中上腹
+							<input name="ftPart" id="ftPart" type="checkbox"  value="左下腹"/>左下腹
+							<input name="ftPart" id="ftPart" type="checkbox"  value="右下腹"/>右下腹
+							<input name="ftPart" id="ftPart" type="checkbox"  value="脐部"/>脐部
+							<input name="ftPart" id="ftPart" type="checkbox"  value="脐周"/>脐周
+							<input name="ftPart" id="ftPart" type="checkbox"  value="下腹"/>下腹
+							<input name="ftPart" id="ftPart" type="checkbox"  value="上腹"/>上腹	
+							<input name="ftPart" id="ftPart" type="checkbox"  value="全腹"/>全腹
+							<input name="ftPart" id="ftPart" type="checkbox"  value="两胁"/>两胁												
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性质:</td>
+						<td class="t4" width="90%">
+							<input name="ftXz" id="ftXz" type="radio"  value="24"/>其他：自定义
+							<input name="ftXzZdy" id="ftXzZdy" type="text"  class="sa"/>
+							<input name="ftXz" rel='xiongtongFeatures'  class='radio dict-fld' type="radio"  />				
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="ftLevel" id="ftLevel" type="radio"  value="0"/>剧痛
+							<input name="ftLevel" id="ftLevel" type="radio"  value="1"/>中度腹痛 
+							<input name="ftLevel" id="ftLevel" type="radio"  value="2"/>轻度腹痛									
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">位置:</td>
+						<td class="t4" width="90%">
+							<input name="ftLocation" class='radio dict-fld' type="radio" rel='xiongtongLocation'/>																					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">放射:</td>
+						<td class="t4" width="90%">
+							<input name="ftFs" id="ftFs" type="radio"  class='radio dict-fld' rel='fare'/>无																						
+						</td>
+					</tr>
+					<tr id="ft19_1" class="hidden">
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3">放射部位:</td>
+										<td class="t4">																						
+											<input name="ftFsParts" id="ftFsParts" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作时间:</td>
+						<td class="t4" width="90%">
+							腹痛常于<input name='ftShow' id='ftShow' type="text" class="select" style="width: 60px;">							
+							出现 															
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">加重缓解因素:</td>
+						<td class="t4" width="90%">
+							多于<input name='ftYinsu' id='ftYinsu' type="text" class="select" style="width: 100px;">								
+							明显,于<input name='ftDesc' id='ftDesc' type="text" class="select" rel='ftYinsu' style="width: 100px;">	
+							减轻,与	<input name='ftGuanxi' id='ftGuanxi' type="text" class="select" rel='ftYinsu' style="width: 100px;">	
+							有明显关系。													
+						</td>
+					</tr>								
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>腹泻及大便改变</font>：</td>
+		<td class="t2">
+			<input name="fxjchange" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr20">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" >
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">腹泻:</td>
+						<td class="t4" width="90%">
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="0"/>急性
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="1"/>慢性
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="2"/><3次/日
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="3"/>3~5次/日
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="4"/>5~10次/日
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="5"/>>10次/日
+							<input name="fxjchangeFx" id="fxjchangeFx" type="radio"  value="6"/>
+							<input name="fxjchangeFxNum" id="fxjchangeFxNum" type="text"  class="sa1"/>次/
+							<input name="fxjchangeFxDay" id="fxjchangeFxDay" type="text"  class="sa1"/>日							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">便秘:</td>
+						<td class="t4" width="90%">
+							
+							<input name="fxjchangeBmDay" id="fxjchangeBmDay" type="text"  class="sa1"/>日/
+							<input name="fxjchangeBmNum" id="fxjchangeBmNum" type="text"  class="sa1"/>次							
+						</td>
+					</tr>	
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name="fxBmHuhuan" id="fxBmHuhuan" type="radio"  value="0"/>便秘与腹泻交替						
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">量:</td>
+						<td class="t4" width="90%">
+							<input name="fxBmNum" id="fxBmNum" type="text"  class="sa1"/>ml或g/次；总量
+							<input name="fxBmSum" id="fxBmSum" type="text"  class="sa1"/>ml或g/日。							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">颜色:</td>
+						<td class="t4" width="90%">
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="0"/>黄色
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="1"/>金黄色
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="2"/>黑便
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="3"/>褐色	
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="4"/>黄褐色						
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="5"/>绿色
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="6"/>黄绿色
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="7"/>白陶土样
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="8"/>暗红色
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="9"/>鲜红色	
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="10"/>柏油样						
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="11"/>果酱样
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="12"/>米泔样
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="13"/>蛋花汤样	
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="14"/>黄白色						
+							<input name="fxBmColor" id="fxBmColor" type="radio"  value="15"/>红豆汤样
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性状:</td>
+						<td class="t4" width="90%">
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="0"/>成形软便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="1"/>不成形软便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="2"/>稀便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="3"/>糊状便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="4"/>水样便						
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="5"/>粘液便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="6"/>稀水样
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="7"/>稀汁样
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="8"/>脓性便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="9"/>脓血便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="10"/>粘液脓血便						
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="11"/>干燥大便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="12"/>团块样大便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="13"/>细条样大便
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="14"/>扁片样大便 						
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="15"/>乳凝块
+							<input name="fxBmXz" id="fxBmXz" type="radio"  value="16"/>洗肉水样
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name="fxBmZz" id="fxBmZz" type="radio"  value="0"/>伴里急后重
+							<input name="fxBmZz" id="fxBmZz" type="radio"  value="1"/>排便后腹痛好转
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">气味异常:</td>
+						<td class="t4" width="90%">
+							<input name="fxBmEx" type="radio"  class='radio dict-fld' rel='fare'/>							
+						</td>
+					</tr>
+					<tr id="ft20_0" class="hidden">
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="fxBmExParts" id="fxBmExParts" type="radio"  value="0"/>臭味
+											<input name="fxBmExParts" id="fxBmExParts" type="radio"  value="1"/>恶臭
+											<input name="fxBmExParts" id="fxBmExParts" type="radio"  value="2"/>血腥臭味
+											<input name="fxBmExParts" id="fxBmExParts" type="radio"  value="3"/>酸臭味											
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">其内是否有混物:</td>
+						<td class="t4" width="90%">
+							<input name="fxBmThing" id="fxBmThing" type="radio"  value="0"/>虫体
+							<input name="fxBmThing" id="fxBmThing" type="radio"  value="1"/>结石
+							<input name="fxBmThing" id="fxBmThing" type="radio"  value="2"/>膜状物
+						</td>
+					</tr>										
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>尿频</font>：</td>
+		<td class="t2">
+			<input name="niaopin" type="radio"  class='radio dict-fld' rel='fare'/>
+			
+		</td>
+	</tr>
+	<tr class="hidden" id="tr21">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name='niaopinLevel' type="radio" class='radio dict-fld' rel='kesouLevel'>					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">诱因:</td>
+						<td class="t4" width="90%">
+							<input name="niaopinBecause" id="niaopinBecause" type="radio"  value="0"/>劳累 
+							<input name="niaopinBecause" id="niaopinBecause" type="radio"  value="1"/>受凉
+							<input name="niaopinBecause" id="niaopinBecause" type="radio"  value="2"/>月经期
+							<input name="niaopinBecause" id="niaopinBecause" type="radio"  value="3"/>接受导尿、尿路器械检查或流产术
+							<input name="niaopinBecause" id="niaopinBecause" type="radio"  value="4"/>自定义
+							<input name="niaopinBecauseZdy" id="niaopinBecauseZdy" type="text"  class="sa"/>					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">频率:</td>
+						<td class="t4" width="90%">			
+							<input name="niaopinPl" id="niaopinPl" type="radio"  value="0"/>				
+							<input name="niaopinPlZdy" id="niaopinPlZdy" type="text"  class="sa1"/>次/天,
+							<input name="niaopinPl" id="niaopinPl" type="radio"  value="1"/>次数不详
+							<input name="niaopinPl" id="niaopinPl" type="radio"  value="2"/>次数较前增多					
+						</td>
+					</tr>					
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>尿急</font>：</td>
+		<td class="t2">
+			<input name="niaoji" id="niaoji" type="radio" value="0"/>无
+			<input name="niaoji" id="niaoji" type="radio" value="1"/>轻度
+			<input name="niaoji" id="niaoji" type="radio" value="2"/>中度
+			<input name="niaoji" id="niaoji" type="radio" value="3"/>重度
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>尿痛</font>：</td>
+		<td class="t2">
+			<input name="niaotong" type="radio"  class='radio dict-fld' rel='fare'/>
+			
+		</td>
+	</tr>
+	<tr class="hidden" id="tr22">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name='niaotongLevel' type="radio" class='radio dict-fld' rel='kesouLevel'>					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">时间:</td>
+						<td class="t4" width="90%">
+							<input name="niaotongTime" id="niaotongTime" type="radio"  value="0"/>排尿时
+							<input name="niaotongTime" id="niaotongTime" type="radio"  value="1"/>排尿完					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">			
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="0"/>耻骨上区
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="1"/>尿道内
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="2"/>尿道口
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="3"/>会阴部	
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="4"/>腹股沟	
+							<input name="niaotongParts" id="niaotongParts" type="radio"  value="5"/>睾丸			
+						</td>
+					</tr>					
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>尿液改变</font>：</td>
+		<td class="t2">
+			<input name="nyChange" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr23">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">尿量改变:</td>
+						<td class="t4" width="90%">
+							<input name="nyChangeChange" id="nyChangeChange" type="radio"  value="0"/>尿量增多 
+							<input name="nyChangeChange" id="nyChangeChange" type="radio"  value="1"/>尿量减少
+							<input name="nyChangeChange" id="nyChangeChange" type="radio"  value="2"/>少尿
+							<input name="nyChangeChange" id="nyChangeChange" type="radio"  value="3"/>无尿    
+							<input name="nyChangeChange" id="nyChangeChange" type="radio"  value="4"/>量约
+							<input name="nyChangeChangeZdy" id="nyChangeChangeZdy" type="text"  class="sa1"/>ml/日					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">尿色异常:</td>
+						<td class="t4" width="90%">			
+							<input name="nyChangeEx" type="radio"  class='radio dict-fld' rel='fare'/>								
+						</td>
+					</tr>	
+					<tr id="ft23_1" class="hidden">
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">																						
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="0"/>淡黄色
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="1"/>深黄色
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="2"/>洗肉水样
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="3"/>酱油色
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="4"/>血尿
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="5"/>米汤样
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="6"/>浓茶色
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="7"/>混有血凝块<p>
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="8"/>豆油样
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="9"/>白色
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="10"/>尿后滴血
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="11"/>泡沫样尿
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="12"/>乳糜尿
+											<input name="nyChangeColor" id="nyChangeColor" type="radio" value="13"/>乳糜血尿
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">清浊度:</td>
+						<td class="t4" width="90%">			
+							<input name="nyChangeDu" id="nyChangeDu" type="radio"  value="0"/>澄清
+							<input name="nyChangeDu" id="nyChangeDu" type="radio"  value="1"/>浑浊	
+						</td>
+					</tr>	
+					<tr>
+						<td class="t3" width="10%">气味异常:</td>
+						<td class="t4" width="90%">	
+							<input name="nyChangeWeidaoEx" type="radio"  class='radio dict-fld' rel='fare'/>		
+						</td>
+					</tr>
+					<tr id="ft23_2" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">																						
+											<input name=nyChangeWeidaoEx1 id=nyChangeWeidaoEx1 type="radio" value="0"/>恶臭
+											<input name=nyChangeWeidaoEx1 id=nyChangeWeidaoEx1 type="radio" value="1"/>烂苹果味
+											<input name=nyChangeWeidaoEx1 id=nyChangeWeidaoEx1 type="radio" value="2"/>鼠尿味
+											<input name=nyChangeWeidaoEx1 id=nyChangeWeidaoEx1 type="radio" value="3"/>氨臭味
+											<input name="nyChangeWeidaoEx1" id=nyChangeWeidaoEx1 type="radio" value="4"/>蒜臭味											
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>					
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>水肿</font>：</td>
+		<td class="t2">
+			<input name="sz" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr24">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">起病:</td>
+						<td class="t4" width="90%">
+							<input name="szShibing" id="szShibing" type="radio"  value="0"/>急性
+							<input name="szShibing" id="szShibing" type="radio"  value="1"/>慢性					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">			
+							<input name="szParts" id="szParts" type="checkbox"  value="左侧"/>左侧
+							<input name="szParts" id="szParts" type="checkbox"  value="右侧"/>右侧	
+							<input name="szParts" id="szParts" type="checkbox"  value="双侧"/>双侧
+							<input name="szParts" id="szParts" type="checkbox"  value="上肢"/>上肢	
+							<input name="szParts" id="szParts" type="checkbox"  value="手"/>手
+							<input name="szParts" id="szParts" type="checkbox"  value="前臂"/>前臂
+							<input name="szParts" id="szParts" type="checkbox"  value="下肢"/>下肢
+							<input name="szParts" id="szParts" type="checkbox"  value="踝部"/>踝部	
+							<input name="szParts" id="szParts" type="checkbox"  value="小腿"/>小腿
+							<input name="szParts" id="szParts" type="checkbox"  value="大腿"/>大腿	
+							<input name="szParts" id="szParts" type="checkbox"  value="腰骶部"/>腰骶部
+							<input name="szParts" id="szParts" type="checkbox"  value="眼睑"/>眼睑<p>
+							<input name="szParts" id="szParts" type="checkbox"  value="颜面部"/>颜面部
+							<input name="szParts" id="szParts" type="checkbox"  value="身体下垂部位"/>身体下垂部位	
+							<input name="szParts" id="szParts" type="checkbox"  value="全身 "/>全身 
+							<input name="szParts" id="szParts" type="checkbox"  value="0"/>自定义
+							<input name="szPartsZdy" id="szPartsZdy" type="text"  class='sa'/>		
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">是否对称:</td>
+						<td class="t4" width="90%">
+							<input name="szDuichen" id="szDuichen" type="radio"  value="0"/>对称
+							<input name="szDuichen" id="szDuichen" type="radio"  value="1"/>不对称					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name="szAotuxing" id="szAotuxing" type="radio"  value="0"/>凹凸性
+							<input name="szAotuxing" id="szAotuxing" type="radio"  value="1"/>非凹凸性					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name='szLevel' type="radio" class='radio dict-fld' rel='kesouLevel'>				
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="15%">出现规律,加重缓解因素:</td>
+						<td class="t4" width="85%">
+							多于<input name='szMingxian' id='szMingxian' type="text" class="select" style="width: 100px;">	
+							明显,于<input name='szJianqing' id='szJianqing' type="text" class="select" rel='szMingxian' style="width: 100px;">
+							减轻,与<input name='szGuanxi' id='szGuanxi' type="text" class="select" rel='szMingxian' style="width: 100px;">
+							有明显关系。
+											
+						</td>
+					</tr>						
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>头痛</font>：</td>
+		<td class="t2">
+			<input name="tt" type="radio"  class='radio dict-fld' rel='fare'/>
+
+		</td>
+	</tr>
+	<tr class="hidden" id="tr25">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" >
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">诱因:</td>
+						<td class="t4" width="90%">
+							<input name="ttBecause" type="radio"  class='radio dict-fld' rel='fare'/>					
+						</td>
+					</tr>
+					<tr id="tr25_0" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="ttFeatures" id="ttFeatures" type="radio"  value="0"/>精神紧张
+											<input name="ttFeatures" id="ttFeatures" type="radio"  value="1"/>劳累
+											<input name="ttFeatures" id="ttFeatures" type="radio"  value="2"/>受凉
+											<input name="ttFeatures" id="ttFeatures" type="radio"  value="3"/>生气											
+											<input name="ttFeatures" id="ttFeatures" type="radio"  value="4"/>其他（自定义）
+											<input name="ttFeaturesZdy" id="ttFeaturesZdy" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">频度:</td>
+						<td class="t4" width="90%">
+							<input name="ttPindu" id="ttPindu" type="radio"  value="0"/>间歇性
+							<input name="ttPindu" id="ttPindu" type="radio"  value="1"/>持续性	
+							<input name="ttPindu" id="ttPindu" type="radio"  value="2"/>频繁
+							<input name="ttPindu" id="ttPindu" type="radio"  value="3"/>偶尔				
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="ttLevel" id="ttLevel" type="radio"  value="0"/>轻度
+							<input name="ttLevel" id="ttLevel" type="radio"  value="1"/>中度	
+							<input name="ttLevel" id="ttLevel" type="radio"  value="2"/>重度
+							<input name="ttLevel" id="ttLevel" type="radio"  value="3"/>剧烈
+							<input name="ttLevel" id="ttLevel" type="radio"  value="4"/>时轻时重				
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">
+							<input name="ttParts" id="ttParts" type="radio"  value="0"/>单侧
+							<input name="ttParts" id="ttParts" type="radio"  value="1"/>双侧	
+							<input name="ttParts" id="ttParts" type="radio"  value="2"/>前额
+							<input name="ttParts" id="ttParts" type="radio"  value="3"/>枕部
+							<input name="ttParts" id="ttParts" type="radio"  value="4"/>颞部
+							<input name="ttParts" id="ttParts" type="radio"  value="5"/>局部
+							<input name="ttParts" id="ttParts" type="radio"  value="6"/>弥散			
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性质:</td>
+						<td class="t4" width="90%">
+													
+							<input name="ttFeature" id="ttFeature" type="radio"  value="27"/>自定义	
+							<input name="ttFeatureZdy" id="ttFeatureZdy" type="text"  class='sa'/>
+							<input name="ttFeature" rel='xiongtongFeatures' class='radio dict-fld' type="radio"  />	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">出现规律:</td>
+						<td class="t4" width="90%">
+							多于<input name='ttGuilv' id='ttGuilv' type="text" class='select' style="width: 100px;">
+							明显,于<input name='ttJianqing' id='ttJianqing' type="text" class='select' rel='ttGuilv' style="width: 100px;">
+							减轻,与<input name='ttGuanxi' id='ttGuanxi' type="text" class='select' rel='ttGuilv' style="width: 100px;">
+							有/无明显关系。
+											
+						</td>
+					</tr>		
+					<tr>
+						<td class="t3" width="10%">加重、缓解因素:</td>
+						<td class="t4" width="90%">
+							多于
+							<select id="ttYinsu1">
+								<option value=''></option>
+								<option value="咳嗽">咳嗽</option>
+								<option value="打喷嚏">打喷嚏</option>
+								<option value="摇头">摇头</option>
+								<option value="俯身">俯身</option>
+								<option value="直立位">直立位</option>
+								<option value="颈部运动后">颈部运动后</option>
+								<option value="活动按摩后">活动按摩后</option>
+								<option value="0">自定义</option>
+							</select>加重,于
+							<select id="ttYinsu2">
+								<option value=''></option>
+								<option value="咳嗽">咳嗽</option>
+								<option value="打喷嚏">打喷嚏</option>
+								<option value="摇头">摇头</option>
+								<option value="俯身">俯身</option>
+								<option value="直立位">直立位</option>
+								<option value="颈部运动后">颈部运动后</option>
+								<option value="活动按摩后">活动按摩后</option>
+								<option value="0">自定义</option>
+							</select>减轻
+											
+						</td>
+					</tr>									
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>神志改变</font>：</td>
+		<td class="t2">
+			<input name="szChange" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr26">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="0"/>神志清楚
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="1"/>神志欠清
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="2"/>神志不清
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="3"/>嗜睡
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="4"/>意识模糊
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="5"/>昏睡
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="6"/>昏迷
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="7"/>言语杂乱
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="8"/>躁动不安<p>
+							<input name="szChangeLevel" id="szChangeLevel" type="radio"  value="9"/>其他：具体描述(自定义)
+							<input name="szChangeLevelZdy" id="szChangeLevelZdy" type="text"  class='sa'/>					
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">对答情况:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeAnswer" id="szChangeAnswer" type="radio"  value="0"/>呼之不应
+							<input name="szChangeAnswer" id="szChangeAnswer" type="radio"  value="1"/>呼之能应
+							<input name="szChangeAnswer" id="szChangeAnswer" type="radio"  value="2"/>回答切题
+							<input name="szChangeAnswer" id="szChangeAnswer" type="radio"  value="3"/>答非所问										
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性格改变:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeXgChange" id="szChangeXgChange" type="radio"  value="0"/>无
+							<input name="szChangeXgChange" id="szChangeXgChange" type="radio"  value="1"/>有,具体描述
+							<input name="szChangeXgChangeZdy" id="szChangeXgChangeZdy" type="text"  class='sa'/>																	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">行为异常:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeXwEx" id="szChangeXwEx" type="radio"  value="0"/>无
+							<input name="szChangeXwEx" id="szChangeXwEx" type="radio"  value="1"/>有,具体描述
+							<input name="szChangeXwExZdy" id="szChangeXwExZdy" type="text"  class='sa'/>																	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">计算力:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeCompute" id="szChangeCompute" type="radio"  value="0"/>正常
+							<input name="szChangeCompute" id="szChangeCompute" type="radio"  value="1"/>障碍,具体描述
+							<input name="szChangeComputeZdy" id="szChangeComputeZdy" type="text"  class='sa'/>																	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">定向力:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeOrientation" id="szChangeOrientation" type="radio"  value="0"/>正常
+							<input name="szChangeOrientation" id="szChangeOrientation" type="radio"  value="1"/>障碍,具体描述
+							<input name="szChangeOrientationZdy" id="szChangeOrientationZdy" type="text"  class='sa'/>																	
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">幻觉:</td>
+						<td class="t4" width="90%">
+							<input name="szChangeHuanjue" type="radio"  class='radio dict-fld' rel='fare'/>																					
+						</td>
+					</tr>
+					<tr id="tr26_0" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">							
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="szChangeHuanjue1" id="szChangeHuanjue1" type="radio"  value="0"/>幻视
+											<input name="szChangeHuanjue1" id="szChangeHuanjue1" type="radio"  value="1"/>幻听																				
+											<input name="szChangeHuanjue1" id="szChangeHuanjue1" type="radio"  value="2"/>其他（自定义）
+											<input name="szChangeHuanjue1Zdy" id="szChangeHuanjue1Zdy" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>							
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>抽搐及惊厥</font>：</td>
+		<td class="t2">
+			<input name="ccJingjue" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr27">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%"></td>
+						<td class="t4" width="90%">
+							<input name="ccJingjueStatue" id="ccJingjueStatue" type="radio"  value="0"/>抽搐
+							<input name="ccJingjueStatue" id="ccJingjueStatue" type="radio"  value="1"/>惊厥												
+						</td>
+					</tr>
+						<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="0"/>全身
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="1"/>局限
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="2"/>角
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="3"/>眼睑
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="4"/>手足
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="5"/>上肢
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="6"/>下肢
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="7"/>左	
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="8"/>右
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="9"/>双
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="10"/>对称
+							<input name="ccJingjueParts" id="ccJingjueParts" type="radio"  value="11"/>不对称										
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">伴随症状:</td>
+						<td class="t4" width="90%">
+							<input name="ccJingjueBansui" id="ccJingjueBansui" type="radio"  value="0"/>意识模糊
+							<input name="ccJingjueBansui" id="ccJingjueBansui" type="radio"  value="1"/>意识丧失
+							<input name="ccJingjueBansui" id="ccJingjueBansui" type="radio"  value="2"/>呼吸暂停
+							<input name="ccJingjueBansui" id="ccJingjueBansui" type="radio"  value="3"/>尿便失控
+							<input name="ccJingjueBansui" id="ccJingjueBansui" type="radio"  value="4"/>其他具体描述:
+							<input name="ccJingjueBansuiZdy" id="ccJingjueBansuiZdy" type="text"  class="sa"/>							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作时间:</td>
+						<td class="t4" width="90%">
+							<input name="ccJingjueTime" id="ccJingjueTime" type="radio"  value="0"/>反复发作
+							<input name="ccJingjueTime" id="ccJingjueTime" type="radio"  value="1"/>持续
+							<input name="ccJingjueTime" id="ccJingjueTime" type="radio"  value="2"/>持续约
+							<input name="ccJingjueBansuiZdy" id="ccJingjueBansuiZdy" type="text"  class="sa1"/>
+							<input type="text" class='select' id='ccJingjueTimeValue' name="ccJingjueTimeValue" rel='continueTime' style="width: 60px;">
+							
+							停止						
+						</td>
+					</tr>
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>腰痛</font>：</td>
+		<td class="t2">
+			<input name="yaotong" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr28">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="90%" border="0" cellpadding="0" cellspacing="0">
+					
+					
+					<tr>
+						<td class="t3" width="10%">诱因:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="0"/>外伤
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="1"/>搬重物
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="2"/>潮湿
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="3"/>寒冷
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="4"/>扭伤
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="5"/>过度活动 
+							<input name="yaotongBecause" id="yaotongBecause" type="radio"  value="6"/>其他:自定义
+							<input name="yaotongBecauseZdy" id="yaotongBecauseZdy" type="text"  class="sa"/>							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作状态:</td>
+						<td class="t4" width="90%">
+							
+							<input name="yaotongStatue" id="yaotongStatue" type="radio"  value="12"/>自定义
+							<input name="yaotongStatueZdy" id="yaotongStatueZdy" type="text"  class='sa'/>
+							<input name="yaotongStatue" id="yaotongStatue" type="radio"  class='radio dict-fld' rel='xiongtongFsTd'/>									
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongLevel" id="yaotongLevel" type="radio"  value="0"/>轻度
+							<input name="yaotongLevel" id="yaotongLevel" type="radio"  value="1"/>中度	
+							<input name="yaotongLevel" id="yaotongLevel" type="radio"  value="2"/>重度	
+							<input name="yaotongLevel" id="yaotongLevel" type="radio"  value="3"/>剧烈
+							<input name="yaotongLevel" id="yaotongLevel" type="radio"  value="4"/>时轻时重										
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="0"/>腰部
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="1"/>背部
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="2"/>骶部
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="3"/>腰骶部
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="4"/>腰背部
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="5"/>左侧
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="6"/>右侧
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="7"/>双侧
+							<input name="yaotongParts" id="yaotongParts" type="radio"  value="8"/>自定义
+							<input name="yaotongPartsZdy" id="yaotongPartsZdy" type="text"  class="sa"/>											
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性质:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongFeature" id="yaotongFeature" type="radio"  value="27"/>自定义	
+							<input name="yaotongFeatureZdy" id="yaotongFeatureZdy" type="text"  class='sa'/>	
+							<input name="yaotongFeature" rel='xiongtongFeatures' class='radio dict-fld' type="radio"  />										
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">位置:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongWeizhi" id="yaotongWeizhi" type="radio"  value="0"/>固定
+							<input name="yaotongWeizhi" id="yaotongWeizhi" type="radio"  value="1"/>不固定
+							<input name="yaotongWeizhi" id="yaotongWeizhi" type="radio"  value="2"/>对称
+							<input name="yaotongWeizhi" id="yaotongWeizhi" type="radio"  value="3"/>不对称											
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作状态:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongStatues" id="yaotongStatues" type="radio"  value="0"/>持续性
+							<input name="yaotongStatues" id="yaotongStatues" type="radio"  value="1"/>阵发性
+							<input name="yaotongStatues" id="yaotongStatues" type="radio"  value="2"/>偶尔															
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">伴随症状:</td>
+						<td class="t4" width="90%">
+							<input name="yaotongBansui" type="radio"  class='radio dict-fld' rel='fare'/>															
+						</td>
+					</tr>
+					<tr id="tr28_0" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">							
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="0"/>活动障碍
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="1"/>感觉障碍	
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="2"/>僵直
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="3"/>间歇跛行
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="4"/>压痛
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="5"/>扣痛
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="6"/>排尿困难
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="7"/>下腹坠胀感
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="8"/>痛经
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="9"/>白带过多																		
+											<input name="yaotongBansui1" id="yaotongBansui1" type="radio"  value="10"/>其他（自定义）
+											<input name="yaotongBansui1Zdy" id="yaotongBansui1Zdy" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">加重、缓解因素:</td>
+						<td class="t4" width="90%">
+							<input type="text" id='yaotongJiazhong' name='yaotongJiazhong' class='select' style="width: 100px;">
+							加重,<input type="text" id='yaotongJianqing' name='yaotongJianqing' class='select' style="width: 100px;" rel='yaotongJiazhong'>
+							减轻			
+						</td>
+					</tr>			
+				</table>
+		</td>
+	</tr>
+	<tr class="sorttd">
+		<td class="t1" width="80"><font color="red">*&nbsp;</font><font>肌肉关节痛</font>：</td>
+		<td class="t2">
+			<input name="jrgjt" type="radio"  class='radio dict-fld' rel='fare'/>
+		</td>
+	</tr>
+	<tr class="hidden" id="tr29">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="2">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="t3" width="10%">诱因:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="0"/>外伤
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="1"/>搬重物
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="2"/>潮湿
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="3"/>寒冷
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="4"/>扭伤
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="5"/>过度活动 
+							<input name="jrgjtBecause" id="jrgjtBecause" type="radio"  value="6"/>其他:自定义
+							<input name="jrgjtBecauseZdy" id="jrgjtBecauseZdy" type="text"  class="sa"/>							
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作状态:</td>
+						<td class="t4" width="90%">							
+							<input name="jrgjtStatue" id="jrgjtStatue" type="radio"  value="12"/>自定义
+							<input name="jrgjtStatueZdy" id="jrgjtStatueZdy" type="text"  class='sa'/>	
+							<input name="jrgjtStatue" id="jrgjtStatue" type="radio"  class='radio dict-fld' rel='xiongtongFsTd'/>							
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="t3" width="10%">程度:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="0"/>轻度
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="1"/>中度	
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="2"/>重度	
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="3"/>剧烈
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="4"/>时轻时重
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="5"/>减轻
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="6"/>加重
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="7"/>逐渐减轻
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="8"/>逐渐加重 	
+							<input name="jrgjtLevel" id="jrgjtLevel" type="radio"  value="9"/>自定义
+							<input name="jrgjtLevelValue" id="jrgjtLevelValue" type="text"  class="sa"/>								
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">部位:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="0"/>左侧
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="1"/>右侧	
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="2"/>双侧
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="3"/>对称
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="4"/>不对称
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="5"/>全身关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="6"/>四肢大关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="7"/>小关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="8"/>肩关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="9"/>肘关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="10"/>腕关节<p>
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="11"/>掌指关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="12"/>髋关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="13"/>膝关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="14"/>踝关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="15"/>趾关节
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="16"/>脊柱
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="17"/>颈部
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="18"/>胸部
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="19"/>腰部
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="20"/>骶部<p> 	
+							<input name="jrgjtParts" id="jrgjtParts" type="radio"  value="21"/>自定义
+							<input name="jrgjtPartsValue" id="jrgjtPartsValue" type="text"  class="sa"/>								
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">性质:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtFeature" id="jrgjtFeature" type="radio"  value="27"/>自定义	
+							<input name="jrgjtFeatureZdy" id="jrgjtFeatureZdy" type="text"  class='sa'/>
+							<input name="jrgjtFeature" rel='xiongtongFeatures' class='radio dict-fld' type="radio"  />											
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">位置:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="0"/>固定
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="1"/>不固定
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="2"/>对称
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="3"/>不对称
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="4"/>游走性
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="5"/>描述不清
+							<input name="jrgjtWeizhi" id="jrgjtWeizhi" type="radio"  value="6"/>自定义
+							<input name="jrgjtWeizhiZdy" id="jrgjtWeizhiZdy" type="text"  class='sa'/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">发作状态:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtStatues" id="jrgjtStatues" type="radio"  value="0"/>持续性
+							<input name="jrgjtStatues" id="jrgjtStatues" type="radio"  value="1"/>阵发性
+							<input name="jrgjtStatues" id="jrgjtStatues" type="radio"  value="2"/>偶尔															
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">伴随症状:</td>
+						<td class="t4" width="90%">
+							<input name="jrgjtBansui" type="radio"  class='radio dict-fld' rel='fare'/>															
+						</td>
+					</tr>
+					<tr id="tr29_0" class="hidden">
+						<td class="t1" width="10%"></td>
+						<td class="t4" width="90%">
+								<table width="90%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td class="t3"></td>
+										<td class="t4">
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="0"/>肿胀
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="1"/>红肿
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="2"/>灼热
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="3"/>活动障碍
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="4"/>僵直
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="5"/>关节畸形
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="6"/>感觉异常
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="7"/>跛行<p>																													
+											<input name="jrgjtBansui1" id="jrgjtBansui1" type="radio"  value="8"/>其他（自定义）
+											<input name="jrgjtBansui1Zdy" id="jrgjtBansui1Zdy" type="text"  class="sa"/>
+										</td>
+									</tr>
+								</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="t3" width="10%">加重、缓解因素:</td>
+						<td class="t4" width="90%">
+							<input type="text" id="jrgjtJiazhong" name='jrgjtJiazhong' class='select' style="width: 100px;" rel='yaotongJiazhong'>
+							加重,<input type="text" id='jrgjtJianqing' name='jrgjtJianqing' class='select' style="width: 100px;" rel='yaotongJiazhong'>
+							减轻
+											
+						</td>
+					</tr>			
+				</table>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1" align="left">内容显示：</td>
+		<td class="t2" >
+			<textarea rows="10" cols="100" id="newContent" name='newContent'></textarea>
+		</td>
+	</tr>						
+	</table>
+    </form>
+  </body>
+</html>

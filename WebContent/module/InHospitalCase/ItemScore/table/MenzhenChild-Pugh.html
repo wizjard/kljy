@@ -1,0 +1,145 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			childPushScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+		
+	function childPushScore(){
+		var totalScore = 0;
+		totalScore = totalScore + eval(Math.abs($('#hepaticEp').val())) 
+					+ eval(Math.abs($('#ascites').val())) 
+					+ eval(Math.abs($('#bilirubin').val())) 
+					+ eval(Math.abs($('#albumin').val())) 
+					+ eval(Math.abs($('#prothrombinTime').val()));
+		$('#totalScore').val(totalScore);
+		if(totalScore >= 5 && totalScore <= 6){
+			$('#scoreGrade').val('A级');
+		}else if(totalScore >= 7 && totalScore <= 9){
+			$('#scoreGrade').val('B级');
+		}else if(totalScore >= 10 && totalScore <= 15){
+			$('#scoreGrade').val('C级');
+		}else{
+			$('#scoreGrade').val('');
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+	<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:14px">
+		    <tr><td colspan="4" style="font-size:20px;color:red;height:30px" align="center"><B>Child-Pugh评分系统</B></td></tr>
+			<tr>
+				<td bgcolor="#D4D4D4" width="150" align="right">肝性脑病(期)：</td>
+				<td bgcolor="#D4D4D4" width="200">
+					<select name="hepaticEp" id="hepaticEp" style="width:120px">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="-2">Ⅰ</option>
+						  <option value="2">Ⅱ</option>
+						  <option value="-3">Ⅲ</option>
+						  <option value="3">Ⅳ</option>
+					</select>
+				</td>
+				<td bgcolor="#D4D4D4" width="150" align="right">腹水：</td>
+				<td bgcolor="#D4D4D4" width="200">
+					<select name="ascites" id="ascites" style="width:120px">
+						  <option value="0"></option>
+						  <option value="1">无</option>
+						  <option value="2">轻度</option>
+						  <option value="3">中重度</option>
+					</select>
+				</td>
+			</tr>
+		    <tr>
+				<td align="right">胆红素(μmol/L)：</td>
+				<td >
+					<select name="bilirubin" id="bilirubin" style="width:120px">
+						  <option value="0"></option>
+						  <option value="1">&lt;34.2</option>
+						  <option value="2">34.2-51.3</option>
+						  <option value="3">&gt;51.3</option>
+					</select>
+				</td>
+				<td align="right">白蛋白(g/L)：</td>
+				<td >
+					<select name="albumin" id="albumin" style="width:120px">
+						  <option value="0"></option>
+						  <option value="3">&lt;28</option>
+						  <option value="2">28-35</option>
+						  <option value="1">&gt;35</option>
+					</select>
+				</td>
+		    </tr>
+			<tr>
+				<td bgcolor="#D4D4D4" align="right">凝血酶原时间较正常</br>延长（秒）：</td>
+				<td bgcolor="#D4D4D4" >
+					<select name="prothrombinTime" id="prothrombinTime" style="width:120px">
+						  <option value="0"></option>
+						  <option value="1">&lt;4</option>
+						  <option value="2">4-6</option>
+						  <option value="3">&gt;6</option>
+					</select>
+				</td>
+				<td bgcolor="#D4D4D4" align="right">Child-Pugh总积分：</td>
+				<td bgcolor="#D4D4D4" >
+					<input name="totalScore" type="text" id="totalScore" style="width:120px; height:20px;" readonly/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Child-Pugh分级：</td>
+				<td >
+					<input name="scoreGrade" type="text" id="scoreGrade" style="width:120px; height:20px;" readonly/>
+				</td>
+				<td >&nbsp;</td>
+				<td >&nbsp;</td>
+			</tr>
+      </table>
+</form>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>CRF表登记</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var date=App.util.getHtmlParameters('date');
+var rid=App.util.getHtmlParameters('rid');
+Ext.onReady(function(){
+	new Ext.Viewport({
+		layout:'fit',
+		items:{
+			xtype:'panel',
+			title:'CRF表登记',
+			autoScroll:true,
+			tbar:[
+				'-',{
+					text:'选择表',
+					menu:[],
+					listeners:{
+						render:function(){
+							Ext.Ajax.request({
+								url:App.App_Info.BasePath+'/common/CommonAction.do',
+								params:{
+									method:'GetSelfQueryList',
+									sql:'select CODE,NAME,URL from SYS_ZD_CRF '+
+									'where CODE in(select CRFCode from SYS_ResearchTopic_CRF_Rel '+
+									'where ResearchTopicID=(select id from SYS_ResearchTopic '+
+									'where id=(select researchId from t_Patient_Research where id='+
+									rid+')))'
+								},
+								scope:this,
+								success:function(_response){
+									var menu=new Ext.menu.Menu();
+									Ext.each(Ext.util.JSON.decode(_response.responseText),function(_item){
+										menu.add({
+											text:_item.NAME,
+											code:_item.CODE,
+											url:_item.URL,
+											handler:function(){
+												document.getElementById('iframe').src=App.App_Info.BasePath+this.url+'?kid='+rid;
+											}
+										});
+									});
+									this.menu=menu;
+								}
+							});
+						}
+					}
+				},'-',{
+					text:'保存',handler:function(){
+						if(document.getElementById('iframe').src)
+							document.getElementById('iframe').contentWindow.SaveData();
+					}
+				},'->',{
+					text:'返回',handler:function(){
+						history.go(-1);
+					}
+				},'-'
+			],
+			html:'<iframe id="iframe" width="100%" height="100%" frameborder=0 scrolling="auto"></iframe>'
+		}
+	});
+});
+</script>
+</head>
+<body>
+</body>
+</html>

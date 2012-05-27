@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+.d1{
+	margin:10px auto;
+	width:600px;
+	border:0;
+	/*
+	background-color:#EFEFEF;
+	*/
+	height:auto;
+	overflow:hidden;
+	whiteo-space:nowrap;
+}
+.d2{
+	margin:0px auto;
+	/*
+	backgrounp-color:#EF9933;
+	*/
+}
+.div2{
+	width:auto;
+	height:auto;
+	font-size:12px;
+	float:left;
+	overflow:hidden;
+}
+.ul{
+	margin:0px;
+	padding:9px;
+	list-style:none;
+	line-height:19px;
+	font-size:12px;
+}
+a:link .a:visited{
+	color:#3F78CF;
+	text-decoration:none;
+}

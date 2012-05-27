@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>体检时发现</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+	<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript">
+		var itemName = App.util.getHtmlParameters('nodeText');
+		var spanContent = parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan;
+		var jquerObj = null;
+		var otherInfo = '<input name="otherInfo" type="text" />';
+		$(function(){
+			$('input[name="causesFlag"]').click(function(){
+				if($(this).val()==1){
+					$(this).parent().parent().next().show();
+				}else{
+					$(this).parent().parent().next().hide();
+				}
+			});
+			if(spanContent != null){
+				spanContent = $(spanContent).html();
+				jqueryObj = $('<div>' + spanContent + '</div>');
+				jqueryObj.appendTo($('#composeInfo'));
+				spanContent = jqueryObj.find("span").html();
+				FormUtil.setFormValues('form',JSON.parse(spanContent));
+				showOrHide(JSON.parse(spanContent));
+			}
+			
+			$('#ok-btn').click(function(){
+				ok();
+			});
+		});
+		
+		function showOrHide(json){
+			if(json.causesFlag == 1){
+				$('input[name="causesFlag"]').parent().parent().next().removeClass("hidden");
+			}else{
+				$('input[name="experunit"]').val('');
+				$('textarea[name="questionDesc"]').val('');
+			}
+		}	
+				
+		function ok(){
+			var values = FormUtil.getFormValues('form');
+			var oldOperation = JSON.stringify(values);
+			var rst = '';
+			var leftInputItem = '';
+			var rightInputItem = '';
+			if(values){
+				var temp = '';
+				if(values.causesFlag==1){
+					temp = values.experunit;
+					
+					leftInputItem = '<input name="medicalFind" type="text" value="在"  />';
+					rightInputItem = '<input name="medicalFind" type="text" value="体验时发现"  />';
+					var rightInputItem2 = '<input name="medicalFind" type="text" value="，"  />';
+					if($('input[name="medicalFind"]').size() > 0){
+						$('input[name="medicalFind"]').eq(0).wrap("<div id='wrap'></div>");
+						leftInputItem = $('#wrap').html();
+						$('#wrap').replaceWith($('#wrap').html());		
+						$('input[name="medicalFind"]').eq(1).wrap("<div id='wrap'></div>");
+						rightInputItem = $('#wrap').html();
+						$('#wrap').replaceWith($('#wrap').html());
+						$('input[name="medicalFind"]').eq(2).wrap("<div id='wrap'></div>");
+						rightInputItem2 = $('#wrap').html();
+						$('#wrap').replaceWith($('#wrap').html());
+					}
+					rst = temp.length > 0 ? leftInputItem + temp + rightInputItem + values.questionDesc + rightInputItem2 : '';
+				}
+				rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hideAidsHis();parent.symptomInfoIfr('cases_tiJian.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+				var iframe = parent.document.getElementById('aidsHistory');
+				iframe.contentWindow.itemValue = rst;
+				if(iframe.contentWindow.dbclickedSpan){
+					iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+				}else{
+					iframe.contentWindow.setReturnValue();
+				}
+			}
+			backToPreIllWindow();
+		}
+		
+		function backToPreIllWindow(){
+			parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan = null;
+			parent.hideSymptomInfoIfr();
+			parent.showAidsHis();	
+		}
+	</script>
+</head>
+<body>
+	<div id="toolbar" style="text-align:right;width:800px">
+		<button class="btn" id="ok-btn">确定</button>
+		<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+	</div>
+	<form>
+		<table id="table-con" width="800" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="100">体检时发现：</td>
+				<td class="t2" width="500">
+					<input type="radio" name="causesFlag" value="0"/>无
+					<input type="radio" name="causesFlag" value="1" />有
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1">&nbsp;</td>
+				<td class=="t2">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td class="t3" width="80">检查单位：</td>
+							<td width="*"><input type="text" name="experunit" class="text" /></td>
+						</tr>
+						<tr>
+							<td class="t3" valign="top">问题说明：</td>
+							<td><textarea name="questionDesc" class="textarea"></textarea></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

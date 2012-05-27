@@ -1,0 +1,678 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>病案首页_反页</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link type="text/css" rel="stylesheet" href="css/IndexHosptialCss.css"/>
+    <script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript">
+		var pid = null,kid = null;
+		var cutGrade = '<select style="width:50px;border:0;text-align:center">'+
+							'<option value=""></option>'+
+							'<option value="I/甲">I/甲</option>'+
+							'<option value="I/乙">I/乙</option>'+
+							'<option value="I/丙">I/丙</option>'+
+							'<option value="II/甲">II/甲</option>'+
+							'<option value="II/乙">II/乙</option>'+
+							'<option value="II/丙">II/丙</option>'+
+							'<option value="III/甲">III/甲</option>'+
+							'<option value="III/乙">III/乙</option>'+
+							'<option value="III/丙">III/丙</option>'+
+						'</select>';
+		$(function(){
+			kid = App.util.getHtmlParameters('kid');
+			pid = App.util.getHtmlParameters('pid');
+			
+			initTable();
+			setValues();
+			$('*[name="caseId"]').val(kid);
+			
+			$('input[name="tf_variety"]').change(function(){
+				if($('input[name="tf_variety"]').val() == 7){
+						$('#tf_varietyItem').find('input').each(function(){
+							$(this).val(0);	
+						});
+				}	
+			});
+			
+			$('input[name="transfusion"]').change(function(){
+				if($('input[name="transfusion"]').val() == 3){
+						$('input[name="tf_variety"]').val(7);
+						$('#tf_varietyItem').find('input').each(function(){
+							$(this).val(0);	
+						});
+				}	
+			});
+			
+					
+			$('input[name="hunmi"]').change(function(){
+				if($(this).val() == 1){
+					$(this).parent().next().show();
+					$(this).parent().next().next().show();
+				}else{
+					$(this).parent().next().hide();
+					$(this).parent().next().next().hide();
+				}	
+			});
+			
+			$('input[name="followUpClinic"]').change(function(){
+				if($(this).val() == 1){
+					$('input[name="followUpClinic"]').parent().next().show();
+				}else{
+					$('input[name="followUpClinic"]').parent().next().hide();
+				}	
+			});
+			
+			$('input[name="fuc_timelimit_unit"]').click(function(){
+				if($(this).val() == 4){
+					$('input[name="fuc_timelimit"]').val("长期");
+				}else{
+					if($('input[name="fuc_timelimit"]').val()=="长期"){
+							$('input[name="fuc_timelimit"]').val("");
+					}
+				}	
+			});
+		});
+		
+		function initTable(){
+			var _surgery = $('#surgery').find('td').css('border-right','solid 1px #000');
+			$('#icu').find('td').css('border-right','solid 1px #000');
+			initDate();
+		}
+		
+		function initDate(){
+			FormUtil.toDateField({el:$('input[name="tdate"]'), dateFormat:"yyyy-MM-dd"});
+			FormUtil.toDateField({el:$('input[name="tdate2"]'), dateFormat:"yyyy-MM-dd"});
+			FormUtil.toDateField({el:$('input[name="tdate3"]'), dateFormat:"yyyy-MM-dd"});
+			FormUtil.toDateField({el:$('input[name="tdate4"]'), dateFormat:"yyyy-MM-dd"});
+			FormUtil.toDateField({el:$('input[name="tdate5"]'), dateFormat:"yyyy-MM-dd"});
+			
+			FormUtil.toDateField({el:$('input[name="icuTurnInto1"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			FormUtil.toDateField({el:$('input[name="icuTurnInto2"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			FormUtil.toDateField({el:$('input[name="icuTurnInto3"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			//FormUtil.toDateField({el:$('input[name="icuTurnInto4"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			FormUtil.toDateField({el:$('input[name="icuDropOut1"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			FormUtil.toDateField({el:$('input[name="icuDropOut2"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			FormUtil.toDateField({el:$('input[name="icuDropOut3"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			//FormUtil.toDateField({el:$('input[name="icuDropOut4"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+			deliveryTimeDateField({el:$('input[name="deliveryTime"]'), dateFormat:"yyyy-MM-dd HH:mm"});
+		}
+		function deliveryTimeDateField(cfg){
+			var config={
+				el:null,
+				dateFormat:'yyyy-MM-dd'
+			};
+			if(cfg)
+				for(var key in cfg){
+					config[key]=cfg[key];
+				}
+			if(!config.el)	return;
+			config.el.attr('readonly',config.readOnly);
+			var _img='<img align="bottom" src="'+App.App_Info.BasePath+'/PUBLIC/images/calendar.bmp" style="cursor:pointer"/>';
+			$(_img).click(function(){
+				WdatePicker({el:config.el.get(0),dateFmt:config.dateFormat});
+			}).insertAfter(config.el);
+		}
+		function setValues(){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do',
+				{
+					method:'getInHospTwoByCaseId',
+					kid:kid
+				},function(data){
+					if(data.success){
+						
+						if($('select').size() == 0){
+							$('td[name="cutgrade"]').append(cutGrade);
+							$('select').change(function(){
+								$(this).prev().val($(this).val());
+							});
+						}
+						if(data.data==""){
+							return;
+						}
+						var json = JSON.parse(data.data);
+						if(json.hunmi == 2){
+							$('input[name="hunmi"]').parent().next().hide();
+							$('input[name="hunmi"]').parent().next().next().hide();
+						}
+						if(json.followUpClinic == 1){
+							$('input[name="followUpClinic"]').parent().next().show();
+						}else{
+							$('input[name="followUpClinic"]').parent().next().hide();
+						}
+						if(json){
+							FormUtil.setFormValues('form',json);
+						}
+						$('td[name="cutgrade"]').each(function(){
+							$(this).find('select').eq(0).val($(this).find('input').eq(0).val());
+						});
+					}else{
+						if($('select').size() == 0){
+							$('td[name="cutgrade"]').append(cutGrade);
+							$('select').change(function(){
+								$(this).prev().val($(this).val());
+							});
+						}
+						alert("页面初始化失败！");
+					}
+				},'json'
+			);
+		}
+		
+		function SaveData(){
+			var json = FormUtil.getFormValues('form');
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do',
+				{
+					method:'saveOrUpdateInHospTwo',
+					data:JSON.stringify(json)	
+				},function(data){
+					//alert(JSON.stringify(data));
+					if(data.success){
+						var json = JSON.parse(data.data);
+						if(json){
+							alert("保存成功！");	
+							setValues();
+						}
+					}else{
+						alert("保存失败！");						
+					}
+				},'json'
+			);
+		}
+		function isvalidate(){
+			if($('input[name="surgeryName"]').val() == ""){
+				alert('请填写手术操作名称第一项并保存');
+				return -1;
+			}
+			if($('input[name="criticalCare"]').val() == ""){
+				alert('请填写特级护理天数并保存');
+				return -1;
+			}
+			if($('input[name="oneRank"]').val() == ""){
+				alert('请填写Ⅰ级护理天数并保存');
+				return -1;
+			}
+			if($('input[name="twoRank"]').val() == ""){
+				alert('请填写Ⅱ级护理天数并保存');
+				return -1;
+			}
+			if($('input[name="threeRank"]').val() == ""){
+				alert('请填写Ⅲ级护理天数并保存');
+				return -1;
+			}
+			if($('input[name="icu"]').val() == ""){
+				alert('请填写ICU天数并保存');
+				return -1;
+			}
+			if($('input[name="ccu"]').val() == ""){
+				alert('请填写CCU天数并保存');
+				return -1;
+			}
+			if($('input[name="icuName1"]').val() == ""){
+				alert('请填写重症监护室名称第一项并保存');
+				return -1;
+			}
+			if($('input[name="hixi"]').val() == ""){
+				alert('请填写呼吸机使用时间并保存');
+				return -1;
+			}
+			if($('input[name="hunmi"]').val() == ""){
+				alert('请填写昏迷(颅脑损伤患者)并保存');
+				return -1;
+			}
+			if($('input[name="hunmi"]').val() == 1){
+				if($('input[name="hunmi_ruyuanqian_hour"]').val() == "" || $('input[name="hunmi_ruyuanqian_minute"]').val() == "" || $('input[name="hunmi_ruyuanhou_hour"]').val() == "" || $('input[name="hunmi_ruyuanhou_minute"]').val() == ""){
+					alert('请完整填写昏迷时间并保存');
+					return -1;
+				}
+			}
+			if($('input[name="liyuanType"]').val() == ""){
+				alert('请填写离院方式并保存');
+				return -1;
+			}
+			if($('input[name="obstetrics"]').val() == ""){
+				alert('请填写产科情况并保存');
+				return -1;
+			}
+			if($('input[name="obstetrics"]').val() == 1){
+				if($('input[name="obs_checkUp"]').val() == ""){
+					alert('请填写产前检查开始孕周并保存');
+					return -1;
+				}
+				if($('input[name="obs_checkUp_times"]').val() == ""){
+					alert('请填写检查次数并保存');
+					return -1;
+				}
+				if($('input[name="deliveryTime"]').val() == ""){
+					alert('请填写分娩时间并保存');
+					return -1;
+				}
+				if($('input[name="obs_totalTime_hour"]').val() == "" || $('input[name="obs_totalTime_minute"]').val() == ""){
+					alert('请填写总产程时间并保存');
+					return -1;
+				}
+				if($('input[name="deliveryType"]').val() == ""){
+					alert('请填写分娩方式并保存');
+					return -1;
+				}
+				if($('input[name="weight"]').val() == ""){
+					alert('请填写出生体重并保存');
+					return -1;
+				}
+				if($('input[name="birth_position"]').val() == ""){
+					alert('请填写出生胎方位并保存');
+					return -1;
+				}
+				if($('input[name="apgar"]').val() == ""){
+					alert('请填写Apgar评分并保存');
+					return -1;
+				}
+				if($('input[name="obs_amountOfBleeding"]').val() == ""){
+					alert('请填写产后出血量<并保存');
+					return -1;
+				}
+				if($('input[name="healthCare"]').val() == ""){
+					alert('请填写围产保健并保存');
+					return -1;
+				}
+				if($('input[name="gcaaoc"]').val() == ""){
+					alert('请填写计划生育指导并保存');
+					return -1;
+				}
+			}
+			if($('input[name="neonatus"]').val() == ""){
+				alert('请填写新生儿情况并保存');
+				return -1;
+			}
+			if($('input[name="neonatus"]').val() == 1){
+				if($('input[name="neonatus_sex"]').val() == ""){
+					alert('请填写新生儿性别并保存');
+					return -1;
+				}
+				if($('input[name="neonatus_ruyuan_weight"]').val() == ""){
+					alert('请填写入院体重并保存');
+					return -1;
+				}
+				if($('input[name="feedType"]').val() == ""){
+					alert('请填写喂养方式并保存');
+					return -1;
+				}
+				if($('input[name="neonatus_chuyuan_weight"]').val() == ""){
+					alert('请填写出院体重并保存');
+					return -1;
+				}
+				if($('input[name="bcg"]').val() == ""){
+					alert('请填写卡介苗并保存');
+					return -1;
+				}
+				if($('input[name="yigan"]').val() == ""){
+					alert('请填写乙肝疫苗并保存');
+					return -1;
+				}
+				if($('input[name="hibg"]').val() == ""){
+					alert('请填写乙肝免疫球蛋白并保存');
+					return -1;
+				}
+				if($('input[name="neonatus_disease1"]').val() == ""){
+					alert('请填写新生儿疾病诊断第一项并保存');
+					return -1;
+				}
+			}
+			if($('input[name="autopsy"]').val() == ""){
+				alert('请填写尸检并保存');
+				return -1;
+			}
+			if($('input[name="ops_treat_checkUp_dia"]').val() == ""){
+				alert('请填写手术、治疗、检查、诊断为本院第一例并保存');
+				return -1;
+			}
+			if($('input[name="followUpClinic"]').val() == ""){
+				alert('请填写随诊并保存');
+				return -1;
+			}
+			if($('input[name="followUpClinic"]').val() == 1 && $('input[name="fuc_timelimit"]').val() == ""){
+				alert('请填写随诊期限并保存');
+				return -1;
+			}
+			if($('input[name="teach"]').val() == ""){
+				alert('请填写示教病例并保存');
+				return -1;
+			}
+			if($('input[name="bloodType"]').val() == ""){
+				alert('请填写血型并保存');
+				return -1;
+			}
+			if($('input[name="rh"]').val() == ""){
+				alert('请填写Rh并保存');
+				return -1;
+			}
+			if($('input[name="transfusion"]').val() == ""){
+				alert('请填写输血反应并保存');
+				return -1;
+			}
+			if($('input[name="tf_variety"]').val() == ""){
+				alert('请填写输血品种并保存');
+				return -1;
+			}
+			if($('input[name="redBloodCell_unit"]').val() == ""){
+				alert('请填写红细胞并保存');
+				return -1;
+			}
+			if($('input[name="bloodCells"]').val() == ""){
+				alert('请填写血小板并保存');
+				return -1;
+			}
+			if($('input[name="bloodPlasma"]').val() == ""){
+				alert('请填写血浆并保存');
+				return -1;
+			}
+			if($('input[name="wholeBlood"]').val() == ""){
+				alert('请填写全血并保存');
+				return -1;
+			}
+			if($('input[name="auto_blood"]').val() == ""){
+				alert('请填写自体回收并保存');
+				return -1;
+			}
+			if($('input[name="other_blood"]').val() == ""){
+				alert('请填写其它并保存');
+				return -1;
+			}
+			return 1;
+		}
+		function printPage(){
+	//		location.href="print/InHosptialTwo_print.html?kid=" + kid + "&pid=" + pid;
+			if(isvalidate() == -1)return;
+			document.getElementById("printPage").src = "print/InHosptialTwo_print.html?kid=" + kid + "&pid=" + pid;
+		}
+	</script>
+  </head>
+  
+  <body>
+  		<IFRAME name="printPage" id="printPage" width=0px height=0px src=""></IFRAME>
+  		<form>
+  			<div>
+		    	<p>&nbsp;</p>
+		    	<p>&nbsp;</p>
+		    	<table class="head" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		    		<tr>
+		    			<td colspan="5" class="noTd">医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+		    		</tr>
+		    		<tr><td colspan="5" class="noTd">&nbsp;</td></tr>
+		    		<tr>
+						<td class="noTd" colspan="5" align="center">
+							<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+						</td>	
+					</tr>
+					<tr>
+						<td class="noTd" colspan="5">&nbsp;
+							<input type="hidden" name="id" value=""/>
+							<input type="hidden" name="caseId" value=""/>
+						</td>
+					</tr>
+					<tr>
+						<td class="noTd" align="center" colspan="5" style="line-height:27px;">
+							<b style="font-size:20px;font-family:'黑体'">住  院  病  案  首  页</b>
+						</td>
+					</tr>
+		    	</table>
+		    </div>
+  			<div>
+    			 <table id="surgery" align="center" border="0" style="border-bottom:none;border-right:0px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+    				<tr align="center">
+						<td rowspan="2" width="60px;">手术操<br>作编码</td>
+						<td rowspan="2" width="70px;">手术操<br>作日期</td>
+						<td rowspan="2" width="130px;">手术操作名称</td>
+						<td colspan="3" width="115px;" style="text-align:center">手术操作医师</td>
+						<td rowspan="2" width="60px;">麻醉方式</td>
+						<td rowspan="2" width="35px;">切口愈合等级</td>
+						<td rowspan="2" width="37px;">麻醉医师</td>
+					</tr>
+					<tr align="center">
+						<td width="35px;">术者</td>
+						<td width="35px;">Ⅰ助</td>
+						<td width="35px;">Ⅱ助</td>
+					</tr>
+					<tr>
+						<td><input type="text" name="operationNo" maxlength="8" style="width:100%;"/></td>
+						<td><input type="text" name="tdate" style="width:65px"/></td>
+						<td><input maxlength="19" type="text" name="surgeryName" style="width:100%;" /></td>
+						<td><input name="surgeryDocName" maxlength="3" style="width:40px;"></input></td>
+						<td><input name="surgeryAssistant1" maxlength="3" style="width:40px;"></input></td>
+						<td><input name="surgeryAssistant2" maxlength="3" style="width:40px;"></input></td>
+						<td><input name="anesthesiaMode" maxlength="7" style="width:60px;"></input></td>
+						<td name="cutgrade"><input type="text" name="cut" maxlength="5" value="" style="width:30px;border:0;text-align:center;display:none;"/></td>
+						<td><input name="anesthesiologist" maxlength="3" style="width:42px;"></input></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="operationNo2" maxlength="8" style="width:100%;"/></td>
+						<td><input type="text" name="tdate2" style="width:65px"/></td>
+						<td><input maxlength="19" type="text" name="surgeryName2" style="width:100%;" /></td>
+						<td><input name="surgeryDocName2" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant21" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant22" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="anesthesiaMode2" maxlength="7" style="width:60px;"></input></td>
+						<td name="cutgrade"><input type="text" name="cut2" maxlength="5" value="" style="width:30px;border:0;text-align:center;display:none;"/></td>
+						<td><input name="anesthesiologist2" maxlength="3" style="width:42px;"></input></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="operationNo3" maxlength="8" style="width:100%;"/></td>
+						<td><input type="text" name="tdate3" style="width:65px"/></td>
+						<td><input maxlength="19" type="text" name="surgeryName3" style="width:100%;" /></td>
+						<td><input name="surgeryDocName3" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant31" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant32" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="anesthesiaMode3" maxlength="7" style="width:60px;"></input></td>
+						<td name="cutgrade"><input type="text" name="cut3" maxlength="5" value="" style="width:30px;border:0;text-align:center;display:none;"/></td>
+						<td><input name="anesthesiologist3" maxlength="3" style="width:42px;"></input></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="operationNo4" maxlength="8" style="width:100%;"/></td>
+						<td><input type="text" name="tdate4" style="width:65px"/></td>
+						
+						<td><input maxlength="19" type="text" name="surgeryName4" style="width:100%;" /></td>
+						<td><input name="surgeryDocName4" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant41" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant42" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="anesthesiaMode4" maxlength="7" style="width:60px;"></input></td>
+						<td name="cutgrade"><input type="text" name="cut4" maxlength="5" value="" style="width:30px;border:0;text-align:center;display:none;"/></td>
+						<td><input name="anesthesiologist4" maxlength="3" style="width:42px;"></input></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="operationNo5" maxlength="8" style="width:100%;"/></td>
+						<td><input type="text" name="tdate5" style="width:65px"/></td>						
+						<td><input maxlength="19" type="text" name="surgeryName5" style="width:100%;" /></td>
+						<td><input name="surgeryDocName5" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant51" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="surgeryAssistant52" maxlength="3" style="width:42px;"></input></td>
+						<td><input name="anesthesiaMode5" maxlength="7" style="width:60px;"></input></td>
+						<td name="cutgrade"><input type="text" name="cut5" maxlength="5" value="" style="width:30px;border:0;text-align:center;display:none;"/></td>
+						<td><input name="anesthesiologist5" maxlength="3" style="width:42px;"></input></td>
+					</tr>
+					<tr>
+						<td style="font-size:12px;">护理级别/天</td>
+						<td colspan="8">
+								特级护理<input type="text" maxlength="3" style="width:25px;" name="criticalCare"/>天;
+								Ⅰ级护理<input type="text" maxlength="3" style="width:25px;" name="oneRank" />天;
+								Ⅱ级护理<input type="text" maxlength="3" style="width:25px;" name="twoRank" />天;&nbsp;
+								Ⅲ级护理<input type="text" maxlength="3" style="width:25px;" name="threeRank"/>天。
+							<span>ICU<input type="text" maxlength="3" style="width:20px;" name="icu" />天;&nbsp;&nbsp;CCU<input type="text" maxlength="3" class="line" name="ccu" style="width:25px;"/>天</span>
+						</td>
+					</tr>
+    			</table>
+    			<table id="icu" align="center" border="0" style="border-top:none;border-right:0px;border-bottom:0px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+    				<tr align="center">
+						<td width="210">重症监护室名称</td>
+						<td width="195">进入时间(_年_月_日_时_分)</td>
+						<td width="195">退出时间(_年_月_日_时_分)</td>
+					</tr>
+					<tr>
+						<td><input type="text" name="icuName1" maxlength="18" style="width:210px;"/></td>
+						<td><input type="text" name="icuTurnInto1"/></td>
+						<td><input type="text" name="icuDropOut1"/></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="icuName2" maxlength="18" style="width:210px;"/></td>
+						<td><input type="text" name="icuTurnInto2"/></td>
+						<td><input type="text" name="icuDropOut2"/></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="icuName3" maxlength="18" style="width:210px;"/></td>
+						<td><input type="text" name="icuTurnInto3"/></td>
+						<td><input type="text" name="icuDropOut3"/></td>
+					</tr>
+    			</table>
+    			<table align="center" border="0" style="border-top:none;" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+    				<tr>
+						<td colspan="4">
+							呼吸机使用时间<input type="text" maxlength="4" style="width:30px;" name="hixi"/>小时。
+							<span>昏迷(颅脑损伤患者)：<input type="text" style="width:25px;" maxlength="1" name="hunmi"/>&nbsp;&nbsp;1.是&nbsp;2.否</span>
+							<span>&nbsp;&nbsp;昏迷时间(颅脑损伤患者)入院前<input type="text" maxlength="4" style="width:30px;" name="hunmi_ruyuanqian_hour"/>小时<input type="text" style="width:20px;" maxlength="2" name="hunmi_ruyuanqian_minute"/>分钟</span>&nbsp;&nbsp;&nbsp;
+							<span>&nbsp;&nbsp;入院后<input type="text" maxlength="4" name="hunmi_ruyuanhou_hour" style="width:30px;" />小时<input type="text" style="width:20px;" maxlength="2" name="hunmi_ruyuanhou_minute"/>分钟</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>离院方式：<input type="text" maxlength="1" style="width:20px;" name="liyuanType" /></span>
+							<span style="margin-left:32px;">1.转院</span>
+							<span style="margin-left:15px;">转入医院的机构名称：<input type="text" name="shiftTo" style="width:200px;"/></span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span style="margin-left:120px;">2.非医嘱离院</span>
+							<span style="margin-left:15px;">3.转社区卫生服务机构</span>
+							<span style="margin-left:15px;">4.回常驻地</span>
+							<span style="margin-left:15px;">5.死亡</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>产科情况：<input type="text" style="width:20px;" maxlength="1" name="obstetrics"/></span>1.有 2.无&nbsp;&nbsp;
+							<span>
+								产前检查开始孕周<input type="text" style="width:25px;" maxlength="2" name="obs_checkUp" style="width:30px;"/>周
+							</span>
+							<span>检查次数<input type="text" style="width:25px;" maxlength="2" name="obs_checkUp_times" style="width:30px;"/>次</span>
+							<span>分娩时间<input type="text" name="deliveryTime" style="width:100px;"/></span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span class="row" style="margin-left:25px;">产程：总产程时间<input maxlength="2" type="text" style="width:20px;" name="obs_totalTime_hour"/>&nbsp;小时&nbsp;<input maxlength="2" type="text" style="width:20px;" name="obs_totalTime_minute"/>&nbsp;分钟</span>
+							<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分娩方式<input type="text" maxlength="6" style="width:50px;" name="deliveryType"/>&nbsp;&nbsp;1.自娩&nbsp;2.剖宫产&nbsp;3.阴道助产</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span style="margin-left:25px;">出生体重<input type="text" style="width:50px;" maxlength="14" name="weight"/>克</span>
+							<span class="row">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出生胎方位<input maxlength="10" type="text" class="line" name="birth_position" style="width:100px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apgar评分<input type="text" style="width:50px;" name="apgar"/>分</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span style="margin-left:25px;">产后出血量<input type="text" maxlength="5" style="width:50px;" name="obs_amountOfBleeding"/>&nbsp;ml</span>
+							<span>&nbsp;&nbsp;&nbsp;&nbsp;围产保健：<input type="text" maxlength="6" style="width:20px;" name="healthCare"/>&nbsp;1.本市&nbsp;2.外阜</span>
+							<span>&nbsp;&nbsp;&nbsp;&nbsp;计划生育指导：<input type="text" maxlength="4" style="width:20px;" name="gcaaoc" />&nbsp;1.有&nbsp;2.无</span>
+						</td>
+						</tr>
+					<tr>
+						<td colspan="9">
+							<span>新生儿情况：<input type="text" name="neonatus" maxlength="1" style="width:20px;"/>1.有 2.无
+							<span>性别：<input type="text" maxlength="6" style="width:20px;" name="neonatus_sex" style="width:30px;"/>&nbsp;1.男&nbsp;2.女</span>
+							<span>入院体重<input type="text" maxlength="20" style="width:35px;" name="neonatus_ruyuan_weight"/>克</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="9">
+							<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喂养方式：<input type="text" maxlength="8" name="feedType" style="width:20px;"/>1.母乳 2.混合 3.人工</span>
+							<span style="margin-left:10px;">出院体重<input type="text" style="width:35px;" maxlength="20" name="neonatus_chuyuan_weight"/>克</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卡介苗：<input type="text" style="width:20px;" maxlength="6" name="bcg"/>&nbsp;1.接种&nbsp;&nbsp;2.未接种
+							<span>&nbsp;&nbsp;乙肝疫苗：<input type="text" maxlength="6" style="width:20px;" name="yigan" />&nbsp;1.接种&nbsp;&nbsp;2.未接种</span>
+							<span>&nbsp;&nbsp;乙肝免疫球蛋白：<input type="text" maxlength="6" style="width:20px;" name="hibg" />&nbsp;1.注射&nbsp;&nbsp;2.未注射</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							新生儿疾病诊断 1.<input type="text" name="neonatus_disease1" maxlength="38" style="width:78%"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span style="margin-left:97px;">2.<input type="text" name="neonatus_disease2" maxlength="38" style="width:78%"/></span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span style="margin-left:97px;">3.<input type="text" name="neonatus_disease3" maxlength="38" style="width:78%"/></span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>尸检：<input type="text" style="width:25px;" maxlength="1" name="autopsy"/>&nbsp;&nbsp;1.是&nbsp;&nbsp;2.否</span>
+							<span style="margin-left:50px;">手术、治疗、检查、诊断为本院第一例<input type="text" style="width:25px;" maxlength="1" name="ops_treat_checkUp_dia"/>&nbsp;&nbsp;1.是&nbsp;&nbsp;2.否</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>随诊：<input type="text" style="width:20px;" maxlength="1" name="followUpClinic"/>&nbsp;1.是&nbsp;&nbsp;2.否</span>
+							<span style="margin-left:40px;display:none;">
+								随诊期限<input type="text" maxlength="2" style="width:26px;" name="fuc_timelimit"/>
+								<input type="radio" name="fuc_timelimit_unit" style="border:0" value="1"/>周
+								<input type="radio" name="fuc_timelimit_unit" style="border:0" value="2"/>月
+								<input type="radio" name="fuc_timelimit_unit" style="border:0" value="3"/>年
+								<input type="radio" name="fuc_timelimit_unit" style="border:0" value="4"/>长期
+							</span>
+							<span style="margin-left:40px;">示教病例：<input type="text" style="width:20px;" maxlength="1" name="teach"/>&nbsp;1.是&nbsp;&nbsp;2.否</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>血型：<input type="text" style="width:10px;" maxlength="1" name="bloodType"/>1.A&nbsp;&nbsp;2.B&nbsp;&nbsp;3.AB&nbsp;&nbsp;4.O&nbsp;&nbsp;5.其它&nbsp;&nbsp;6.未作&nbsp;&nbsp;7.待回报&nbsp;&nbsp;&nbsp;</span>
+							<span style="padding-left:2%">Rh：<input type="text" style="width:10px;" maxlength="1" name="rh"/>&nbsp;1.阴&nbsp;&nbsp;2.阳&nbsp;&nbsp;3.未作&nbsp;&nbsp;4.待回报</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<span>输血反应：<input name="transfusion" type="text" style="width:10px;" maxlength="1"/>&nbsp;1.有&nbsp;&nbsp;2.无&nbsp;&nbsp;3.未输&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							<span> 
+								输血品种:<input name="tf_variety" type="text" style="width:50px;" />&nbsp;
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td id="tf_varietyItem" colspan="4">
+							<span> 
+								1.红细胞<input type="text" maxlength="2" style="width:21px;" name="redBloodCell_unit">单位&nbsp; 
+								2.血小板</span><span><input type="text" maxlength="2" style="width:16px;" name="bloodCells"></span>
+								<span>袋&nbsp;3.血浆<input type="text" maxlength="5" name="bloodPlasma" style="width:34px;"/>ml&nbsp; 
+								4.全血<input type="text" maxlength="5" class="line" name="wholeBlood" style="width:34px;"/>ml&nbsp;
+								5.自体回收<input type="text" maxlength="5" style="width:34px;" name="auto_blood"/>ml &nbsp;
+								6.其它<input type="text" maxlength="5" style="width:31px;" name="other_blood"/>ml&nbsp;&nbsp;7.未输 
+							</span>
+						</td>
+					</tr>
+    			</table>
+    		</div>
+  		</form>
+  		<table align="center" class="head">
+			<tr>
+				<td style="border-bottom:none;">
+					说明：医疗付款方式：1.社会基本医疗保险(补充保险、特大病保险) 2.商业保险 3.自费 4.公费 5.大病
+									统筹 6.其它。年龄：年龄不足一周岁的患儿，要求按实际天数填写。 新生儿体重：空格内填入
+									四位数，精确到10克；活产儿为产后一小时内、入院新生儿为入院当日体重
+				</td>
+			</tr>
+		</table>
+  </body>
+</html>

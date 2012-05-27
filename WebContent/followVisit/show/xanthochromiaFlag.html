@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>黄染</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _value = document.getElementById("xanthochromiaDegree").value;
+		var _answer = document.getElementById("xanthochromiaBehavior").value;
+		var _sum="";
+		
+		if(_value!=null&&_value!="" && _answer!=null&&_answer!=""){
+			_sum=_value+","+_answer;
+		}else if(_value!=null&&_value!=""){
+			_sum = _value;
+		}else if(_answer!=null&&_answer!=""){
+			_sum=_answer;
+		}
+		window.returnValue = _sum;
+		window.close();
+}
+</script>
+</head>
+
+<body>
+	<table width="511" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="156" align="right">程度：</td>
+        <td width="58">
+        	<select name="xanthochromiaDegree" id="xanthochromiaDegree">
+            	<option value=""></option>
+                <option value="轻度">轻度</option>
+                <option value="中度">中度</option>
+                <option value="重度">重度</option>
+            </select>
+        
+        </td>
+        <td width="61" align="right">表现：</td>
+        <td width="220">
+        	<select name="xanthochromiaBehavior" id="xanthochromiaBehavior" >
+            	<option value=""></option>
+                <option value="巩膜黄染">巩膜黄染</option>
+                <option value="皮肤黄染">皮肤黄染</option>
+                <option value="粘膜黄染">粘膜黄染</option>
+            </select>  
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

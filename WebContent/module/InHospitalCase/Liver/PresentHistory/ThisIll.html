@@ -1,0 +1,1045 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>本次发病</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<style type="text/css">
+.sortdiv{
+	border:solid 1px #666;
+	width:100px;
+	height:220px;
+	overflow-y:scroll;
+}
+.sortdiv ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+.sortdiv ul li{
+	cursor:default;
+	line-height:22px;
+	text-align:center;
+}
+td{
+	font-size:12px;
+}
+td.title{
+	font-size:12px;
+	letter-spacing:2px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	$('#id').data('data',window.dialogArguments);
+	initPage();
+	setValue();
+	{
+		var text='';
+		$('input[type="text"],textarea,input[type="radio"]').each(function(){
+			text+='private String '+this.name+';\n';
+		});
+		$('textarea[name="otherCurrent"]').val(text);
+	}
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-IllThis'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="time"]'),dateFormat:'yyyy-MM-dd',readOnly:false});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==1){
+				tr.show();
+			}else{
+				tr.hide();
+			}
+		});
+	});
+	var sortStareTr=0;
+	var sortEndTr=0;
+	$('#table-con > tbody >tr').each(function(i){
+		if($(this).text()=='主要症状'){
+			sortStareTr=i;
+		}else if($(this).text()=='伴随症状'){
+			sortEndTr=i;
+			return false;
+		}
+	});
+	$('#table-con > tbody >tr').filter(function(i){
+		return i>sortStareTr&&i<sortEndTr&&$(this).attr('class')!='hidden';
+	}).each(function(){
+		var radio=$(this).find('input[type="radio"]');
+		var _code=radio.eq(0).attr('name');
+		var _text=$(this).find('td').eq(0).text().replace('：','');
+		$('#naga-ul').append('<li name="'+_code+'" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left;"></span><span>'+_text+'</span></li>');
+		radio.click(addToSortable);
+	});
+	//体重事件
+	$('input[name="bodyWeight"]').unbind('click');
+	$('input[name="bodyWeight"]').click(function(){
+		var _val=$(this).val();
+		if(_val==1){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('增加');
+		}else if(_val==2){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('减轻');
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//诱因事件
+	$('input[name="causesFlag"]').unbind('click');
+	$('input[name="causesFlag"]').click(function(){
+		var _val=$(this).val();
+		if(_val==1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+}
+function setValue(){
+	var json=$('#id').data('data')['illThis'];
+	if(!json)	return;
+	FormUtil.setFormValues('form',json);
+	$('input[type="radio"]').each(function(){
+		if(this.checked){
+			$(this).click();
+		}
+	});
+	if(json.order_positive&&json.order_negative&&(json.order_positive.length>0||json.order_negative.length>0)){
+		var li=$('#naga-ul li');
+		var posiArray=[];
+		var nagaArray=[];
+		$.each(json.order_positive.split(','),function(){
+			var _code=this;
+			$.each(li,function(){
+				if(this.name==_code){
+					var _text=$(this).find('span').eq(1).text();
+					posiArray.push($('<li name="'+this.name+'" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left;"></span><span>'+_text+'</span></li>'));
+					return false;
+				}
+			});
+		});
+		$.each(json.order_negative.split(','),function(){
+			var _code=this;
+			$.each(li,function(){
+				if(this.name==_code){
+					var _text=$(this).find('span').eq(1).text();
+					nagaArray.push($('<li name="'+this.name+'" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left;"></span><span>'+_text+'</span></li>'));
+					return false;
+				}
+			});
+		});
+		$('#naga-ul li').remove();
+		$('#posi-ul li').remove();
+		$.each(posiArray,function(){
+			this.appendTo($('#posi-ul'));
+		});
+		$.each(nagaArray,function(){
+			this.appendTo($('#naga-ul'));
+		});
+		initSortable();
+	}else{
+		$('#posi-ul').append($('#naga-ul li'));
+	}
+}
+function addToSortable(){
+	var _code=$(this).attr('name');
+	var _text=$(this).parent().prev().text();
+	if($(this).val()!=0){
+		var _li=$('#posi-ul').find('li[name="'+_code+'"]');
+		if(_li.size()>0)
+			$('#naga-ul').append(_li);
+	}else{
+		var _li=$('#naga-ul').find('li[name="'+_code+'"]');
+		if(_li.size()>0)
+			$('#posi-ul').append(_li);
+	}
+	initSortable();
+}
+function backDefaultSort(){
+	var posiArray=[];
+	var nagaArray=[];
+	$('input[type="checkbox"]').filter(function(){
+		return this.name.indexOf('dabian_')==-1;
+	}).each(function(i){
+		var _name=this.name;
+		$('#naga-ul li').each(function(){
+			var _code=this.name;
+			if(_code==_name){
+				var _text=$(this).find('span').eq(1).text();
+				nagaArray.push($('<li name="'+_code+'" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left;"></span><span>'+_text+'</span></li>'));
+			}
+		});
+		$('#posi-ul li').each(function(){
+			var _code=this.name;
+			if(_code==_name){
+				var _text=$(this).find('span').eq(1).text();
+				posiArray.push($('<li name="'+_code+'" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left;"></span><span>'+_text+'</span></li>'));
+			}
+		});
+	});
+	$('#naga-ul li').remove();
+	$('#posi-ul li').remove();
+	$.each(posiArray,function(){
+		this.appendTo($('#posi-ul'));
+	});
+	$.each(nagaArray,function(){
+		this.appendTo($('#naga-ul'));
+	});
+	initSortable();
+}
+function initSortable(){
+	$("#naga-ul").sortable();
+	$("#naga-ul").disableSelection();
+	$("#posi-ul").sortable();
+	$("#posi-ul").disableSelection();
+}
+function okClick(){
+	var json=FormUtil.getFormValues('form');
+	var order_negative='';
+	var order_positive='';
+	$("#posi-ul li").each(function(){
+		order_positive+=this.name+',';
+	});
+	$("#naga-ul li").each(function(){
+		order_negative+=this.name+',';
+	});
+	if(order_negative.length>0){
+		order_negative=order_negative.substr(0,order_negative.length-1);
+	}
+	if(order_positive.length>0){
+		order_positive=order_positive.substr(0,order_positive.length-1);
+	}
+	json.order_positive=order_positive;
+	json.order_negative=order_negative;
+	if(!ValidForm(json))
+		return;
+	var data=$('#id').data('data');
+	$.extend(data.illThis,json);
+	window.returnValue={
+		values:data,
+		compose:Compose(json)
+	};
+	window.close();
+}
+function ValidForm(json){
+	if(typeof json.otherTimeCausesFlag=='undefined'||json.otherTimeCausesFlag==0){
+		if(json.time.length==0){
+			alert('发病时间不能为空。');
+			return false;
+		}
+		if(typeof json.timeUnit=='undefined'){
+			alert('发病时间单位不能为空。');
+			return false;
+		}
+	}else if(json.otherTimeCausesFlag==1){
+		if(json.otherTimeCauses.length==0){
+			alert('发病时间与发病诱因其它未填写。');
+			return false;
+		}
+	}
+	var temp=false;
+	$('#posi-ul li,#naga-ul li').each(function(){
+		var val=json[$(this).attr('name')];
+		if(typeof val=='undefined'){
+			alert($(this).text()+'不能为空。');
+			temp=true;
+			return false;
+		}
+	});
+	if(temp)
+		return false;
+	if(json.treatmentDesc.length==0){
+		alert('诊疗经过不能为空。');
+		return false;
+	}
+}
+function Compose(json){
+	var rst='';
+	//时间诱因
+	var tempValue=json.time+'';
+	rst+=tempValue.length>0?(tempValue+getRowValue('timeUnit',json.timeUnit)+'前'):'';
+	tempValue=json.causes;
+	if(tempValue.length>0){
+		if(tempValue=='无明显诱因'||tempValue=='体检时'){
+		}else{
+			tempValue=tempValue+'后';
+		}
+		rst+=tempValue;
+	}
+	//主要症状
+	var _nagaStr='';
+	$.each(json.order_negative.split(','),function(){
+		_nagaStr+=ComposeMainSysptom(this,json);
+	});
+	if(_nagaStr.length>0){
+		_nagaStr='出现'+_nagaStr;
+	}
+	var _posiStr='';
+	$.each(json.order_positive.split(','),function(){
+		_posiStr+=ComposeMainSysptom(this,json);
+	});
+	if(_posiStr.length>0){
+		_posiStr='无'+_posiStr.replaceAll('，','、');
+		_posiStr=_posiStr.substr(0,_posiStr.length-1)+'。';
+	}
+	rst+=_nagaStr+_posiStr;
+	//伴随症状
+	rst+=json.sideSysptomDesc;
+	//诊疗经过
+	if(json.treatmentDesc.length>0){
+		rst+='\n    '+json.treatmentDesc;
+	}
+	//目前状况
+	rst+='\n    '+ComposeCurrentStatu(json);
+	return '    '+rst;
+}
+function ComposeCurrentStatu(json){
+	var rst='';
+	var tempValue='';
+	rst+='患者自发病以来，';
+	rst+='精神'+getRowValue('spiritStatu',json.spiritStatu)+'，';
+	tempValue=json.positiveSysptom;
+	tempValue=tempValue.length>0?('无'+tempValue+'，'):'';
+	rst+=tempValue;
+	rst+='食量'+getRowValue('eatVolume',json.eatVolume)+'，';
+	rst+='睡眠'+getRowValue('sleep',json.sleep)+'，';
+	rst+='小便'+getRowValue('piss',json.piss)+'，';
+	rst+='大便'+getRowValue('excrement',json.excrement)+'，';
+	tempValue=getRowValue('bodyWeight',json.bodyWeight);
+	if(tempValue=='无变化'){
+		rst+='体重无变化，';
+	}else if(tempValue=='增加'){
+		tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'增加'+json.bodyWeight_kg+'Kg，';
+		rst+='体重'+tempValue;
+	}else if(tempValue=='减轻'){
+		tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'减轻'+json.bodyWeight_kg+'Kg，';
+		rst+='体重'+tempValue;
+	}
+	rst=rst.substr(0,rst.length-1)+'。';
+	return rst;
+}
+function ComposeMainSysptom(code,json){
+	var value=json[code];
+	var rst='';
+	var temp='';
+	if(code=='fali'){
+		rst='乏力，';
+	}else if(code=='fansuan'){
+		rst='反酸，';
+	}else if(code=='yanyou'){
+		rst='厌油，';
+	}else if(code=='tunyan'){
+		rst='吞咽困难，';
+	}else if(code=='exin'){
+		rst='恶心，';
+	}else if(code=='xiaohua'){
+		rst='消化不良';
+	}else if(code=='aiqi'){
+		rst='嗳气，';
+	}else if(code=='fuzhang'){
+		rst='腹胀，';
+	}else if(code=='shiyu'){
+		rst='食欲减退，';
+	}else if(code=='ouxue'){
+		rst='呕血，';
+	}else if(code=='shishao'){
+		if(value==1){
+			rst='食少、';
+			temp=getRowValue('shishao_performance',json.shishao_performance);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=getRowValue('shishao_reduce',json.shishao_reduce);
+			rst+=temp.length>0?('减少至正常食量的'+temp+'、'):'';
+			rst=rst.substr(0,rst.length-1)+'，';
+		}else{
+			rst='食少，';
+		}
+	}else if(code=='outu'){
+		if(value==1){
+			rst='呕吐、';
+			temp=getRowValue('outu_shape',json.outu_shape);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=getRowValue('outu_thing',json.outu_thing);
+			rst+=temp.length>0?('呕吐物为'+temp+'、'):'';
+			temp=json.outu_countDay;
+			rst+=temp.length>0?('每天'+temp+'次、'):'';
+			temp=json.outu_volumeDay;
+			rst+=temp.length>0?('每次'+temp+'ml、'):'';
+			temp=json.outu_countTotal;
+			rst+=temp.length>0?('总共'+temp+'次、'):'';
+			temp=json.outu_volumeTotal;
+			rst+=temp.length>0?('总量'+temp+'ml、'):'';
+			rst=rst.substr(0,rst.length-1)+'，';
+		}else{
+			rst='呕吐，';
+		}
+	}else if(code=='futong'){
+		if(value==1){
+			rst='腹痛、';
+			var ttemp=getRowValue('futong_position',json.futong_position);
+			ttemp+=getRowValue('futong_performance',json.futong_performance);
+			rst+=ttemp.length>0?(ttemp+'、'):'';
+			temp=getRowValue('futong_rate',json.futong_rate);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=getRowValue('futong_change',json.futong_change);
+			rst+=temp.length>0?('病情'+temp+'、'):'';
+			rst=rst.substr(0,rst.length-1)+'，';
+		}else{
+			rst='腹痛，';
+		}
+	}else if(code=='dabian'){
+		if(value==1){
+			rst='大便异常、';
+			var posi=[];
+			var naga=[];
+			if(json.dabian_fuxie==1){
+				posi.push('腹泻');
+			}else{
+				naga.push('腹泻');
+			}
+			if(json.dabian_huibai==1){
+				posi.push('灰白便');
+			}else{
+				naga.push('灰白便');
+			}
+			if(json.dabian_hei==1){
+				posi.push('黑便');
+			}else{
+				naga.push('黑便');
+			}
+			if(json.dabian_bmi==1){
+				posi.push('便秘');
+			}else{
+				naga.push('便秘');
+			}
+			if(json.dabian_xue==1){
+				posi.push('便血');
+			}else{
+				naga.push('便血');
+			}
+			if(json.dabian_liji==1){
+				posi.push('里急后重');
+			}else{
+				naga.push('里急后重');
+			}
+			if(posi.length>0){
+				rst+=posi.join('、')+'、';
+			}
+			temp=getRowValue('dabian_color',json.dabian_color)+getRowValue('dabian_shape',json.dabian_shape);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=json.dabian_countDay;
+			rst+=temp.length>0?('每天'+temp+'次、'):'';
+			temp=json.dabian_volumeDay;
+			rst+=temp.length>0?('每次'+temp+'ml、'):'';
+			temp=json.dabian_countTotal;
+			rst+=temp.length>0?('总共'+temp+'次、'):'';
+			temp=json.dabian_volumeTotal;
+			rst+=temp.length>0?('总量'+temp+'ml、'):'';
+			rst=rst.substr(0,rst.length-1)+'，';
+		}else{
+			rst='大便异常，';
+		}
+	}else if(code=='niaoye'){
+		if(value==1){
+			temp=getRowValue('niaoye_color',json.niaoye_color);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=getRowValue('niaoye_volume',json.niaoye_volume);
+			var total=json.niaoye_volumeTotal;
+			if(temp=='无变化'){
+				rst+='尿量无变化、';
+				rst+=total.length>0?('总量为'+total+'ml/天、'):'';
+			}else if(temp=='多尿'){
+				rst+=total.length>0?('尿量增加至'+total+'ml/天、'):'多尿、';
+			}else if(temp=='少尿'){
+				rst+=total.length>0?('尿量减少至'+total+'ml/天、'):'少尿、';
+			}else if(temp=='无尿'){
+				rst+='无尿、';
+			}
+			rst=rst.length>0?(rst.substr(0,rst.length-1)+'，'):'小便异常，';
+		}else{
+			rst='尿液改变，';
+		}
+	}else if(code=='xiazhi'){
+		if(value==1){
+			temp=getRowValue('xiazhi_position',json.xiazhi_position);
+			var ttemp=getRowValue('xiazhi_degree',json.xiazhi_degree);
+			if(ttemp.length>0){
+				rst+=temp+ttemp+'，';
+			}else{
+				if(temp.length>0){
+					rst=temp+'浮肿，'
+				}else{
+					rst='下肢浮肿';
+				}
+			}
+		}else{
+			rst='下肢浮肿，';
+		}
+	}else if(code=='fare'){
+		if(value==1){
+			rst='发热、';
+			temp=getRowValue('fare_type',json.fare_type);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=json.fare_topt;
+			rst+=temp.length>0?('最高体温'+temp+'℃、'):'';
+			temp=getRowValue('fare_performance',json.fare_performance);
+			rst+=temp.length>0?('呈'+temp+'、'):'';
+			temp=getRowValue('fare_side',json.fare_side);
+			rst+=temp.length>0?(temp+'、'):'';
+			rst=rst.substr(0,rst.length-1)+'，';
+		}else{
+			rst='发热，';
+		}
+	}else if(code=='huangran'){
+		if(value==1){
+			temp=getRowValue('huangran_degree',json.huangran_degree);
+			var ttemp=getRowValue('huangran_performance',json.huangran_performance);
+			if(ttemp.length==0){
+				rst=temp+'黄染，';
+			}else{
+				rst=temp+ttemp+'，';
+			}
+		}else{
+			rst='黄染，';
+		}
+	}else if(code=='shenzhi'){
+		if(value==1){
+			temp=getRowValue('shenzhi_performance',json.shenzhi_performance);
+			rst+=temp.length>0?(temp+'、'):'';
+			temp=getRowValue('shenzhi_answer',json.shenzhi_answer);
+			rst+=temp.length>0?(temp+'、'):'';
+			rst=rst.length>0?(rst.substr(0,rst.length-1)+'，'):'神志改变，';
+		}else{
+			rst='神志改变，';
+		}
+	}else if(code=='xingwei'){
+		if(value==1){
+			temp=getRowValue('xingwei_performance',json.xingwei_performance);
+			rst=temp.length>0?temp+'，':'行为异常，';
+		}else{
+			rst='行为异常，';
+		}
+	}
+	return rst;
+}
+function ShowSideSys(){
+	var returnValue=window.showModalDialog('PresentIllness_side.html',$('#id').data('data').illThis,'dialogWidth:620px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		$('textarea[name="sideSysptomDesc"]').html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.illThis=returnValue.values;
+		$('#id').data('data',_data);
+	}
+}
+function ShowTreat(){
+	var returnValue=window.showModalDialog('PresentIllness_treat.html',$('#id').data('data').treats,'dialogWidth:620px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+	if(returnValue){
+		$('textarea[name="treatmentDesc"]').html(returnValue.compose);
+		var _data=$('#id').data('data');
+		_data.treats=returnValue.values;
+		$('#id').data('data',_data);
+	}
+}
+function showHideOrder(_this){
+	var _tr=$(_this).parent().parent().next();
+	if(_tr.css('display')=='none'){
+		_tr.show();
+		$(_this).html('隐藏');
+	}else{
+		_tr.hide();
+		$(_this).html('显示');
+	}
+}
+</script>
+</head>
+<body>
+<div id="sort-div" style="position:absolute;right:0;top:160px;background:#FFF;z-index:99">
+	<div style="line-height:25px;border:solid 1px #000;border-bottom:none;font-weight:bold;color:#400040;text-align:center">阳性症状排序</div>
+	<div class="sortdiv"><ul id="naga-ul"></ul></div>
+	<div class="sortdiv" style="display:none"><ul id="posi-ul"></ul></div>
+</div>
+<div id="toolbar" style="text-align:right;width:600px">
+	<button class="btn" id="ok-btn" onclick="okClick()">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<form style="margin:0;padding:0;">
+<input type="hidden" id="id" name="id" value=""/>
+<table id="table-con" width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=2 class="title">发病时间与发病诱因</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">发病时间：</td>
+		<td class="t2" width="500"><input name="time" type="text" class="text" style="width:80px"/>
+					   <input name="timeUnit" type="text" class="select" style="width:60px"/>
+					   <input name="timeUnitSuffix" type="text" class="select" style="width:60px"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">发病诱因：</td>
+		<td class="t2">
+			<input type="radio" name="causesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="causes" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它事件：</td>
+		<td class="t2">
+			<input type="radio" name="otherTimeCausesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="otherTimeCauses" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan=2 class="title">主要症状</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80"><font color="red">*&nbsp;</font>乏力：</td>
+		<td class="t2" width="520"><input name="fali" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="fali_performance" type="text" class="select" style="width:50%"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>厌油：</td>
+		<td class="t2"><input name="yanyou" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>纳差：</td>
+		<td class="t2"><input name="shishao" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="80%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">食少表现：</td>
+					<td><input name="shishao_performance" type="text" class="select"/></td>
+					<td class="t3">减少至：</td>
+					<td><input name="shishao_reduce" type="text" class="select"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>反酸：</td><td class="t2"><input name="fansuan" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="fansuan_time" type="text" class="checkbox" style="width:50%"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>嗳气：</td><td class="t2"><input name="aiqi" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>恶心：</td>
+		<td class="t2"><input name="exin" rel="fansuan" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>呕吐：</td><td class="t2"><input name="outu" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="80%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">呕吐性状：</td>
+					<td width="80"><input name="outu_shape" type="text" class="select"/></td>
+					<td class="t3">呕吐物：</td>
+					<td><input name="outu_thing" type="text" class="select"/></td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="outu_countDay" type="text" class="text"/></td>
+					<td class="t3">每次量(ml)：</td>
+					<td><input name="outu_volumeDay" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">总次数：</td>
+					<td><input name="outu_countTotal" type="text" class="text"/></td>
+					<td class="t3">总量(ml)：</td>
+					<td><input name="outu_volumeTotal" type="text" class="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>呕血：</td><td class="t2"><input name="ouxue" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">性状：</td>
+					<td colspan="3"><input name="ouxue_shape" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="ouxue_countDay" type="text" class="text"/></td>
+					<td class="t3">每次量(ml)：</td>
+					<td><input name="ouxue_volumeDay" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">总次数：</td>
+					<td><input name="ouxue_countTotal" type="text" class="text"/></td>
+					<td class="t3">总量(ml)：</td>
+					<td><input name="ouxue_volumeTotal" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">伴随：</td>
+					<td colspan="3"><input name="ouxue_side" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>腹胀：</td><td class="t2"><input name="fuzhang" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>腹痛：</td><td class="t2"><input name="futong" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">诱因：</td>
+					<td><input name="futong_cases" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">部位：</td>
+					<td><input name="futong_position" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">性质：</td>
+					<td><input name="futong_performance" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">程度：</td>
+					<td><input name="futong_degree" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t3">发病状态：</td>
+					<td><input name="futong_rate" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">位置：</td>
+					<td><input name="futong_position2" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t3">出现时间：</td>
+					<td><input name="futong_time" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">放射：</td>
+					<td><input name="futong_fangshe" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t3">部位：</td>
+					<td><input name="futong_fangshe0" type="text" class="text" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">缓解因素：</td>
+					<td><input name="futong_change" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>腹泻：</td><td class="t2"><input name="fuxie" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">伴里急后重：</td>
+					<td colspan="3"><input name="fuxie_liji" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t3">性状：</td>
+					<td colspan="3"><input name="fuxie_shape" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="fuxie_countDay" type="text" class="text"/></td>
+					<td class="t3" width="70">每次量(ml)：</td>
+					<td><input name="fuxie_volumeDay" type="text" class="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>水肿：</td><td class="t2"><input name="shuizhong" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">部位：</td>
+					<td colspan="3"><input name="shuizhong_buwei" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">程度：</td>
+					<td><input name="shuizhong_chengdu" type="text" class="select"/></td>
+					<td class="t3" width="70">性质：</td>
+					<td><input name="shuizhong_xingzhi" type="text" class="select"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>发热：</td><td class="t2"><input name="fare" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">热型：</td>
+					<td colspan="3"><input name="fare_type" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">体温：</td>
+					<td><input name="fare_tiwen" type="text" class="select"/></td>
+					<td class="t3" width="70">最高体温(℃)：</td>
+					<td><input name="fare_topt" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">发作特点：</td>
+					<td colspan="3"><input name="fare_performance" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">伴随症状：</td>
+					<td colspan="3"><input name="fare_side" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>黄染：</td><td class="t2"><input name="huangran" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">表现：</td>
+					<td><input name="huangran_performance" type="text" class="select"/></td>
+					<td class="t3" width="70">程度：</td>
+					<td><input name="huangran_degree" type="text" class="select"/></td>
+				</tr>
+				<tr>
+					<td class="t3">伴随：</td>
+					<td colspan="3"><input name="huangran_side" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">不伴随：</td>
+					<td colspan="3"><input rel="huangran_side" name="huangran_noside" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>尿液改变：</td><td class="t2"><input name="niaoye" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3">尿色：</td>
+					<td colspan="3"><input name="niaoye_color" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">清亮程度：</td>
+					<td colspan="3"><input name="niaoye_qldegree" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t3" width="70">尿量变化：</td>
+					<td width="150"><input name="niaoye_volume" type="text" class="select"/></td>
+					<td class="t3" width="70">总量(ml/天)：</td>
+					<td><input name="niaoye_volumeTotal" type="text" class="text"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>大便改变：</td><td class="t2"><input name="dabian" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">灰白便：</td><td><input name="dabian_huibai" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+					<td class="t3" width="70">便血：</td><td><input name="dabian_xue" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+				</tr>
+				<tr>
+					<td class="t3">颜色：</td>
+					<td><input name="dabian_color" type="text" class="select"/></td>
+					<td class="t3">性状：</td>
+					<td><input name="dabian_shape" type="text" class="select"/></td>
+				</tr>
+				<tr>
+					<td class="t3">每天次数：</td>
+					<td><input name="dabian_countDay" type="text" class="text"/></td>
+					<td class="t3">每次量(ml)：</td>
+					<td><input name="dabian_volumeDay" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">总次数：</td>
+					<td><input name="dabian_countTotal" type="text" class="text"/></td>
+					<td class="t3">总量(ml)：</td>
+					<td><input name="dabian_volumeTotal" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="t3">伴随：</td>
+					<td colspan="5"><input name="dabian_side" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>神志改变：</td><td class="t2"><input name="shenzhi" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">表现：</td>
+					<td><input name="shenzhi_performance" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+				<tr>
+					<td class="t3">对答情况：</td>
+					<td><input name="shenzhi_answer" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1"><font color="red">*&nbsp;</font>行为异常：</td><td class="t2"><input name="xingwei" rel="otherTimeCausesFlag" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="t3" width="70">表现：</td>
+					<td><input name="xingwei_performance" type="text" class="checkbox" style="width:90%"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">其它阳性症状</td>
+		<td class="t2"><input name="otherSysptom" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">重要阴性症状</td>
+		<td class="t2"><input name="positiveSysptom" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td colspan=2 class="title">伴随症状</td>
+	</tr>
+	<tr>
+		<td colspan="6"><textarea name="sideSysptomDesc" class="textarea" style="width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowSideSys(this)" /></td>
+	</tr>
+	<tr>
+		<td colspan=2 class="title">诊疗经过</td>
+	</tr>
+	<tr>
+		<td colspan="6"><textarea name="treatmentDesc" class="textarea" class="textarea" style="width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowTreat(this)"/></td>
+	</tr>
+	<tr>
+		<td colspan=2 class="title">目前状况</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">精神状态：</td>
+					<td class="t2"><input name="spiritStatu" type="text" class="select"/><br/><input name="spiritStatu0" type="text" class="text hidden"/></td>
+					<td class="t1" width="80">食量：</td>
+					<td class="t2"><input name="eatVolume" type="text" class="select"/><br/><input name="eatVolume0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">睡眠：</td>
+					<td class="t2"><input name="sleep" type="text" class="select"/><br/><input name="sleep0" type="text" class="text hidden"/></td>
+					<td class="t1">小便：</td>
+					<td class="t2"><input name="piss" type="text" class="select"/><br/><input name="piss0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">大便：</td>
+					<td class="t2"><input rel="piss" name="excrement" type="text" class="select"/><br/><input name="excrement0" type="text" class="text hidden"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">体重：</td>
+		<td class="t2"><input name="bodyWeight" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<p>体重<input name="bodyWeight_time" type="text" class="text" style="width:40px"/><input rel="timeUnit" name="bodyWeight_timeUnit" type="radio" class="radio dict-fld"/></p>
+			<p><span id="bodyWeight-span">增加</span><input name="bodyWeight_kg" type="text" class="text" style="width:40px"/>Kg</p>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td>
+		<td class="t2"><textarea name="otherCurrent" class="textarea"></textarea></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

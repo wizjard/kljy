@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>入院记录主表信息</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var basePath=App.App_Info.BasePath+'/MemberAction.do';
+var _kid=App.util.getHtmlParameters('KID');
+var _pid=App.util.getHtmlParameters('PID');
+$(function(){
+	$('input[name="caseId"]').val(_kid);
+	initPage();
+});
+function initPage(){
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="startDate"]'),dateFormat:'yyyy-MM-dd'});
+	setValue();
+}
+function setValue(){
+	$.post(
+		basePath,
+		{
+			method:'firstgroup_findByCaseId',
+			id:_kid
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					var memberGroupId=$('input[name="memberGroupId"]').val();
+					if(memberGroupId>0){
+						$.post(
+							App.App_Info.BasePath+'/common/CommonAction.do',
+							{method:'GetSelfQueryList',sql:'select SubGroupName from SYS_MemberGroup_Table where id='+memberGroupId},
+							function(data){
+								if(data.length>0){
+									$('input[name="memberGroupId_show"]').val(data[0]['SubGroupName']);
+								}
+							},
+							'json'
+						);
+					}
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var _data=FormUtil.getFormValues('form');
+	$.post(
+		basePath,
+		{
+			method:'firstgroup_saveOrUpdate',
+			data:JSON.stringify(_data)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				$('input[name="id"]').val(data.data);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ShowMemberGroupSelect(){
+	var sheight = screen.height/2;
+	var swidth = 620;
+	var winoption ="dialogHeight:"+sheight+"px;dialogWidth:"+ swidth +"px;status:yes;scroll:yes;resizable:yes;center:yes";
+	var returnValue=window.showModalDialog(App.App_Info.BasePath+'/module/MemberGroup/MemberGroupSelect.html',null,winoption);
+	if(returnValue){
+		$('*[name="checkName"]').val('');
+		$('*[name="checkCycle"]').val('');
+		$('input[name="memberGroupId"]').val(returnValue.id);
+		$.ajax({
+			url:App.App_Info.BasePath+'/admin/MemberGroupMngAction.do?method=tpl_findByGroupId&id='+returnValue.id,
+			async:false,
+			success:function(data){
+				$.each(data,function(){
+					if(this.type==2){
+						$('*[name="checkName"]').val(this.name);
+						$('*[name="checkCycle"]').val(this.course);
+					}
+				});
+			},
+			dataType:'json'
+		})
+		$('input[name="memberGroupId_show"]').val(returnValue.name);
+	}
+}
+</script>
+</head>
+<body>
+<form>
+<input name="id" type="hidden" value="-1"/>
+<input name="caseId" type="hidden" value="-1"/>
+<input name="memberGroupId" type="hidden" value="-1"/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">会员分组及随访设置</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">会员分组：</td>
+		<td class="t2" width="500"><input type="text" name="memberGroupId_show" class="text" readonly="readonly"/><img onclick="ShowMemberGroupSelect()" class="hand" src="../../../PUBLIC/images/sign.gif"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">检查项目：</td>
+		<td class="t2"><textarea name="checkName" class="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">随访周期(月)：</td>
+		<td class="t2"><input type="text" name="checkCycle" class="text" style="width:120px"/></td>
+	</tr>
+	<tr>
+		<td class="t1">起始日期：</td>
+		<td class="t2"><input type="text" name="startDate" class="text" style="width:120px"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>辅助输入</title>
+<script type="text/javascript" src="InsertHelp.data.js"></script>
+<style type="text/css">
+body{
+	margin:0;
+	font-size:12px;
+	width:400px;
+	height:300px;
+}
+#con{
+	text-align:center;
+}
+td{
+	height:33px;
+	border:solid 1px #CCC;
+	cursor:default;
+	background:#FFF;
+	color:#000;
+	overflow:hidden;
+}
+td.over{
+	height:33px;
+	border:solid 1px blue;
+	cursor:default;
+	background:#999;
+	color:#FFF;
+	overflow:hidden;
+}
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	layoutTable();
+}
+function layoutTable(){
+	var _table=document.getElementsByTagName('tbody')[0];
+	var col=10;
+	var row=Math.ceil(array.length/col);
+	var _tdWidth=100/col+'%';
+	for(var i=0;i<row;i++){
+		var _tr=document.createElement('tr');
+		_tr.setAttribute('align','center');
+		for(var j=0;j<col;j++){
+			var _td=document.createElement('td');
+			_td.setAttribute('width',_tdWidth);
+			_td.innerHTML='&nbsp;';
+			_td.onmouseover=function(){
+				this.className='over';
+			};
+			_td.onmouseout=function(){
+				this.className='';
+			};
+			_td.onclick=function(){
+				var _html=this.innerHTML;
+				if(_html!='&nbsp;'){
+					window.returnValue=_html;
+					window.close();
+				}else{
+					window.close();
+				}
+			};
+			_tr.appendChild(_td);
+		}
+		_table.appendChild(_tr);
+	}
+	var _tds=document.getElementsByTagName('td');
+	for(var i=0,len=array.length;i<len;i++){
+		_tds[i].innerHTML=array[i];
+	}
+}
+</script>
+</head>
+<body>
+<div id="con">
+<table width="380" cellspacing=0 cellpadding=0 border=0></table>
+</div>
+</body>
+</html>

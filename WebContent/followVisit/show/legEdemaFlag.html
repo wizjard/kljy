@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>下肢浮肿</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _value = document.getElementById("legEdemaPosition").value;
+		var _answer = document.getElementById("legEdemaDegreeKind").value;
+		var _sum="";
+		
+		if(_value!=null&&_value!="" && _answer!=null&&_answer!=""){
+			_sum=_value+","+_answer;
+		}else if(_value!=null&&_value!=""){
+			_sum = _value;
+		}else if(_answer!=null&&_answer!=""){
+			_sum=_answer;
+		}
+		window.returnValue = _sum;
+		window.close();
+}
+</script>
+</head>
+
+<body>
+	<table width="457" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="116" align="right">位置：</td>
+        <td width="71">
+            <select name="legEdemaPosition" id="legEdemaPosition">
+                <option value=""></option>
+                <option value="左膝下">左膝下</option>
+                <option value="右膝下">右膝下</option>
+                <option value="左踝下">左踝下</option>
+                <option value="右踝下">右踝下</option>
+                <option value="双膝下">双膝下</option>
+                <option value="双踝下">双踝下</option>
+            </select>
+        </td>
+        <td width="84" align="right">程度性质：</td>
+        <td width="170">
+            <select name="legEdemaDegreeKind" id="legEdemaDegreeKind">
+                <option value=""></option>
+                <option value="轻度可凹性水肿">轻度可凹性水肿</option>
+                <option value="中度可凹性水肿">中度可凹性水肿</option>
+                <option value="重度可凹性水肿">重度可凹性水肿</option>
+            	<option value="轻度非可凹性水肿">轻度非可凹性水肿</option>
+                <option value="中度非可凹性水肿">中度非可凹性水肿</option>
+                <option value="重度非可凹性水肿">重度非可凹性水肿</option>
+            </select>
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

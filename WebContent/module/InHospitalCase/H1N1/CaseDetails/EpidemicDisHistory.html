@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>流行病史(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-Epidemic';
+var KID=null;
+var PID=null;
+
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');   
+	FormUtil.toDateField({el:$('input[name="lxTime"]'),dateFormat:'yyyy-MM-dd'});
+	FormUtil.toDateField({el:$('input[name="lxArrivingTime"]'),dateFormat:'yyyy-MM-dd'});
+	FormUtil.toDateField({el:$('input[name="h1n1ContactTime"]'),dateFormat:'yyyy-MM-dd'});
+	FormUtil.toDateField({el:$('input[name="h1n1ShowTime"]'),dateFormat:'yyyy-MM-dd'});
+	initPage();
+	setValue();
+});
+function initPage(){
+	//radio单击事件
+	$('input[type="radio"]').click(function(){
+		if($(this).val() == 1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	
+	//弹出框
+	$('#dialog1').dialog({
+		title:'流行病史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeEpidemic();$(this).dialog("close");}
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/H1N1.do',
+		{
+			method:'findEpidemicDisHistoryByCaseId',
+			caseId:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+					$('input[type="radio"]').each(function(){
+						if(this.checked){
+							$(this).parent().parent().next().show();
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function ComposeEpidemic(){
+	var rst='';
+	var json=CollectionData();
+	if(json.lvxing==0){
+		rst+="无旅行史。";
+	}else if(json.lvxing==1){
+		rst+="有旅行史，";
+		rst+=json.lxTime==""?"":json.lxTime+"，";
+		if(json.lxNum!="" && json.lxGongju){
+			rst+="乘"+json.lxNum+"号"+json.lxGongju+"，";
+		}
+		rst+=json.lxArea==""?"":"由"+json.lxArea+"出发，";
+		if(json.lxArrivingTime!="" && json.lxArrivingArea!=""){
+			rst+="于"+json.lxArrivingTime+"抵达 "+json.lxArrivingArea+"。";
+		}
+		rst+=json.lxOtherDesc+"。"
+	}
+	if(json.h1n1Contact==0){
+		rst+="无甲型H1N1流感接触史。";
+	}else if(json.h1n1Contact==1){
+		rst+="有甲型H1N1流感接触史，";
+		rst+=json.h1n1Country==""?"":"发病前7天内到过"+json.h1n1Country+"，";
+		rst+=json.h1n1ContactTime==""?"":"发病时间为"+json.h1n1ContactTime+"，";
+		if(json.hcBeforeIllCount!="" && json.h1n1ContactWay!=""){
+			rst+="发病前"+json.hcBeforeIllCount+"天"+json.h1n1ContactWay+"，";
+		}
+	}
+	if(json.h1n1Show==0){
+		rst+="无甲型H1N1流感暴露史。";
+	}else if(json.h1n1Show==1){
+		rst+="有甲型H1N1流感暴露史，";
+		rst+=json.beforeIllInner7==""?"":"发病前7天内暴露（在接触/谈话距离内）于新甲型H1N1流感确诊或可能病例："+json.beforeIllInner7+"，";
+		rst+=json.h1n1ShowOdd==""?"":"是否单次暴露："+json.h1n1ShowOdd+"，";
+		rst+=json.h1n1ShowTime==""?"":"暴露时间："+json.h1n1ShowTime+"，";
+		rst+=json.hsBeforeIllCount==""?"":"发病前天数："+json.hsBeforeIllCount+"天，";
+		rst+=json.h1n1ShowWay==""?"":"暴露方式："+json.h1n1ShowWay+"。";
+	}
+	if(json.epidemicDisOther!=""){
+		rst+=json.epidemicDisOther+"。";
+	}
+	$('textarea[name="epidemicDisDesc"]').val(rst);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function SaveData(){
+	var _values=CollectionData();
+	
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/H1N1.do',
+		{
+			method:'saveOrUpdateEpidemicDisHistoryByCaseId',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value="-1"/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">流行病史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="epidemicDisDesc" class="textarea" style="width:95%" readOnly></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="80">旅行史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="lvxing" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="lvxing"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="lvxing"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="80">&nbsp;</td>
+			<td class="t2">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td style="width:120px;">出行时间：</td>
+						<td><input type="text" name="lxTime" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>车次/航号/船次：</td>
+						<td><input type="text" name="lxNum" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>交通工具：</td>
+						<td>
+							<select name="lxGongju" style="width:120px;">
+								<option value=""></option>
+								<option value="火车">火车</option>
+								<option value="飞机">飞机</option>
+								<option value="轮船">轮船</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>出行国家/地区：</td>
+						<td><input type="text" name="lxArea" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>抵达（国）时间：</td>
+						<td><input type="text" name="lxArrivingTime" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>抵达（国）地区：</td>
+						<td><input type="text" name="lxArrivingArea" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>其他说明：</td>
+						<td><input type="text" name="lxOtherDesc" style="width:120px;"/></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" width="80">甲型H1N1流感接触史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="h1n1Contact" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="h1n1Contact"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="h1n1Contact"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="80">&nbsp;</td>
+			<td class="t2">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td style="width:160px;">发病前7天内到过发现了新甲</br>型H1N1流感病例的国家/地区：</td>
+						<td><input type="text" name="h1n1Country" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>接触时间：</td>
+						<td><input type="text" name="h1n1ContactTime" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>发病前天数：</td>
+						<td><input type="text" name="hcBeforeIllCount" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>接触方式：</td>
+						<td>
+							<select name="h1n1ContactWay" style="width:120px;">
+								<option value=""></option>
+								<option value="在无有效防护的条件下照顾患者">在无有效防护的条件下照顾患者</option>
+								<option value="与患者同室居住">与患者同室居住</option>
+								<option value="与患者有密切生活接触">与患者有密切生活接触</option>
+								<option value="直接接触患者的气道分泌物或体液">直接接触患者的气道分泌物或体液</option>
+								<option value="进距离（2米以内）接触患者">进距离（2米以内）接触患者</option>
+								<option value="接触可疑动物（如死猪、病猪、家畜市场、宰杀、禽）">接触可疑动物（如死猪、病猪、家畜市场、宰杀、禽）</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" width="80">甲型H1N1流感暴露史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="h1n1Show" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="h1n1Show"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="h1n1Show"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="80">&nbsp;</td>
+			<td class="t2">
+				<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					<tr>
+						<td style="width:120px;">发病前7天内暴露（在接触/谈话距离内）于新甲型H1N1流感确诊或可能病例：</td>
+						<td>
+							<select name="beforeIllInner7" style="width:120px;">
+								<option value=""></option>
+								<option value="是">是</option>
+								<option value="否">否</option>
+								<option value="不明">不明</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>是否单次暴露：</td>
+						<td>
+							<select name="h1n1ShowOdd" style="width:120px;">
+								<option value=""></option>
+								<option value="是">是</option>
+								<option value="否">否</option>
+								<option value="不明">不明</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>暴露时间：</td>
+						<td><input type="text" name="h1n1ShowTime" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>发病前天数：</td>
+						<td><input type="text" name="hsBeforeIllCount" style="width:120px;"/></td>
+					</tr>
+					<tr>
+						<td>暴露方式：</td>
+						<td>
+							<select name="h1n1ShowWay" style="width:200px;">
+								<option></option>
+								<option value="医疗结构暴露史">医疗结构暴露史</option>
+								<option value="实验室暴露史">实验室暴露史</option>
+								<option value="于患者同一环境暴露史">于患者同一环境暴露史</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" width="80">其他说明：</td>
+			<td class="t2">
+				<textarea name="epidemicDisOther" style="width:400px;"></textarea>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

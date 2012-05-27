@@ -1,0 +1,496 @@
+<!--生物医学中心全部会员索引页面 by xl 2010年12月10日9:19:42--> <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>会员索引</title>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/common.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js">
+        </script>
+        <script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js">
+        </script>
+        <script type="text/javascript" src="MemberInfoForm.js">
+        </script>
+        <script type="text/javascript">
+            Ext.onReady(function(){
+                layout();
+            });
+            function layout(){
+                var ds = new Ext.data.Store({
+                    proxy: new Ext.data.HttpProxy({
+                        url: App.App_Info.BasePath + '/biomedical.do'
+                    }),
+                    reader: new Ext.data.JsonReader({
+                        root: 'root',
+                        totalProperty: 'total'
+                    }, [{
+                        name: 'memberNo'
+                    }, {
+                        name: 'account'
+                    }, {
+                        name: 'password'
+                    }, {
+                        name: 'inDate'
+                    }, {
+                        name: 'inWard'
+                    }, {
+                        name: 'memberStatus'
+                    }, {
+                        name: 'memberType'
+                    }, {
+                        name: 'memo'
+                    }, {
+                        name: 'patient'
+                    }, {
+                        name: 'records'
+                    }, {
+                        name: 'currentGroup'
+                    },{
+                        name: 'outHspRec'
+                    }])
+                });
+                ds.baseParams = {
+                    method: 'memberDataAnalysis',
+                    search: ''
+                };
+                ds.load({
+                    params: {
+                        start: 0,
+                        limit: 20
+                    }
+                });
+                var sm = new Ext.grid.RowSelectionModel({
+                    singleSelect: true
+                });
+                var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
+                    header: '姓名',
+                    dataIndex: 'patient',
+                    renderer: function(value){
+                        return value.patientName;
+                    }
+                }, {
+                    header: '病案号',
+                    dataIndex: 'patient',
+                    renderer: function(value){
+                        return value.patientNo;
+                    }
+                }, {
+                    header: '会员编号',
+                    dataIndex: 'memberNo'
+                }, {
+                    header: '用户名',
+                    dataIndex: 'account'
+                }, {
+                    header: '入会科室',
+                    dataIndex: 'inWard'
+                }, {
+                    header: '入会日期',
+                    dataIndex: 'inDate'
+                },    /* {
+                 header: '会员类型',
+                 dataIndex: 'memberType'
+                 }, {
+                 header: '会员状态',
+                 dataIndex: 'memberStatus'
+                 }, */
+                {
+                    header: '首次分组',
+                    dataIndex: 'records',
+                    renderer: function(value){
+                        if (value && value.length > 0) {
+                            return value[0].generator1.groupName;
+                        }
+                        else {
+                            return '';
+                        }
+                    }
+                }, {
+                    header: '当前疾病分组',
+                    dataIndex: 'currentGroup'
+                }, {
+                    header: '已随访次数',
+                    dataIndex: 'records',
+                    renderer: function(value){
+                        if (value) {
+                            return value.length;
+                        }
+                        else {
+                            return 0;
+                        }
+                    }
+                }, {
+                    header: 'x线号',
+                    dataIndex: 'outHspRec',
+                    renderer: function(value){
+                        return value.xNo;
+                    }
+                },{
+                    header: 'CT号',
+                    dataIndex: 'outHspRec',
+                    renderer: function(value){
+                        return value.ctNo;
+                    }
+                },{
+                    header: 'MRI号',
+                    dataIndex: 'outHspRec',
+                    renderer: function(value){
+                        return value.mriNo;
+                    }
+                },{
+                    header: 'B超号',
+                    dataIndex: 'outHspRec',
+                    renderer: function(value){
+                        return value.bcNo;
+                    }		
+                },{
+                    header: '病理号',
+                    dataIndex: 'outHspRec',
+                    renderer: function(value){
+                        return value.blNo;
+                    }			
+                },{
+                    header: '分组查看',
+                    dataIndex: 'records',
+                    renderer: function(value, meta, record, rowIndex, colIndex, store){
+                        return '<a href="javascript:viewGroups(' + rowIndex + ');">查看</a>';
+                    }
+                }]);
+                var SearchButton = Ext.extend(Ext.Button, {
+                    text: '查询',
+                    sw: null,
+                    toggleSw: function(){
+                        if (this.sw.isVisible()) {
+                            this.sw.hide();
+                        }
+                        else {
+                            this.sw.show();
+                            this.setSwPosition();
+                        }
+                    },
+                    /*Init Search Window*/
+                    initSw: function(){
+                        var o = this;
+                        o.sw = new Ext.Window({
+                            draggable: false,
+                            resizable: false,
+                            width: 300,
+                            autoHeight: true,
+                            closable: false,
+                            buttonAlign: 'center',
+                            frame: true,
+                            items: {
+                                xtype: 'form',
+                                border: false,
+                                bodyStyle: 'padding-top:5px',
+                                labelAlign: 'right',
+                                labelWidth: 60,
+                                defaults: {
+                                    xtype: 'textfield',
+                                    anchor: '95%'
+                                },
+                                items: [{
+                                    fieldLabel: '姓名/病案号',
+                                    name: 'name'
+                                }, {
+                                    fieldLabel: '用户名',
+                                    name: 'account'
+                                }, {
+                                    fieldLabel: '当前分组',
+                                    name: 'currentGroup'
+                                }]
+                            },
+                            buttons: [{
+                                text: '查询',
+                                handler: function(){
+                                    var values = o.sw.items.get(0).getForm().getValues();
+                                    var store = Ext.getCmp('grid').getStore();
+                                    store.baseParams.search = Ext.encode(values);
+                                    store.load({
+                                        params: {
+                                            start: 0,
+                                            limit: 20
+                                        }
+                                    });
+                                    o.sw.hide();
+                                }
+                            }, {
+                                text: '取消',
+                                handler: function(){
+                                    o.sw.hide();
+                                }
+                            }]
+                        });
+                    },
+                    /*ReSet Window's Position*/
+                    setSwPosition: function(){
+                        var el = this.el.dom;
+                        var pos = getElementPos(el);
+                        var oPos = [pos.x, pos.y];
+                        var oSize = {
+                            width: el.offsetWidth,
+                            height: el.offsetHeight
+                        };
+                        var bodySize = Ext.getBody().getSize();
+                        var sSize = this.sw.getSize();
+                        var x = oPos[0];
+                        var y = oPos[1] + oSize.height;
+                        if ((x + sSize.width) > bodySize.width) {
+                            x = x - sSize.width + oSize.width;
+                        }
+                        if ((y + sSize.height) > bodySize.height) {
+                            y = y - sSize.height - oSize.height;
+                        }
+                        this.sw.setPosition(x, y);
+                    }
+                });
+                var grid = new Ext.grid.GridPanel({
+                    id: 'grid',
+                    title: '会员列表',
+                    sm: new Ext.grid.CheckboxSelectionModel({
+                        sigleSelect: true
+                    }),
+                    cm: cm,
+                    ds: ds,
+                    autoScroll: true,
+                    viewConfig: {
+                        forceFit: true
+                    },
+                    sm: sm,
+                    tbar: ['-', {
+                        text: '返回列表',
+                        handler: function(){
+                            var store = Ext.getCmp('grid').getStore();
+                            store.baseParams.search = '';
+                            store.load({
+                                params: {
+                                    start: 0,
+                                    limit: 20
+                                }
+                            });
+                        }
+                    }, '-', new SearchButton({
+                        handler: function(){
+                            if (!this.sw) {
+                                this.initSw();
+                            }
+                            this.toggleSw();
+                        }
+                    }), '-', {
+                        text: '会员信息',
+                        handler: function(){
+                            var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+                            if (ss.length == 0) {
+                                alert('请先选择一个会员。');
+                                return;
+                            }
+                            MemberInfo(Ext.getCmp('grid').getStore().indexOf(ss[0]));
+                        }
+                    }, '-', {
+                        text: '入会病历信息',
+                        handler: function(){
+                            var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+                            if (ss.length == 0) {
+                                alert('请先选择一个会员。');
+                                return;
+                            }
+                            if (ss[0].cm) {
+                                App.util.addNewMainTab('/module/biomedical/MemberCase/InHspRec.html?PID=' + ss[0].patient.id + '&KID=' + ss[0].cm.id, '入会病历信息');
+                            }
+                            else {
+                                if (confirm('确定要编辑此病人的入会病历？')) {
+                                    Ext.Ajax.request({
+                                        url: App.App_Info.BasePath + '/biomedical.do',
+                                        params: {
+                                            method: 'saveMemberCase',
+                                            memberNo: ss[0].get('memberNo')
+                                        },
+                                        success: function(response){
+                                            var res = Ext.decode(response.responseText);
+                                            if (res.success) {
+                                                var cm = Ext.decode(res.data);
+                                                ss[0].set('cm', Ext.decode(res.data));
+                                                App.util.addNewMainTab('/module/biomedical/MemberCase/InHspRec.html?PID=' + ss[0].get('patient').id + '&KID=' + cm.id, '入会病历信息');
+                                            }
+                                            else {
+                                                alert('会员入会病历初始化失败。');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }, '-', {
+                        text: '住院记录',
+                        handler: function(){
+                            var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+                            if (ss.length == 0) {
+                                alert('请先选择一个会员。');
+                                return;
+                            }
+                            App.util.addNewMainTab('/module/InHospitalCase/CaseList.html?id=' + ss[0].get('patient').id, '住院记录');
+                        }
+                    }, '-', {
+                        text: '会员分组随访',
+                        handler: function(){
+                            var ss = Ext.getCmp('grid').getSelectionModel().getSelections();
+                            if (ss.length == 0) {
+                                alert('请先选择一个会员。');
+                                return;
+                            }
+                            App.util.addNewMainTab('/module/biomedical/OutPatientRecordIndex.html?id=' + ss[0].get('patient').id, '会员随访记录');
+                        }
+                    }, '-', {
+                        text: '入会知情同意书',
+                        handler: function(){
+                            window.open(App.App_Info.BasePath + '/module/member/memberAgreePrint.html');
+                        }
+                    }, 
+                    '-'
+                    , {
+                       /* text: '导出会员随访信息',
+                        handler: function(){
+                            Ext.Ajax.request({
+                                url: App.App_Info.BasePath + '/biomedical.do',
+                                params: {
+                                    method: 'memberDataAnalysisToExcel',
+                                    search: Ext.getCmp('grid').getStore().baseParams.search
+                                },
+                                success: function(response){
+                                    var res = Ext.decode(response.responseText);
+                                    if (res.success) {
+                                        window.open(App.App_Info.BasePath + '/module/biomedical/temp/' + res.data);
+                                    }
+                                    else {
+                                        alert('信息导出失败。');
+                                    }
+                                }
+                            });
+                        }*/
+                    }
+                    ],
+                    bbar: new Ext.PagingToolbar({
+                        pageSize: 20,
+                        store: ds,
+                        displayInfo: true,
+                        displayMsg: '显示第<font color="red"> {0} </font>条' +
+                        '到<font color="red"> {1} </font>条记录，' +
+                        '一共<font color="red"> {2} </font>条',
+                        emptyMsg: "没有记录"
+                    })
+                });
+                new Ext.Viewport({
+                    layout: 'fit',
+                    items: grid
+                });
+            }
+            
+            function MemberInfo(rowIndex){
+                var store = Ext.getCmp('grid').getStore();
+                var record = store.getAt(rowIndex);
+                var win = Ext.getCmp('MemberInfo-Window');
+                if (!win) {
+                    win = new Biomedical.MemberInfoWindow({
+                        id: 'MemberInfo-Window',
+                        saveCallback: function(res, w){
+                            record.set('memberNo', res.data);
+                            record.set('inWard', w.items.get(0).getForm().getValues().inWard);
+                            w.hide();
+                        }
+                    });
+                }
+                win.show();
+                var memberNo = record.get('memberNo');
+                var obj = {
+                    name: record.get('patient').patientName,
+                    patientNo: record.get('patient').patientNo,
+                    patientId: record.get('patient').id
+                };
+                if (memberNo && memberNo.length > 0) {
+                    Ext.Ajax.request({
+                        url: App.App_Info.BasePath + '/biomedical.do',
+                        params: {
+                            memberNo: memberNo,
+                            method: 'getMember'
+                        },
+                        success: function(response){
+                            var res = Ext.decode(response.responseText);
+                            if (res.success) {
+                                win.items.get(0).getForm().reset();
+                                win.items.get(0).getForm().loadRecord(new Ext.data.Record(Ext.apply(obj, Ext.decode(res.data))));
+                            }
+                            else {
+                                alert('获取会员信息失败。');
+                            }
+                        }
+                    });
+                }
+                else {
+                    win.items.get(0).getForm().reset();
+                    win.items.get(0).getForm().loadRecord(new Ext.data.Record(obj));
+                }
+            }
+            
+            function viewGroups(index){
+                var win = Ext.getCmp('View-Group-Window');
+                if (!win) {
+                    win = new Ext.Window({
+                        id: 'View-Group-Window',
+                        title: '会员历史分组查看',
+                        width: 350,
+                        height: 400,
+                        buttonAlign: 'center',
+                        closable: false,
+                        layout: 'fit',
+                        items: {
+                            xtype: 'grid',
+                            border: false,
+                            columns: [new Ext.grid.RowNumberer(), {
+                                header: '开始日期',
+                                dataIndex: 'startDate'
+                            }, {
+                                header: '分组名称',
+                                dataIndex: 'groupName'
+                            }, {
+                                header: '随访周期',
+                                dataIndex: 'cycle'
+                            }],
+                            store: new Ext.data.Store({
+                                proxy: new Ext.data.MemoryProxy([]),
+                                reader: new Ext.data.JsonReader({
+                                    root: ''
+                                }, [{
+                                    name: 'startDate'
+                                }, {
+                                    name: 'groupName'
+                                }, {
+                                    name: 'cycle'
+                                }])
+                            }),
+                            autoScroll: true
+                        },
+                        buttonAlign: 'center',
+                        buttons: [{
+                            text: '关闭',
+                            handler: function(){
+                                this.ownerCt.hide();
+                            }
+                        }]
+                    });
+                }
+                win.show();
+                var data = [];
+                var records = Ext.getCmp('grid').getStore().getAt(index).get('records');
+                if (records && records.length > 0) {
+                    Ext.each(records, function(){
+                        if (this.generator1) {
+                            data.push(this.generator1);
+                        }
+                    });
+                }
+                win.items.get(0).getStore().loadData(data);
+            }
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

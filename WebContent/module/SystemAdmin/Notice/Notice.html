@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>信息管理</title>
+<link rel="Shortcut Icon" href="images/favicon.ico" />
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="scripts/Notice.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/JQuery/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'fit',
+		items:Ext.apply(CreateNotice(),{
+			xtype:'grid',
+			title:'信息列表',
+			tbar:[
+				{
+					text:'图片新闻',
+					tooltip:'图片新闻管理',
+					handler:function(){
+						window.open(App.App_Info.BasePath+"/module/SystemAdmin/showPicture/picList.html");
+					}
+				}
+				,
+				{
+					xtype:'tbseparator'
+				},{
+					text:'&nbsp;刷新&nbsp;',
+					tooltip:'刷新当前列表',
+					handler:function(){
+						Ext.getCmp('notice-list-grid').getStore().reload();
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'编辑信息',
+					tooltip:'编辑信息,保存成功后请刷新列表显示。',
+					handler:function(){
+						var _data=getEditSelect();
+						if(!_data)	return;
+						window.open('edit/noticeEdit.html?id='+_data.data.id,'编辑信息','height=1000,width=900,top=150,left=220');
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'新增信息',
+					tooltip:'新增一条信息,保存成功后请刷新列表显示。',
+					handler:function(){
+						window.open('insert/noticeInsert.html','新增信息','height=1000,width=1000,top=150,left=220');
+					}
+				},{
+					xtype:'tbseparator'
+				},{
+					text:'删除信息',
+					tooltip:'删除一条信息',
+					handler:function(){
+						var _data=getSelections();
+						if(!_data)	return;
+						$.post(
+							App.App_Info.BasePath+'/admin/notice.do',
+							{
+								method:'delete',
+								data:_data.data.id
+							},
+							function(data){
+								if(data.success){
+									alert('删除成功');
+									Ext.getCmp('notice-list-grid').getStore().reload();
+								}else{
+									alert('删除失败');
+								}
+							},
+							'json'
+						);
+					}
+				},
+				'->',
+				{
+					xtype:'tbseparator'
+				},
+				{
+					xtype:'textfield',
+					width:200,
+					emptyText:'信息标题',
+					id:'search-keyword'
+				},{
+					text:'搜索信息',
+					tooltip:'根据信息名',
+					handler:function(){
+						var _val=Ext.getCmp('search-keyword').getValue().trim();
+						if(_val.length==0){
+							alert('关键字不能为空。');
+							return;
+						}
+						var _store=Ext.getCmp('notice-list-grid').getStore();
+						_store.baseParams={method:'searchByName',keyword:_val,typeName:'医务处'};
+						_store.load({params:{start:0,limit:20}});
+					}
+				}
+			],
+			listeners:{
+				render:function(){
+					this.getStore().load({params:{start:0,limit:20}});
+				}
+			}
+		})
+	});
+})
+function getSelections(){
+	var _ss=Ext.getCmp('notice-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}
+	return _ss[0];
+}
+function getEditSelect(){
+	var ss = Ext.getCmp('notice-list-grid').getSelectionModel().getSelections();
+	if(ss.length==0){
+		alert('请选择一条记录。');
+		return null;
+	}else if(ss.length>1){
+		alert('只能选择一条记录进行编辑。');
+		return null;
+	}else{
+		return ss[0];
+	}
+}
+
+function reloadParent(){
+	Ext.getCmp('notice-list-grid').getStore().reload();
+}
+
+</script>
+</head>
+<body>
+	
+</body>
+</html>

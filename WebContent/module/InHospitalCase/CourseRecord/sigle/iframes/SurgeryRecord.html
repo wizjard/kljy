@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>手术记录</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript">
+$(function(){
+	initPage('SurgeryRecord_findById');	
+});
+function before_init(){
+	registrationPageHead(kid,'手术记录','#header');
+	FormUtil.toDateField({el:$('*[name="time"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="surgeryFromTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="surgeryToTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+}
+function initPage_callback(json){
+	json.title='手术记录('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'SurgeryRecord_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'手术记录'
+	}
+}
+function isValid(data){
+	if(data.time.length==0){
+		alert('记录时间不能为空。');
+		return false;
+	}
+	return true;
+}
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	SaveData2();
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/CourseRecord/sigle/iframes/print/SurgeryRecord.html?kid='+
+	id+'&cid='+kid);
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="100">记录日期：</td>
+		<td class="t2" widht="200"><input name="time" type="text" class="text"/></td>
+		<td class="t2" colspan="2" width="300"> <span style="color:red">*</span> 本次记录的日期，用以区分病程内的多次记录</td>
+	</tr>
+	<tr>
+		<td class="t1" width="100">姓名：</td>
+		<td class="t2" width="200"><input name="name" type="text" class="text"/></td>
+		<td class="t1" width="100">病案号：</td>
+		<td class="t2" width="200"><input name="patientNo" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">性别：</td>
+		<td class="t2"><input name="gender" type="text" class="text"/></td>
+		<td class="t1">年龄：</td>
+		<td class="t2"><input name="age" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">病床号：</td>
+		<td class="t2"><input name="bedNo" type="text" class="text"/></td>
+		<td class="t1">手术间号：</td>
+		<td class="t2"><input name="operatingRoom" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">术前诊断：</td>
+		<td class="t2" colspan="3"><textarea name="previousSurgeryDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">术后诊断：</td>
+		<td class="t2" colspan="3"><textarea name="afterSurgeryDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr style="display:none">
+		<td class="t1">手术适应症：</td>
+		<td class="t2" colspan="3"><textarea name="surgeryAdapt" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">手术名称：</td>
+		<td class="t2" colspan="3"><textarea name="surgeryName" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">术者：</td>
+		<td class="t2"><input name="surgeryDocName" type="text" class="text"/></td>
+		<td class="t1">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1">一助：</td>
+		<td class="t2"><input name="surgeryAssistant1" type="text" class="text"/></td>
+		<td class="t1">二助：</td>
+		<td class="t2"><input name="surgeryAssistant2" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">手术开始时间：</td>
+		<td class="t2"><input name="surgeryFromTime" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">手术结束时间：</td>
+		<td class="t2"><input name="surgeryToTime" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">麻醉方式：</td>
+		<td class="t2" colspan="3"><textarea name="anesthesiaMode" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">洗手护士：</td>
+		<td class="t2"><input name="washNurse" type="text" class="text"/></td>
+		<td class="t1">巡回护士：</td>
+		<td class="t2"><input name="aroundNurse" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">出血量：</td>
+		<td class="t2"><input name="bleedingVolumn" type="text" class="text"/>ml</td>
+		<td class="t1">输血量：</td>
+		<td class="t2"><input name="transBloodVolumn" type="text" class="text"/>ml</td>
+	</tr>
+	<tr>
+		<td class="t1">手术经过：</td>
+		<td class="t2" colspan="3"><textarea name="surgeryProcess" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">手术结果：<br/>(标本肉眼所见)：</td>
+		<td class="t2" colspan="3"><textarea name="surgeryResultSample" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3">手术中标本送病理：<input name="sample2Pathology" type="radio" value="是" checked="checked"/>是&nbsp;<input name="sample2Pathology" type="radio" value="否"/>否&nbsp;&nbsp;标本件数：<input type="text" name="sampleNum" style="width:40px"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3">对麻醉效果：<input name="anesthesiaEffect" type="radio" value="满意" checked="checked"/>满意&nbsp;<input name="anesthesiaEffect" type="radio" value="不满意"/>不满意</td>
+	</tr>
+	<tr>
+		<td class="t1">手术医生签字：</td>
+		<td class="t2"><input name="surgeryDocSign" type="text" class="text"/></td>
+		<td class="t1">&nbsp;</td>
+		<td class="t2">&nbsp;</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

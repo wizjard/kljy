@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>现病史</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+var content = '';
+var isSave = "false";
+var prehis_cases = [];
+var prehis_mainSymptom = [];
+var prehis_otherPositive = [];
+var prehis_currentStatus = [];
+var prehis_sideSysptom = [];
+var prehis_otherDisease = [];
+var prehis_negaSymptom = [];
+var prehis_treat = [];
+var prehis_sysptomEvolution = [];
+
+Ext.onReady(function(){
+	KID=App.util.getHtmlParameters('KID');
+	PID=App.util.getHtmlParameters('PID');
+	$('*[name="caseId"]').val(KID);
+	initPage();
+});
+function initPage(){
+	var response=null;
+	var data=null;
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/PresentHistoryActionNew.do',
+		params:{
+			method:'findContent',
+			caseId:KID
+		},
+		sync:false,
+		scope:this,
+		success:function(_response){
+			response=Ext.decode(_response.responseText);
+		}
+	});
+	if(response&&response.success){
+		data=Ext.decode(response.data);
+		if(!data){
+			data={
+				id:-1,
+				caseId:KID
+			};
+		}
+		FormUtil.setFormValues('#contentDiv',data);
+		content = $("#content").val();
+	}else{
+		alert('获取数据失败。');
+		return;
+	}
+}
+
+function getData(){
+	var value=FormUtil.getFormValues('#contentDiv');
+	value.prehis_cases = prehis_cases;
+	value.prehis_mainSymptom = prehis_mainSymptom;
+	value.prehis_otherPositive = prehis_otherPositive;
+	value.prehis_currentStatus = prehis_currentStatus;
+	value.prehis_sideSysptom = prehis_sideSysptom;
+//	value.prehis_otherDisease = prehis_otherDisease;
+//	value.prehis_negaSymptom = prehis_negaSymptom;
+	value.prehis_treat = prehis_treat;
+//	value.prehis_sysptomEvolution = prehis_sysptomEvolution;
+	return value;
+}
+function SaveData(){
+	if(isSave == "false"){
+		alert("无数据需要保存");
+		return;
+	}
+	var value=getData();
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/PresentHistoryActionNew.do',
+		params:{
+			method:'saveOrUpdateContent',
+			data:JSON.stringify(value)
+		},
+		success:function(_reponse){
+			var res=Ext.decode(_reponse.responseText);
+			if(res.success){
+				var data = Ext.decode(res.data);
+				$('input[name="id"]').val(data.id);
+				alert('保存成功。');
+			}else{
+				alert('保存失败。');
+			}
+		}
+	});
+}
+function presentHistory(){
+	hideSymptomInfoIfr();
+	$('#preHistory').attr('src', 'presentHistoryInfo.html');
+	$('#preHistory').width(840);
+	$('#preHistory').height($(window).height());
+}
+function showPreHis(){
+	hideSymptomInfoIfr();
+	$('#preHistory').width(840);
+	$('#preHistory').height($(window).height());
+}
+function destroyPerHis(){
+	$('#preHistory').width(0);
+	$('#preHistory').height(0);
+	$('#preHistory').attr('src', '');
+}
+function hidePreHis(){
+	$('#preHistory').width(0);
+	$('#preHistory').height(0);
+}
+function symptomInfoIfr(sysptomPage, nodeText){
+	$('#symptomInfoIfr').width(840);
+	$('#symptomInfoIfr').height(1000);
+	$('#symptomInfoIfr').attr('src', sysptomPage + '?nodeText=' + nodeText);
+}	
+function hideSymptomInfoIfr(){
+	$('#symptomInfoIfr').width(0);
+	$('#symptomInfoIfr').height(0);
+	$('#symptomInfoIfr').attr('src', '');
+}
+function setRetValue(retoldOperations, retContent){
+	if(retoldOperations){
+		$('#oldOperations').val(retoldOperations);
+	}
+	if(retContent){
+		$('#content').val(retContent);
+	}
+}
+function getOldOperations(){
+	return $('#oldOperations').val();	
+}
+</script>
+</head>
+<body>
+<div id="tab"></div>
+	
+<table width="850" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+<tr><td class="title">现病史</td></tr>
+</table>
+	
+<div id="contentDiv">
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value="-1"/>
+<input type="hidden" id="oldOperations" name="oldOperations" value=""/>
+	
+
+<textarea id="content" name="content" class="textarea" style="width:820px;" readOnly></textarea>
+<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="presentHistory()"/>
+</div>
+<iframe name="preHistory" id="preHistory" src="" width="0" height="0"></iframe>
+<iframe name="symptomInfoIfr" id="symptomInfoIfr" src="" width="0" height="0" scrolling="auto"></iframe>
+</body>
+</html>

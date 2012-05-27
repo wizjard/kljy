@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>发热</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _values = new Array();
+			_values[0] = document.getElementById("feverKind").value;
+			_values[1] = document.getElementById("feverTemperature").value;
+			_values[2] = document.getElementById("feverBehavior").value;
+			_values[3] = document.getElementById("feverSideSyptom").value;
+		var _sum="";	
+			for(var i=0;i<_values.length;i++){
+				if(_values[i]!=""){
+					_sum +=_values[i]+",";
+				}
+			}
+			
+			//查询最后一个','的下标位置
+			var _num = _sum.lastIndexOf(",");
+			//从第0个下标开始截取长度为_num的字符串
+			_sum = _sum.slice(0,_num);
+			window.returnValue = _sum;
+			window.close();
+	}
+</script>
+
+</head>
+
+<body>
+	<table width="511" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="90" align="right">热型：</td>
+        <td width="102">
+            <select name="feverKind" id="feverKind">
+                <option value=""></option>
+                <option value="稽留热">稽留热</option>
+                <option value="弛张热">弛张热</option>
+                <option value="间歇热">间歇热</option>
+                <option value="回归热">回归热</option>
+                <option value="不规则发热">不规则发热</option>
+            </select>
+        </td>
+        <td width="114" align="right">最高体温(℃)：</td>
+        <td width="189">
+            <input type="text" name="feverTemperature" id="feverTemperature" />
+        </td>
+  </tr>
+  <tr>
+        <td align="right">表现：</td>
+        <td>
+        	<select name="feverBehavior" id="feverBehavior">
+            	<option value=""></option>
+                <option value="间断性发作">间断性发作</option>
+                <option value="偶有发作">偶有发作</option>
+                <option value="持续性发作">持续性发作</option>
+            </select>
+        
+        </td>
+        <td align="right">伴随症状：</td>
+        <td>
+        	<select name="feverSideSyptom" id="feverSideSyptom" >
+            	<option value=""></option>
+                <option value="伴畏寒、寒战">伴畏寒、寒战</option>
+                <option value="不伴畏寒、寒战">不伴畏寒、寒战</option>
+            </select>  
+        </td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

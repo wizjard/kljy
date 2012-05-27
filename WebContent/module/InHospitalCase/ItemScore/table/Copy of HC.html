@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		initPage();
+		$('select').change(function(){
+			childPushScore();
+		});
+	});
+	
+	function initPage(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'hc_findByScid',
+				scId:scId
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					if(json){
+						FormUtil.setFormValues('form',json);
+					}
+				}
+			},'json'
+		);
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'hc_saveOrUpdate',
+				data:JSON.stringify(data)
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					$('input[name="id"]').val(json.id);
+				}
+			},
+			'json'
+		 );
+	}
+	
+	function isRadioSelected(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			if (radios[i].checked == true) {
+				return $(radios[i]).val();
+			}
+		}
+		return 0;
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr><td colspan="2" style="font-size:20px;color:red;">肝门部胆管癌分型</td></tr>
+		<tr>
+			<td width="300" align="center" style="color:red">肝门部胆管癌Bismuth分型</td>
+			<td width="400" align="center" style="color:red">肝门部胆管癌T分期</td>
+		</tr> 
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="1" /></div><div style="float:left;">BismuthⅠ型 肿瘤位于肝总管，未侵犯汇合部</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="1" /></div><div style="float:left;">T1 肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管</div></div></td>
+		</tr>	
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="2" /></div><div style="float:left;">BismuthⅡ型 肿瘤已累及汇合部,但未侵犯左右肝管</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="2" /></div><div style="float:left;">T2 肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管合并同侧门静脉受侵和（或）同侧肝叶萎缩</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="3" /></div><div style="float:left;">BismuthⅢa型 肿瘤已侵犯右肝管</div></div></td>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="3" /></div><div style="float:left;">T3 肿瘤累及肝管汇合部并扩展到双侧二级胆管；或扩展到单侧二级胆管合并对侧门静脉受侵；或扩展到单侧二级胆管合并对侧肝叶萎缩；或门静脉主干受侵</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="4" /></div><div style="float:left;">BismuthⅢb型 肿瘤已侵犯左肝管</div></div></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="5" /></div><div style="float:left;">BismuthⅣ型 肿瘤已侵犯左右肝管</div></div></td>
+			<td>&nbsp;</td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

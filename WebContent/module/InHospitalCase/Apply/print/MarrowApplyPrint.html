@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>骨髓检查单打印</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../css/print.css"/>	
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			LODOP=document.getElementById("LODOP");
+			singlePageTableInfo(KID,'骨髓申请检查单','#page-header');
+			setValue('marrowApplyPrint','MarrowApplyAction','get_Main_Message','MarrowApplyAction');
+		});
+	</script>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button onclick="PREVIEW('骨髓检查单')">打印预览</button>
+	</div>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<style type="text/css">
+			<!--.t td{
+				border-top:none;
+				border-right:1px solid black;
+				border-bottom:1px solid black;
+			}
+			.t td.ti{
+				border-top:none;
+				border-left:none;
+				border-right:none;
+			}-->
+		</style>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="80" class="td1">患者姓名：</td>
+				<td width="120" class="td2"><span name="patientName"></span>&nbsp;</td>
+				<td width="120" class="td2" colspan="2">性&nbsp;&nbsp;&nbsp;&nbsp;别：<span name="patientSex"></span></td>
+				<td width="*" class="td2" colspan="2">年&nbsp;&nbsp;&nbsp;&nbsp;龄：<span name="patientAge"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">病&nbsp;&nbsp;&nbsp;&nbsp;区：</td>
+				<td class="td2" colspan="3"><span name="patientArea"></span></td>
+				<td class="td2" colspan="2">病&nbsp;历&nbsp;号：<span name="patientNum"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">检&nbsp;查&nbsp;号：</td>
+				<td class="td2" colspan="3"><span name="checkNum"></span></td>
+				<td class="td2" colspan="2">实验室编号：<span name="labNum"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">临床表现：</td>
+				<td class="td2" colspan="5"><span name="clinicalShow"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">临床诊断：</td>
+				<td class="td2" colspan="5"><span name="clinicalDiagnosis"></span></td>
+			</tr>
+		</table>
+		<p></p>
+		<table class="conTable t" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="ti" style="text-align:left" colspan="7">末梢血象结果：</td>
+			</tr>
+			<tr>
+				<td  rowspan="2" class="td1">白细胞：</td>
+				<td style="text-align:center;width:14%">WBC</td>
+				<td style="text-align:center;width:14%">LYM</td>
+				<td style="text-align:center;width:14%">MON</td>
+				<td style="text-align:center;width:14%">NEU</td>
+				<td style="text-align:center;width:14%">EOS</td>
+				<td style="" class="td1" style="text-align:center;width:14%">BAS</td>
+			</tr>
+			<tr>
+				<td style="text-align:center"><span name="WBC"></span></td>
+				<td style="text-align:center"><span name="LYM"></span></td>
+				<td style="text-align:center"><span name="MON"></span></td>
+				<td style="text-align:center"><span name="NEU"></span></td>
+				<td style="text-align:center"><span name="EOS"></span></td>
+				<td style="text-align:center"><span name="BAS"></span></td>
+			</tr>
+			<tr>
+				<td rowspan="4" class="td1">红细胞：</td>
+				<td style="text-align:center">HGB</td>
+				<td style="text-align:center">RBC</td>
+				<td style="text-align:center">HCT</td>
+				<td style="text-align:center">MCV</td>
+				<td style="text-align:center">MCH</td>
+				<td style="text-align:center">MCHC</td>
+			</tr>
+			<tr>
+				<td style="text-align:center"><span name="HGB"></span></td>
+				<td style="text-align:center"><span name="RBC"></span></td>
+				<td style="text-align:center"><span name="HCT"></span></td>
+				<td style="text-align:center"><span name="MCV"></span></td>
+				<td style="text-align:center"><span name="MCH"></span></td>
+				<td style="text-align:center"><span name="MCHC"></span></td>
+			</tr>
+			<tr>
+				<td style="text-align:center" >RDW</td>
+				<td style="text-align:center">Ret</td>
+				<td style="text-align:center">LIC</td>
+				<td style="text-align:center"><span name="redName"></span></td>
+				<td style="text-align:center" colspan="2">其他</td>
+			</tr>
+			<tr>
+				<td style="text-align:center" ><span name="RDW"></span></td>
+				<td style="text-align:center"><span name="ret"></span></td>
+				<td style="text-align:center"><span name="LIC"></span></td>
+				<td style="text-align:center"><span name="redValue"></span></td>
+				<td style="text-align:center" colspan="2"><span name="redOther"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" rowspan="2">血小板：</td>
+				<td style="text-align:center">PLT</td>
+				<td style="text-align:center">MPV</td>
+				<td style="text-align:center">PDW</td>
+				<td style="text-align:center">PVT</td>
+				<td colspan="2" style="text-align:center">其他</td>
+			</tr>
+			<tr>
+				<td style="text-align:center"><span name="PLT"></span></td>
+				<td style="text-align:center"><span name="MPV"></td>
+				<td style="text-align:center"><span name="PDW"></span></td>
+				<td style="text-align:center"><span name="PVT"></span></td>
+				<td style="text-align:center" colspan="2"><span name="plateletOther"></span></td>
+			</tr>
+		</table>
+		<p></p>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td valign="top" width="85" class="td1">骨髓检查目</td>
+				<td colspan="4" width="*" class="td2">的：</br><span name="checkEnd"></span></td>
+			</tr>
+			<tr>
+				<td>送检标本：</td>
+				<td>血片：<span name="bloodSliceNum"></span>&nbsp;张</td>
+				<td>骨髓片：<span name="marrowSliceNum"></span>&nbsp;张</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>送检日期：</td>
+				<td><span name="checkDate"></span></td>
+				<td >送检医师：<span name="doctorName"></span></td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

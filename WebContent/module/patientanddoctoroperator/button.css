@@ -1,0 +1,49 @@
+@CHARSET "UTF-8";
+button.sign{
+	BORDER-RIGHT: #7EBF4F 1px solid; 
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #7EBF4F 1px solid; 
+	PADDING-LEFT: 2px; 
+	FONT-SIZE: 12px; 
+	FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#B3D997); 
+	BORDER-LEFT: #7EBF4F 1px solid; 
+	CURSOR: pointer; 
+	COLOR: black; 
+	PADDING-TOP: 2px; 
+	BORDER-BOTTOM: #7EBF4F 1px solid
+}
+button.sign:hover{
+	BORDER-RIGHT: #7EBF4F 1px solid; 
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #7EBF4F 1px solid; 
+	PADDING-LEFT: 2px; 
+	FONT-SIZE: 12px; 
+	FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#CAE4B6); 
+	BORDER-LEFT: #7EBF4F 1px solid; 
+	CURSOR: pointer; 
+	COLOR: black; 
+	PADDING-TOP: 2px; 
+	BORDER-BOTTOM: #7EBF4F 1px solid
+}
+
+td.tzi {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: center;
+	background-color: #f5f5f5;
+	padding-bottom: 1px;
+}
+
+td.editt1 {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: right;
+	padding-bottom: 1px;
+}
+
+td.edittzi {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: center;
+	padding-bottom: 1px;
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>24小时出入院记录打印</title>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript" src="print.js"></script>
+<script type="text/javascript">
+$(function(){
+	LODOP=document.getElementById("LODOP");
+	CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+	var r=new RepoertHeader();
+	r.basePath=App.App_Info.BasePath;
+	r.el=document.getElementById('page-header');
+	r.config.title='24小时出入院记录';
+	r.cid=cid;
+	r.create();
+	setValue('InHspRec24_print');
+});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+<button onclick="PREVIEW('24小时出入院记录')">打印预览</button>
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../css/print.css"/>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td1" width="75">&nbsp;</td>
+				<td class="td1" width="50">姓名：</td>
+				<td class="td2" width="130" name="PatientName">&nbsp;</td>
+				<td class="td2" width="*">职业：<span name="Occupation">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td1">性别：</td>
+				<td class="td2" name="Gender">&nbsp;</td>
+				<td class="td2">住址：<span name="Address">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td1">年龄：</td>
+				<td class="td2" name="age">&nbsp;</td>
+				<td class="td2">入院日期：<span name="inhspTime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td1">民族：</td>
+				<td class="td2" name="People">&nbsp;</td>
+				<td class="td2">出院日期：<span name="outhspTime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td1">籍贯：</td>
+				<td class="td2" name="Province">&nbsp;</td>
+				<td class="td2">叙述者：<span name="narrator">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td1">&nbsp;</td>
+				<td class="td1">婚姻：</td>
+				<td class="td2" name="MarrageStatus">&nbsp;</td>
+				<td class="td2">可靠性：<span name="reliability">&nbsp;</span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td2">主诉：<span name="chiefComplaint"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">入院时情况：</td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;&nbsp;&nbsp;&nbsp;<span name="inHspStatu"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">入院诊断：<span name="inHspDiag"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">诊疗经过：（注明住院短暂时间中提出出院的可能原因）</td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;&nbsp;&nbsp;&nbsp;<span name="treatProcess"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">出院情况：</td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;&nbsp;&nbsp;&nbsp;<span name="outHspStatu"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">出院诊断：<span name="outHspDiag"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">出院医嘱：</td>
+			</tr>
+			<tr>
+				<td class="td2"><span name="outHspOrder"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="65%">&nbsp;</td>
+				<td width="35%">记&nbsp;录&nbsp;者：<span name="recName"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>记录时间：<span name="time"></span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

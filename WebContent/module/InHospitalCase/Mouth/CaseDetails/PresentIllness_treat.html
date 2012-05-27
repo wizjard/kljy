@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>现病史-诊疗经过</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+$(function(){
+	initPage();
+	$("#tabs").tabs();
+	var page=new Page();
+	if(window.dialogArguments)
+		$.each(window.dialogArguments,function(i){
+			if(i==0)
+				page.setContentValue($('#tabs-0'),this);
+			else
+				page.addTab(this);
+		});
+	$('#add-btn').click(function(){
+		page.addTab();
+	});
+	$('#del-btn').click(function(){
+		page.removeTab();
+	});
+	$('#ok-btn').click(function(){
+		page.ok();
+	});
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PresentIllnessHistory-Treat'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Btn
+	$('button').mouseover(function(){
+		$(this).addClass('btn-hover');
+	}).mouseout(function(){
+		$(this).removeClass('btn-hover');
+	});
+	//Select
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+}
+function Page(){
+	this.tab=$('#tabs');
+	this.defaultValue={
+		id:'',
+		evolution:'',
+		seeDoct:'',
+		seeDoct0:'',
+		examination:'',
+		diagnosis:'',
+		diagnosis0:'',
+		treatment:''
+	};
+	this.addTab=function(record){
+		var _size=this.tab.find('li').size();
+		$('<li><a href="#tabs-'+_size+'">记录'+(_size+1)+'</a></li>').appendTo(this.tab.find('ul'));
+		var _content=$('div.tabs-content').eq(0).clone(true);
+		_content.attr('id','tabs-'+_size);
+		_content.find('input.select').removeAttr('isInit').removeAttr('showId');
+		_content.find('input.checkbox').removeAttr('isInit').removeAttr('showId');
+		_content.appendTo(this.tab);
+		this.tab.tabs('destroy');
+		if(record){
+			$.extend(this.defaultValue,record);
+		}
+		var _thisRecord=this.defaultValue;
+		this.setContentValue(_content,_thisRecord);
+		this.tab.tabs();
+		this.tab.tabs( "select" , _size );
+	}
+	this.setContentValue=function(_content,_thisRecord){
+		_content.find('input').each(function(){
+			if(this.className=='select'){
+				$(this).attr('inputValue',_thisRecord[this.name]);
+				$(this).val(getRowValue(this.name,_thisRecord[this.name]));
+			}else{
+				$(this).val(_thisRecord[this.name]);
+			}
+		});
+		_content.find('textarea').each(function(){
+			$(this).val(_thisRecord[this.name]);
+		});
+	}
+	this.removeTab=function(){
+		var _select=this.tab.tabs('option', 'selected');
+		if(_select==0){
+			alert('首次记录不能删除。');
+			return;
+		}
+		if(!confirm('确定 要删除此记录？'))	return;
+		var _id=$('#tabs-'+_select).find('input[name="id"]').val();
+		if(!isNaN(_id)&&_id>0){
+			var _tab=this.tab;
+			$.post(
+				App.App_Info.BasePath+'/InHospitalCase/MouthCaseAction.do',
+				{
+					method:'PresentIllnessHistory_deleteTreat',
+					id:_id
+				},
+				function(data){
+					if(data.success){
+						_tab.tabs('remove',_select);
+					}else{
+						alert('删除失败。');
+					}
+				},
+				'json'
+			);
+		}else{
+			this.tab.tabs('remove',_select);
+		}
+	}
+	this.ok=function(){
+		var _values=[];
+		var _compsoe='';
+		$('div.tabs-content').each(function(i){
+			var json=FormUtil.getFormValues('#tabs-'+i);
+			_values.push(json);
+			var tempValue='';
+			var treatRst='';
+			tempValue=json.evolution;
+			treatRst+=tempValue.length>0?tempValue+'，':'';
+			tempValue=getRowValue('seeDoct',json.seeDoct);
+			if(tempValue=='其它')
+				tempValue=json.seeDoct0;
+			treatRst+=tempValue.length>0?tempValue+'，':'';
+			tempValue=json.examination;
+			treatRst+=tempValue.length>0?'检查结果:'+tempValue+'，':'';
+			tempValue=getRowValue('diagnosis',json.diagnosis);
+			if(tempValue=='其它')
+				tempValue=json.diagnosis0;
+			treatRst+=tempValue.length>0?tempValue+'，':'';
+			tempValue=json.treatment;
+			treatRst+=tempValue.length>0?tempValue+'，':'';
+			_compsoe+=treatRst;
+		});
+		if(_compsoe.length>0){
+			_compsoe=_compsoe.substr(0,_compsoe.length-1)+'。';
+		}
+		window.returnValue={
+			values:_values,
+			compose:_compsoe
+		};
+		window.close();
+	}
+}
+</script>
+<style type="text/css">
+textarea{
+	width:91%;
+	height:60px;
+}
+</style>
+</head>
+<body>
+<div id="toolbar" style="text-align:right">
+	<button class="btn" id="add-btn">新增</button>
+	<button class="btn" id="del-btn">删除</button>
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="window.close()">取消</button>
+</div>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-0">首次记录</a></li>
+	</ul>
+	<div class="tabs-content" id="tabs-0">
+		<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" valign="top" width="70">演变：<input type="hidden" name="id" value=""/></td>
+				<td><textarea name="evolution" style="width:91%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">就诊：</td>
+				<td><input name="seeDoct" type="text" class="select" style="width:91%"/>
+				<input name="seeDoct0" type="text" class="text hidden" style="width:91%"/></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">检查：</td>
+				<td><textarea name="examination"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">诊断：</td>
+				<td><input name="diagnosis" type="text" class="select" style="width:91%"/>
+				<input name="diagnosis0" type="text" class="text hidden" style="width:91%"/></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">治疗：</td>
+				<td><textarea name="treatment"></textarea></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</body>
+</html>

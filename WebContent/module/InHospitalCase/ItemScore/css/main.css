@@ -1,0 +1,357 @@
+﻿@CHARSET "UTF-8";
+
+body {
+	margin-top:0px;
+	margin-left:0px;
+	margin-right:0px
+}
+
+A:link{
+	text-decoration:none;
+	color:#000000;
+	font-family:宋体
+}
+
+A:visited{
+	text-decoration:none;
+	color:#000000;
+	font-family:宋体
+}
+
+A:active{
+	text-decoration:none;
+	color:#000000;
+	font-family:宋体
+}
+
+A:hover{
+	text-decoration:underline;
+	color:#FF7F50
+}
+
+.DTable {
+	border: 1px solid #000
+}
+
+.DTableHeader{
+    background-color:#A9A9A9;
+    border-left: 0px;
+    border-bottom: 1px solid #000;
+    border-top: 0px;
+    border-right: 1px solid #000;
+    font-size: 9pt;
+    font-weight: bold;
+    text-align:center
+}
+
+.DTableContent{
+    border-left: 0px;
+    border-bottom: 1px solid gray;
+    border-top: 0px;
+    border-right: 1px solid gray;
+    font-size: 9pt;
+    text-align:center
+}
+
+.fieldLabel {
+	font-size: 13px;
+	font-color: #000;
+	font-weight: bold
+}
+
+input:text{
+	font-size:9pt;
+	font-family:宋体;
+	border:1px solid #AD9A8C;
+	HEIGHT: 22px;
+}
+
+div #error {
+	position:absolute; 
+	left:30px; 
+	top:200px; 
+	width:300px;
+	z-index:1000; 
+	display:none; 
+	background-image:url(../image/loading_bg.gif);
+}
+
+div #errorInfo {
+	padding-left:20px; 
+	padding-right:20px; 
+	padding-top:20px; 
+	padding-bottom:10px; 
+	z-index:1001; 
+	font-family:arial, sans-serif; 
+	font-size:14px; 
+	text-align:center;
+	color:red
+}
+
+.modalDialog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 3px solid #CCC;
+	background: #EFF5FF;
+
+    z-index: 9001;
+    padding: 5px;
+    padding-bottom: 35px;
+}
+.modalDialog h1 {
+    text-align:center;
+    color: #5D9DFE;
+    margin: 3px;
+    padding: 3px;
+    text-align: left;
+    font-size: 18px;
+}
+.modalDialog h2 {
+    color: #FF6600;
+    margin-bottom: .3em;
+}
+.modalDialog h3 {
+    text-align:left;
+    color:#36C;
+    padding-bottom:4px;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #DDD;
+}
+
+.modalDialog .content {
+    background: #FFF;
+    margin: 3px;
+    padding:5px;
+}
+.modalDialog .close {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   cursor: pointer;
+}
+.overlay_dialog {
+    background-color: #000;
+    filter:alpha(opacity=60);
+    -moz-opacity: 0.6;
+    opacity: 0.6;
+    z-index: 8000;
+}
+
+/* ---[ settings panel ]-------------------------------- */
+
+.nv-settings {
+    border: 3px solid #444;
+	border: 1px solid #B9D1F0;
+	padding-bottom: 4px;
+}
+.nv-settings .settings {
+    background-color: #111;
+	background: #FFF;
+    margin: 0 5px 0 0;
+    padding: 0;
+    border: 1px solid #444;
+	border: 1px solid #D4E3F6;
+	border-top-color: #B9D1F0;
+	border-left-color: #B9D1F0;
+    list-style: none;
+    float:left;
+    height:440px;
+    width: 150px;
+}
+.nv-settings .settings li {
+    list-style-type: none;
+    margin: 0;
+    padding:0;
+}
+.nv-settings .settings li a {
+    display: block; /* a elements to blocks */
+    margin: 0;
+    padding: 5px;
+	background: #FFF;
+    border-bottom:1px solid #000;
+	border-bottom:1px solid #FFF;
+    text-decoration:none;
+    outline: none;
+   -moz-user-focus:ignore;
+}
+.nv-settings .settings li a:hover {
+	background: #FFFFE0;
+	border-bottom: 1px solid #C3C370;
+}
+.nv-settings .settings li a.selected,
+.nv-settings .settings li a.selected:hover {
+	background: #E5EFFF;
+	font-weight: bold;
+	border: 0;
+}
+.nv-settings .settings li a.disabled {
+    color:#ddd;
+}
+.nv-settings h2 {
+    color:  #36C;
+    border-bottom: 1px solid #DDD;
+}
+.nv-settings h3 {
+    text-align: center;
+}
+.nv-settings .page{
+    background: #FFF;
+    margin: 0;
+    padding:5px 10px;
+    float:left;
+    width: 470px;
+    min-height:430px;
+    height:430px;
+	border: 1px solid #D4E3F6;
+	border-top-color: #B9D1F0;
+	border-left-color: #B9D1F0;
+}
+
+.nv-settings div.wallpaper input {
+    vertical-align: middle;
+}
+
+#nv-startpage .page{
+	border: 1px solid #D4E3F6;
+	border-top-color: #B9D1F0;
+	border-left-color: #B9D1F0;
+}
+	#nv-startpage .page{
+		background: #FFF;
+		padding: 10px;
+		height: auto;
+		width: auto;
+		min-height: inherit;
+		margin-bottom: 50px;
+		float: none;
+	}
+	#nv-startpage .page p{
+		margin-bottom: 1em;
+	}
+
+
+.nv-settings .bottom {
+    clear: both;
+    padding: 8px 5px;
+    text-align:right;
+}
+.nv-settings input.confirm,
+.nv-settings input.done {
+    width: 10em;
+    position: relative; 
+}
+
+/* ---[ General settings ]------------------------------ */
+
+.nv-settings .page fieldset {
+	border: 1px solid #CCC;
+	padding: 5px 10px;
+	margin: 0 0 5px 0;
+	float:  none;
+}
+.nv-settings .page legend {
+    /*color: #486DEB;*/
+}
+.nv-settings p.option {
+    padding: 5px;
+}
+* html .nv-settings p.option {
+    padding: 2px;
+}
+.nv-settings p.option label {
+	font-weight: bold;
+}
+.nv-settings p.option .help {
+    font-style: normal;
+    color: #666;
+}
+
+#localContentRegions { /* see scrollable */
+    float:left;
+    width: 100%;
+    height: 95px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.actions-window-close{
+	background: transparent url(../img/actions.png) no-repeat -3px -160px;
+}
+
+p.field {
+    float:none;
+    clear:both;
+    margin: 2px;
+    padding: 2px 2px 4px 2px;
+    width: 100%;
+    border-bottom: 1px dotted #DCDCDC;
+}
+p.field label {
+    float:left;
+    width: 16em;
+    text-align:right;
+    margin: 0 8px;
+    padding-left: 20px;
+	font-weight:bold;
+	font-size:12px
+}
+p.fieldSmall label {
+    float:left;
+    width: 80px;
+    text-align:right;
+    margin: 0 8px;
+    padding-left: 10px;
+	font-weight:bold;
+	font-size:12px
+}
+p.field input {
+    float:left;
+}
+p.field em {
+    font-weight:bold;
+    font-size:11px;
+}
+
+p.fieldSmall {
+    float:none;
+    clear:both;
+    margin: 2px;
+    padding: 2px 2px 4px 2px;
+    width: 90%;
+    border-bottom: 1px dotted #DCDCDC;
+}
+p.fieldSmall label {
+    float:left;
+    width: 80px;
+    text-align:right;
+    margin: 0 8px;
+    padding-left: 10px;
+	font-weight:bold;
+	font-size:12px
+}
+p.fieldSmall input {
+    float:left;
+}
+p.fieldSmall em {
+    color:#BBB;
+    font-size:10px;
+}
+
+/*分页栏使用的css样式*/
+td.pageClickable {
+	cursor:hand;
+	border: 1px solid #CCCCCC;
+	color: #0061de;
+}
+
+td.pageUnclickable {
+	border: 1px solid #CCCCCC;
+	color: #999999;
+}
+
+td.pageNonClickable {
+	border: 1px none #CCCCCC;
+}
+/*分页栏结束使用的css样式*/

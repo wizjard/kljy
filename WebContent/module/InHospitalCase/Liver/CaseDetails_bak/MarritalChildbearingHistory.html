@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>婚育史(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-MarritalChildbearingHistory';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-MarritalChildbearingHistory'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//初始化婚姻状态字典值
+	$('input[name="marriageStatus"]').data('options',FormUtil.getIndependentDictionaryList('marrageStatus'));
+	//select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Radio事件
+	$('input[type="radio"]').click(function(){
+		if($(this).val()!=0){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//弹出框
+	$('#dialog1').dialog({
+		title:'婚育史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeMarritalChildbearingHistory();$(this).dialog("close");}
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'MarritalChildbearingHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+					$('input[name="consortHealthStatus"]').each(function(){
+						if(this.checked){
+							$(this).click();
+							return false;
+						}
+					});
+					$('input[name="hasChildFlag"]').each(function(){
+						if(this.checked){
+							$(this).click();
+							return false;
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function ComposeMarritalChildbearingHistory(){
+	var _compose=CollectionData();
+	var rst='';
+	var tempValue='';
+	/*---------婚姻史----------*/
+	tempValue=getRowValue('marriageStatus',_compose.marriageStatus);
+	if(tempValue=='未婚'||tempValue=='未说明的婚姻状况'){
+		rst+=tempValue+'、';
+	}else if(tempValue.length==0){
+		
+	}else{
+		if(tempValue=='其他'){
+			tempValue=_compose.marriageStatus0;
+		}
+		rst+=tempValue+'、';
+		tempValue=_compose.marriageAge+'';
+		rst+=tempValue.length>0?tempValue+'岁结婚、':'';
+		tempValue=getRowValue('consortHealthStatus',_compose.consortHealthStatus);
+		if(tempValue=='体健'){
+			rst+='配偶体健、';
+		}else{
+			rst+=tempValue.length>0?'配偶健康状况'+tempValue+'、':'';
+			tempValue=_compose.consorDisDesc;
+			rst+=tempValue.length>0?tempValue+'、':'';
+		}
+	}
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'；';
+	}
+	/*---------生育史----------*/
+	var rst2='';
+	tempValue=getRowValue('hasChildFlag',_compose.hasChildFlag);
+	if(tempValue==0){
+		rst2+='未有生育、';
+	}else{
+		tempValue=_compose.sunCount+'';
+		rst2+=tempValue.length>0?'子'+tempValue+'个、':'';
+		tempValue=_compose.daughterCount+'';
+		rst2+=tempValue.length>0?'女'+tempValue+'个、':'';
+		if(rst2.length>0) rst2='育'+rst2.substr(0,rst2.length-1)+'，';
+		tempValue=_compose.gestation+'';
+		rst2+=tempValue.length>0?'妊娠'+tempValue+'次，':'';
+		tempValue=_compose.shunchan+'';
+		rst2+=tempValue.length>0?'顺产'+tempValue+'次，':'';
+		tempValue=_compose.zaochan+'';
+		rst2+=tempValue.length>0?'早产'+tempValue+'次，':'';
+		tempValue=_compose.liuchan+'';
+		rst2+=tempValue.length>0?'流产'+tempValue+'次，':'';
+		tempValue=_compose.sitai+'';
+		rst2+=tempValue.length>0?'死胎'+tempValue+'次，':'';
+		tempValue=_compose.childOther+'';
+		rst2+=tempValue.length>0?tempValue+'、':'';
+	}
+	if(rst2.length>0){
+		rst2=rst2.substr(0,rst2.length-1)+'；';
+	}
+	rst+=rst2;
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'。';
+		$('textarea:[name="marriageChildDesc"]').val(rst);
+	}
+	$('#dialog1').dialog("close");
+}
+function SaveData(){
+	var _values=CollectionData();
+	if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'MarritalChildbearingHistory_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">婚育史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="marriageChildDesc" class="textarea" style="width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">婚姻状态：</td>
+			<td class="t2">
+				<input type="text" class="select" name="marriageStatus" style="width:120px"/>
+				<input type="text" class="text hidden" name="marriageStatus0" style="width:150px"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">结婚年龄：</td>
+			<td class="t2">
+				<input type="text" class="text" name="marriageAge" style="width:50px"/>&nbsp;岁
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">配偶健康状况：</td>
+			<td class="t2">
+				<input type="radio" class="radio dict-fld" name="consortHealthStatus" checked="checked"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" valign="top">配偶疾病情况：</td>
+			<td class="t2">
+				<textarea name="consorDisDesc" class="text" style="width:90%;height:50px;"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">生育情况：</td>
+			<td class="t2">
+				<input type="radio" class="radio dict-fld" name="hasChildFlag" checked="checked"/>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2">
+				<p>育子：<input name="sunCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;&nbsp;&nbsp;
+				        育女：<input name="daughterCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;&nbsp;&nbsp;
+				</p>
+				<p>妊娠：<input name="gestation" type="text" class="text" style="width:40px"/>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;
+				        早产：<input name="zaochan" type="text" class="text" style="width:40px"/>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;
+				</p>
+				<p>顺产：<input name="shunchan" type="text" class="text" style="width:40px"/>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;
+				        死胎：<input name="sitai" type="text" class="text" style="width:40px"/>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;
+				</p>
+				<p>流产：<input name="liuchan" type="text" class="text" style="width:40px"/>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;
+				</p>
+				<p style="line-height:20px">难产及病情：</p>
+				<p><textarea name="childOther" class="textarea" style="width:90%;height:50px"></textarea>
+				</p>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

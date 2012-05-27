@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>随访提醒</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	var sm=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var cm=new Ext.grid.ColumnModel([
+		new Ext.grid.RowNumberer(),
+		sm,
+		{header:'姓名',dataIndex:'patientName'},
+		{header:'病案号',dataIndex:'patientNo'},
+		{header:'课题名称',dataIndex:'researchId',renderer:function(value){
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/common/CommonAction.do',
+				params:{
+					method:'GetSelfQueryList',
+					sql:'select name from SYS_ResearchTopic where id='+value
+				},
+				sync:true,
+				success:function(_response){
+					var data=Ext.util.JSON.decode(_response.responseText);
+					if(data.length>0){
+						value=data[0].name;
+					}
+				}
+			});
+			return value;
+		}},
+		{header:'随访开始日期',dataIndex:'followupStart'},
+		{header:'随访次数',dataIndex:'followTimes'},
+		{header:'随访周期(月)',dataIndex:'followCycle'},
+		{header:'随访项目',dataIndex:'followContent'},
+		{header:'随访计划日期',dataIndex:'followupPlanDate'},
+		{header:'剩余(天)',dataIndex:'followupLeast'},
+		{header:'随访通知日期',dataIndex:'noticeDate'},
+		{header:'预约日期',dataIndex:'reserveDate'}
+	]);
+	var ds=new Ext.data.Store({
+		proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/ResearchFollowupAction.do'}),
+		reader:new Ext.data.JsonReader({root:'root',totalProperty:'total'},[
+			{name:'id'},
+			{name:'patientName'},
+			{name:'patientNo'},
+			{name:'researchId'},
+			{name:'followupStart'},
+			{name:'followTimes'},
+			{name:'followCycle'},
+			{name:'followContent'},
+			{name:'followupPlanDate'},
+			{name:'followupLeast'},
+			{name:'noticeDate'},
+			{name:'remarkContent'},
+			{name:'reserveDate'}
+		])
+	});
+	ds.baseParams={method:'notice_findAll',action:1};
+	ds.load({params:{start:0,limit:20}});
+	var grid=new Ext.grid.GridPanel({
+		title:'待通知随访病人列表',
+		id:'grid',
+		border:false,
+		sm:sm,
+		cm:cm,
+		ds:ds,
+		autoScroll: true,
+		viewConfig:{
+			forceFit:true
+		},
+		bbar:new Ext.PagingToolbar({
+            pageSize: 20,
+            store: ds,
+            displayInfo: true,
+            displayMsg: '显示第<font color="red"> {0} </font>条' +
+            '到<font color="red"> {1} </font>条记录，' +
+            '一共<font color="red"> {2} </font>条',
+            emptyMsg: "没有记录"
+        }),
+		tbar:[
+			'-',{
+				text:'待通知',handler:function(){
+					Ext.getCmp('grid').setTitle('待通知随访病人列表');
+					Ext.getCmp('grid').getStore().baseParams={method:'notice_findAll',action:1};
+					Ext.getCmp('grid').getStore().load({params:{start:0,limit:20}});
+				}
+			},'-',{
+				text:'已通知',handler:function(){
+					Ext.getCmp('grid').setTitle('已通知随访病人列表');
+					Ext.getCmp('grid').getStore().baseParams={method:'notice_findAll',action:2};
+					Ext.getCmp('grid').getStore().load({params:{start:0,limit:20}});
+				}
+			},'-',{
+				text:'全部',handler:function(){
+					Ext.getCmp('grid').setTitle('全部随访病人列表');
+					Ext.getCmp('grid').getStore().baseParams={method:'notice_findAll',action:3};
+					Ext.getCmp('grid').getStore().load({params:{start:0,limit:20}});
+				}
+			},'->',{
+				text:'随访提醒',handler:ShowNoticeWin
+			},'-'
+		]
+	});
+	new Ext.Viewport({
+		layout:'fit',
+		items:grid
+	});
+});
+function ShowNoticeWin(){
+	var _ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+	if(_ss.length==0||_ss.length>1){
+		alert('请选择一条记录。');
+		return;
+	}
+	new Ext.Window({
+		title:'随访提醒',
+		width:400,
+		autoHeight:true,
+		frame:true,
+		closable:false,
+		buttonAlign:'center',
+		layout:'fit',
+		items:{
+			xtype:'form',
+			labelWidth:60,
+			bodyStyle:'padding-top:5px',
+			labelAlign:'right',
+			border:false,
+			autoHeight:true,
+			items:[
+				{
+					xtype:'datefield',
+					name:'noticeDate',
+					format:'Y-m-d',
+					fieldLabel:'通知日期',
+					value:_ss[0].data.noticeDate,
+					readOnly:true,
+					anchor:'50%'
+				},{
+					xtype:'datefield',
+					name:'reserveDate',
+					format:'Y-m-d',
+					fieldLabel:'预约日期',
+					readOnly:true,
+					value:_ss[0].data.reserveDate,
+					anchor:'50%'
+				},{
+					xtype:'textarea',
+					name:'remarkContent',
+					fieldLabel:'备注',
+					height:90,
+					value:_ss[0].data.remarkContent,
+					anchor:'98%'
+				}
+			]
+		},
+		buttons:[
+			{
+				text:'保存',handler:function(){
+					var _id=_ss[0].data.id;
+					var _form=this.ownerCt.items.get(0).form;
+					var _noticeDate=_form.findField('noticeDate').getRawValue();
+					if(_noticeDate.length==0){
+						alert('通知日期不能为空。');
+						return;
+					}
+					var _reserveDate=_form.findField('reserveDate').getRawValue();
+					var _remarkContent=_form.findField('remarkContent').getValue();
+					Ext.Ajax.request({
+						url:App.App_Info.BasePath+'/ResearchFollowupAction.do',
+						params:{
+							method:'notice_save',
+							id:_id,
+							noticeDate:_noticeDate,
+							reserveDate:_reserveDate,
+							remarkContent:_remarkContent
+						},
+						scope:this,
+						success:function(_response){
+							if(Ext.util.JSON.decode(_response.responseText).success){
+								alert('保存成功。');
+								Ext.getCmp('grid').getStore().reload();
+								this.ownerCt.close();
+							}else{
+								alert('保存失败。');
+							}
+						}
+					});
+				}
+			},{
+				text:'关闭',handler:function(){
+					this.ownerCt.close();
+				}
+			}
+		]
+	}).show();
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

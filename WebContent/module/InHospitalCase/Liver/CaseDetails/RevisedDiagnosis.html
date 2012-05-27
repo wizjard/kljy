@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>订正诊断(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-RevisedDiagnosis';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="dz_checkdate"]')});
+	FormUtil.toDateField({el:$('input[name="dz_inhspSignDate"]')});
+	FormUtil.toDateField({el:$('input[name="dz_treatSignDate"]')});
+	FormUtil.toDateField({el:$('input[name="dz_directorSignDate"]')});
+	//医生字典选择
+	$('input[name="dz_inhspDoctorId_show"],input[name="dz_treatDoctorId_show"],input[name="dz_directorDoctorId_show"]').each(function(){
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			hiddenEl:$('input[name="'+$(this).attr('name').replace('_show','')+'"]'),
+			showEl:$('input[name="'+$(this).attr('name')+'"]')
+		});
+	});
+}
+
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'RevisedDiagnosis_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function setFormValues_onComplete(){
+	var _longId=$('input[name="dz_inhspDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="dz_inhspDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="dz_treatDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="dz_treatDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="dz_directorDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="dz_directorDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'RevisedDiagnosis_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<input type="hidden" name="dz_inhspDoctorId" value=""/>
+<input type="hidden" name="dz_treatDoctorId" value=""/>
+<input type="hidden" name="dz_directorDoctorId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">订正诊断</td>
+	</tr>
+	<tr>
+		<td class="t1" width="65">诊断时间：</td>
+		<td class="t2" colspan="3"><input name="dz_checkdate" type="text" class="text" style="width:32%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">诊断结果：</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis1" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis2" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis3" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis4" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis5" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis6" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis7" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis8" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis9" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis10" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis11" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis12" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis13" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="dz_diagnosis14" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">住院医师：</td>
+		<td class="t2" width="230"><input name="dz_inhspDoctorId_show" type="text" class="text"/></td>
+		<td class="t1" width="65">签字时间：</td>
+		<td class="t2"><input name="dz_inhspSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">主治医师：</td>
+		<td class="t2"><input name="dz_treatDoctorId_show" type="text" class="text"/></td>
+		<td class="t1">签字时间：</td>
+		<td class="t2"><input name="dz_treatSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">主任医师：</td>
+		<td class="t2"><input name="dz_directorDoctorId_show" type="text" class="text"/></td>
+		<td class="t1">签字时间：</td>
+		<td class="t2"><input name="dz_directorSignDate" type="text" class="text"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

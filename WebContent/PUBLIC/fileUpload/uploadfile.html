@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>上传附件</title>
+<script type="text/javascript" src="script/fileUpload.js"></script>
+</head>
+<body onload ="FileUploadSupport.getFilePath()">
+
+	<form name="uploadForm" method="post" id="uploadForm" enctype="multipart/form-data" action="script/upload.jsp">
+		<input name="imgFile" type="file" style="width:220px;" id="imgFile"/><input type="submit" value="上传" onclick="FileUploadSupport.checkName()"/>
+		&nbsp;&nbsp;&nbsp;<font color="red" size="2">压缩文件命名不要出现空格</font><div id="first" style="display:none">
+		<a href="#" target="_blank"></a>
+		</div>
+	</form>
+	
+</body>
+</html>

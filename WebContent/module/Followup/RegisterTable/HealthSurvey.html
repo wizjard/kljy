@@ -1,0 +1,479 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>健康调查简表</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+td{
+	font-size:12px;
+}
+h1{
+	margin:0;
+	padding:0;
+	font-size:14px;
+	line-height:20px;
+}
+p{
+	padding:0;
+	margin:0;
+	line-height:18px;
+	text-indent:2em;
+}
+.title{
+	line-height:22px;
+	font-weight:bold;
+	font-size:16px;
+	text-align:center;
+}
+td.t1{
+	line-height:20px;
+}
+td.t2{
+	padding-left:20px;
+	line-height:20px;
+}
+</style>
+<script type="text/javascript">
+var kid=App.util.getHtmlParameters('kid');
+$(function(){
+	$('input[name="followupId"]').val(kid);
+	initPage();
+	setValue();
+});
+function initPage(){
+	var dict=FormUtil.getPageDictionary('Research-CRF-HealthSurvey');
+	$('input[type="checkbox"]').each(function(){
+		var name=$(this).attr('name');
+		var code=$(this).attr('rel')||name;
+		var array=dict[code];
+		var html='';
+		$.each(array,function(){
+			html+='<input name="'+name+'" type="checkbox" value="'+this[0]+'"/><span>'+this[1]+'</span>&nbsp;&nbsp;';
+		});
+		$(this).parent().append($(html));
+		$(this).remove();
+	});
+	$('input[type="checkbox"]').click(function(){
+		var checked=$(this).attr('checked');
+		$('input[name="'+$(this).attr('name')+'"]').attr('checked',false);
+		if(checked){
+			$(this).attr('checked',true);
+		}else{
+			$(this).attr('checked',false);
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'HealthSurvey_findByFollowupId',
+			id:kid
+		},
+		function(data){
+			if(data.success){
+				var json=JSON.parse(data.data);
+				if(json){
+					$.each(json,function(key){
+						if(key=='id'||key=='followupId'){
+							$('input[name="'+key+'"]').val(json[key]);
+						}else{
+							$('input[name="'+key+'"]').each(function(){
+								if(this.value==json[key]){
+									$(this).attr('checked',true);
+									return false;
+								}
+							});
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var json={
+		id:$('input[name="id"]').val(),
+		followupId:$('input[name="followupId"]').val()
+	};
+	$('input[type="checkbox"][checked]').each(function(){
+		json[$(this).attr('name')]=$(this).val();
+	});
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'HealthSurvey_SaveOrUpdate',
+			data:JSON.stringify(json)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				$('input[name="id"]').val(JSON.parse(data.data)['id']);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="followupId" value=""/>
+<table border=0 cellSpacing=0 cellPadding=2>
+	<tr>
+		<td class="title">健康调查简表（the MOS item short from health survey,SF-36）</td>
+	</tr>
+	<tr>
+		<td>
+			<h1>填表说明：</h1>
+			<p>这份问卷是要了解您对自己健康状况的看法及您做日常生活活动的能力。</p>
+			<p>请您一定回答所有问题，如果某个问题您不能肯定回答，就选择最近您自己真实感受的那个答案。</p>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">1、总的来讲，你的健康状况是：</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input name="normalHealth" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">2、跟1年以前比您觉得自己的健康状况是：</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input name="compare1year" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">3、以下这些问题都和日常活动有关。请您想一想，您的健康善是否限制了这些活动？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<table border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="100%">
+				<tr>
+					<td class="t1">（1） 重体力活动。如跑步举重、参加剧烈运动等：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input name="limitActive" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（2） 适度的活动。如移动一张桌子、扫地、打太极拳、做简单体操：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive2" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（3） 手提日用品。如买菜，购物等：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive3" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（4） 上几层楼梯：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive4" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（5） 上一层楼梯：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive5" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（6） 弯腰、屈膝、下蹲：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive6" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（7） 步行1500米以上的路程：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive7" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（8） 步行1000米的路程：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive8" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（9） 步行100米的路程：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive9" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（10） 自己洗澡、穿衣：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="limitActive" name="limitActive10" type="checkbox">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">4、在过去4个星期里，您的工作和日常活动有无因为身体健康的原因而出现以下这些问题？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<table border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="100%">
+				<tr>
+					<td class="t1">（1）减少了工作或其他活动时间：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input name="fourWeeks_work" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（2） 本来想要做的事情只能完成一部分：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_work2" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（3） 想要干的工作或活动种类受到限制：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_work3" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（4） 完成工作或其他活动困难增多（比如需要额外的努力）：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_work4" type="checkbox">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">5、在过去4个星期里，您的工作和日常活动有无因为情绪的原因（如压抑或忧虑）而出现以下这些问题？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<table border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="100%">
+				<tr>
+					<td class="t1">（1）减少了工作或其他活动时间：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_mood" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（2） 本来想要做的事情只能完成一部分：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_mood2" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（3） 干事情不如平时仔细：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="fourWeeks_work" name="fourWeeks_mood3" type="checkbox">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">6、在过去4个星期里，您的健康或情绪不好在多大程度上影响了您与家人、朋友、邻居或集体的正常</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input name="fourWeeks_contact" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">7、在过去4个星期里，您有身体疼痛吗？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input name="fourWeeks_pain" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">8、在过去4个星期里，您的身体疼痛影响了您的工作和家务吗？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input rel="fourWeeks_pain" name="fourWeeks_pain_eff" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">9、以下这些问题是关于过去1个月里您自己的感觉，对每一条问题所说的事情，您的情况是什么样的？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<table border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="100%">
+				<tr>
+					<td class="t1">（1）您觉得生活充实：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input name="oneMonthStatus" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（2） 您是一个敏感的人：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus2" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（3） 您的情绪非常不好，什么事情都不能使您高兴起来：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus3" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（4） 您的心理很平静：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus4" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（5） 您做事精力充沛：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus5" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（6） 您的情绪很低落：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus6" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（7） 您觉得筋疲力尽：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus7" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（8） 您是个快乐的人：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus8" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（9）您感觉厌烦：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="oneMonthStatus" name="oneMonthStatus9" type="checkbox">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">10、不健康影响了您的社会活动（如走访亲友）：</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<input rel="oneMonthStatus" name="healthless_eff" type="checkbox">
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">11、请看下列每一条问题，哪一种答案最符合您的情况？</td>
+	</tr>
+	<tr>
+		<td class="t2">
+			<table border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 width="100%">
+				<tr>
+					<td class="t1">（1）我好象比别人容易生病：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input name="personalSituation" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（2） 我跟周围人一样健康：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="personalSituation" name="personalSituation2" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（3） 我认为我的健康状况在变坏：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="personalSituation" name="personalSituation3" type="checkbox">
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">（4）我的健康状况非常好：</td>
+				</tr>
+				<tr>
+					<td class="t2">
+						<input rel="personalSituation" name="personalSituation4" type="checkbox">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

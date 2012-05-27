@@ -1,0 +1,131 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/LINKCSS.CSS" />
+<link rel="stylesheet" type="text/css" href="css/main.CSS" />
+<link rel="stylesheet" type="text/css" href="css/tablecloth/tablecloth.css" />
+<link rel="stylesheet" type="text/css" href="js/TreeMng/css/dtree.css"/>
+
+<script type="text/javascript" src="js/TreeMng/js/dtree.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="js/TabCloseMenu.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<title>肝病病人评估系统首页</title>
+<script type="text/javascript">
+	var PatientID = App.util.getHtmlParameters('PID');
+	var kid = App.util.getHtmlParameters('KID');
+	var dtree = null;
+	var pinfo={};
+	Ext.onReady(function(){
+		initTree();	
+		initMainZone();
+	});
+
+	function initTree(){
+		document.getElementById('dtree').innerHTML = "";
+		dtree = new dTree('dtree');
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath + '/KLJY/ItemScore/TreeAction.do?method=getTreeNode&PatientID='+PatientID,
+			success:function(_response,_options){
+				var treelist = Ext.util.JSON.decode(_response.responseText);
+				for(var i=0,len=treelist.length;i<len;i++){
+					var treeNode = treelist[i];
+					dtree.add(treeNode.treeId,treeNode.PId,treeNode.nodeName,treeNode.href,'','_self');	
+				}
+				dtree.config.useSelection = true;
+				dtree.config.folderLinks=false;
+				document.getElementById('dtree').innerHTML = dtree.toString();
+			}				 
+		});		
+	}
+	
+	function initMainZone(){
+		var _tab=new Ext.TabPanel({
+			id:'mainZone',
+			el:'main',
+			autoShow:true,
+			height:Ext.getBody().getSize().height-50,
+			width:Ext.getBody().getSize().width-235,
+			activeTab:0,
+			border:false,
+			plugins:new Ext.ux.TabCloseMenu(),
+			items:[
+				{title:'使用说明',
+					closable:false,
+					html:'<iframe width="100%" height="100%" frameborder="0" src="useDescription.html"></iframe>'
+				}	   
+			]
+		}).render();
+	}
+
+function nodeClick(id,pid){
+	var keyID = id.split('_')[1];
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/KLJY/ItemScore/TreeAction.do?method=getRelPageName&TreeID='+pid,				 
+		success:function(_response,_options){
+			var tree = Ext.util.JSON.decode(_response.responseText);
+			var url = tree.pageName+'?PatientID='+PatientID+'&keyID='+keyID+'&kid='+kid;
+			var title = tree.simpleName+'_'+dtree.aNodes[dtree.selectedNode].name;
+			var panelId = 'tab'+id;
+			addTab(panelId,title,url);
+		}			
+	});
+}
+function addTab(id,title,url){
+	var tabPanel=Ext.getCmp('mainZone');
+	var tab=Ext.getCmp('id');	
+	if(typeof(tab)!='undefined'){
+		tabPanel.setActiveTab(tab);
+	}else{
+		tab=new Ext.Panel({
+				id:id,
+				closable:true,
+				border:false,
+				html:'<iframe width="100%" height="100%" frameborder="0" src="'+url+'&tabID='+id+'"></iframe>'			  
+			});
+		tabPanel.add(tab);
+		tab.setTitle(title);
+		tabPanel.setActiveTab(tab);
+	}
+}
+function delTab(id){
+//	Ext.getCmp('mainZone').remove(Ext.getCmp('mainZone').getActiveTab(),true); 
+	if(Ext.getCmp(id)){
+		Ext.getCmp('mainZone').remove(Ext.getCmp(id),true); 
+	}	
+}
+function backToHistory(){
+	parent.backToHistory();
+}
+</script>
+</head>
+
+<body>
+	<table width="100%" height="100%" border="1" cellpadding="0" cellspacing="1">
+		<tr>
+			<td height="25" colspan="2">
+				<div class="pageDiv">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							 <td width="150" style="font-size:12px"><!-- &nbsp;&nbsp;病人姓名：<span id="pname"></span>-->&nbsp;</td>
+							<td align="center"><span style="font-size:16px; color:#909; line-height:25px">器官功能评估系统管理</span></td>
+							<td width="50"><input type="button" class="btn_compact" value="返回" onClick="backToHistory()"/></td>
+						</tr>
+					</table>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="160">
+				<div id="dtree"></div>
+			</td>
+			<td valign="top">
+				<div id="main"></div>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

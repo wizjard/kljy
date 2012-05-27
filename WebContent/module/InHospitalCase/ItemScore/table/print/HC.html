@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="2" style="font-size:20px;color:red;">肝门部胆管癌分型</td></tr>
+		<tr>
+			<td width="550" align="center" style="color:red">肝门部胆管癌Bismuth</td>
+			<td width="100" align="center">分型</td>
+		</tr> 
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅠ型" /></div><div style="float:left;">肿瘤位于肝总管，未侵犯汇合部</div></div></td>
+			<td rowspan="5"><input type="text" name="bismuthRst" style="width:90px;" /></td>
+		</tr>	
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅡ型" /></div><div style="float:left;">肿瘤已累及汇合部,但未侵犯左右肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅢa型" /></div><div style="float:left;">肿瘤已侵犯右肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅢb型" /></div><div style="float:left;">肿瘤已侵犯左肝管</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hcbismuth" value="BismuthⅣ型" /></div><div style="float:left;">肿瘤已侵犯左右肝管</div></div></td>
+		</tr>
+		
+		<tr>
+			<td align="center" style="color:red">肝门部胆管癌T</td>
+			<td align="center">分期</td>
+		</tr> 
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T1" /></div><div style="float:left;">肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管</div></div></td>
+			<td rowspan="3"><input type="text" name="hctRst" style="width:90px;" /></td>
+		</tr>	
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T2" /></div><div style="float:left;">肿瘤累及肝管汇合部和（或）扩展到单侧二级胆管合并同侧门静脉受侵和（或）同侧肝叶萎缩</div></div></td>
+		</tr>
+		<tr>
+			<td><div><div style="float:left;"><input type="radio" name="hct" value="T3" /></div><div style="float:left;">肿瘤累及肝管汇合部并扩展到双侧二级胆管；或扩展到单侧二级胆管合并对侧门静脉受侵；或扩展到单侧二级胆管合并对侧肝叶萎缩；或门静脉主干受侵</div></div></td>
+		</tr>
+    </table>
+    </div>
+</form>
+</body>
+</html>

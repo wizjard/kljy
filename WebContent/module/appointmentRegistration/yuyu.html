@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Untitled Document</title>
+		<style>
+			input{
+				border:solid 1px green;
+				background: url(image/button.jpg);
+				width:150ppx;
+				height:40px;
+				font-family:楷体;
+				font-size:20px;	}
+				span{
+					text-align:center;
+					float:left;
+				}
+				
+		</style>
+	</head>
+	<body>
+		<center><input type="button" value="预约" onclick="toLink()"></center><br />
+		<b>预约流程</b>
+		<hr>
+		
+	  <span>
+	    <input type="button" value="登陆康乐家园"/> <img src="image/ji.jpg" />  <img src="image/ji.jpg" />
+		<input type="button" value="网上预约挂号"/> <img src="image/ji.jpg" /><img src="image/ji.jpg" />
+		</span>
+		<span>
+		<input type="button" value="选择门诊科室"/>
+		<img src="image/ji.jpg" />  <img src="image/ji.jpg" />
+		<input type="button" value="选择门诊类型"/>
+		<img src="image/ji.jpg" /><img src="image/ji.jpg" />
+		</span>
+		<span>
+			<input type="button" value="选择门诊医生">
+		<img src="image/ji.jpg" /> <img src="image/ji.jpg" />
+		<input type="button" value="预约挂号成功">
+		</span>
+	</body>
+	
+	<script type="text/javascript">
+ function toLink(){
+ 	window.parent.location.href="departmentList.html";
+ }
+</script>
+</html>

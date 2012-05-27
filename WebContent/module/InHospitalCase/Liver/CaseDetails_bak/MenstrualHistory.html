@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>月经史(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-MenstrualHistory';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+	PatientInfo();
+});
+function PatientInfo(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/CourseRecordingAction.do',
+		{
+			method:'public_patientInfo',
+			id:KID
+		},
+		function(data){
+			if (data.success) {
+				var json=JSON.parse(data.data);
+				if(json.gender.indexOf('男')!=-1){
+					var td=$('textarea[name="menstrualDesc"]').parent();
+					td.children().css('display','none');
+					td.html('<p>患者为男性，无需填写。</p>');
+				}
+			}
+		},
+		'json'
+	);
+}
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-MenstrualHistory'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Radio选项初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//时间选择
+	FormUtil.toDateField({el:$('input[name="lastMenstrualDate"]')});
+	//弹出框
+	$('#dialog1').dialog({
+		title:'月经史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeMenstrualHistoryHistory();$(this).dialog("close");}
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'MenstrualHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function ComposeMenstrualHistoryHistory(){
+	var _compose=CollectionData();
+	var rst='';
+	var flag='';
+	var tempValue='';
+	//初潮年龄
+	tempValue=_compose.menarcheAge+'';
+	tempValue=tempValue.length>0?('初潮年龄'+tempValue+'岁，'):'';
+	rst+=tempValue;
+	//月经周期
+	var temp1=_compose.menstrualCycleFrom+'';
+	var temp2=_compose.menstrualCycleTo+'';
+	if(temp1.length>0&&temp2.length>0){
+		tempValue='月经周期'+temp1+'~'+temp2+'天，';
+		rst+=tempValue;
+	}else if(temp1.length>0&&temp2.length==0){
+		tempValue='月经周期'+temp1+'天，';
+		rst+=tempValue;
+	}else if(temp1.length==0&&temp2.length>0){
+		tempValue='月经周期'+temp2+'天，';
+		rst+=tempValue;
+	}
+	//经期天数
+	temp1=_compose.menstrualPeriodFrom+'';
+	temp2=_compose.menstrualPeriodTo+'';
+	if(temp1.length>0&&temp2.length>0){
+		tempValue='经期'+temp1+'~'+temp2+'天，';
+		rst+=tempValue;
+	}
+	//末次月经日期
+	tempValue=_compose.lastMenstrualDate+'';
+	tempValue=tempValue.length>0?('末次月经日期'+tempValue+'，'):'';
+	rst+=tempValue;
+	//绝经年龄
+	tempValue=_compose.menopauseAge+'';
+	tempValue=tempValue.length>0?(tempValue+'岁绝经，'):'';
+	rst+=tempValue;
+	//经量
+	tempValue=getRowValue('menstrualVolume',_compose.menstrualVolume);
+	tempValue=tempValue.length>0?('经量'+tempValue+'，'):'';
+	rst+=tempValue;
+	//经期
+	tempValue=getRowValue('menstrualDate',_compose.menstrualDate);
+	tempValue=tempValue.length>0?('经期'+tempValue+'，'):'';
+	rst+=tempValue;
+	//痛经
+	flag=getRowValue('painfulMenstruation',_compose.painfulMenstruation);
+	if(flag=='0'){
+		rst+='无痛经，';
+	}else if(flag=='1'){
+		rst+='痛经，';
+	}
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'。';
+		$('textarea:[name="menstrualDesc"]').val(rst);
+	}
+	$('#dialog1').dialog("close");
+}
+function SaveData(){
+	var _values=CollectionData();
+	if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'MenstrualHistory_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">月经史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="menstrualDesc" class="textarea" style="width:95%"></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="150">初潮年龄：</td>
+			<td class="t2">
+				<input type="text" class="text" name="menarcheAge" style="width:40px"/>&nbsp;岁
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">绝经年龄：</td>
+			<td class="t2">
+				<input type="text" class="text" name="menopauseAge" style="width:40px"/>&nbsp;岁
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">月经周期：</td>
+			<td class="t2">
+				<input type="text" class="text" name="menstrualCycleFrom" style="width:40px"/>&nbsp;~
+				<input type="text" class="text" name="menstrualCycleTo" style="width:40px"/>&nbsp;天
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">经期天数：</td>
+			<td class="t2">
+				<input type="text" class="text" name="menstrualPeriodFrom" style="width:40px"/>&nbsp;~
+				<input type="text" class="text" name="menstrualPeriodTo" style="width:40px"/>&nbsp;天
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">末次月经：</td>
+			<td class="t2">
+				<input type="text" class="text" name="lastMenstrualDate" style="width:150px"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">经量：</td>
+			<td class="t2">
+				<input type="radio" class="radio dict-fld" name="menstrualVolume" checked="checked"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">经期：</td>
+			<td class="t2">
+				<input type="radio" class="radio dict-fld" name="menstrualDate" checked="checked"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">痛经：</td>
+			<td class="t2">
+				<input type="radio" class="radio dict-fld" name="painfulMenstruation" checked="checked"/>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>肿瘤肝胆介入治疗中心介入诊断、治疗预约单</title>
+	<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript"></script>
+	<script type="text/javascript" src="print1.js"></script>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			
+			singlePageTableInfo(KID,'介入诊断治疗预约单','#page-header');
+			setValue('CancerTreatBespokePrint','CancerTreatBespokeAction','get_Main_Info','CancerTreatBespokeAction');
+			var url="CancerTreatBespokePrint2.html?id="+id+"&kid="+KID + "&height=" + $('#table-div').height();
+			document.getElementById('iframe').src=url;
+			
+			LODOP = document.getElementById("LODOP");
+			CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+			$('#PRINT').click(function(){
+				PREVIEW('介入诊断治疗预约单');
+			});
+		});
+	</script>
+</head>
+<body style="height:100%">
+	<div id="page-toolbar">
+		<button id="PRINT">打印预览</button>
+	</div>
+	
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+
+	<div id="page-con">
+		<div id="page-header"></div>
+		<div id="table-div">
+			<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+			<style type="text/css">
+				<!--.t td{
+					border:1px solid black;
+					border-top:none;
+					border-left:none;
+				}-->
+			</style>
+		 	<table class="conTable t" border=0 cellpadding=0 cellspacing=0>	
+				<tr align="center">
+					<td width="85" class="td1">姓名：</td>
+					<td width="100" class="td2"><span name="patientName"></span></td>
+					<td width="85" class="td1" align="right">性别：</td>
+					<td width="*" class="td2" align="left"><span name="gender"></span></td>
+					<td width="80" class="td1">年龄：</td>
+					<td width="100" class="td2"><span name="age"></span></td>
+				</tr>
+				<tr align="center">
+					<td class="td1">病案号：</td>
+					<td class="td2" width="100"><span name="patientCaseId"></span></td>
+					<td class="td1">科别：</td>
+					<td class="td2" width="145"><span name="officeAssort"></span></td>
+					<td class="td1">床号：</td>
+					<td class="td2"><span name="bedNum"></span></td>
+				</tr>
+				<tr align="center">
+					<td class="td1">CT号：</td>
+					<td class="td2"><span name="ctNum"></span></td>
+					<td class="td1">MR号：</td>
+					<td class="td2"><span name="mrNum"></span></td>
+					<td class="td1">介入号：</td>
+					<td class="td2"><span name="joinNum"></span></td>
+				</tr>
+				<tr align="center">
+					<td class="td1" style="border-right-style:none;border-bottom-style:none">诊断：</td>
+					<td class="td2" width="510" colspan="5" style="border-bottom-style:none"><span name="diagnose"></span></td>
+				</tr>
+				<tr>
+					<td class="td1" style="border-right-style:none;border-top-style:none;">介入手术项</td>
+					<td colspan="5" style="border-top-style:none;">
+					目：<span name="joinItemName"></span> 定于&nbsp;&nbsp;&nbsp;&nbsp;<span name="checkDate"></span>&nbsp;&nbsp;&nbsp;&nbsp;开始手术，术前请提前做好准备:<br/>
+					1、术前六小时禁食、水<br/>
+					2、备皮(胆道系统治疗不需作备皮)<br/>
+					3、碘过敏试验(CT导引射频消化、化学消融术不作碘过敏试验)<br/>
+					4、签署手术知情同意书(手术当天必须有家属陪同)<br/>
+					5、请携带预约单、病历、CT片、MR片、患者备静脉通路一组，由医护人员陪同到导管室
+					</td>
+				</tr>
+				<tr>
+					<td class="td1">医师：</td>
+					<td class="td2"><span name="doctorName"></span></td>
+					<td class="td1" colspan="4" width="*"><span name="songDate"></span>&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<p>---------------------------------------------------------------------------------------</p>
+		<iframe id="iframe" src="" width="750" height="100%" frameborder="no" srcoll="no"></iframe>
+		<div id="page-footer"></div>
+	</div>
+</body>
+</html>

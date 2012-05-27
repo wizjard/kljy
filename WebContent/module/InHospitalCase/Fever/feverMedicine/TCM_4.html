@@ -1,0 +1,706 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>中医四诊(中医)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-TCM-TCM4';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	PatientInfo();
+	setValue();
+});
+
+/*验证患者是否为男性*/
+function PatientInfo(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/CourseRecordingAction.do',
+		{
+			method:'public_patientInfo',
+			id:KID
+		},
+		function(data){
+			if (data.success) {
+				var json=JSON.parse(data.data);
+				if(json.gender.indexOf('男')!=-1){
+					$('#menses1').empty();
+					$('#menses2').empty();
+					$('#menses3').empty();
+					$('#menses4').show();
+				}
+			}
+		},
+		'json'
+	);
+}	
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary(PageCode),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Radio
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox-action
+	$('input.event').click(function(){
+		if(this.checked){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/TCMAction.do',
+		{
+			method:'TCM4_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					$('input[type="checkbox"]').each(function(){
+						var _val=_json[this.name];
+						if(_val==1){
+							this.checked=true;
+							if(this.className=='event'){
+								$(this).parent().parent().next().show();
+							}
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			_values[this.name]=1;
+		}else{
+			_values[this.name]=0;
+		}
+	});
+	if(ValidForm(_values)== false)	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/TCMAction.do',
+		{
+			method:'TCM4_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(_json){
+	var _st = false;
+	$('form').find('.radio').each(function(){
+		var _name = this.name;
+		var i = 0;
+		$('input[name="'+ _name +'"]').each(function(){
+			if(this.checked){
+				i +=1;
+			}
+		});
+		if(i==0){
+			var _v = $('input[name="'+_name+'"]').parent().prev().text();
+			subString(_v,"未选择！");
+			_st = false;
+			return false;
+		}else{
+			_st = true;
+		}
+	});
+	return _st;
+}
+function subString(_sb,_st){
+	var _s = "";
+	if(_sb.length > 0){
+		var _start = _sb.indexOf("* ");
+		if(_start==-1){
+			_start =-1;
+		}
+		var _end = _sb.indexOf("：");
+		if(_end==-1){
+			_end = _sb.length -1;
+		}else{
+			_end = _end -1;
+		}
+		_s = _sb.substr(_start+1,_end);
+	}else{
+		_s = _sb;
+	}
+	alert('['+_s.trim() +']，'+ _st);
+}
+</script>
+<style type="text/css">
+h1{
+	font-size:14px;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	padding-left:1em;
+}
+textarea{
+	width:91%;
+	height:60px;
+}
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" id="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！□未选择默认为阴性！</span></p>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title" colspan="6">望诊</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>神志</h1></td>
+	</tr>
+	<tr>
+		<td class="t1" width="100">神智清晰：</td><td class="t2" width="90"><input name="shengzhi_qingxing" type="checkbox"/></td>
+		<td class="t1" width="100">嗜睡：</td><td class="t2" width="90"><input name="shengzhi_sheshui" type="checkbox"/></td>
+		<td class="t1" width="100">昏聩：</td><td class="t2" width="90"><input name="shengzhi_huikui" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">神识恍惚：</td><td class="t2"><input name="shengzhi_huanghu" type="checkbox"/></td>
+		<td class="t1">神识昏蒙：</td><td class="t2"><input name="shengzhi_huimeng" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>精神</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">精神萎靡：</td><td class="t2"><input name="jingsheng_jingsheng" type="checkbox"/></td>
+		<td class="t1">抑郁：</td><td class="t2"><input name="jingsheng_yiyu" type="checkbox"/></td>
+		<td class="t1">烦躁不安：</td><td class="t2"><input name="jingsheng_buan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">急躁易怒：</td><td class="t2"><input name="jingsheng_yiru" type="checkbox"/></td>
+		<td class="t1">谵语：</td><td class="t2"><input name="jingsheng_chanyu" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>形体</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">身体强壮：</td><td class="t2"><input name="xingti_qiangzhuang" type="checkbox"/></td>
+		<td class="t1">身体瘦弱：</td><td class="t2"><input name="xingti_shouluo" type="checkbox"/></td>
+		<td class="t1">身体肥胖：</td><td class="t2"><input name="xingti_fengpang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">身体消瘦：</td><td class="t2"><input name="xingti_xiaoshou" type="checkbox"/></td>
+		<td class="t1">身重不能转侧：</td><td class="t2"><input name="xingti_zhuangche" type="checkbox"/></td>
+		<td class="t1">坐卧不安：</td><td class="t2"><input name="xingti_buan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">腹壁青筋暴露：</td><td class="t2"><input name="xingti_qingjing" type="checkbox"/></td>
+		<td class="t1">腹壁突起：</td><td class="t2"><input name="xingti_tuqi" type="checkbox"/></td>
+		<td class="t1">浮肿：</td><td class="t2"><input name="xingti_fuzhong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><span style="color:red">* </span>四肢动态：</td><td class="t2" colspan="5"><input name="xingti_dongtai" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><span style="color:red">* </span>腹部外形：</td><td class="t2" colspan="5"><input name="xingti_waixing" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td class="t1"><span style="color:red">* </span>甲色：</td><td class="t2" colspan="5"><input name="xingti_jiashe" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>面色</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">面色金黄：</td><td class="t2"><input name="mianshe_jinghuang" type="checkbox"/></td>
+		<td class="t1">面色暗黄：</td><td class="t2"><input name="mianshe_anhuang" type="checkbox"/></td>
+		<td class="t1">面色萎黄：</td><td class="t2"><input name="mianshe_weihuang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">面色苍白：</td><td class="t2"><input name="mianshe_changbai" type="checkbox"/></td>
+		<td class="t1">面色胱白：</td><td class="t2"><input name="mianshe_guangbai" type="checkbox"/></td>
+		<td class="t1">两颧潮红：</td><td class="t2"><input name="mianshe_chaohong" type="checkbox"/></td>
+		
+	</tr>
+	<tr>
+		<td class="t1">面色黧黑：</td><td class="t2"><input name="mianshe_lihei" type="checkbox"/></td>
+		<td class="t1">眶周发黑：</td><td class="t2"><input name="mianshe_fahei" type="checkbox"/></td>
+		<td class="t1">面色青灰：</td><td class="t2"><input name="mianshe_qinghui" type="checkbox"/></td>
+		
+	</tr>
+	<tr>
+		<td class="t1">面色青黑：</td><td class="t2"><input name="mianshe_qinghei" type="checkbox"/></td>
+		<td class="t1">面青颧赤：</td><td class="t2"><input name="mianshe_echi" type="checkbox"/></td>
+		<td class="t1">青赤而晦暗：</td><td class="t2"><input name="mianshe_huian" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>皮肤</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">黄染色鲜明：</td><td class="t2"><input name="pifu_xianming" type="checkbox"/></td>
+		<td class="t1">黄染色晦暗：</td><td class="t2"><input name="pifu_huian" type="checkbox"/></td>
+		<td class="t1">瘀斑色红：</td><td class="t2"><input name="pifu_shehong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">瘀斑色暗紫：</td><td class="t2"><input name="pifu_anzhi" type="checkbox"/></td>
+		<td class="t1">水肿：</td><td class="t2"><input name="pifu_shuizhong" type="checkbox"/></td>
+		<td class="t1">肌肤甲错：</td><td class="t2"><input name="pifu_cuo" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">皮肤弹性：</td><td class="t2"><input name="pifu_tangxing" type="checkbox"/></td>
+		<td class="t1">蛛丝赤缕：</td><td class="t2"><input name="pifu_chiluo" type="checkbox"/></td>
+		<td class="t1">朱砂掌：</td><td class="t2"><input name="pifu_zhushazhang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="title" colspan="6">闻诊</td>
+	</tr>
+	<tr>
+		<td class="t1">语音低微：</td><td class="t2"><input name="wenzheng_diwei" type="checkbox"/></td>
+		<td class="t1">语音高亢：</td><td class="t2"><input name="wenzheng_gaokang" type="checkbox"/></td>
+		<td class="t1">语言懒言：</td><td class="t2"><input name="wenzheng_laiyan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">语言多言：</td><td class="t2"><input name="wenzheng_duoyan" type="checkbox"/></td>
+		<td class="t1">少气：</td><td class="t2"><input name="wenzheng_shaoqi" type="checkbox"/></td>
+		<td class="t1">气短：</td><td class="t2"><input name="wenzheng_qiduan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">太息：</td><td class="t2"><input name="wenzheng_taixi" type="checkbox"/></td>
+		<td class="t1">肝臭：</td><td class="t2"><input name="wenzheng_ganchuo" type="checkbox"/></td>
+		<td class="t1">郑声：</td><td class="t2"><input name="wenzheng_zhengsheng" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">独语：</td><td class="t2"><input name="wenzheng_duyu" type="checkbox"/></td>
+		<td class="t1">夺气：</td><td class="t2"><input name="wenzheng_duoqi" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="title" colspan="6">问诊</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>肝系症状</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">头昏：</td><td class="t2"><input name="ganxi_touhun" type="checkbox"/></td>
+		<td class="t1">目干涩：</td><td class="t2"><input name="ganxi_muganse" type="checkbox"/></td>
+		<td class="t1">眩晕：</td><td class="t2"><input name="ganxi_xuanyun" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">视物模糊：</td><td class="t2"><input name="ganxi_mohu" type="checkbox"/></td>
+		<td class="t1">四肢抽搐：</td><td class="t2"><input name="ganxi_chouxu" type="checkbox"/></td>
+		<td class="t1">烦躁易怒：</td><td class="t2"><input name="ganxi_yiru" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">胁胀：</td><td class="t2"><input name="ganxi_xiezhang" type="checkbox"/></td>
+		<td class="t1">善太息：</td><td class="t2"><input name="ganxi_zhantaixi" type="checkbox"/></td>
+		<td class="t1">胸胁胀痛：</td><td class="t2"><input name="ganxi_zhangtong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>脾系症状</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">纳食减少：</td><td class="t2"><input name="pixing_jianshao" type="checkbox"/></td>
+		<td class="t1">食欲减退：</td><td class="t2"><input name="pixing_jianshu" type="checkbox"/></td>
+		<td class="t1">嗳气：</td><td class="t2"><input name="pixing_aiqi" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">呃逆：</td><td class="t2"><input name="pixing_eli" type="checkbox"/></td>
+		<td class="t1">厌油：</td><td class="t2"><input name="pixing_yayou" type="checkbox"/></td>
+		<td class="t1">恶心：</td><td class="t2"><input name="pixing_exin" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">呕吐：</td><td class="t2"><input name="pixing_etu" type="checkbox"/></td>
+		<td class="t1">脘痞：</td><td class="t2"><input name="pixing_wangpi" type="checkbox"/></td>
+		<td class="t1">腹胀：</td><td class="t2"><input name="pixing_fuzhang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">大便溏薄：</td><td class="t2"><input name="pixing_tangbao" type="checkbox"/></td>
+		<td class="t1">大便秘结：</td><td class="t2"><input name="pixing_mijie" type="checkbox"/></td>
+		<td class="t1">肌瘦无力：</td><td class="t2"><input name="pixing_wuli" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">肠鸣：</td><td class="t2"><input name="pixing_tangming" type="checkbox"/></td>
+		<td class="t1">矢气频作：</td><td class="t2"><input name="pixing_pingzuo" type="checkbox"/></td>
+		<td class="t1">脱肛：</td><td class="t2"><input name="pixing_tuogang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">流涎：</td><td class="t2"><input name="pixing_liuyan" type="checkbox"/></td>
+		<td class="t1">口水多：</td><td class="t2"><input name="pixing_koushiuduo" type="checkbox"/></td>
+		<td class="t1">周身困重：</td><td class="t2"><input name="pixing_kuizhong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>肾系症状</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">腰酸：</td><td class="t2"><input name="shenxi_yaoshuan" type="checkbox"/></td>
+		<td class="t1">腰痛：</td><td class="t2"><input name="shenxi_yaotong" type="checkbox"/></td>
+		<td class="t1">膝软无力：</td><td class="t2"><input name="shenxi_wuli" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">耳鸣：</td><td class="t2"><input name="shenxi_erming" type="checkbox"/></td>
+		<td class="t1">阳痿：</td><td class="t2"><input name="shenxi_yangwei" type="checkbox"/></td>
+		<td class="t1">抬颈无力：</td><td class="t2"><input name="shenxi_shijing" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">吞咽无力：</td><td class="t2"><input name="shenxi_tunyan" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>心系症状</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">胸闷：</td><td class="t2"><input name="xinxi_xiongmen" type="checkbox"/></td>
+		<td class="t1">心痛：</td><td class="t2"><input name="xinxi_xintong" type="checkbox"/></td>
+		<td class="t1">惊悸：</td><td class="t2"><input name="xinxi_jingji" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">昏迷：</td><td class="t2"><input name="xinxi_huming" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>肺系症状</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">咳嗽：</td><td class="t2"><input name="feixi_koushou" type="checkbox"/></td>
+		<td class="t1">咯黄痰：</td><td class="t2"><input name="feixi_kouhuangtan" type="checkbox"/></td>
+		<td class="t1">咯白痰：</td><td class="t2"><input name="feixi_koubaitan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">咯血：</td><td class="t2"><input name="feixi_kouxie" type="checkbox"/></td>
+		<td class="t1">喘促：</td><td class="t2"><input name="feixi_cuanchu" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>寒热</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">恶寒：</td><td class="t2"><input name="hanre_wuhan" type="checkbox"/></td>
+		<td class="t1">畏寒：</td><td class="t2"><input name="hanre_weihan" type="checkbox"/></td>
+		<td class="t1">肢冷：</td><td class="t2"><input name="hanre_zhiling" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">局部冷感：</td><td class="t2"><input name="hanre_linggan" type="checkbox"/></td>
+		<td class="t1">寒战：</td><td class="t2"><input name="hanre_hanzhang" type="checkbox"/></td>
+		<td class="t1">低热：</td><td class="t2"><input name="hanre_dire" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">高热：</td><td class="t2"><input name="hanre_gaore" type="checkbox"/></td>
+		<td class="t1">身热不扬：</td><td class="t2"><input name="hanre_buyang" type="checkbox"/></td>
+		<td class="t1">自觉发热：</td><td class="t2"><input name="hanre_fare" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">潮热：</td><td class="t2"><input name="hanre_chaore" type="checkbox"/></td>
+		<td class="t1">五心烘热：</td><td class="t2"><input name="hanre_wuxinghongre" type="checkbox"/></td>
+		<td class="t1">面部烘热：</td><td class="t2"><input name="hanre_mianbuhongre" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">寒热往来：</td><td class="t2"><input name="hanre_hanre" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>汗出</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">自汗：</td><td class="t2"><input name="hanchu_zhihan" type="checkbox"/></td>
+		<td class="t1">盗汗：</td><td class="t2"><input name="hanchu_daohan" type="checkbox"/></td>
+		<td class="t1">大汗：</td><td class="t2"><input name="hanchu_dahan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">口渴饮冷：</td><td class="t2"><input name="hanchu_koukou" type="checkbox"/></td>
+		<td class="t1">面色苍白：</td><td class="t2"><input name="hanchu_changbai" type="checkbox"/></td>
+		<td class="t1">四肢厥冷：</td><td class="t2"><input name="hanchu_jueling" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">手足心汗：</td><td class="t2"><input name="hanchu_xinhan" type="checkbox"/></td>
+		<td class="t1">汗出乏力：</td><td class="t2"><input name="hanchu_fali" type="checkbox"/></td>
+		<td class="t1">头汗而困重：</td><td class="t2"><input name="hanchu_touhan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">汗出如油：</td><td class="t2"><input name="hanchu_ruyou" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>口味与渴饮</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">口舌生疮：</td><td class="t2"><input name="kouying_koushe" type="checkbox"/></td>
+		<td class="t1">口臭：</td><td class="t2"><input name="kouying_kouchou" type="checkbox"/></td>
+		<td class="t1">口淡：</td><td class="t2"><input name="kouying_koudan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">口粘腻：</td><td class="t2"><input name="kouying_koulianning" type="checkbox"/></td>
+		<td class="t1">口苦：</td><td class="t2"><input name="kouying_kouku" type="checkbox"/></td>
+		<td class="t1">口甜：</td><td class="t2"><input name="kouying_koutian" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">口味与渴饮：</td><td class="t2"><input name="kouying_kouying" type="checkbox"/></td>
+		<td class="t1">睡眠：</td><td class="t2"><input name="kouying_shuimian" type="checkbox"/></td>
+		<td class="t1">口干：</td><td class="t2"><input name="kouying_kougan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">口渴不欲饮：</td><td class="t2"><input name="kouying_buyuying" type="checkbox"/></td>
+		<td class="t1">口渴喜热饮：</td><td class="t2"><input name="kouying_xireying" type="checkbox"/></td>
+		<td class="t1">口渴喜冷饮：</td><td class="t2"><input name="kouying_xilingying" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>睡眠</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">嗜睡：</td><td class="t2"><input name="shuimian_sheshui" type="checkbox"/></td>
+		<td class="t1">寐差多梦：</td><td class="t2"><input name="shuimian_meica" type="checkbox"/></td>
+		<td class="t1">整夜失眠：</td><td class="t2"><input name="shuimian_shimian" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">不易入睡(>1h)：</td><td class="t2"><input name="shuimian_buyilushui" type="checkbox"/></td>
+		<td class="t1">睡后易醒：</td><td class="t2"><input name="shuimian_yixing" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>大小便</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">自利：</td><td class="t2"><input name="daxiaobian_zhili" type="checkbox"/></td>
+		<td class="t1">小便短赤：</td><td class="t2"><input name="daxiaobian_duanci" type="checkbox"/></td>
+		<td class="t1">小便清长：</td><td class="t2"><input name="daxiaobian_qingchang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">大便粘滞不爽：</td><td class="t2"><input name="daxiaobian_bushuang" type="checkbox"/></td>
+		<td class="t1">排便无力：</td><td class="t2"><input name="daxiaobian_wuli" type="checkbox"/></td>
+		<td class="t1">便溏：</td><td class="t2"><input name="daxiaobian_biantang" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">腹泻：</td><td class="t2"><input name="daxiaobian_fuxie" type="checkbox"/></td>
+		<td class="t1">矢气不畅：</td><td class="t2"><input name="daxiaobian_shiqi" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>月经</h1></td>
+	</tr>
+	<tr id="menses1">
+		<td class="t1"><span style="color:red">* </span>月经周期：</td><td class="t2" colspan="5"><input name="yuejing_zhouqi"  type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr id="menses2">
+		<td class="t1"><span style="color:red">* </span>月经质：</td><td class="t2" colspan="5"><input name="yuejing_zhi"  type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr id="menses3">
+		<td class="t1">经期乳房作胀：</td><td class="t2"><input name="yuejing_zhuzhang" type="checkbox"/></td>
+		<td class="t1"><span style="color:red">* </span>月经量：</td><td class="t2" colspan="3"><input name="yuejing_liang"  type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr id="menses4" class="hidden">
+		<td colspan="6" align="center"><span style="font-size:12px;">患者为男性，无需填写！</span></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>出血</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">鼻衄：</td><td class="t2"><input name="chuxie_bixie" type="checkbox"/></td>
+		<td class="t1">齿衄：</td><td class="t2"><input name="chuxie_chixie" type="checkbox"/></td>
+		<td class="t1">便血：</td><td class="t2"><input name="chuxie_bianxie" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">呕血：</td><td class="t2"><input name="chuxie_exie" type="checkbox"/></td>
+		<td class="t1">腹泻：</td><td class="t2"><input name="chuxie_fuxie" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="title" colspan="6">按诊</td>
+	</tr>
+	<tr>
+		<td class="t1">身热：</td><td class="t2"><input name="anzhen_shenre" type="checkbox"/></td>
+		<td class="t1">身寒：</td><td class="t2"><input name="anzhen_shenghan" type="checkbox"/></td>
+		<td class="t1">喜按：</td><td class="t2"><input name="anzhen_xian" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">拒按：</td><td class="t2"><input name="anzhen_juan" type="checkbox"/></td>
+		<td class="t1">下肢水肿：</td><td class="t2"><input name="anzhen_shuizhong" type="checkbox"/></td>
+		<td class="t1">腹部压痛：</td><td class="t2"><input name="anzhen_fubuyatong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">腹部反跳痛：</td><td class="t2"><input name="anzhen_fatiaotong" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1" colspan="2">腹部胀满，按之充实，叩声重浊：</td>
+		<td class="t2" colspan="4"><input name="anzhen_zhongzuo" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1" colspan="2">腹部胀满，按之充实，叩之空声：</td>
+		<td class="t2" colspan="4"><input name="anzhen_kongsheng" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="title" colspan="6">舌诊、脉诊</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>舌质</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">舌质淡：</td><td class="t2"><input name="shezhi_shezhidan" type="checkbox"/></td>
+		<td class="t1">舌质淡红：</td><td class="t2"><input name="shezhi_shezhidanhong" type="checkbox"/></td>
+		<td class="t1">舌质红：</td><td class="t2"><input name="shezhi_shezhihong" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌尖红：</td><td class="t2"><input name="shezhi_shejianhong" type="checkbox"/></td>
+		<td class="t1">舌质红绛：</td><td class="t2"><input name="shezhi_shezhihongjian" type="checkbox"/></td>
+		<td class="t1">舌质暗：</td><td class="t2"><input name="shezhi_shezhihongan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌质青紫：</td><td class="t2"><input name="shezhi_shezhiqingzhi" type="checkbox"/></td>
+		<td class="t1">舌质瘀点：</td><td class="t2"><input name="shezhi_shezhiyudian" type="checkbox"/></td>
+		<td class="t1">舌质瘀斑：</td><td class="t2"><input name="shezhi_shezhiyuban" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td>
+		<td class="t2" colspan="5"><input name="shezhi_qita" type="checkbox" class="event"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5"><textarea name="shezhi_shuoming"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>舌体</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">舌体胖：</td><td class="t2"><input name="sheti_shetipang" type="checkbox"/></td>
+		<td class="t1">舌体瘦：</td><td class="t2"><input name="sheti_shetishou" type="checkbox"/></td>
+		<td class="t1">舌体嫩：</td><td class="t2"><input name="sheti_shetire" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌有齿痕：</td><td class="t2"><input name="sheti_sheyouchiheng" type="checkbox"/></td>
+		<td class="t1">裂纹：</td><td class="t2"><input name="sheti_liewen" type="checkbox"/></td>
+		<td class="t1">其它：</td><td class="t2"><input name="sheti_qita" type="checkbox" class="event"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5"><textarea name="sheti_shuoming"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>舌苔</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">舌苔白：</td><td class="t2"><input name="shetai_shetaibai" type="checkbox"/></td>
+		<td class="t1">舌苔黄：</td><td class="t2"><input name="shetai_shetaihuang" type="checkbox"/></td>
+		<td class="t1">舌苔薄：</td><td class="t2"><input name="shetai_shetaibo" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌苔厚：</td><td class="t2"><input name="shetai_shetaihou" type="checkbox"/></td>
+		<td class="t1">舌苔腻：</td><td class="t2"><input name="shetai_shetaier" type="checkbox"/></td>
+		<td class="t1">舌苔润：</td><td class="t2"><input name="shetai_shetairen" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌苔滑：</td><td class="t2"><input name="shetai_shetaihua" type="checkbox"/></td>
+		<td class="t1">舌苔干：</td><td class="t2"><input name="shetai_shetaigan" type="checkbox"/></td>
+		<td class="t1">舌苔烦：</td><td class="t2"><input name="shetai_shetaifan" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">舌苔焦：</td><td class="t2"><input name="shetai_shetaijiao" type="checkbox"/></td>
+		<td class="t1">舌苔少：</td><td class="t2"><input name="shetai_shetaishao" type="checkbox"/></td>
+		<td class="t1">无苔：</td><td class="t2"><input name="shetai_wutai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">剥脱苔：</td><td class="t2"><input name="shetai_botuotai" type="checkbox"/></td>
+		<td class="t1">灰黑苔：</td><td class="t2"><input name="shetai_huiheitai" type="checkbox"/></td>
+		<td class="t1">舌苔腐：</td><td class="t2"><input name="shetai_sheyutai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td>
+		<td class="t2" colspan="5"><input name="shetai_qita" type="checkbox" class="event"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5"><textarea name="shetai_shuoming"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>舌底脉络</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">舌底脉络青紫：</td><td class="t2"><input name="shedimai_qingzhi" type="checkbox"/></td>
+		<td class="t1">舌底脉络迂曲：</td><td class="t2"><input name="shedimai_yuqu" type="checkbox"/></td>
+		<td class="t1">&nbsp;</td><td class="t2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="6"><h1>基本脉象</h1></td>
+	</tr>
+	<tr>
+		<td class="t1">浮脉：</td><td class="t2"><input name="jibenmai_fumai" type="checkbox"/></td>
+		<td class="t1">沉脉：</td><td class="t2"><input name="jibenmai_chengmai" type="checkbox"/></td>
+		<td class="t1">迟脉：</td><td class="t2"><input name="jibenmai_chimai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">数脉：</td><td class="t2"><input name="jibenmai_shumai" type="checkbox"/></td>
+		<td class="t1">疾脉：</td><td class="t2"><input name="jibenmai_jimai" type="checkbox"/></td>
+		<td class="t1">细脉：</td><td class="t2"><input name="jibenmai_ximai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">弱脉：</td><td class="t2"><input name="jibenmai_ruomai" type="checkbox"/></td>
+		<td class="t1">微脉：</td><td class="t2"><input name="jibenmai_weimai" type="checkbox"/></td>
+		<td class="t1">虚脉：</td><td class="t2"><input name="jibenmai_xumai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">实脉：</td><td class="t2"><input name="jibenmai_shimai" type="checkbox"/></td>
+		<td class="t1">缓脉：</td><td class="t2"><input name="jibenmai_huanmai" type="checkbox"/></td>
+		<td class="t1">濡脉：</td><td class="t2"><input name="jibenmai_rumai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">滑脉：</td><td class="t2"><input name="jibenmai_huamai" type="checkbox"/></td>
+		<td class="t1">涩脉：</td><td class="t2"><input name="jibenmai_semai" type="checkbox"/></td>
+		<td class="t1">弦脉：</td><td class="t2"><input name="jibenmai_xuemai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">结脉：</td><td class="t2"><input name="jibenmai_jiemai" type="checkbox"/></td>
+		<td class="t1">代脉：</td><td class="t2"><input name="jibenmai_daimai" type="checkbox"/></td>
+		<td class="t1">促脉：</td><td class="t2"><input name="jibenmai_chumai" type="checkbox"/></td>
+	</tr>
+	<tr>
+		<td class="t1">其它：</td>
+		<td class="t2" colspan="5"><input name="jibenmai_qita" type="checkbox" class="event"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5"><textarea name="jibenmai_shuoming"></textarea></td>
+	</tr>
+	<tr>
+		<td class="title" colspan="6">四诊分析</td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">四诊分析：</td>
+		<td class="t2" colspan="5">
+			<textarea name="sizhenfenxi" class="textarea" style="width:95%"></textarea>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

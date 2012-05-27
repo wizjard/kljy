@@ -1,0 +1,375 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>现病史</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('preHistory').contentWindow.dbclickedSpan;
+Ext.onReady(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('#contentDiv',JSON.parse(spanContent));
+		showOrHide(JSON.parse(spanContent));
+	}
+});		
+function showOrHide(json){
+	if(json.bodyWeight != 0){
+		$('input[name="bodyWeight"]').parent().parent().next().removeClass("hidden");
+	}else{
+		$('input[name="bodyWeight_time"]').val('');
+		$('input[name="bodyWeight_kg"]').val('');
+		$('input[name="bodyWeight_otherDesc"]').val('');
+	}
+}		
+		
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionaryNew('EMR-liver-PresentIllnessHistory-IllThis'),function(code){
+		$('*[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//体重事件
+	$('input[name="bodyWeight"]').unbind('click');
+	$('input[name="bodyWeight"]').click(function(){
+		var _val=$(this).val();
+		if(_val==1){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('增加');
+		}else if(_val==2){
+			$(this).parent().parent().next().show();
+			$('#bodyWeight-span').text('减轻');
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value=getData();
+		var oldOperation = JSON.stringify(value);
+		var rst='';
+		rst+=ComposeCurrentStatu(value);
+		var jqObj = $('<div>' + rst + '</div>');
+		jqObj.find('input:last').val('。');
+		rst = jqObj.html();		
+		if(rst.length > 0){
+			rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hidePreHis();parent.symptomInfoIfr('currentStatus.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+			var iframe = parent.document.getElementById('preHistory');
+			iframe.contentWindow.itemValue = rst;
+			if(iframe.contentWindow.dbclickedSpan){
+				iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+			}else{
+				iframe.contentWindow.setReturnValue();
+			}
+		}
+		backToPreIllWindow();
+	});
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('preHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showPreHis();	
+}
+	
+function getData(){
+	var value=FormUtil.getFormValues('#contentDiv');
+	$.extend(value,FormUtil.getFormValues('#currentStatusDiv'));
+	
+	return value;
+}
+
+function getMyData(elId){
+	return Ext.getCmp(elId).getData();
+}
+/*目前状况组合值*/
+function ComposeCurrentStatu(value){
+	var rst='';
+	var tempValue='';
+	var leftInputItem = '';
+	var rightInputItem = '';
+	tempValue=getRowValue('spiritStatu',value.spiritStatu);
+	if(tempValue.length>0){
+		leftInputItem = '<input name="lrspiritStatu" type="text" value="" />';
+		rightInputItem = '<input name="lrspiritStatu" type="text" value="，" />';
+		if($('input[name="lrspiritStatu"]').size() > 0){
+			$('input[name="lrspiritStatu"]').eq(0).wrap("<div id='wrap'></div>");
+			leftInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());		
+			$('input[name="lrspiritStatu"]').eq(1).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(tempValue=='其它'){
+			tempValue=leftInputItem+'精神'+value.spiritStatu0+rightInputItem;
+		}else{
+			tempValue=leftInputItem+'精神'+tempValue+rightInputItem;
+		}
+		rst+=tempValue;
+	}
+	
+	tempValue=getRowValue('eatVolume',value.eatVolume);
+	if(tempValue.length>0){
+		leftInputItem = '<input name="lreatVolume" type="text" value="" />';
+		rightInputItem = '<input name="lreatVolume" type="text" value="，" />';
+		if($('input[name="lreatVolume"]').size() > 0){
+			$('input[name="lreatVolume"]').eq(0).wrap("<div id='wrap'></div>");
+			leftInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());		
+			$('input[name="lreatVolume"]').eq(1).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(tempValue=='其它'){
+			tempValue=leftInputItem+'食量'+value.eatVolume0+rightInputItem;
+		}else{
+			tempValue=leftInputItem+'食量'+tempValue+rightInputItem;
+		}
+		rst+=tempValue;
+	}
+	
+	tempValue=getRowValue('sleep',value.sleep);
+	if(tempValue.length>0){
+		leftInputItem = '<input name="lrsleep" type="text" value="" />';
+		rightInputItem = '<input name="lrsleep" type="text" value="，" />';
+		if($('input[name="lrsleep"]').size() > 0){
+			$('input[name="lrsleep"]').eq(0).wrap("<div id='wrap'></div>");
+			leftInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());		
+			$('input[name="lrsleep"]').eq(1).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(tempValue=='其它'){
+			tempValue=leftInputItem+'睡眠'+value.sleep0+rightInputItem;
+		}else{
+			tempValue=leftInputItem+'睡眠'+tempValue+rightInputItem;
+		}
+		rst+=tempValue;
+	}
+	
+	tempValue=getRowValue('piss',value.piss);
+	if(tempValue.length>0){
+		leftInputItem = '<input name="lrpiss" type="text" value="" />';
+		rightInputItem = '<input name="lrpiss" type="text" value="，" />';
+		if($('input[name="lrpiss"]').size() > 0){
+			$('input[name="lrpiss"]').eq(0).wrap("<div id='wrap'></div>");
+			leftInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());		
+			$('input[name="lrpiss"]').eq(1).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(tempValue=='其它'){
+			tempValue=leftInputItem+'小便'+value.piss0+rightInputItem;
+		}else{
+			tempValue=leftInputItem+'小便'+tempValue+rightInputItem;
+		}
+		rst+=tempValue;
+	}
+	
+	tempValue=getRowValue('excrement',value.excrement);
+	if(tempValue.length>0){
+		leftInputItem = '<input name="lrexcrement" type="text" value="" />';
+		rightInputItem = '<input name="lrexcrement" type="text" value="，" />';
+		if($('input[name="lrexcrement"]').size() > 0){
+			$('input[name="lrexcrement"]').eq(0).wrap("<div id='wrap'></div>");
+			leftInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());		
+			$('input[name="lrexcrement"]').eq(1).wrap("<div id='wrap'></div>");
+			rightInputItem = $('#wrap').html();
+			$('#wrap').replaceWith($('#wrap').html());
+		}
+		if(tempValue=='其它'){
+			tempValue=leftInputItem+'大便'+value.excrement0+rightInputItem;
+		}else{
+			tempValue=leftInputItem+'大便'+tempValue+rightInputItem;
+		}
+		rst+=tempValue;
+	}
+	
+	tempValue=getRowValue('bodyWeight',value.bodyWeight);
+	alert(tempValue);
+	if(tempValue.length>0){
+		if(tempValue=='无变化'){
+			leftInputItem = '<input name="lrbodyWeight" type="text" value="" />';
+			rightInputItem = '<input name="lrbodyWeight" type="text" value="，" />';
+			if($('input[name="lrbodyWeight"]').size() > 0){
+				$('input[name="lrbodyWeight"]').eq(0).wrap("<div id='wrap'></div>");
+				leftInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());		
+				$('input[name="lrbodyWeight"]').eq(1).wrap("<div id='wrap'></div>");
+				rightInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());
+			}
+			rst+=leftInputItem+'体重' + tempValue + rightInputItem;
+		}else if(tempValue=='增加'){
+			leftInputItem = '<input name="lrbodyWeight" type="text" value="" />';
+			rightInputItem = '<input name="lrbodyWeight" type="text" value="" />';
+			rightInputItem2 = '<input name="lrbodyWeight" type="text" value="，" />';
+			if($('input[name="lrbodyWeight"]').size() > 0){
+				$('input[name="lrbodyWeight"]').eq(0).wrap("<div id='wrap'></div>");
+				leftInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());		
+				$('input[name="lrbodyWeight"]').eq(1).wrap("<div id='wrap'></div>");
+				rightInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());
+			}
+			tempValue=leftInputItem+'体重' + value.bodyWeight_time+getRowValue('bodyWeight_timeUnit',value.bodyWeight_timeUnit) + '增加';
+			if(value.bodyWeight_kg.length>0){
+				tempValue +=  value.bodyWeight_kg + 'Kg';
+			}
+			rst+=tempValue;
+			if(value.bodyWeight_otherDesc != ''){
+				rst+='，'+value.bodyWeight_otherDesc+rightInputItem2;
+			}else{
+				rst+='。';
+			}
+		}else if(tempValue=='减轻'){
+			leftInputItem = '<input name="lrbodyWeight" type="text" value="" />';
+			rightInputItem = '<input name="lrbodyWeight" type="text" value="" />';
+			var rightInputItem2 = '<input name="lrbodyWeight" type="text" value="，" />';
+			if($('input[name="lrbodyWeight"]').size() > 0){
+				$('input[name="lrbodyWeight"]').eq(0).wrap("<div id='wrap'></div>");
+				leftInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());		
+				$('input[name="lrbodyWeight"]').eq(1).wrap("<div id='wrap'></div>");
+				rightInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());
+			}
+			tempValue=leftInputItem+'体重' + value.bodyWeight_time+getRowValue('bodyWeight_timeUnit',value.bodyWeight_timeUnit) + '减轻';
+			if(value.bodyWeight_kg.length>0){
+				tempValue +=  value.bodyWeight_kg + 'Kg';
+			}
+			rst+=tempValue;
+			if(value.bodyWeight_otherDesc != ''){
+				rst+='，'+value.bodyWeight_otherDesc+rightInputItem2;
+			}else{
+				rst+='。';
+			}
+		}
+	}
+	tempValue = getRowValue('mainSysptomEve',value.mainSysptomEve);
+	leftInputItem = '<input name="lrmainSysptom" type="text" value="上述主要症状" />';
+	rightInputItem = '<input name="lrmainSysptom" type="text" value="，" />';
+	if($('input[name="lrmainSysptom"]').size() > 0){
+		$('input[name="lrmainSysptom"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());		
+		$('input[name="lrmainSysptom"]').eq(1).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst += tempValue.length > 0 ? leftInputItem + tempValue  + rightInputItem: '';
+	tempValue = value.newSysptom;
+	rightInputItem = '<input name="lrnewSysptom" type="text" value="，" />';
+	if($('input[name="lrnewSysptom"]').size() > 0){
+		$('input[name="lrnewSysptom"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst += tempValue.length > 0 ? tempValue + rightInputItem : ''; 
+	tempValue = value.otherCurrent;
+	rightInputItem = '<input name="lrotherCurrent" type="text" value="，" />';
+	if($('input[name="lrotherCurrent"]').size() > 0){
+		$('input[name="lrotherCurrent"]').eq(0).wrap("<div id='wrap'></div>");
+		rightInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst += tempValue.length > 0 ? tempValue + rightInputItem : '';
+	leftInputItem = '<input name="lrsummary" type="text" value="患者自发病以来" />';
+	if($('input[name="lrsummary"]').size() > 0){
+		$('input[name="lrsummary"]').eq(0).wrap("<div id='wrap'></div>");
+		leftInputItem = $('#wrap').html();
+		$('#wrap').replaceWith($('#wrap').html());
+	}
+	rst=rst.length>0?leftInputItem+rst:'';
+	return rst;
+}
+
+</script>
+</head>
+<body>
+<div id="toolbar" style="text-align:right;width:820px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<div id="contentDiv">
+<div id="currentStatusDiv">
+<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=2>
+			<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">精神状态：</td>
+					<td class="t2"><input name="spiritStatu" type="text" class="select"/><br/><input name="spiritStatu0" type="text" class="text hidden"/></td>
+					<td class="t1" width="80">食量：</td>
+					<td class="t2"><input name="eatVolume" type="text" class="select"/><br/><input name="eatVolume0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">睡眠：</td>
+					<td class="t2"><input name="sleep" type="text" class="select"/><br/><input name="sleep0" type="text" class="text hidden"/></td>
+					<td class="t1">小便：</td>
+					<td class="t2"><input name="piss" type="text" class="select"/><br/><input name="piss0" type="text" class="text hidden"/></td>
+				</tr>
+				<tr>
+					<td class="t1">大便：</td>
+					<td class="t2"><input rel="piss" name="excrement" type="text" class="select"/><br/><input name="excrement0" type="text" class="text hidden"/></td>
+					<td class="t1">&nbsp;</td>
+					<td class="t2">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">体重：</td>
+		<td class="t2" width="500"><input name="bodyWeight" type="radio" class="radio dict-fld"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2">
+			<p>具体数值：<input name="bodyWeight_time" type="text" class="text" style="width:40px"/><span><input name="bodyWeight_timeUnit" type="radio" class="radio dict-fld"/></span>
+			<span id="bodyWeight-span">增加</span><input name="bodyWeight_kg" type="text" class="text" style="width:40px"/>Kg</p></br>
+			<p>其它描述：<input name="bodyWeight_otherDesc" type="textarea" class="textarea" style="height:20px;width:300px;"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">症状演变：</td>
+		<td class="t2"><input name="mainSysptomEve" type="text" class="select" style="width:32%"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">新发症状：</td>
+		<td class="t2"><input name="newSysptom" type="textarea" class="textarea" style="height:30px"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">其他：</td>
+		<td class="t2"><textarea name="otherCurrent" class="textarea" style="height:40px"></textarea></td>
+	</tr>
+</table>
+</div>
+</div>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+
+<link rel="stylesheet" type="text/css" href="../css/tablecloth/tablecloth.css" />
+
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../css/tablecloth/tablecloth.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<title>危重病人综合评价</title>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			if($(this).parent().next().next().find('input')){
+				$(this).parent().next().next().find('input').eq(0).val($(this).attr('value'));
+			}
+			setAPACHEIIScore();
+			setTotalScore();
+		});
+		$('input').click(function(){
+			if($(this).parent().next().next().find('input')){
+				var str = $(this).val();
+				str = str.replace('+','');
+				str = str.replace('-','');
+				$(this).parent().next().next().find('input').eq(0).val(str);
+				var checkOr = document.getElementById("hasShen");
+				if(checkOr.checked){
+					if($(this).parent().next().next().find('input').eq(0).attr('name')=="xqjiqian"){
+						$(this).parent().next().next().find('input').eq(0).val(str*2);
+					}
+				}
+				
+			}
+			setAPACHEIIScore();
+			setTotalScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function setAPACHEIIScore(){    
+		var eye = $('input[name="eye"]').val();
+		var language = $('input[name="language"]').val();
+		var move = $('input[name="move"]').val();
+		if(eye != "" && language != "" && move != ""){
+			var gcsScore = parseInt(eye) + parseInt(language) + parseInt(move);
+			$('input[name="gcsScore"]').val(gcsScore);
+			$('input[name="cscore"]').val(15 - gcsScore);
+		}
+		var dscore = 0;
+		$('input[flag="dScr"]').each(function(){
+			if($(this).val() != ""){
+				dscore = dscore + parseInt($(this).val());
+			}
+		});
+		$('input[name="dscore"]').val(dscore);
+	}
+	
+	function setTotalScore(){
+		var aScore = $('input[name="ascore"]').val();
+		var bScore = $('input[name="bscore"]').val();
+		var cScore = $('input[name="cscore"]').val();
+		var dScore = $('input[name="dscore"]').val();
+		$('tr[flag="totalScore"]').find('input').each(function(){
+			$(this).val('');
+		});
+		if(aScore != "" && bScore != "" && cScore != "" && dScore != ""){
+			var value = parseInt(aScore) + parseInt(bScore) + parseInt(cScore) + parseInt(dScore);
+			if(value>=0&&value<=9){
+				document.getElementById('apas1').value=value;
+			}else if(value>=10&&value<=14){
+				document.getElementById('apas2').value=value;
+			}else if(value>=15&&value<=19){
+				document.getElementById('apas3').value=value;
+			}else if(value>=20&&value<=24){
+				document.getElementById('apas4').value=value;
+			}else if(value>=25&&value<=29){
+				document.getElementById('apas5').value=value;
+			}else if(value>=30&&value<=34){
+				document.getElementById('apas6').value=value;
+			}else if(value>=35){
+				document.getElementById('apas7').value=value;	
+			}
+		}
+	}
+	
+	/*
+	*当点击血清肌酐再点击急性肾衰竭后积分翻倍
+	*/
+	var checkFlag = 1;
+	function addTwoEvent(_this){
+		checkNoFlag = 1
+	    if(_this.checked && checkFlag == 1){
+	          var xqjiqian = $('input[name="xqjiqian"]').val();
+		      if(xqjiqian != ""){
+				$('input[name="xqjiqian"]').val(xqjiqian*2);
+			  }
+			checkFlag = 2;
+	    }
+	}
+	var checkNoFlag = 1;
+	function addEvent(_this){
+	  checkFlag = 1;
+	  if(_this.checked && checkNoFlag == 1){
+	      var xqjiqian = $('input[name="xqjiqian"]').val();
+	       $('input[name="xqjiqian"]').val(xqjiqian/2);
+			checkNoFlag = 2;
+	    }
+	}
+	
+	var tempradio=null;
+	function checkOrNotCheck(_this){
+		if(tempradio == _this){
+			tempradio.checked = false;
+			tempradio = null;
+		}else{
+			tempradio = _this;
+		}
+	}
+</script>
+<style type="text/css">
+	.myLabel {
+		font-size:12px
+	}
+	.bottomTxt {
+		border:none;
+		border-bottom:solid #000 1px;
+	}
+	.scoreTxt {
+		border:none;
+		width:30px;
+		color:#F00;
+		text-align:center;
+	}
+</style>
+</head>
+<body>
+	<form id="form">
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="N">
+		<table border="1" cellpadding="0" cellspacing="1" width="700">
+		   <tr>
+          	   <td valign="top" align="center">
+          	  		<div style="width:680px;">
+        		  		<table width="100%" border="0" cellpadding="0" cellspacing="5" align="center">
+          			  		
+                     		<tr>
+                         		<td>
+			                		<div style="border:solid 1px; padding:10px; width:680px">
+				                		<table width="100%" border=1 cellSpacing=0 cellPadding=2 style="font-size:12px">
+						                    <tr>
+					                           <td rowspan="7" colspan="3" bgcolor="#FFFFFF" align="center" style="line-height:25px" width="30px">
+					                           		抢<br/>救<br/>诊<br/>断
+					                      	   </td>
+					                      	</tr>
+					                      	<tr>
+					                    	   <td width="100px" bgcolor="#FFFFFF" align="right">抢救疾病诊断</td>
+					                    	   <td width="580" colspan="2" bgcolor="#FFFFFF" align="center">
+					                    	   		1、<input name="qiangjiu1" type="text" class="bottomTxt" style="width:90%"/>
+					                    	   </td>
+					                  		</tr>
+						                    <tr>
+						                    	<td rowspan="2" bgcolor="#FFFFFF" align="right" valign="top">主要疾病诊断</td>
+						                    	<td colspan="2" bgcolor="#FFFFFF" align="center">
+						                    		1、<input name="zhuyao1" type="text" class="bottomTxt" style="width:90%"/>
+						                      	</td>
+						                    </tr>
+						                    <tr>
+						                    	<td colspan="3" bgcolor="#FFFFFF" align="center">	
+						                      		2、<input name="zhuyao2" type="text" class="bottomTxt" style="width:90%"/>
+						                      	</td>
+						                   </tr>
+						                   <tr>
+						                        <td rowspan="3" align="right" valign="top" bgcolor="#FFFFFF">合并伴随诊断</td>
+						                        <td colspan="2" bgcolor="#FFFFFF" align="center">
+						                           1、<input name="hebing1" type="text" class="bottomTxt" style="width:90%"/>
+						                        </td>
+						                   </tr>
+						                   <tr>
+						                  	   <td colspan="3" bgcolor="#FFFFFF" align="center">  
+						                           2、<input name="hebing2" type="text" class="bottomTxt" style="width:90%"/>
+						                       </td>
+						                  </tr>
+						                  <tr>
+						                  	   <td colspan="3" bgcolor="#FFFFFF" align="center">
+						                      	    3、<input name="hebing3" type="text" class="bottomTxt" style="width:90%"/>
+						                       </td>
+						                  </tr>
+			                    		</table>
+			             			</div>
+			                		<div style="margin:5px 0 5px 0;width:680px">
+						                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+						                    <tr align="center">
+							                   <td bgcolor="#FFFFFF" width="50">A.年龄</td>
+							                   <td bgcolor="#FFFFFF">
+							                   		<input type="radio" value="0" name="ascore0" onclick="checkOrNotCheck(this)"/>≤44&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							                   		<input type="radio" value="2" name="ascore0" onclick="checkOrNotCheck(this)"/>45-54&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							                   		<input type="radio" value="3" name="ascore0" onclick="checkOrNotCheck(this)"/>55-64&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							                   		<input type="radio" value="5" name="ascore0" onclick="checkOrNotCheck(this)"/>65-74&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							                   		<input type="radio" value="6" name="ascore0" onclick="checkOrNotCheck(this)"/>≥75
+						                       </td>
+						                       <td bgcolor="#FFFFFF" width="50">A积分</td>
+						                       <td bgcolor="#FFFFFF" width="50">
+						                       	  <input name="ascore" type="text" class="scoreTxt"/>
+						                       </td>
+						                    </tr>
+						                </table>
+			                		</div>
+					                <div style="margin:5px 0 5px 0;width:680px">
+						               <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+						                  <tr align="center">
+						                    <td bgcolor="#FFFFFF" width="230">B.有严重器官系统功能不全或免疫损害</td>
+						                    <td bgcolor="#FFFFFF">
+						                    	<select name="bscore0" style="width:200px">
+						                        	<option value=""></option>
+						                        	<option value="2">非手术或择期手术后</option>
+						                        	<option value="5">不能手术或急诊手术后</option>
+						                        	<option value="0">无上述情况</option>
+						                      	</select>
+						                    </td>
+						                    <td bgcolor="#FFFFFF" width="50">B积分</td>
+						                    <td bgcolor="#FFFFFF" width="50"><input name="bscore" type="text" class="scoreTxt"/></td>
+						                 </tr>
+						               </table>
+					                </div>
+		              				<div style="margin:5px 0 5px 0;width:680px">
+						                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+						                   <tr align="center">
+							                    <td bgcolor='#FFFFFF' rowspan="4" width="30">G<br/>C<br/>S<br/><br/>评<br/><br/>分</td>
+			                    			    <td bgcolor='#CCCCCC' width="200">检验项目</td>
+			                    			    <td bgcolor='#CCCCCC'>检验结果</td>
+			                    			    <td bgcolor='#CCCCCC' width="50">积分</td>
+			                    			    <td bgcolor='#CCCCCC' width="70">GCS积分</td>
+			                    			    <td bgcolor='#FFFFFF' rowspan="4" width="50">C积分</td>
+			                    			    <td bgcolor='#FFFFFF' rowspan="4" width="50"><input name="cscore" type="text" class="scoreTxt"/></td>
+		                  					</tr>
+		                  					<tr align="center">
+		                    					<td bgcolor='#FFFFFF'>睁&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;眼</td>
+							                    <td bgcolor='#FFFFFF'>
+							                    	<select name="eye0" style="width:120">
+							                        	<option value=""></option>
+							                        	<option value="4">自动睁眼</option>
+							                        	<option value="3">呼唤睁眼</option>
+							                        	<option value="2">刺疼睁眼</option>
+							                        	<option value="1">不睁眼</option>
+							                     	</select>
+							                    </td>
+							                    <input type="hidden" />
+		                    					<td bgcolor='#FFFFFF'><input name="eye" type="text" class="scoreTxt"/></td>
+		                    					<td bgcolor='#FFFFFF' rowspan="3"><input name="gcsScore" type="text" class="scoreTxt"/></td>
+		                  					</tr>
+						                    <tr align="center">
+						                    	<td bgcolor='#FFFFFF'>语言反应</td>
+						                    	<td bgcolor='#FFFFFF'>
+						                    		<select name="language0" style="width:120">
+						                        		<option value=""></option>
+						                        		<option value="5">回答切题</option>
+						                        		<option value="4">回答不切题</option>
+						                        		<option value="3">答非所问</option>
+						                        		<option value="2">只能发音</option>
+						                        		<option value="1">不能言语</option>
+						                     	 	</select>
+						                     	</td>
+						                     	<input type="hidden" />
+						                    	<td bgcolor='#FFFFFF'><input name="language" type="text" class="scoreTxt"/></td>
+						                    </tr>
+							                <tr align="center">
+							                    <td bgcolor='#FFFFFF'>运动反应</td>
+							                    <td bgcolor='#FFFFFF'>
+							                    	<select name="move0" style="width:120">
+							                        	<option value=""></option>
+							                        	<option value="6">按吩咐动作</option>
+							                        	<option value="5">刺痛能定位</option>
+							                        	<option value="4">刺痛能躲避</option>
+							                        	<option value="3">刺痛肢体屈曲</option>
+							                        	<option value="2">刺痛肢体伸展</option>
+							                        	<option value="1">不能活动</option>
+							                      	 </select>
+							                     </td>
+							                     <input type="hidden" />
+							                     <td bgcolor='#FFFFFF'><input name="move" type="text" class="scoreTxt"/></td>
+							                 </tr>
+		                				</table>
+		              				</div>
+		              				<div style="margin:5px 0 5px 0;width:680px">
+						                <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="1" style="font-size:12px">
+							                <tr align="center">
+							                   <td bgcolor="#CCCCCC" width="150">D.生理指标</td>
+							                   <td bgcolor="#CCCCCC" colspan="9">结果</td>
+							                   <td bgcolor="#CCCCCC" width="50">积分</td>
+							                </tr>
+		                  				   <tr align="left">
+		                    					<td bgcolor="#FFFFFF" align="center">1.体温(腋下℃)</td>
+		                    					<td bgcolor="#FFFFFF" colspan="9">
+		                    						<input name="tiwen0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥41
+		                    						<input name="tiwen0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>39-40.9
+		                    						<input name="tiwen0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>38.5-38.9
+		                    						<input name="tiwen0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>36-38.4
+		                    						<input name="tiwen0" type="radio" value="-1" onclick="checkOrNotCheck(this)"/>34-35.9
+		                    						<input name="tiwen0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>32-33.9
+		                    						<input name="tiwen0" type="radio" value="-3" onclick="checkOrNotCheck(this)"/>30-31.9
+		                    						<input name="tiwen0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>≤29.9
+		                    					</td>
+		                    					 <input type="hidden" />
+		                    					<td bgcolor="#FFFFFF"><input name="tiwen" type="text" class="scoreTxt" flag="dScr"/></td>
+		                  					</tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">2.平均血压(mmHg)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xueya0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥160
+						                    		<input name="xueya0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>130-159
+						                    		<input name="xueya0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>110-129
+						                    		<input name="xueya0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>70-109
+						                    		<input name="xueya0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>50-69
+						                    		<input name="xueya0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>≤49
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xueya" type="text" class="scoreTxt" flag="dScr"/></td>
+						                    </tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">3.心率(次/分)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xinlv0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥180
+						                    		<input name="xinlv0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>140-179
+						                    		<input name="xinlv0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>110-139
+						                    		<input name="xinlv0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>70-109
+						                    		<input name="xinlv0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>55-69
+						                    		<input name="xinlv0" type="radio" value="-3" onclick="checkOrNotCheck(this)"/>40-54
+						                    		<input name="xinlv0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>≤39
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xinlv" type="text" class="scoreTxt" flag="dScr"/></td>
+						                     </tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">4.呼吸频率(次/分)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="huxi0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥50
+						                    		<input name="huxi0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>35-49
+						                    		<input name="huxi0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>25-34
+						                    		<input name="huxi0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>12-24
+						                    		<input name="huxi0" type="radio" value="-1" onclick="checkOrNotCheck(this)"/>10-11
+						                    		<input name="huxi0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>6-9
+						                    		<input name="huxi0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>≤5
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="huxi" type="text" class="scoreTxt" flag="dScr"/></td>
+						                    </tr>
+						                    <tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">5.PaO<sub>2</sub>(mmHg)</br>(Fio<sub>2</sub>&lt;50%)
+						                      	</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="paoFio0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>&gt;70
+						                      		<input name="paoFio0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>61-70
+						                      		<input name="paoFio0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>55-60
+						                      		<input name="paoFio0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>&lt;55
+						                      		
+						                      	</td>
+						                      	 <input type="hidden" />
+						                      	<td bgcolor="#FFFFFF"><input name="paoFio" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">A-aDO<sub>2</sub></br>(Fio<sub>2</sub>&gt;50%)
+						                      	</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="aado0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥500
+						                    		<input name="aado0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>350-499
+						                    		<input name="aado0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>200-349
+						                      		<input name="aado0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>&lt;200
+						                      	</td>
+						                      	 <input type="hidden" />
+						                      	<td bgcolor="#FFFFFF"><input name="aado" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	
+						                  	
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">6.动脉血PH(mmol/L)</br>(无血气时用)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="dongmaixue0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥7.7
+ 						                      		<input name="dongmaixue0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>7.5-7.59
+						                      		<input name="dongmaixue0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>7.33-7.49
+						                      		<input name="dongmaixue0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>7.25-7.32
+						                      		<input name="dongmaixue0" type="radio" value="-3" onclick="checkOrNotCheck(this)"/>7.15-7.24
+						                      		<input name="dongmaixue0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>&lt;7.15
+						                      	</td>
+						                      	 <input type="hidden" />
+						                      	<td bgcolor="#FFFFFF"><input name="dongmaixue" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center"> 血清血HCO<sub>3</sub>(mmol/L)</br>(无血气时用)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                      		<input name="hco0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥52
+						                      		<input name="hco0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>41-51.9
+						                      		<input name="hco0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>32-40.9
+						                      		<input name="hco0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>23-31.9
+						                      		<input name="hco0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>18-21.9
+						                      		<input name="hco0" type="radio" value="-3" onclick="checkOrNotCheck(this)"/>15-17.9
+						                      		<input name="hco0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>&lt;15
+						                      		
+						                      	</td>
+						                      	 <input type="hidden" />
+						                      	<td bgcolor="#FFFFFF"><input name="hco" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	
+						                  	
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">7.血清Na(mmol/L)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xueqingNa0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥180
+						                    		<input name="xueqingNa0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>160-179
+						                    		<input name="xueqingNa0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>155-159
+						                    		<input name="xueqingNa0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>150-154
+						                    		<input name="xueqingNa0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>130-149
+						                    		<input name="xueqingNa0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>120-129
+						                    		<input name="xueqingNa0" type="radio" value="-3" onclick="checkOrNotCheck(this)"/>111-119
+						                    		<input name="xueqingNa0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>≤110
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xueqingNa" type="text" class="scoreTxt" flag="dScr"/></td>
+						                   </tr>
+						                   <tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">8.血清K(mmol/L)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xueqingK0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥7
+						                    		<input name="xueqingK0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>6-6.9
+						                    		<input name="xueqingK0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>5.5-5.9
+						                    		<input name="xueqingK0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>3.5-5.4
+						                    		<input name="xueqingK0" type="radio" value="-1" onclick="checkOrNotCheck(this)"/>3-3.4
+						                    		<input name="xueqingK0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>2.5-2.9
+						                    		<input name="xueqingK0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>&lt;2.5
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xueqingK" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                    <tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">9.血清肌酐(mg/dl)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xqjiqian0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥3.5
+						                    		<input name="xqjiqian0" type="radio" value="3" onclick="checkOrNotCheck(this)"/>2-3.4
+						                    		<input name="xqjiqian0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>1.5-1.9
+						                    		<input name="xqjiqian0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>0.6-1.4
+						                    		<input name="xqjiqian0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>&lt;0.6
+						                    		<input name="xqjiqian0" type="text" class="scoreTxt"/>
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xqjiqian" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">10.血球压积(%)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="xueqiuJiya0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥60
+						                    		<input name="xueqiuJiya0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>50-59.9
+						                    		<input name="xueqiuJiya0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>46-49.9
+						                    		<input name="xueqiuJiya0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>30-35.9
+						                    		<input name="xueqiuJiya0" type="radio" value="-2" onclick="checkOrNotCheck(this)"/>20-29.9
+						                    		<input name="xueqiuJiya0" type="radio" value="-4" onclick="checkOrNotCheck(this)"/>&lt;20
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="xueqiuJiya" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	<tr align="left">
+						                    	<td bgcolor="#FFFFFF" align="center">11.WBC(X1000)</td>
+						                    	<td bgcolor="#FFFFFF" colspan="9">
+						                    		<input name="wbc0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>≥40
+						                    		<input name="wbc0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>20-39.9
+						                    		<input name="wbc0" type="radio" value="1" onclick="checkOrNotCheck(this)"/>15-19.9
+						                    		<input name="wbc0" type="radio" value="0" onclick="checkOrNotCheck(this)"/>3-14.9
+						                    		<input name="wbc0" type="radio" value="2" onclick="checkOrNotCheck(this)"/>1-2.9
+						                    		<input name="wbc0" type="radio" value="4" onclick="checkOrNotCheck(this)"/>&lt;1
+						                    		
+						                    	</td>
+						                    	 <input type="hidden" />
+						                    	<td bgcolor="#FFFFFF"><input name="wbc" type="text" class="scoreTxt" flag="dScr"/></td>
+						                  	</tr>
+						                  	<tr>
+						                    	<td bgcolor="#FFFFFF" align="center">12.急性肾衰竭</td>
+						                    	<td colspan="10" bgcolor="#FFFFFF" >
+						                    	<!-- 	<input name="hasShen" type="checkbox" value="1" onclick="addTwoEvent(this)"/>急性肾衰竭   -->
+						                    		<input name="hasShen" type="radio" value="1" onclick="addTwoEvent(this)"/>是
+						                    		<input name="hasShen" type="radio" value="2" onclick="addEvent(this)"/>否
+						                    	</td>
+						                   </tr>
+						                  	<tr>
+						                    	<td colspan="9" bgcolor="#FFFFFF">
+							                    	<ul style="line-height:25px; padding:5px 0 5px 10px">
+							                    	    <li>备注：</li>   
+							                        	<li>1、急性肾衰竭时第9项分值加倍</li>
+							                        	<li>2、严重器官功能不全：</li>
+								                        		<br/><span style="padding-left:30">(1) 心：心功能IV级;</span><br/>
+								                        		<span style="padding-left:30">(2) 肺：慢性缺氧,阻塞性或限制性通气障碍,运动耐受差;</span><br/>
+								                        		<span style="padding-left:30">(3) 肾：慢性透析者;</span><br/>
+								                        		<span style="padding-left:30">(4) 肝：肝硬化,门脉高压,有上消化道出血史,肝昏迷,肝功能衰竭史;</span>
+							                        	<li>3、免疫损害:如接受放疗、化疗、长期或大量激素治疗,有白血病、淋巴瘤、艾滋病等。</li>
+							                      	</ul>
+						                    	<td bgcolor="#FFFFFF" align="center">D积分</td>
+						                    	<td bgcolor="#FFFFFF"><input name="dscore" type="text" class="scoreTxt"/></td>
+						                  	</tr>
+		                				</table>
+		              				</div>
+					             	<div style="margin:5px 0 5px 0;width:680px">
+					                	<table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="1" border="0" style="font-size:12px">
+					                  		<tr>
+							                    <td bgcolor="#FFFFFF" width="150">&nbsp;&nbsp; APACHE II 总积分分组</td>
+							                    <td bgcolor="#FFFFFF" align="center">0-9</td>
+							                    <td bgcolor="#FFFFFF" align="center">10-14</td>
+							                    <td bgcolor="#FFFFFF" align="center">15-19</td>
+							                    <td bgcolor="#FFFFFF" align="center">20-24</td>
+							                    <td bgcolor="#FFFFFF" align="center">25-29</td>
+							                    <td bgcolor="#FFFFFF" align="center">30-34</td>
+							                    <td bgcolor="#FFFFFF" align="center">35+</td>
+							                 </tr>
+							                 <tr flag="totalScore">
+							                    <td bgcolor="#FFFFFF" width="150">&nbsp;&nbsp; APACHE II 总积分</td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas1" type="text" class="scoreTxt" id="apas1"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas2" type="text" class="scoreTxt" id="apas2"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas3" type="text" class="scoreTxt" id="apas3"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas4" type="text" class="scoreTxt" id="apas4"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas5" type="text" class="scoreTxt" id="apas5"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas6" type="text" class="scoreTxt" id="apas6"/></td>
+							                    <td bgcolor="#FFFFFF" align="center"><input name="apas7" type="text" class="scoreTxt" id="apas7"/></td>
+							                 </tr>
+					                	</table>
+					              	</div>
+			             		</td>
+          					</tr>
+        				</table>
+      				</div>
+      			</td>
+  			</tr>
+		</table>
+	</form>
+</body>
+</html>

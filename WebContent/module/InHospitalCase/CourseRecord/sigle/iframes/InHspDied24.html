@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>24小时入院死亡记录</title>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript">
+var outHspDiag = null;
+$(function(){
+	initPage('InHspDied24_findById');	
+});
+function before_init(){
+	registrationPageHead(kid,'24小时入院死亡记录','#header');
+	FormUtil.toDateField({el:$('*[name="time"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="inhspTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('*[name="outhspTime"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-ChiefComplaint'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//下拉框初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//医生字典选择
+	$('#mainDoctor,#inhspDoctor').each(function(){
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			//hiddenEl:$('input[name="'+$(this).attr('name').replace('doc','')+'"]'),
+			showEl:$('#'+$(this).attr('id'))
+		});
+	});
+}
+//医生签字
+function sign(_this){
+    var input = $(_this).parent().find('input');
+    var val = input.val();
+	if(!top.USER)
+		return;
+    var name = top.USER.name;
+    if (!name || name.length == 0) 
+        return;
+    if (val.length == 0) {
+        if (confirm('确定要签入您的名字 【 ' + name + ' 】？')) {
+            input.val(name);
+        }
+    }
+    else {
+        if (name == val) {
+            if (confirm('您已签字，是否要撤销签字？')) {
+                input.val('');
+            }
+        }
+        else {
+            alert('已经签字，不能再次操作。');
+        }
+    }
+}
+function initPage_callback(json){
+	json.title='24小时入院死亡记录('+json.time+')';
+	parent.setAuth(json);
+}
+function before_save(){
+	var data=FormUtil.getFormValues('form');
+	return {
+		allowSubmit:isValid(data),
+		method:'InHspDied24_saveOrUpdate',
+		data:JSON.stringify(data),
+		title:'24小时入院死亡记录'
+	}
+}
+function isValid(data){
+	if(data.time.length==0){
+		alert('记录时间不能为空。');
+		return false;
+	}
+	return true;
+}
+function print(){
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	SaveData2();
+	window.open(App.App_Info.BasePath+
+	'/InHospitalCase/CourseRecordingAction.do?method=InHspDied24_Print&id='+
+	id);
+}
+function showOutHspDiag(){
+	if(outHspDiag){
+		outHspDiag = outHspDiag.next();
+	}else{
+		$('textarea[flag="hide"]').each(function(){
+			if(outHspDiag == null && $(this).val() == ""){
+				outHspDiag = $(this).parent().parent();
+			}
+		});
+	}
+	outHspDiag.show();
+}
+</script>
+</head>
+<body>
+<div id="header" style="width:600px;position:relative;"></div>
+<form>
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value=""/>
+<table class="table" width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="t1" width="80">记录日期：</td>
+		<td class="t2" width="200"><input name="time" type="text" class="text" style="width:150px"/></td>
+		<td class="t2" colspan="2"> <span style="color:red">*</span> 本次记录的日期，用以区分病程内的多次记录</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">年龄：</td>
+		<td class="t2" width="200"><input name="age" type="text" class="text"/></td>
+		<td class="t1" width="80">&nbsp;</td>
+		<td class="t2" width="200">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">入院日期：</td>
+		<td class="t2" width="200"><input name="inhspTime" type="text" class="text"/></td>
+		<td class="t1" width="80">死亡时间：</td>
+		<td class="t2" width="200"><input name="outhspTime" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">叙述者：</td>
+		<td class="t2" width="200"><input name="narrator" type="text" class="select"/><br/><input name="narrator0" type="text" class="text input-hidden"/></td>
+		<td class="t1" width="80">可靠性：</td>
+		<td class="t2" width="200"><input name="reliability" type="text" class="select"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">主诉：</td>
+		<td class="t2" colspan="3" width="480"><textarea name="chiefComplaint" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">入院情况：</td>
+		<td class="t2" colspan="3"><textarea name="inHspStatu" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">入院诊断：</td>
+		<td class="t2" colspan="3"><textarea name="inHspDiag" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">诊疗经过<br/>(抢救经过)：</td>
+		<td class="t2" colspan="3"><textarea name="treatProcess" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">死亡原因：</td>
+		<td class="t2" colspan="3"><textarea name="diedReason" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">死亡诊断：</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder2" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder3" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder4" class="textarea" style="width:98%"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3">
+			<textarea name="diedOrder30" class="textarea" style="width:98%"></textarea>
+			<input type="button" value="继续添加诊断" onclick="showOutHspDiag()">
+		</td>
+	</tr>
+	
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder5" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder6" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder7" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder8" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder9" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder10" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder11" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder12" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder13" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder14" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder15" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder16" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder17" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder18" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder19" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder20" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder21" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder22" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder23" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder24" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder25" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder26" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder27" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder28" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	<tr style="display:none;">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><textarea name="diedOrder29" class="textarea" style="width:98%" flag="hide"></textarea></td>
+	</tr>
+	
+	<tr>
+		<td class="t1" width="80">主治医生：</td>
+		<td class="t2">&nbsp;<input id="mainDoctor" name="mainDoctor" type="text" readonly/>&nbsp;<a href="###" onclick="sign(this)">签字</a></td>
+		<td class="t1" width="80">住院医生：</td>
+		<td class="t2">&nbsp;<input id="inhspDoctor" name="inhspDoctor" type="text" readonly/>&nbsp;<a href="###" onclick="sign(this)">签字</a></td>
+	</tr>
+	
+</table>
+</form>
+</body>
+</html>

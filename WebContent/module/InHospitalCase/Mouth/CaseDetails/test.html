@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript">
+$(function(){
+	var txt='';
+	$('input[type="checkbox"]').each(function(){
+		txt+='private int '+this.name+';\n';
+	});
+	$('input[type="text"]').each(function(){
+		txt+='private String '+this.name+';\n';
+	});
+	$('input[type="radio"]').each(function(){
+		txt+='private String '+this.name+';\n';
+	});
+	$('textarea').val(txt);
+});
+</script>
+</head>
+<body>
+<textarea style="width:100%;height:600px"></textarea>
+<table>
+<tr>
+		<td colspan=6 class="title">主要症状</td>
+	</tr>
+	<tr>
+		<td class="t1">肿瘤：</td><td class="t2" colspan="5"><input name="zhongliu" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿物：</td><td class="t2"><input name="zhongliu_zhw" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:1em">大小：<input type="text" name="zhongliu_zhw_size" class="text" style="width:40px"/>cm</p>
+						<p style="padding-left:1em">质地：<input type="radio" name="zhongliu_zhw_zhidi" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:1em">边界：<input type="radio" name="zhongliu_zhw_bianjie" class="radio dict-fld" checked="checked"/></p>
+						<p>活动度：<input type="radio" name="zhongliu_zhw_huodongdu" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">肿胀：</td><td class="t2"><input name="zhongliu_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="zhongliu_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" name="zhongliu_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" name="zhongliu_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" name="zhongliu_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">麻木：</td><td class="t2"><input name="zhongliu_mm" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">面瘫：</td><td class="t2"><input name="zhongliu_mt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="zhongliu_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" name="zhongliu_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">破溃：</td><td class="t2"><input name="zhongliu_pk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="zhongliu_chx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">外伤：</td><td class="t2" colspan="5"><input name="waishang" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="80">骨折：</td><td class="t2"><input name="waishang_gzh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>骨折类型：<input type="text" name="waishang_gzh_leix" class="checkbox" style="width:75%"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="waishang_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" rel="zhongliu_zhk_chengdu" name="waishang_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">面部不对称：</td><td class="t2"><input name="waishang_mb" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="waishang_chx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">头晕：</td><td class="t2"><input name="waishang_ty" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">恶心：</td><td class="t2"><input name="waishang_ex" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">呕吐：</td><td class="t2"><input name="waishang_ot" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>呕吐性状：<input type="radio" name="waishang_ot_xzh" class="radio dict-fld" checked="checked"/></p>
+						<p>每天次数：<input type="text" name="waishang_ot_per" class="text" style="width:40px"/>次，每次量：<input type="text" name="waishang_ot_perVol" class="text" style="width:40px"/>ml</p>
+						<p>总的次数：<input type="text" name="waishang_ot_tol" class="text" style="width:40px"/>次，总的量：<input type="text" name="waishang_ot_tolVol" class="text" style="width:40px"/>ml</p>
+						<p>呕吐物：<input type="text" name="waishang_ot_w" class="checkbox" style="width:75%"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">炎症：</td><td class="t2" colspan="5"><input name="yanzheng" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿胀：</td><td class="t2"><input name="yanzheng_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>程度：<input type="radio" name="yanzheng_zhzh_chd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="yanzheng_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="yanzheng_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="yanzheng_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="yanzheng_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">皮肤发红：</td><td class="t2"><input name="yanzheng_ph" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">皮温升高：</td><td class="t2"><input name="yanzheng_ps" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">化脓：</td><td class="t2"><input name="yanzheng_hn" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溃烂：</td><td class="t2"><input name="yanzheng_kl" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口受限：</td><td class="t2"><input name="yanzheng_zhk" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">程度：<input type="radio" rel="zhongliu_zhk_chengdu" name="yanzheng_zhk_chengdu" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">吞咽疼痛：</td><td class="t2"><input name="yanzheng_ty" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">口臭：</td><td class="t2"><input name="yanzheng_kch" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">粘膜,牙龈,唇：</td><td class="t2" colspan="5"><input name="nmych" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">破损：</td><td class="t2"><input name="nmych_ps" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:2em">形态：<input type="radio" name="nmych_ps_xt" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:2em">长度：<input type="text" name="nmych_ps_xt1" style="width:40px"/>cm&nbsp;&nbsp;或&nbsp;&nbsp;面积：<input type="text" name="nmych_ps_xt2" style="width:40px"/>cm<sup>2</sup></p>
+						<p style="padding-left:2em">深度：<input type="radio" name="nmych_ps_sd" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:2em">边缘：<input type="radio" name="nmych_ps_by" class="radio dict-fld" checked="checked"/></p>
+						<p>污染程度：<input type="radio" rel="yanzheng_zhzh_chd" name="nmych_ps_wr" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">红肿：</td><td class="t2"><input name="nmych_hzg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">充血：</td><td class="t2"><input name="nmych_chx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">溃疡：</td><td class="t2"><input name="nmych_ky" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">糜烂：</td><td class="t2"><input name="nmych_ml" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">黑线：</td><td class="t2"><input name="nmych_hx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1" width="60">出血：</td><td class="t2"><input name="nmych_cx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">舌：</td><td class="t2" colspan="5"><input name="she" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">红肿：</td><td class="t2"><input name="she_hzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">肿大：</td><td class="t2"><input name="she_hzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">出血：</td><td class="t2"><input name="she_zhd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溃疡：</td><td class="t2"><input name="she_ky" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">糜烂：</td><td class="t2"><input name="she_ml" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">运动障碍：</td><td class="t2"><input name="she_yd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">伸舌偏斜：</td><td class="t2"><input name="she_shsh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">抬高：</td><td class="t2"><input name="she_tg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">味觉异常：</td><td class="t2"><input name="she_wj" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">牙：</td><td class="t2" colspan="5"><input name="ya" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">松动：</td><td class="t2"><input name="ya_sd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>程度：<input type="radio" name="ya_sd_chd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">移位：</td><td class="t2"><input name="ya_yw" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>方向：<input type="radio" name="ya_yw_fx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">伸长：</td><td class="t2"><input name="ya_shch" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">折断：</td><td class="t2"><input name="ya_zhd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_zhd_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">脱落：</td><td class="t2"><input name="ya_tl" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_tl_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">阻生：</td><td class="t2"><input name="ya_zsh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="ya_zsh_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">埋伏：</td><td class="t2"><input name="ya_mf" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">多生：</td><td class="t2"><input name="ya_dsh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">残根：</td><td class="t2"><input name="ya_cg" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">畸形：</td><td class="t2"><input name="ya_jx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">开颌：</td><td class="t2"><input name="ya_kh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">反颌：</td><td class="t2"><input name="ya_fh" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">涎腺：</td><td class="t2" colspan="5"><input name="xianxian" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">疼痛：</td><td class="t2"><input name="xianxian_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="xianxian_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="xianxian_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="xianxian_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">肿大：</td><td class="t2"><input name="xianxian_zhd" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">肿胀：</td><td class="t2"><input name="xianxian_zhzh" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">压痛：</td><td class="t2"><input name="xianxian_yt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">导管口：</td><td class="t2"><input type="radio" name="xianxian_dgk" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">唾液：</td><td class="t2"><input type="radio" name="xianxian_ty" class="radio dict-fld" checked="checked"/></td>
+				</tr>
+				<tr>
+					<td class="t1">干燥：</td><td class="t2"><input name="xianxian_gz" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">颞下颌关节：</td><td class="t2" colspan="5"><input name="niexia" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">疼痛：</td><td class="t2"><input name="niexia_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="niexia_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="niexia_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="niexia_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">压痛：</td><td class="t2"><input name="niexia_yt" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">张口困难：</td><td class="t2"><input name="niexia_zhk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">闭口受阻：</td><td class="t2"><input name="niexia_bk" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">弹响：</td><td class="t2"><input name="niexia_tx" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>出现时间：<input type="radio" name="niexia_tx_time" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">淋巴结：</td><td class="t2" colspan="5"><input name="linbajie" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">肿大：</td><td class="t2"><input name="linbajie_zhd" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p style="padding-left:1em">数量：<input type="text" name="linbajie_zhd_shl" style="width:40px"/>个</p>
+						<p style="padding-left:1em">直径：<input type="text" name="linbajie_zhd_zhj" style="width:40px"/>cm</p>
+						<p style="padding-left:1em">质地：<input type="radio" name="linbajie_zhd_zhd" class="radio dict-fld" checked="checked"/></p>
+						<p>活动度：<input type="radio" name="linbajie_zhd_hd" class="radio dict-fld" checked="checked"/></p>
+						<p style="padding-left:1em">基地：<input type="radio" name="linbajie_zhd_jd" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">疼痛：</td><td class="t2"><input name="linbajie_tt" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>疼痛性质：<input type="text" rel="zhongliu_tt_tt" name="linbajie_tt_tt" class="checkbox" style="width:80%"/></p>
+						<p>发作状态：<input type="text" rel="zhongliu_tt_fz" name="linbajie_tt_fz" class="select"/></p>
+						<p>演变过程：<input type="text" rel="zhongliu_tt_yb" name="linbajie_tt_yb" class="select"/></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">耳,鼻：</td><td class="t2" colspan="5"><input name="erbi" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">溢血：</td><td class="t2"><input name="erbi_yx" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">溢脓：</td><td class="t2"><input name="erbi_yn" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">畸形：</td><td class="t2"><input name="erbi_jx" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="t1">眼球：</td><td class="t2" colspan="5"><input name="yanqiu" type="checkbox"/></td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="5">
+			<table width="100%"  border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+				<tr>
+					<td class="t1" width="60">突出：</td><td class="t2"><input name="yanqiu_tch" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">分离：</td><td class="t2"><input name="yanqiu_fl" type="checkbox"/></td>
+				</tr>
+				<tr>
+					<td class="t1">斜视：</td><td class="t2"><input name="yanqiu_xsh" type="checkbox"/></td>
+				</tr>
+				<tr class="hidden">
+					<td class="t1">&nbsp;</td>
+					<td class="t2">
+						<p>类型：<input type="radio" name="yanqiu_xsh_lx" class="radio dict-fld" checked="checked"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td class="t1">复视：</td><td class="t2"><input name="yanqiu_fsh" type="checkbox"/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

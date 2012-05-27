@@ -1,0 +1,715 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>住院病案续页</title>
+		<link type="text/css" rel="stylesheet" href="../css/InHspRec.css"/>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+		<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+		<script type="text/javascript" src="Js/FormUtil.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="Js/be_InHp_Continue.js"></script>
+		<style type="text/css">
+			.tab1.nopanel{border:0px;}
+			.tab2.nopanel{width:80px;border:0px;}
+			.tab2 tr{text-align:center}
+			.tab3 tr{text-align:center}
+			.oper{width:60px;border:0;}
+			.ktext{width:70px}
+			.sys{width:98%;border:0px}
+			.tab99{text-align:left}
+		</style>	
+	</head>
+<body>
+<div id="button"></div>
+<form>
+	<div>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<table width="600" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td align="left">
+					<span>医疗机构代码：0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<table class="tab1" width="700" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>		
+		<tr>
+			<td align="center" colspan="2">
+				<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+				<input type="hidden" name="state"/>
+			</td>	
+		</tr>
+		<tr><td colspan="2">&nbsp;</td></tr>
+		<tr>
+			<td colspan="2" align="center"><b style="font-size:20px;font-family:'黑体'">住  院  病  案  续  页</b></td>
+		</tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td align="right" width="370">第<input class="nopanel" style="width:20px;border:0px;text-align:center" type="text" name="inHspTimes" readonly="readonly"/>次住院 </td>
+			<td>
+				<div style="margin-left:150px;">
+					病案号：<input class="nopanel" style="width:50px;border:0px;" type="text" name="patientNo" readonly="readonly"/>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<table class="tab99" width="600" align="center" border="1" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		<tr>
+			<td>
+				<span>姓名：<input class="nopanel" style="width:70px;" maxlength="5" type="text" name="patientName" readonly="readonly"/></span>
+				<span style="margin-left:20px;">
+					性别：<input class="nopanel" style="width:20px;" maxlength="4" type="text" name="gender" readonly="readonly"/>
+					&nbsp;&nbsp;1.男&nbsp;&nbsp;2.女
+				</span>
+				<span style="margin-left:20px;">
+					出生日期：<input class="nopanel" style="width:70px;" type="text" name="birthday" readonly="readonly"/>
+				</span>
+				<span style="margin-left:20px;">
+					年龄：<input class="nopanel" style="width:25px;" type="text" name="age" readonly="readonly"/>
+						  <input class="nopanel" type="text" class="nopanel" style="width:25px;" name="age_months" />月
+						  <input class="nopanel" type="text" class="nopanel" style="width:25px;" name="age_day"/>天
+				</span>	
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span style="margin-left:0px;">婚姻：<input type="text" style="width:25px;" name="marrageStatus" />
+				&nbsp;&nbsp;1.未&nbsp;&nbsp;2.已&nbsp;&nbsp;3.离&nbsp;&nbsp;4.丧</span>
+				<span style="margin-left:20px;">出生地：
+					<input type="text" name="province" style="width:10%;"/>省(市)
+					<input type="text" name="city" style="width:10%;"/>县
+					<input type="text" name="area" style="width:18%;"/>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>职业：<input type="text" name="occupation" style="width:80px;border:none;border-bottom:solid #000 1px;" class="nopanel"/></span>
+				<span style="margin-left:20px;">民族：<input type="text" style="width:65px;border:none;border-bottom:solid #000 1px;" name="people" class="nopanel"/></span>
+				<span style="margin-left:20px;">国籍：<input type="text" name="nationality" style="width:60px;border:none;border-bottom:solid #000 1px;" class="nopanel"/></span>
+				<span style="margin-left:20px;">身份证号：<input type="text" name="idNo" maxlength="18" style="width:125px;border:none;border-bottom:solid #000 1px;"/></span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>工作单位及地址：</span><input type="text" name="workUnitAddr" style="width:38%;border:none;border-bottom:solid 1px #000;" class="nopanel"/>
+				<span style="margin-left:10px;">电话：</span><input type="text" name="workUnitTel" style="width:83px;border:none;border-bottom:solid 1px #000;"class="nopanel"/>&nbsp;
+				<span style="margin-left:10px;">邮政编码：</span><input type="text" name="workUnitPostCode" style="width:55px;border:none;border-bottom:solid 1px #000;"class="nopanel"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>户口地址/现住址：</span><input type="text" name="homeAddr" style="width:60%;" class="nopanel"/>
+				<span style="margin-left:10px;">邮政编码：</span><input type="text" name="homePostCode" style="width:55px;"class="nopanel"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>联系人姓名：</span><input type="text" name="contacterName" style="width:80px;"class="nopanel"/>
+				<span style="margin-left:20px;">关系：</span><input type="text" name="contacterRelationship" style="width:60px;"class="nopanel"/>
+				<span style="margin-left:20px;">地址：</span><input type="text" name="contacterAdd" style="width:20%"class="nopanel"/>
+				<span style="margin-left:20px">电话：</span><input type="text" name="contacterTel" style="width:83px;"class="nopanel"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>入院日期：
+					<input type="text" name="inHspDate" style="width:100px;"class="nopanel"/>
+				</span>
+				<span>入院科别：
+					<input type="text" name="inWardCode" style="width:90px;"class="nopanel"/>
+				</span>
+				<span>病室：
+					<input type="text" name="inWard" style="width:60px;"class="nopanel"/>
+				</span>
+				<span>转科科别：
+					<input type="text" name="creditWard" style="width:90px;"class="nopanel"/>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>出院日期：
+					<input type="text" class="input nopanel" name="outHspDate" style="width:100px;"/>
+				</span>
+				<span style="margin-left:10px;">出院科别：
+					<input type="text" name="outHspWard" style="width:90px;"class="nopanel"/>
+				</span>
+				<span style="margin-left:10px;">病室：
+					<input type="text" name="outWard" style="width:60px;"class="nopanel"/>
+				</span>
+				<span style="margin-left:10px;">实际住院：
+					<input type="text" style="width:25px;" name="hspDate2" class="nopanel"/>&nbsp;天
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>门(急)诊诊断：</span><input type="text" class="input nopanel" name="menzhen" style="width:50%"/>
+				<span style="margin-left:20px;">入院时情况：</span><input type="text" style="width:25px;" name="inStatus"class="nopanel"/><span>&nbsp;1.危&nbsp;2.急&nbsp;3.一般</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>入院诊断：</span><input type="text" class="input nopanel" name="inIllsShow" style="width:54%"/>
+				<span style="margin-left:17px;">入院后确诊日期：</span><input type="text" style="width:90px;" class="nopanel"name="queding_checkdate" style="width:100px;"/>
+			</td>
+		</tr>
+	</table>
+	<table class="tab3" width="600" align="center" border="1" cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+		<tr class="ftr">
+			<td rowspan="2" width="250"><span><font size="3">出院诊断</font></span></td>
+			<td colspan="5" style="border-bottom:1px" align="center">出院时情况</td>
+			<td style="border-bottom:1px;width:80px;ling-width:13px" rowspan="2"><font color="red">ICD-10</font></td>
+		</tr>
+		<tr class="ftr" style="text-align:center">
+			<td style="width:33px;line-width:12px">1.治愈</td>
+			<td style="width:33px;line-width:12px">2.好转</td>
+			<td style="width:33px;line-width:12px">3.未愈</td>
+			<td style="width:33px;line-width:12px">4.死亡</td>
+			<td style="width:33px;line-width:12px">5.其他</td>
+		</tr>
+		<tr >
+			<td align="left">其它诊断：<input style="width:78%;border:0px" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%" type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr><tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+		<tr>
+			<td><input class="sys" style="width:95%"   type="text" name="sysptom"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="1"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="2"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="3"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="4"/></td>
+			<td><input type="checkbox" name="leaveHospital" value="5"/></td>
+			<td><input style="width:80px;border:0px" type="text" name="icd"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>
+	</table>
+	<table class="tab4" width="600" align="center" border=1 style="border:solid 1px;font-size:12px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr align="center">
+				<td rowspan="2" width="45">手术操作编码</td>
+				<td rowspan="2" width="90">手术操作日期</td>
+				<td rowspan="2" width="230">手术操作名称</td>
+				<td colspan="3" width="180">手术操作医师</td>
+				<td rowspan="2" width="60">麻醉方式</td>
+				<td rowspan="2" width="45">切口愈合等级</td>
+				<td rowspan="2" width="60">麻醉医师</td>
+		</tr>
+			<tr align="center">
+				<td width="60px;">术者</td>
+				<td width="60px;">Ⅰ助</td>
+				<td width="60px;">Ⅱ助</td>
+			</tr>
+			<tr>
+				<td width="70px"><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			 <tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr> 
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr> 
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>  
+			<tr>
+				<td><input type="text" name="operationNo" style="width:60px;" class="oper"/></td>
+				<td><input type="text" name="tdate" style="width:70px;" class="oper"/></td>
+				<td><input type="text" name="surgeryName" style="width:98%;" class="oper"/></td>
+				<td><input type="text" name="surgeryDocName" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant1" class="oper"/></td>
+				<td><input type="text" name="surgeryAssistant2" class="oper"/></td>
+				<td><input type="text" name="anesthesiaMode" class="oper"/></td>
+				<td><input type="text" name="cut" value="/" style="width:40px;border:0;text-align:center"/></td>
+				<td><input type="text" name="analgesist" class="oper"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>    
+	</table>
+	<table class="tab5" width="600" align="center" border=1 style="border:solid 1px;font-size:12px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr align="center">
+				<td>重症监护室名称</td>
+				<td>进入时间(yyyy-MM-dd HH:mm)</td>
+				<td>退出时间(yyyy-MM-dd HH:mm)</td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+			<tr>
+				<td><input type="text" name="icuName" style="border:0;width:220px;"/></td>
+				<td><input type="text" name="icuTurnInto" style="border:0;width:100%/>"/></td>
+				<td><input type="text" name="icuDropOut" style="border:0;width:100%/>"/><input type="hidden" name="id" value="-1"/></td>
+			</tr>
+	</table>
+	<table class="tab6" width="600" align="center" border=1 style="border:solid 1px;font-size:12px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<!--<tr>
+			<td style="width:50px">科主任</td>
+			<td><input class="ktext" type="text" name="kezhuren_show"/></td>
+			<td>主(副)主任医师</td>
+			<td><input class="ktext" type="text" name="directorDoctorId_show"/></td>
+			<td>主治医师</td>
+			<td><input class="ktext" type="text" name="treatDoctorId_show"/></td>
+			<td>住院医师</td>
+			<td><input class="ktext" type="text" name="inhspDoctorId_show"/></td>
+		</tr>
+		<tr>
+			<td>进修医师</td>
+			<td><input class="ktext" type="text" name="jinxiu_show"/></td>
+			<td>研究生实习医师</td>
+			<td><input class="ktext" type="text" name="yanjiusheng_show"/></td>
+			<td>实习医师</td>
+			<td><input class="ktext" type="text" name="shixi_show"/></td>
+			<td>编码员</td>
+			<td><input class="ktext" type="text" name="bianma"/></td>
+		</tr>
+		<tr>
+			<td>病案质量</td>
+			<td><input class="ktext" style="width:20px;" type="text" name="bingan"/>1甲,2乙,3丙</td>
+			<td>质控医师</td>
+			<td><input class="ktext" type="text" name="qcyishi"/></td>
+			<td>质控护师</td>
+			<td><input class="ktext" type="text" name="qchushi"/></td>
+			<td>日期</td>
+			<td><input class="ktext" type="text" name="badate"/><input type="hidden" name="id" value="-1"/></td>
+		</tr>-->
+		<tr>
+			<td>
+				<span>
+					  科主任：<input class="ktext" type="text" name="kezhuren_show" style="width:55px;"/>
+				</span>
+				<span style="margin-left:12px;">
+					主(副)主任医师：<input class="ktext" style="width:55px;" type="text" name="directorDoctorId_show"/>
+				</span>
+				<span style="margin-left:12px;">
+					主治医师：<input class="ktext" style="width:55px;" type="text" name="treatDoctorId_show"/>
+				</span>
+				<span style="margin-left:12px;">
+					住院医师：<input class="ktext" style="width:55px;" type="text" name="inhspDoctorId_show"/>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>
+					进修医师：<input class="ktext" style="width:55px;" type="text" name="jinxiu_show"/>
+				</span>
+				<span style="margin-left:12px;">
+					研究生实习医师：<input class="ktext" style="width:55px;" type="text" name="yanjiusheng_show"/>
+				</span>
+				<span style="margin-left:12px;">
+					实习医师：<input class="ktext" style="width:55px;" type="text" name="shixi_show"/>
+				</span>
+				<span style="margin-left:12px;">
+					编码员：<input class="ktext" style="width:55px;" type="text" name="bianma"/>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span>
+					病案质量：<input class="ktext" style="width:20px;" type="text" name="bingan"/>1甲,2乙,3丙
+				</span>	
+				<span style="margin-left:20px;">
+					质控医师：<input class="ktext" style="width:65px;" type="text" name="qcyishi"/>
+				</span>
+				<span style="margin-left:20px;">
+					质控护师：<input class="ktext" style="width:65px;" type="text" name="qchushi"/>
+				</span>
+				<span style="margin-left:20px;">
+					日期：<input class="ktext" style="width:65px;" type="text" name="badate"/>
+					<input type="hidden" style="width:10px;" name="id" value="-1"/>
+				</span>
+			</td>
+		</tr>
+	</table>
+</form>
+</body>
+</html>

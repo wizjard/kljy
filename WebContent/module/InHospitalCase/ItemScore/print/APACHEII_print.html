@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>危重病人综合评价打印叶面</title>
+<style type="text/css">
+body{
+	margin:0;
+	font-family:"宋体";
+	font-size:12px
+}
+#A4DIVpx{
+	width:620px;
+	height:877px;
+	border:none;
+	margin:0 auto;
+}
+#A4DIVmm{
+	width:172mm;
+	height:286mm;
+	border:none;
+	margin:0;
+	padding:0 0 0 20mm;
+}
+#TOPDIV{
+	height:30mm;
+}
+.title{
+	font-size:20px;
+	font-weight:bold;
+}
+.moudleDiv{
+	margin-top:7px
+}
+.noborder{
+	border:none;
+	border-bottom:solid #FFF 1px;
+}
+.bottomTxt {
+	border:none;
+	border-bottom:solid #000 1px;
+}
+</style>
+<!--  <link rel="stylesheet" type="text/css" href="../css/LINKCSS.CSS" />
+<link rel="stylesheet" type="text/css" href="../css/main.CSS" />
+<link rel="stylesheet" type="text/css" href="../css/tablecloth/tablecloth.css" />-->
+<link rel="stylesheet" type="text/css" href="../css/print.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../css/tablecloth/tablecloth.js"></script>
+<script type="text/javascript" src="../../scripts/print.js"></script>
+<script>
+	/*此变量值从后台获取*/
+	var cfg={
+		patientName:'',
+		patientNo:'',
+		title:'危重病人综合评价打印',
+		inHspTimes:'',
+		pageNo:''
+	}
+	$(function(){
+		document.getElementById('page-toolbar').innerHTML= CreateViewPageHeader(cfg);
+	});
+</script>
+</head>
+
+<body>
+	<div id="page-toolbar"></div>
+			<div id="A4DIVmm">
+				
+		    <!--<div id="TOPDIV">
+		        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="height:30mm;">
+		        <tr><td rowspan="2" width="55" height="70" valign="bottom"><img src="../img/youanlogo.jpg" /></td>
+		        <td height="55" valign="bottom" class="title">首都医科大学附属北京佑安医院</td>
+		        <td width="55">&nbsp;</td></tr>
+		        <tr>
+		          <td height="20">BeiJing YouAn Hospital,Capital Medical University</td>
+		          <td>&nbsp;</td>
+		        <tr>
+		          <td>&nbsp;</td>
+		        <td class="title" align="center">危重病人综合评价</td>
+		        <td>&nbsp;</td></tr>
+		        </table>
+		    </div>
+		    -->
+	    <div class="moudleDiv">
+	    	<table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#000000">
+	        	<tr>
+	        		<td bgcolor="#FFFFFF" width="42px;" align="center">科别</td>
+	            	<td bgcolor="#FFFFFF" width="9%"><input type="text" class="noborder" style="width:55px" /></td>
+	            	<td bgcolor="#FFFFFF">姓名<input type="text" class="noborder" style="width:70px" />
+	                	<input type="checkbox" />男<input type="checkbox" />女
+	                	年龄<input class="noborder" type="text" style="width:40px" />
+	                	日期<input class="noborder" type="text" style="width:90px" />/<input type="checkbox"/>Am /<input type="checkbox"/>Pm
+	                </td>
+	             	<td bgcolor="#FFFFFF" align="center" width="42px;">病案号</td>
+	             	<td bgcolor="#FFFFFF" width="9%"><input type="text" class="noborder" style="width:55px" /></td>
+	            </tr>
+	        </table>
+	    </div>
+	    <div class="moudleDiv">
+	    	<table width="100%" border="1" cellpadding="0" cellspacing="0">
+	        	<tr>
+	        		<td bgcolor="#FFFFFF" rowspan="7" colspan="3" align="center">肝<br/>病<br/>诊<br/>断</td>
+	        	</tr>
+	        	<tr>	
+	            	<td bgcolor="#FFFFFF" width="12%" valign="top" align="right">抢救疾病诊断</td>
+	            	<td bgcolor="#FFFFFF" colspan="2" width="80%">&nbsp;1、<input type="text" class="noborder" style="width:90%" /></td>
+	            </tr>
+	            <tr >
+	            	<td bgcolor="#FFFFFF"  rowspan="2" valign="top" align="right">主要疾病诊断</td>
+	            	<td bgcolor="#FFFFFF"colspan="2">&nbsp;1、<input type="text" class="noborder" style="width:100%%" /></td>
+	            </tr>
+	            <tr>
+	            	<td colspan="3" bgcolor="#FFFFFF">&nbsp;2、<input type="text" class="noborder" style="width:90%" />
+	            	</td>
+	            </tr>
+	            <tr>
+	            	<td bgcolor="#FFFFFF" rowspan="3" valign="top" align="right">合并伴随诊断</td>
+	            	<td bgcolor="#FFFFFF" colspan="2">&nbsp;1、<input type="text" class="noborder" style="width:100%%" /></td>
+	            </tr>
+	            <tr>
+	            	<td colspan="3" bgcolor="#FFFFFF">&nbsp;2、<input type="text" class="noborder" style="width:90%" />
+	            	</td>
+	            </tr>
+	            <tr>
+	            	<td colspan="3" bgcolor="#FFFFFF">&nbsp;3、<input type="text" class="noborder" style="width:90%" /></td>
+	           </tr>
+	        </table>
+	    </div>
+	    <div class="moudleDiv">
+	    	<table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#000000">
+	             <tr align="center">
+	                 <td bgcolor="#FFFFFF" width="50" height="25">A.年龄</td>
+	                 <td bgcolor="#FFFFFF" width="*">
+	                 	<table width="100%" border="0" style="font-size:12px">
+	             			<tr align="center">
+	                 			<td width="20%">≤44<input type="checkbox" value="0" name="ACheckbox2"/>0;</td>
+	                 			<td width="20%">45-54<input type="checkbox" value="2" name="ACheckbox3"/>2;</td>
+	                 			<td width="20%">55-64<input type="checkbox" value="3" name="ACheckbox4"/>3;</td>
+	                 			<td width="20%">65-74<input type="checkbox" value="5" name="ACheckbox5"/>5;</td>
+	                 			<td width="20%">≥75<input type="checkbox" value="6" name="ACheckbox"/>6;</td>
+	            			</tr>
+	         			</table>
+	         		 </td>
+	                 <td bgcolor="#FFFFFF" width="50">A积分</td>
+	                 <td bgcolor="#FFFFFF" width="50"><input name="ASX" type="text" class="noborder" id="ASX" style="width:40px"/></td>
+	             </tr>
+	        </table>
+	    </div>
+	    <div class="moudleDiv">
+	    	<table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="0" border="1">
+	             <tr>
+	                <td bgcolor="#FFFFFF" width="22%">B.有严重器官系统功能不全或免疫损害</td>
+	                <td bgcolor="#FFFFFF" align="center">
+	                	非手术或择期手术后<input type="checkbox" />
+	                	2;不能手术或急诊手术后5<input type="checkbox" />;
+	                	无上述情况0<input type="checkbox" />
+	                </td>
+	                <td bgcolor="#FFFFFF" width="50">B积分</td>
+	                <td bgcolor="#FFFFFF" width="50"><input name="BS" type="text" class="noborder" id="BS" style="width:40px"/></td>
+	             </tr>
+	         </table>
+	    </div>
+    	<div class="moudleDiv">
+    	 <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="0" border="1">
+        	 <tr align="center">
+            	<td bgcolor="#FFFFFF" height="25">GCS评分</td>
+                <td bgcolor="#FFFFFF">6</td>
+                <td bgcolor="#FFFFFF">5</td>
+                <td bgcolor="#FFFFFF">4</td>
+                <td bgcolor="#FFFFFF">3</td>
+                <td bgcolor="#FFFFFF">2</td>
+                <td bgcolor="#FFFFFF">1</td>
+            </tr>
+            <tr align="left">
+            	<td bgcolor="#FFFFFF" height="25">&nbsp;1、睁眼反应</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />自动睁眼</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />呼唤睁眼</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />刺疼睁眼</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />不能睁眼</td>
+            </tr>
+            <tr align="left">
+            	<td bgcolor="#FFFFFF" height="25">&nbsp;2、语言反应</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />回答切题</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />回答不切题</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />答非所问</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />只能发音</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />不能言语</td>
+            </tr>
+            <tr align="left">
+            	<td bgcolor="#FFFFFF" height="25">&nbsp;3、运动反应</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />按吩咐动作</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />刺痛能定位</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />刺痛能躲避</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />刺痛肢体屈曲</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />刺痛肢体伸展</td>
+                <td bgcolor="#FFFFFF"><input type="checkbox" />不能活动</td>
+            </tr>
+            <tr align="center">
+           		<td bgcolor="#FFFFFF" colspan="2" height="30">GCS积分 = 1+2+3</td>
+                <td bgcolor="#FFFFFF"><input type="text" class="noborder" style="width:30px" /></td>
+                <td bgcolor="#FFFFFF" colspan="3">C.积分=15-GCS积分</td>
+                <td bgcolor="#FFFFFF"><input type="text" class="noborder" style="width:30px" /></td>
+            </tr>
+          </table>
+    	</div>
+    	<div class="moudleDiv">
+    	    <table width="100%" bgcolor="#000000" cellpadding="2" cellspacing="0" border="1">
+	        	 <tr align="center">
+	        		<td rowspan="2" bgcolor="#FFFFFF">D.生理指标</td>
+	            	<td colspan="9" bgcolor="#FFFFFF">分值</td>
+	            	<td rowspan="2" bgcolor="#FFFFFF">D记分</td>
+            	 </tr>
+         		 <tr align="center">
+	            	<td bgcolor="#FFFFFF">+4</td><td bgcolor="#FFFFFF">+3</td><td bgcolor="#FFFFFF">+2</td><td bgcolor="#FFFFFF">+1</td>
+	                <td bgcolor="#FFFFFF">0</td><td bgcolor="#FFFFFF">+1</td><td bgcolor="#FFFFFF">+2</td><td bgcolor="#FFFFFF">+3</td>
+	                <td bgcolor="#FFFFFF">+4</td>
+            	 </tr>
+            	 <tr align="left">
+                    <td bgcolor="#FFFFFF" width="*" height="25" align="center">1.体温(腋下℃)</td>
+                    <td bgcolor="#FFFFFF" width="8%">≥41</td>
+                    <td bgcolor="#FFFFFF" width="8%">39-40.9</td>
+                    <td bgcolor="#FFFFFF" width="8%">&nbsp;</td>
+                    <td bgcolor="#FFFFFF" width="8%">38.5-38.9</td>
+                    <td bgcolor="#FFFFFF" width="8%">36-38.4</td>
+                    <td bgcolor="#FFFFFF" width="8%">34-35.9</td>
+                    <td bgcolor="#FFFFFF" width="8%">32-33.9</td>
+                    <td bgcolor="#FFFFFF" width="8%">30-31.9</td>
+                    <td bgcolor="#FFFFFF" width="8%">≤29.9</td>
+                    <td bgcolor="#FFFFFF" width="8%"><input class="noborder" style="width:30px;" type="text"/></td>
+          		 </tr>
+          		 <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">2.平均血压(mmHg)</td>
+                    <td bgcolor="#FFFFFF">≥160</td>
+                    <td bgcolor="#FFFFFF">130-159</td>
+                    <td bgcolor="#FFFFFF">110-129</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">70-109</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">50-69</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">≤49</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+          		 </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">3.心率(次/分)</td>
+                    <td bgcolor="#FFFFFF">≥180</td>
+                    <td bgcolor="#FFFFFF">140-179</td>
+                    <td bgcolor="#FFFFFF">110-139</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">70-109</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">55-69</td>
+                    <td bgcolor="#FFFFFF">40-54</td>
+                    <td bgcolor="#FFFFFF">≤39</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">4.呼吸频率
+                      (次/分)</td>
+                    <td bgcolor="#FFFFFF">≥50</td>
+                    <td bgcolor="#FFFFFF">35-49</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">25-34</td>
+                    <td bgcolor="#FFFFFF">12-24</td>
+                    <td bgcolor="#FFFFFF">10-11</td>
+                    <td bgcolor="#FFFFFF">6-9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">≤5</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">5.PaO<sub>2</sub>(mmHg)
+                      (Fio<sub>2</sub>&lt;50%) A-aDO<sub>2</sub>(Fio<sub>2</sub>&gt;50%)
+                    </td>
+                    <td bgcolor="#FFFFFF">≥500<br/>&nbsp;</td>
+                    <td bgcolor="#FFFFFF">350-499<br/><br/>&nbsp;</td>
+                    <td bgcolor="#FFFFFF">200-349<br/><br/>&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&gt;70<br/> <br/>&lt;200</td>
+                    <td bgcolor="#FFFFFF">&nbsp;<br/><br/>61-70</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&nbsp;<br/><br/>55-60</td>
+                    <td bgcolor="#FFFFFF">&nbsp;<br/><br/>&lt;55</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">6.动脉血PH
+                           血清HCO<sub>3</sub>(mmol/L)(无血气时用)</td>
+                    <td bgcolor="#FFFFFF">≥7.7<br/>≥52</td>
+                    <td bgcolor="#FFFFFF">7.6-7.69<br/>41-51.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">7.5-7.59<br/>32-40.9</td>
+                    <td bgcolor="#FFFFFF">7.33-7.49<br/>23-31.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">7.25-7.32<br/>18-21.9</td>
+                    <td bgcolor="#FFFFFF">7.15-7.24<br/>15-17.9</td>
+                    <td bgcolor="#FFFFFF">&lt;7.15<br/>&lt;15</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">7.血清Na(mmol/L)</td>
+                    <td bgcolor="#FFFFFF">≥180</td>
+                    <td bgcolor="#FFFFFF">160-179</td>
+                    <td bgcolor="#FFFFFF">155-159</td>
+                    <td bgcolor="#FFFFFF">150-154</td>
+                    <td bgcolor="#FFFFFF">130-149</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">120-129</td>
+                    <td bgcolor="#FFFFFF">111-119</td>
+                    <td bgcolor="#FFFFFF">≤110</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">8.血清K(mmol/L)</td>
+                    <td bgcolor="#FFFFFF">≥7</td>
+                    <td bgcolor="#FFFFFF">6-6.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">5.5-5.9</td>
+                    <td bgcolor="#FFFFFF">3.5-5.4</td>
+                    <td bgcolor="#FFFFFF">3-3.4</td>
+                    <td bgcolor="#FFFFFF">2.5-2.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&lt;2.5</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">9.血清肌酐(mg/dl)</td>
+                    <td bgcolor="#FFFFFF">≥3.5</td>
+                    <td bgcolor="#FFFFFF">2-3.4</td>
+                    <td bgcolor="#FFFFFF">1.5-1.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">0.6-1.4</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&lt;0.6</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">10.血球压积(%)</td>
+                    <td bgcolor="#FFFFFF">≥60</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">50-59.9</td>
+                    <td bgcolor="#FFFFFF">46-49.9</td>
+                    <td bgcolor="#FFFFFF">30-35.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">20-29.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&lt;20</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr align="left">
+                    <td bgcolor="#FFFFFF" height="25" align="center">11.WBC(X1000)</td>
+                    <td bgcolor="#FFFFFF">≥40</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">20-39.9</td>
+                    <td bgcolor="#FFFFFF">15-19.9</td>
+                    <td bgcolor="#FFFFFF">3-14.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">1-2.9</td>
+                    <td bgcolor="#FFFFFF">&nbsp;</td>
+                    <td bgcolor="#FFFFFF">&lt;1</td>
+                    <td bgcolor="#FFFFFF"><input class="noborder" style="width:30px;" type="text"/></td>
+                  </tr>
+                  <tr>
+                    <td colspan="9" bgcolor="#FFFFFF">
+                    	<ul style="line-height:25px; padding:5px 0 5px 10px">
+	                        <li>1、急性肾衰竭时第9项分值加倍</li>
+	                        <li>2、严重器官功能不全：</li>
+	                        	<ol>
+	                        		<li style="padding-left:26px;">心:心功能IV级;</li>
+	                        		<li style="padding-left:26px;">肺:慢性缺氧,阻塞性或限制性通气障碍,运动耐受差;</li>
+	                        		<li style="padding-left:26px;">肾:慢性透析者;</li>
+	                        		<li style="padding-left:26px;">肝:肝硬化,门脉高压,有上消化道出血史,肝昏迷,肝功能衰竭史。</li>
+	                        	</ol>	
+	                        <li>3、免疫损害:如接收放疗、化疗、长期或大量激素治疗,有白雪病、淋巴瘤、爱滋病等。</li>
+                      	</ul>
+                    </td>
+                    <td bgcolor="#FFFFFF" align="center">D积分</td>
+                    <td bgcolor="#FFFFFF"><input type="text" class="noborder" style="width:30px"/></td>
+                 </tr>
+            </table>
+    	</div>
+    	<div class="moudleDiv">
+    		 <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="0" border="1" style="font-size:12px">
+            	 <tr>
+                    <td bgcolor="#FFFFFF" height="30" width="150">&nbsp;&nbsp; APACHE II 总积分分组</td>
+                    <td bgcolor="#FFFFFF" align="center">0-9</td>
+                    <td bgcolor="#FFFFFF" align="center">10-14</td>
+                    <td bgcolor="#FFFFFF" align="center">15-19</td>
+                    <td bgcolor="#FFFFFF" align="center">20-24</td>
+                    <td bgcolor="#FFFFFF" align="center">25-29</td>
+                    <td bgcolor="#FFFFFF" align="center">30-34</td>
+                    <td bgcolor="#FFFFFF" align="center">35+</td>
+                    <td bgcolor="#FFFFFF" align="center">转归</td>
+                    <td bgcolor="#FFFFFF" width="130" align="center" valign="bottom" rowspan="2">医师签字：
+                      <input type="text" class="noborder" style="width:50px"/></td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#FFFFFF" height="30" width="150">&nbsp;&nbsp; APACHE II 总积分</td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="text" class="noborder" style="width:30px"/></td>
+                    <td bgcolor="#FFFFFF" align="center"><input type="checkbox" />Y<input type="checkbox" />N</td>
+                  </tr>
+             </table>
+        </div>
+	</div>
+</body>
+</html>

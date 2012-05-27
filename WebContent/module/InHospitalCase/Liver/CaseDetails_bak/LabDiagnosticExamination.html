@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实验室与辅助检查(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-LabDiagnosticExamination';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	setValue();
+});
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'LabDiagnosticExamination_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					$('input[name="id"]').data('json',_json);
+					$('input[name="id"]').val(_json.id);
+					$('textarea[name="result"]').val(_json.result);
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function ShowDialog(){
+	var _json=$('input[name="id"]').data('json');
+	var _lab={};
+	if(_json){
+		_lab=_json.lab;
+	}else{
+		_json={};
+	}
+	var sheight = screen.height/2;
+	var swidth = 620;
+	var winoption ="dialogHeight:"+sheight+"px;dialogWidth:"+ swidth +"px;status:yes;scroll:yes;resizable:yes;center:yes";
+	var returnValue=window.showModalDialog('LabExamination.html',_lab?_lab:null,winoption);
+	if(returnValue){
+		var _text=returnValue.text;
+		var _value=returnValue.value;
+		_json.lab=_value;
+		$('input[name="id"]').data('json',_json);
+		$('textarea[name="result"]').val(_text);
+	}
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	return json;
+}
+function SaveData(){
+	var _values=$('input[name="id"]').data('json');
+	if(!_values) _values={};
+	_values=FormUtil.apply(_values,CollectionData());
+	if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'LabDiagnosticExamination_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+				$('form input[name="id"]').data('json',_json);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="630" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">实验室、辅助检查</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="result" class="textarea" style="width:95%"></textarea>
+				<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowDialog()"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>模块选择窗口</title>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/dTree/css/dtree.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/dTree/js/checkTree.js"></script>
+<script type="text/javascript">
+var dtree = new dTree('dtree');
+$(function(){
+	$.post(
+		App.App_Info.BasePath+'/admin/SysModuleAction.do?method=getJSONModules',
+		null,
+		function(data){
+			if(data.success){
+				dtree.add('1','-1','康乐家园','root','_self');
+				$.each(eval('('+data.data+')'),function(){
+					var _code=this.code;
+					dtree.add(_code,'1',this.title,_code,this.title,'_self');
+					$.each(this.children,function(){
+						dtree.add(this.code,_code,this.title,this.code,this.title,'_self');
+					});
+				});
+				dtree.config.useSelection=true;
+				dtree.config.folderLinks=false;	
+				dtree.config.useCookies=false;
+				$('#dtree').html(dtree.toString());
+				dtree.openAll();
+				$('div.dTreeNode').eq(0).hide();
+				initChecked();
+				$('input[type="button"]').mouseover(function(){
+					this.className='btn_mouseover';
+				}).mouseout(function(){
+					this.className='btn_mouseout';
+				});
+			}else{
+				alert('模块信息获取失败。');
+			}
+		},
+		'json');
+});
+function initChecked(){
+	var _checked=App.util.getHtmlParameters('check');
+	var _checkarr=_checked.split(',');
+	if(_checked&&_checked.length>0){
+		$.each($('input[type="checkbox"]'),function(){
+			var _val=this.value;
+			if(_val&&_val.length>0&&_val!='null'){
+				var _checkFlag=false;
+				$.each(_checkarr,function(){
+					if(this==_val){
+						_checkFlag=true;
+					}
+				});
+				if(_checkFlag)	this.checked=true;
+			}else{
+				this.parentNode.removeChild(this);
+			}
+		});
+	}
+}
+function OKBtnClick(){
+	var _val='';
+	$.each($('input[type="checkbox"]'),function(){
+		if(this.checked){
+			var _temp=this.value;
+			if (_temp && _temp.length > 0 && _temp != 'null') {
+				_val+=_temp+',';
+			}
+		}
+	});
+	if(_val.length>0){
+		window.returnValue=_val.substr(0,_val.length-1);
+	}else{
+		window.returnValue='';
+	}
+	window.close();
+}
+</script>
+<style type="text/css">
+body{
+	margin:3px 0 0 3px;	
+}
+</style>
+</head>
+<body>
+<input type="button" value="确定" class="btn_mouseout" onclick="OKBtnClick()" style="margin-left:0px"/>
+<input type="button" value="关闭" class="btn_mouseout" onclick="window.close()" style="margin-left:10px"/>
+<div id="dtree"></div>
+</body>
+</html>

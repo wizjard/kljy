@@ -1,0 +1,86 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>打印页面</title>
+<link rel="stylesheet" type="text/css" href="../jsOrCss/print.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript"src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../jsOrCss/print.js"></script>
+<style>
+.fn {
+	font-size: 12px;
+}
+</style>
+</head>
+<script type="text/javascript" language="javascript">
+	//病人ID值
+	var responseData={};
+	var cfg ={};
+	
+	$(function(){
+		document.getElementById('page-header').innerHTML=CreatePageHeader('科研标本查询');
+		getAllRegister();
+	});
+	
+	//设置全选或不全选的函数
+	function checkAll(){
+		var _ch = document.getElementsByName("ch");
+		var _chAll = document.getElementById("chAll");
+		for(var i=0;i<_ch.length;i++){
+			if(_chAll.checked){
+				_ch[i].checked=true;
+			}else {
+				_ch[i].checked=false;
+			}
+		}
+	}
+</script>
+<body>
+<div id="page-header" style="width:92%;"></div>
+<div id="page1Div" class="printCon">
+	<div class="divMargin">
+		<table width="100%" border="1" cellpadding="0" cellspacing="0" class="myTable"  style="font-size:14px">
+		<tr>
+			<td align="right">课题名称：</td>
+		    <td ><input type="text" name="name"></td>
+		</tr>
+		<tr>
+		    <td align="right">日&nbsp;&nbsp;期：</td>
+		    <td colspan="4">
+		    		<input size=6 type='text' name='inDate' class='input-text' readonly='readonly'/>
+		    		<img src='../../../../PUBLIC/images/calendar.bmp' 
+			style='cursor:pointer'onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />
+		    		&nbsp;&nbsp;至&nbsp;&nbsp;
+		        	<input type="text" name="outDate" id="outDate" class="input-text" readonly="readonly" style="width:70px;height:20px;"/>
+		    		<img src="../../../../PUBLIC/images/calendar.bmp" style="cursor:pointer" 
+						onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(1),dateFmt:'yyyy-MM-dd'})"/>
+						&nbsp;&nbsp;&nbsp;<input type="button" name="find" id="find" onClick="getRegisterByTime();" value=" 查 询 " />
+		        		&nbsp;&nbsp;&nbsp;<input type="button" name="printView" id="printView" onClick="findRegisterByIdPrint();" value="打印预览" />
+		        </td>
+		   </tr>
+	  </table>
+  		<table id="re" width="100%" border="1" cellpadding="0" cellspacing="0" class="myTable" style="font-size:12px">
+	        <tr align="center">
+              <td><input type="checkbox" name="chAll" id="chAll" onClick="checkAll();"/></td>
+	              <td>日期</td>
+	              <td>课题名称</td>
+	              <td>课题科室</td>
+	              <td>病人姓名</td>
+	              <td>病案号</td>
+	              <td>诊断</td>
+	              <td>标本类型</td>
+	              <td>数量</td>
+	              <td>送标本人</td>
+	               <td>送标本科室</td>
+	              <td>备注</td>
+	        </tr>
+   	  </table>
+  </div>
+   </div>
+</body>
+</html>

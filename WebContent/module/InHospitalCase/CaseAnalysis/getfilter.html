@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>病人过滤</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<link rel="stylesheet" type="text/css" href="LINKCSS.CSS" />
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+		<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript"src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript"src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script language="javascript">
+// 查询省份
+$(function(){
+
+	var _el=$('input[name="province"]');
+	_el.data('options',FormUtil.getIndependentDictionaryList('province'));
+	FormUtil.toCombobox({el:_el});
+	})
+
+function closeWindow(){
+var _values=FormUtil.getFormValues('form');
+var value4=_values.adder1;
+		var names='';
+        var values= new Array();
+		 values[0] = document.getElementById("infromDate").value;
+		 values[1] = document.getElementById("intoDate").value;
+		 values[2] = document.getElementById("outfromDate").value;
+		 values[3] = document.getElementById("outtoDate").value;
+		 values[4]= document.getElementById("adder1").value;
+  		 values[5] = document.getElementById("adder2").value;
+  		  values[6] = document.getElementById("pnumber").value;
+		   values[7] = document.getElementById("zhenduan").value;
+		     values[8] = document.getElementById("zhusu").value;
+		 if(values[0]==''&&values[1]!=''){
+		 alert('请输入入院开始时间')
+		 return false;
+		 }
+		 if(values[0]!=''&&values[1]==''){
+		 alert('请输入入院结束时间')	
+		  return false;
+		 }
+		  if(values[2]==''&&values[3]!=''){
+		 alert('请输入出院开始时间')
+		  return false;
+		 }
+		 if(values[2]!=''&&values[3]==''){
+		 alert('请输入出院结束时间')
+		  return false;
+		 }
+		
+		var sqlwhere='';
+  			if(values[0]!=''){
+  			names+=" 入院时间：从"+values[0]+" 至 "+values[1];
+  		  sqlwhere+=" and t_InHsp_CaseMaster.inHspDate>'"+values[0]+"' and t_InHsp_CaseMaster.inHspDate< '"+values[1]+"'";
+  				}
+  			if(values[2]!=''){
+  			names+=" 出院时间：从"+values[2]+" 至 "+values[3];
+  			sqlwhere+=" and t_InHsp_Liver_OutHspRec.outHspDate>'"+values[2]+"' and  t_InHsp_Liver_OutHspRec.outHspDate< '"+values[3]+"'";
+  			}
+  		   if(values[4]!=''){
+  		   names+=" 籍贯= "+values[4];
+  		  sqlwhere+=" and t_Patient.province = '"+value4+"' ";
+  		  }
+  		  if(values[5]!=''){
+  		  names+=" 市（区）= "+values[5];
+  		sqlwhere+="  and t_Patient.homeAddr like '%25"+values[5]+"%25'";
+  		 }
+  		 //病案号
+	    if(values[6]!=''){
+	     var num='';
+	     names+=" 病案号=";
+		     var str='';
+		     var arr1=values[6].split(',');
+			 var alength1=arr1.length;
+		   for(var i=0;i<alength1;i++){
+		     var arr2=arr1[i].split('，');
+		   alength2=arr2.length;
+		   for(var j=0;j<alength2;j++){
+		   num+=arr2[j]+" ";
+		 	 str += " and t_Patient.patientNo = '"+arr2[j]+"' or ";
+		   }
+		   }
+		   names+=num;
+		var _num = str.lastIndexOf("or");
+		sqlwhere+=str.slice(0,_num);
+		   }
+		   //诊断查询
+		 if(values[7]!=''){
+	     var num='';
+	     names+=" 诊断查询=";
+	     var str='';
+	     var arr1=values[7].split(',');
+		 var alength1=arr1.length;
+	   for(var i=0;i<alength1;i++){
+	     var arr2=arr1[i].split('，');
+		   alength2=arr2.length;
+		   for(var j=0;j<alength2;j++){
+		   num+=arr2[j]+" ";
+		 	 str += "  and t_InHsp_Liver_RevisedDiagnosis.dz_diagnosis1 like '%25"+arr2[j]+"%25' or ";
+		   }
+		   }
+		   names+=num;
+		var _num = str.lastIndexOf("or");
+		sqlwhere+=str.slice(0,_num);
+		   }
+  		  
+  		  //主诉症状
+  		  	 if(values[8]!=''){
+	     var num='';
+	     names+=" 主诉症状查询=";
+	     var str='';
+	     var arr1=values[8].split(',');
+		 var alength1=arr1.length;
+	   for(var i=0;i<alength1;i++){
+	     var arr2=arr1[i].split('，');
+		   alength2=arr2.length;
+		   for(var j=0;j<alength2;j++){
+		   num+=arr2[j]+" ";
+		 	 str += "  and t_InHsp_Liver_ChiefComplaint.ccContent like '%25"+arr2[j]+"%25' or ";
+		   }
+		   }
+		   names+=num;
+		var _num = str.lastIndexOf("or");
+		sqlwhere+=str.slice(0,_num);
+		   }
+  		
+		getvalues=[sqlwhere,names];
+		window.returnValue = getvalues;
+		window.close();
+	}
+</script>
+<style type="text/css">
+<!--
+.STYLE2 {
+	font-size: 12px;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+
+<body class="pageDiv">
+<form>
+<table width="510" border="0" align="center" cellpadding="2" cellspacing="0" >
+  <tr>
+  		<td colspan="4"><div align="center" class="STYLE2">病人过滤</div></td>
+  </tr>
+  <tr>
+    <td width="90" ><div align="center">入院时间：从</div></td>
+    <td width="180">
+      <div align="left">
+      <input size=9 type='text' name='infromDate'id='infromDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'+ 
+			style='cursor:pointer' 
+			onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />
+    </div></td>
+    <td width="16"><div align="center">至</div></td>
+    <td width="189">
+      <div align="left">
+		  <input size=9 type='text' name='intoDate'id='intoDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'+ 
+			style='cursor:pointer' 
+			onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />
+		
+			</div></td>
+  </tr>
+   <tr>
+    <td ><div >
+      <div align="center">出院时间：从</div>
+    </div></td>
+    <td>
+      <div align="left">
+         <input size=9 type='text' name='outfromDate'id='outfromDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'+ 
+			style='cursor:pointer' 
+			onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />
+			</div></td>
+    <td ><div align="center">至</div></td>
+    <td>
+      <div align="left">
+          <input size=9 type='text' name='outtoDate'id='outtoDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'+ 
+			style='cursor:pointer' 
+			onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />
+</div></td>
+  </tr>
+   <tr>
+     <td ><div align="center">籍贯：</div></td>
+     <td>
+       <div align="left">
+         <input name="province" id="adder1" type="text" class="select"/><br/>
+     </div></td>
+     <td colspan="3"><div align="left">
+        <input name="adder2" id="adder2" type="text"  size="18"/>
+     市(区) </div></td>
+  </tr>
+    <tr>
+     <td height="1" ><div align="center">病案号：</div></td>
+   <td colspan="3" align="center" valign="middle"><p>
+     <label></label>
+     <label>
+     <div align="center">
+       <div align="center">
+         <input name="pnumber"id="pnumber" type="text" size="50%" />
+      </div>
+     </label>      (多个病案号查询，请用逗号(，)隔开) </td>
+    </tr>
+    <tr>
+      <td height="1" ><div align="center">诊断查询：</div></td>
+      <td colspan="3" align="center" valign="middle"><div align="center">
+        <input name="zhenduan" id="zhenduan" type="text" size="50%" />
+      </div>
+(多个诊断关键词查询，请用逗号(，)隔开)</td>
+    </tr>
+    <tr>
+      <td height="1" ><div align="center">主诉症状查询：</div></td>
+      <td colspan="3" align="center" valign="middle"><div align="center">
+        <input name="zhusu" id="zhusu" type="text" size="50%" />
+      </div>
+      (多个症状关键词查询，请用逗号(，)隔开)</td>
+    </tr>
+  
+  <tr>
+  		<td colspan="4" align="center"><div align="center">
+  		  <input type="button" value="确定" name="ok" id="ok"  class="btn_compact" onclick="closeWindow()"/> 
+	    </div></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

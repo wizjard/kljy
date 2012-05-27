@@ -1,0 +1,120 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var pid = App.util.getHtmlParameters('pid');
+	var scId = App.util.getHtmlParameters('scId');
+	var sex = -1;
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		initPage();
+		//getPtient();
+		$('input').change(function(){
+			getBmi();
+		});
+	});
+	function initPage(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'bmi_findByScid',
+				scId:scId
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					if(json){
+						FormUtil.setFormValues('form',json);
+					}
+				}
+			},'json'
+		);
+	}
+	function getPtient(){
+		$.post(
+			App.App_Info.BasePath+'/patient.do',
+			{
+				method:'findById',
+				id:pid
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					sex = json.gender;
+				}
+			},'json'
+		);
+	}
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ScoreComment.do',
+			{
+				method:'bmi_saveOrUpdate',
+				data:JSON.stringify(data)
+			},
+			function(data){
+				if(data.success){
+					var json=JSON.parse(data.data);
+					$('input[name="id"]').val(json.id);
+				}
+			},
+			'json'
+		 );
+	}
+	
+	function getBmi(){
+		var bmi = -1;
+		if($('input[name="weight"]').val() != "" && $('input[name="height"]').val() != ""){
+			var height = eval($('input[name="height"]').val()) * eval($('input[name="height"]').val());
+			bmi = eval($('input[name="weight"]').val())/height;
+		}
+		$('input[name="bodyMi"]').val(bmi);
+		if(bmi >= 18.5 && bmi < 24){
+			$('input[name="clinicalValue"]').val('正常');
+		}else if(bmi >= 24 && bmi < 28){
+			$('input[name="clinicalValue"]').val('超重');
+		}else if(bmi >= 28){
+			$('input[name="clinicalValue"]').val('肥胖');
+		}else{
+			$('input[name="clinicalValue"]').val('');
+		}
+	}
+	
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<table width="700" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2">
+		<tr><td colspan="4" style="font-size:20px;color:red;">BMI指数</td></tr>
+		<tr>
+			<td width="120" align="right">体重：</td>
+			<td width="230"><input type="text" name="weight" style="width:100;" />kg</td>
+			<td width="120" align="right">身高：</td>
+			<td width="230"><input type="text" name="height" style="width:100;" />m</td>
+		</tr>
+		<tr>
+			<td align="right">体质指数(BMI)：</td>
+			<td><input type="text" name="bodyMi" style="width:100;" readOnly/></td>
+			<td align="right">临床意义：</td>
+			<td><input type="text" name="clinicalValue" style="width:100;" readOnly/></td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

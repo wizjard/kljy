@@ -1,0 +1,238 @@
+<!--生物医学中心全部会员索引页面 by xl 2010年12月10日9:19:42--> <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>医患交流</title>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/common.js">
+        </script>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js">
+        </script>
+        <script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js">
+        </script>
+        <script type="text/javascript">
+            Ext.onReady(function(){
+                layout();
+            });
+            function layout(){
+                var sm = new Ext.grid.CheckboxSelectionModel({
+                    singleSelect: true
+                });
+                var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
+                    header: '姓名',
+                    width: 150,
+                    dataIndex: 'mem',
+                    renderer:function(value){
+                    	return value.patient.patientName;
+                    }
+                },{
+                    header: '病案号',
+                    width: 150,
+                    dataIndex: 'mem',
+                    renderer:function(value){
+                    	return value.patient.patientNo;
+                    }
+                },{
+                    header: '入会日期',
+                    width: 150,
+                    dataIndex: 'mem',
+                    renderer:function(value){
+                    	return value.inDate;
+                    }
+                },{
+                    header: '申请日期',
+                    width: 150,
+                    dataIndex: 'askTime'
+                }, {
+                    header: '症状',
+                    id: 'symptomcol',
+                    dataIndex: 'hr',
+                    renderer: function(value){
+                        if (value) 
+                            return value.symptom;
+                    }
+                }, {
+                    header: '回复日期',
+                    width: 150,
+                    dataIndex: 'answerDate'
+                }, {
+                    header: '回复医生',
+                    dataIndex: 'doctor'
+                }]);
+                var store = new Ext.data.Store({
+                    proxy: new Ext.data.HttpProxy({
+                        url: App.App_Info.BasePath + '/biomedical.do?method=getMemberMsgs2'
+                    }),
+                    reader: new Ext.data.JsonReader({
+                        root: 'root',
+                        totalPropertity: 'total'
+                    }, [{
+                        name: 'id'
+                    }, {
+                        name: 'askTime'
+                    }, {
+                        name: 'ask'
+                    }, {
+                        name: 'ward'
+                    }, {
+                        name: 'answerDate'
+                    }, {
+                        name: 'answer'
+                    }, {
+                        name: 'hr'
+                    }, {
+                        name: 'mem'
+                    }, {
+                        name: 'doctor'
+                    }])
+                });
+                store.baseParams = {
+                    ward: top.USER['单位'],
+                    flag: 1
+                };
+                store.load({
+                    params: {
+                        start: 0,
+                        limit: 20
+                    }
+                });
+                var _grid = new Ext.grid.GridPanel({
+                    title: '会员网上咨询列表',
+                    id: 'grid',
+                    ds: store,
+                    cm: cm,
+                    sm: sm,
+                    border: false,
+                    viewConfig: {
+                        forceFit: true
+                    },
+                    bbar: new Ext.PagingToolbar({
+                        pageSize: 20,
+                        store: store,
+                        displayInfo: true,
+                        displayMsg: '显示第<font color="red"> {0} </font>条' +
+                        '到<font color="red"> {1} </font>条记录，' +
+                        '一共<font color="red"> {2} </font>条',
+                        emptyMsg: "没有记录"
+                    }),
+                    tbar: ['-', {
+                        text: '回复',
+                        handler: function(){
+                            var ss = _grid.getSelectionModel().getSelections();
+                            if (ss.length == 0) {
+                                alert('请选择一条记录。');
+                                return;
+                            }
+							var win=new Ext.Window({
+								title:'回复咨询',
+								width: 450,
+					            autoHeight: true,
+					            buttonAlign: 'center',
+					            closable: false,
+					            layout: 'fit',
+								items:{
+									xtype:'form',
+									bodyStyle:'padding-top:5px',
+									labelWidth:60,
+									labelAlign:'right',
+									autoHeight:true,
+									border:false,
+									defaults:{
+										xtype:'textarea',
+										anchor:'98%'
+									},
+									items:[
+										{
+											xtype:'textfield',
+											fieldLabel:'申请时间',
+											name:'askTime',
+											readOnly:true
+										},{
+											fieldLabel:'咨询内容',
+											height:150,
+											name:'ask',
+											readOnly:true
+										},{
+											fieldLabel:'回复内容',
+											height:150,
+											allowBlank:false,
+											name:'answer'
+										},{
+											xtype:'textfield',
+											fieldLabel:'医生<a href="javascript:Ext.getCmp(\'doctor\').setValue(top.USER.name)">签名</a>',
+											id:'doctor',
+											allowBlank:false,
+											name:'doctor'
+										}
+									]
+								},
+								buttons:[
+									{
+										text:'保存',
+										handler:function(){
+											var form=win.items.get(0).getForm();
+											if(form.isValid()){
+												Ext.Ajax.request({
+													url:App.App_Info.BasePath + '/biomedical.do?method=answerMemberMsg',
+													params:{
+														id:ss[0].get('id'),
+														doctor:form.getValues().doctor,
+														answer:form.getValues().answer
+													},
+													success:function(response){
+														if(Ext.decode(response.responseText).success){
+															alert('回复成功。');
+															win.close();
+															Ext.getCmp('grid').getStore().reload();
+														}else{
+															alert('回复失败。');
+														}
+													}
+												});
+											}else{
+												alert('表单未填写完整。');
+											}
+										}
+									},{
+										text:'关闭',
+										handler:function(){
+											win.close();
+										}
+									}
+								]
+							});
+							win.show();
+							win.items.get(0).getForm().loadRecord(ss[0]);
+                        }
+                    },'-',{
+						text:'全部',
+						handler:function(){
+							var store=Ext.getCmp('grid').getStore();
+							store.baseParams.flag=3;
+							store.load({params:{start:0,limit:20}});
+						}
+					},'-',{
+						text:'未回复',
+						handler:function(){
+							var store=Ext.getCmp('grid').getStore();
+							store.baseParams.flag=1;
+							store.load({params:{start:0,limit:20}});
+						}
+					},'-',{
+						text:'已回复',
+						handler:function(){
+							var store=Ext.getCmp('grid').getStore();
+							store.baseParams.flag=2;
+							store.load({params:{start:0,limit:20}});
+						}
+					}]
+                });
+                new Ext.Viewport({
+                    layout: 'fit',
+                    items: _grid
+                });
+            }
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

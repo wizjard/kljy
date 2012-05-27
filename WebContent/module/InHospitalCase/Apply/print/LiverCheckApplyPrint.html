@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>肝活检病理检查申请单</title>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			LODOP=document.getElementById("LODOP");
+			singlePageTableInfo(KID,'肝活检病理检查申请单','#page-header');
+			setValue('LiverCheckApplyPrint','LiverCheckApplyAction','get_Main_Info','LiverCheckApplyAction');
+		});
+	</script>
+</head>
+<body>
+	<div id="page-toolbar">
+		<button onclick="PREVIEW('肝活检病理检查申请单')">打印预览</button>
+	</div>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+	<div id="page-con">
+		<div id="page-header"></div>
+		<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+		<style type="text/css">
+			.tb td.ts{
+				border-top:none;
+				border-bottom:none;
+				border-right:none;	
+			}
+			.tb td{
+				border-right:1px solid black;
+			}
+		</style>
+		<table class="conTable" Style="border: 1px solid black;border-left:none" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td style="border-top:0px;">收到日期：<span name="acceptDate"></span></td>
+				<td style="border-top:0px">病理号：<span name="pathobiologyNum"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 Style="border:1px solid black;border-top:0px;border-left:none" cellpadding=0 cellspacing=0>
+			<tr>
+				<td width="150" class="td2">姓名：<span name="patientName"></span></td>
+				<td width="150" class="td2">性别：<span name="gender"></span></td>
+				<td width="150" class="td2">年龄：<span name="age"></span></td>
+				<td width="*" class="td2">职业：<span name="career"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="2">科室：<span name="depRoom"></span></td>
+				<td class="td2">住院号：<span name="hosNum"></span></td>
+				<td class="td2">电话：<span name="phoneNum"></span></td>
+			</tr>
+		</table>
+		<table class="conTable tb" border=0 cellpadding=0 Style="border: 1px solid black;border-top:0px;border-bottom:none;border-right:none;border-left:none" cellspacing=0>
+			 <tr style="border-left:none">
+				<td width="80" class="td1" valign="top" style="border-right-style:none;">肝病史简介</td>
+				<td width="515" class="td2">(体征)：</br><span name="liverHistory"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none" valign="top">家族史：</td>
+				<td class="td2" width="515"><span name="familyHistory"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none" valign="top">手术史：</td>
+				<td class="td2" width="515"><span name="operationHistory"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none">饮酒：</td>
+				<td class="td2" width="515"><span name="drinkYear"></span>年，每日<span name="everyDayGram"></span>克</td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none" valign="top">输血史：</td>
+				<td class="td2" width="515"><span name="bloodHistory"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none" valign="top">用药史：</td>
+				<td class="td2" width="515"><span name="drugHistory"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-right-style:none">是否做过病</td>
+				<td class="td2">
+					理检查：<span name="benWaiYuan"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					病理号:<span name="checkedPathobiologyNum"></span>
+				</td>
+			</tr>
+		</table>
+		<table class="conTable cnTable" border=0 style="border-top:none;" cellpadding=0 cellspacing=0>
+			<tr>
+				<td colspan="12" class="first" style="border-right:1px solid black;">肝功能检查(肝穿同期)：</td>
+			</tr>
+			<tr align="center">
+				<td style="width:10%;text-align:left">日期</td>
+				<td style="width:8%;text-align:left">ALT</td>
+				<td style="width:8%;text-align:left">AST</td>
+				<td style="width:8%;text-align:left">ALP</td>
+				<td style="width:8%;text-align:left">GGT</td>
+				<td style="width:8%;text-align:left">TBIL</td>
+				<td style="width:8%;border-right:1px solid black;text-align:left">DBIL</td>
+			</tr>
+			<tr>
+				<td><span name="dateOne"></span></td>
+				<td><span name="altOne"></span></td>
+				<td><span name="astOne"></span></td>
+				<td><span name="alpOne"></span></td>
+				<td><span name="ggtOne"></span></td>
+				<td><span name="tbilOne"></span></td>
+				<td style="border-right:1px solid black;"><span name="dbilOne"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td style="width:8%;text-align:left">TBA</td>
+				<td style="width:8%;text-align:left">A</td>
+				<td style="width:8%;text-align:left">G</td>
+				<td style="width:8%;text-align:left">PTA</td>
+				<td style="width:8%;text-align:left">其他</td>
+				<td style="width:8%;border-right:1px solid black;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><span name="tbaOne"></span></td>
+				<td><span name="asOne"></span></td>
+				<td><span name="gsOne"></span></td>
+				<td><span name="ptaOne"></span></td>
+				<td><span name="otherOne"></span></td>
+				<td style="border-right:1px solid black;">&nbsp;</td>
+			</tr>
+			
+			<tr align="center">
+				<td style="width:10%;text-align:left">日期</td>
+				<td style="width:8%;text-align:left">ALT</td>
+				<td style="width:8%;text-align:left">AST</td>
+				<td style="width:8%;text-align:left">ALP</td>
+				<td style="width:8%;text-align:left">GGT</td>
+				<td style="width:8%;text-align:left">TBIL</td>
+				<td style="width:8%;border-right:1px solid black;text-align:left">DBIL</td>
+			</tr>
+			<tr>
+				<td><span name="dateTwo"></span></td>
+				<td><span name="altTwo"></span></td>
+				<td><span name="astTwo"></span></td>
+				<td><span name="alpTwo"></span></td>
+				<td><span name="ggtTwo"></span></td>
+				<td><span name="tbilTwo"></span></td>
+				<td style="border-right:1px solid black;"><span name="dbilTwo"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td style="width:8%;text-align:left">TBA</td>
+				<td style="width:8%;text-align:left">A</td>
+				<td style="width:8%;text-align:left">G</td>
+				<td style="width:8%;text-align:left">PTA</td>
+				<td style="width:8%;text-align:left">其他</td>
+				<td style="width:8%;border-right:1px solid black;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><span name="tbaTwo"></span></td>
+				<td><span name="asTow"></span></td>
+				<td><span name="gsTwo"></span></td>
+				<td><span name="ptaTwo"></span></td>
+				<td><span name="otherTwo"></span></td>
+				<td style="border-right:1px solid black;">&nbsp;</td>
+			</tr>
+		</table>
+		<table class="conTable cnTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td colspan="4" style="border-right:1px solid black;">病毒标志物血清检查：</td>
+			</tr>
+			<tr>
+				<td width="150" class="td2">HBsAg：<span name="hbsag"></span></td>
+				<td width="150" class="td2">HBsAb：<span name="hbsab"></span></td>
+				<td width="150" class="td2">HBeAg：<span name="hbeag"></span></td>
+				<td width="150" class="td2" style="border-right:1px solid black;">HBeAb：<span name="hbeab"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">HBcAb：<span name="hbcab"></span></td>
+				<td class="td2">Pre-S1Ag：<span name="pres1ag"></span></td>
+				<td class="td2">HBVDNA：<span name="hbvdna"></span></td>
+				<td class="td2" style="border-right:1px solid black;">抗HBc-IgM：<span name="khbclgm"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">抗HAV-IgM：<span name="khavlgm"></span></td>
+				<td class="td2">抗HAV-IgG：<span name="khavlgg"></span></td>
+				<td class="td2">抗HCV-IgM：<span name="khcvlgm"></span></td>
+				<td class="td2" style="border-right:1px solid black;">抗HCV-IgG：<span name="khcvlgg"></span></td>
+			</tr>
+			<tr>
+				<td class="td2">HCVRNA：<span name="hcvrna"></span></td>
+				<td class="td2">HDV：<span name="hdv"></span></td>
+				<td class="td2">抗HEV-IgM：<span name="khevlgm"></span></td>
+				<td class="td2" style="border-right:1px solid black;">抗HEV-IgG：<span name="khevlgg"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="4" style="border-right:1px solid black;">非嗜肝病毒：</td>
+			</tr>
+			<tr>
+				<td class="td2">EBV：<span name="ebv"></span></td>
+				<td class="td2">CMV：<span name="cmv"></span></td>
+				<td class="td2" colspan="2" style="border-right:1px solid black;">&nbsp;</td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 style="border-top:none" cellspacing=0>
+			<tr>
+				<td class="td1" width="85px;" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;其他：</td>
+				<td class="td2" width="510" style="border-right:1px solid black;"><span name="virusOther"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">自身抗体：</td>
+				<td class="td2" style="border-right:1px solid black;"><span name="antibody"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">肿瘤标志物</td>
+				<td class="td2" style="border-right:1px solid black;">：</br><span name="liverSing"/></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;血脂：</td>
+				<td class="td2" style="border-right:1px solid black;"><span name="bloodFat"></span></td>
+			</tr>
+			<tr>
+				<td colspan="2" style="border-right:1px solid black;">肝移植专填内容：</td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">原发肝病病</td>
+				<td class="td2" style="border-right:1px solid black;">理诊断：</br><span name="liverDiagnose"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" valign="top">血药浓度：</td>
+				<td class="td2" style="border-right:1px solid black;"><span name="concentration"></span></td>
+			</tr>
+		</table>
+		<table class="conTable" border=0 cellpadding=0 style="border-top:none" cellspacing=0>	
+			<tr>
+				<td colspan="2" style="border-right:1px solid black;">B超结果：</td>
+			</tr>
+			<tr>
+				<td width="85" class="td1">&nbsp;&nbsp;&nbsp;&nbsp;肝脏：</td>
+				<td width="*" class="td2" style="border-right:1px solid black;">
+					左叶厚&nbsp;<span name="liverDeep"></span>cm，左叶长&nbsp;<span name="liverLength"></span>cm，
+					右叶斜&nbsp;<span name="liverSlope"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="td1">门静脉内径</td>
+				<td class="td2" style="border-right:1px solid black;">：<span name="inside"></span>cm，
+				         肝回声&nbsp;<span name="liverReecho"></span>，肝占位&nbsp;<span name="liverOccupy"></span>(大小<span name="occupySize"></span>cm)
+				 </td>
+			</tr>
+			<tr>
+				<td class="td1">脾脏：</td>
+				<td class="td2" style="border-right:1px solid black;">厚&nbsp;<span name="spleenDeep"></span>cm，
+					长&nbsp;<span name="spleenLength"></span>，脾静脉内径&nbsp;<span name="spleenInside"></span>cm，其他<span name="spleenOther"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="td1">其他影像学</td>
+				<td class="td2" style="border-right:1px solid black;">结果：</br><span name="imageResult"></span></td>
+			</tr>
+			<tr>
+				<td class="td1">临床诊断：</td>
+				<td class="td2" style="border-right:1px solid black;"><span name="clinicalDiagnosis"></span></td>
+			</tr>
+			<tr>
+				<td class="td1" style="border-bottom:1px solid black;">送检医师：</td>
+				<td class="td2" style="border-right:1px solid black;border-bottom:1px solid black;">
+					<span name="doctorName"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					送检时间：<span name="checkDate"></span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

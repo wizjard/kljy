@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>诊断(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-Diagnosis';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	var _input=$('input');
+	//时间选择框
+	_input.filter(function(_index){
+		return $(this).attr('name').indexOf('date')!=-1||$(this).attr('name').indexOf('Date')!=-1;
+	}).each(function(){
+		FormUtil.toDateField({el:$(this)});
+	});
+	//医生字典选择
+	_input.filter(function(_index){
+		return $(this).attr('name').indexOf('_show')!=-1;
+	}).each(function(){
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			hiddenEl:$('input[name="'+$(this).attr('name').replace('_show','')+'"]'),
+			showEl:$('input[name="'+$(this).attr('name')+'"]')
+		});
+	});
+	//诊断条目控制
+//	_input.filter(function(_index){
+//		return $(this).attr('name').indexOf('chubu_diagnosis')!=-1||$(this).attr('name').indexOf('queding_diagnosis')!=-1;
+//	}).each(function(){
+//		var _name=$(this).attr('name');
+//		var _index=_name.split('diagnosis')[1];
+//		if (_index != 1) {
+//			$(this).parent().parent().addClass('hidden');
+//		}
+//		if(_index!=14)
+//			$(this).focus(function(){
+//				$(this).parent().parent().next().removeClass('hidden');
+//			});
+//	});
+}
+
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'Diagnosis_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function setFormValues_onComplete(){
+	var _longId=$('input[name="chubu_inhspDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="chubu_inhspDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="chubu_treatDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="chubu_treatDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="queding_inhspDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="queding_inhspDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="queding_treatDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="queding_treatDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+	_longId=$('input[name="queding_directorDoctorId"]').val()+'';
+	if(_longId.length>0){
+		$('input[name="queding_directorDoctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_longId));
+	}
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	if(!ValidForm(_values))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'Diagnosis_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<input type="hidden" name="chubu_inhspDoctorId" value=""/>
+<input type="hidden" name="chubu_treatDoctorId" value=""/>
+<input type="hidden" name="queding_inhspDoctorId" value=""/>
+<input type="hidden" name="queding_treatDoctorId" value=""/>
+<input type="hidden" name="queding_directorDoctorId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=4 class="title">初步诊断</td>
+	</tr>
+	<tr>
+		<td class="t1" width="75">诊断时间：</td>
+		<td class="t2" colspan="3"><input name="chubu_checkdate" type="text" class="text" style="width:32%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">诊断结果：</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis1" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis2" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis3" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis4" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis5" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis6" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis7" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis8" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis9" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis10" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis11" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis12" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis13" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="chubu_diagnosis14" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">住院医师：</td>
+		<td class="t2" width="230"><input name="chubu_inhspDoctorId_show" type="text" class="text"/></td>
+		<td class="t1" width="65">签字时间：</td>
+		<td class="t2"><input name="chubu_inhspSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">主治医师：</td>
+		<td class="t2"><input name="chubu_treatDoctorId_show" type="text" class="text"/></td>
+		<td class="t1">签字时间：</td>
+		<td class="t2"><input name="chubu_treatSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td colspan=4 class="title">确定诊断</td>
+	</tr>
+	<tr>
+		<td class="t1">诊断时间：</td>
+		<td class="t2" colspan="3"><input name="queding_checkdate" type="text" class="text" style="width:32%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">诊断结果：</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis1" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis2" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis3" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis4" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis5" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis6" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis7" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis8" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis9" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis10" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis11" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis12" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis13" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">&nbsp;</td>
+		<td class="t2" colspan="3"><input name="queding_diagnosis14" type="text" class="text" style="width:91.5%"/></td>
+	</tr>
+	<tr>
+		<td class="t1">住院医师：</td>
+		<td class="t2"><input name="queding_inhspDoctorId_show" type="text" class="text"/></td>
+		<td class="t1" width="65">签字时间：</td>
+		<td class="t2"><input name="queding_inhspSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">主治医师：</td>
+		<td class="t2"><input name="queding_treatDoctorId_show" type="text" class="text"/></td>
+		<td class="t1">签字时间：</td>
+		<td class="t2"><input name="queding_treatSignDate" type="text" class="text"/></td>
+	</tr>
+	<tr>
+		<td class="t1">副主任医师：</td>
+		<td class="t2"><input name="queding_directorDoctorId_show" type="text" class="text"/></td>
+		<td class="t1">签字时间：</td>
+		<td class="t2"><input name="queding_directorSignDate" type="text" class="text"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

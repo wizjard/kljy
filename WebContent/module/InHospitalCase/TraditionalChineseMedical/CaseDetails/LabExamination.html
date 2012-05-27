@@ -1,0 +1,1189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实验室与辅助检查</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-TCM-LabExamination';
+$(function(){
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-LabExamination'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//时间选择框
+	$('input.text').filter(function(){
+		return $(this).attr('name').indexOf('checkdate')!=-1;
+	}).each(function(){
+		FormUtil.toDateField({el:$(this)});
+	});
+	//Checkbox事件
+	$('input[type="checkbox"]').click(function(){
+		if(this.checked){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//按钮
+	FormUtil.initBtnCss();
+	setValue();
+}
+function setValue(){
+	var json=window.dialogArguments;
+	if(!json)	return;
+	FormUtil.setFormValues('form',json);
+	$('input[type="checkbox"]').each(function(){
+		var _val=json[this.name];
+		if(_val==1){
+			$(this).attr('checked',true);
+			$(this).parent().parent().next().show();
+		}
+	});
+}
+function closeWindow(){
+	var _value=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			_value[this.name]=1;
+		}else{
+			_value[this.name]=0;
+		}
+	});
+	window.returnValue={
+		text:ComposeData(_value),
+		value:_value
+	};
+	window.close();
+}
+function ComposeData(_value){
+	var rst=ComposeData_LabCheck(_value);
+	rst+=ComposeData_AuxiliaryPathology(_value);
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'。';
+	}
+	return rst;
+}
+
+function ComposeData_AuxiliaryPathology(_compose){
+	var rst='';
+	var tempRst='';
+	var flag=false;
+	var tempValue='';
+	/*X线平片*/
+	flag=document.getElementsByName('xline_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.xline_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.xline_checkResult;
+		rst+=tempValue.length>0?('X线平片：'+tempRst+tempValue+','):'';
+	}
+	/*心电图*/
+	flag=document.getElementsByName('heart_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.heart_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.heart_checkResult;
+		rst+=tempValue.length>0?('心电图：'+tempRst+tempValue+','):'';
+	}
+	/*B超*/
+	flag=document.getElementsByName('bc_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.bc_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.bc_checkResult;
+		rst+=tempValue.length>0?('B超：'+tempRst+tempValue+','):'';
+	}
+	/*CT*/
+	flag=document.getElementsByName('ct_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.ct_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.ct_checkResult;
+		rst+=tempValue.length>0?('CT：'+tempRst+tempValue+','):'';
+	}
+	/*MRI*/
+	flag=document.getElementsByName('mri_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.mri_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.mri_checkResult;
+		rst+=tempValue.length>0?('MRI：'+tempRst+tempValue+','):'';
+	}
+	/*消化道造影*/
+	flag=document.getElementsByName('xhd_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.xhd_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.xhd_checkResult;
+		rst+=tempValue.length>0?('消化道造影：'+tempRst+tempValue+','):'';
+	}
+	/*胃镜*/
+	flag=document.getElementsByName('weijing_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.weijing_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.weijing_checkResult;
+		rst+=tempValue.length>0?('胃镜：'+tempRst+tempValue+','):'';
+	}
+	/*结肠镜*/
+	flag=document.getElementsByName('jiechang_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.jiechang_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.jiechang_checkResult;
+		rst+=tempValue.length>0?('结肠镜：'+tempRst+tempValue+','):'';
+	}
+	/*十二指肠镜*/
+	flag=document.getElementsByName('zhichang_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.zhichang_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.zhichang_checkResult;
+		rst+=tempValue.length>0?('十二指肠镜：'+tempRst+tempValue+','):'';
+	}
+	/*胶囊内镜*/
+	flag=document.getElementsByName('jiaon_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.jiaon_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.jiaon_checkResult;
+		rst+=tempValue.length>0?('胶囊内镜：'+tempRst+tempValue+','):'';
+	}
+	/*尿素呼气试验*/
+	flag=document.getElementsByName('niaosu_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.niaosu_checkdate;
+		tempRst=tempValue.length>0?'('+tempValue+')':'';
+		tempValue=_compose.niaosu_checkResult;
+		rst+=tempValue.length>0?('尿素呼气试验：'+tempRst+tempValue+','):'';
+	}
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+';';
+	}
+	/*病理检查结果*/
+	flag=document.getElementsByName('bingli_mark')[0].checked;
+	if(flag){
+		tempValue=_compose.bingli_checkResult;
+		tempRst=tempValue.length>0?('病理检查结果：'+tempValue+','):'';
+		tempValue=_compose.bingli_fenji;
+		tempRst+=tempValue.length>0?('肝病病理标准分级：'+tempValue+','):'';
+		if(tempRst.length>0){
+			tempRst=tempRst.substr(0,tempRst.length-1)+';';
+		}
+		rst=rst+tempRst;
+	}
+	return rst;
+}
+function ComposeData_LabCheck(_compose){
+	var rst='';
+	var tempRst='';
+	var flag=false;
+	var tempValue='';
+	/*三大常规——血常规*/
+	flag=document.getElementsByName('xrt_mark')[0].checked;
+	if(flag){
+		tempValue=_compose.xrt_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('xrt_abo',_compose.xrt_abo);
+		if(tempValue.length>0){
+			tempValue=tempValue=='不详'?'ABO血型不详,':tempValue+'型血,';
+			tempRst+=tempValue;
+		}
+		tempValue=_compose.xrt_wbc+'';
+		tempRst+=tempValue.length>0?'WBC '+tempValue+'×10<sup>9</sup>/L,':'';
+		tempValue=_compose.xrt_rbc+'';
+		tempRst+=tempValue.length>0?'RBC '+tempValue+'×10<sup>12</sup>/L,':'';
+		tempValue=_compose.xrt_neut1+'';
+		tempRst+=tempValue.length>0?'NEUT '+tempValue+'×10<sup>9</sup>/L,':'';
+		tempValue=_compose.xrt_neut2+'';
+		tempRst+=tempValue.length>0?'NEUT '+tempValue+'%,':'';
+		tempValue=_compose.xrt_plt+'';
+		tempRst+=tempValue.length>0?'PLT '+tempValue+'×10<sup>9</sup>/L,':'';
+		tempValue=_compose.xrt_ly+'';
+		tempRst+=tempValue.length>0?'LY '+tempValue+'%,':'';
+		tempValue=_compose.xrt_hb+'';
+		tempRst+=tempValue.length>0?'Hb '+tempValue+'g/L,':'';
+		tempValue=_compose.xrt_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='血常规：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*三大常规——尿常规*/
+	flag=document.getElementsByName('nrt_mark')[0].checked;
+	if(flag){
+		tempValue=_compose.nrt_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.nrt_color+'';
+		tempRst+=tempValue.length>0?'颜色 '+tempValue+',':'';
+		tempValue=getRowValue('nrt_rbc',_compose.nrt_rbc);
+		tempRst+=tempValue.length>0?'RBC '+tempValue+',':'';
+		tempValue=getRowValue('nrt_pro',_compose.nrt_pro);
+		tempRst+=tempValue.length>0?'PRO '+tempValue+',':'';
+		tempValue=getRowValue('nrt_blo',_compose.nrt_blo);
+		tempRst+=tempValue.length>0?'BLO '+tempValue+',':'';
+		tempValue=getRowValue('nrt_uro',_compose.nrt_uro);
+		tempRst+=tempValue.length>0?'URO '+tempValue+',':'';
+		tempValue=getRowValue('nrt_glu',_compose.nrt_glu);
+		tempRst+=tempValue.length>0?'Glu '+tempValue+',':'';
+		tempValue=getRowValue('nrt_ket',_compose.nrt_ket);
+		tempRst+=tempValue.length>0?'KET '+tempValue+',':'';
+		tempValue=_compose.nrt_wbc+'';
+		tempRst+=tempValue.length>0?'WBC '+tempValue+'个/HP,':'';
+		tempValue=getRowValue('nrt_danbai',_compose.nrt_danbai);
+		tempRst+=tempValue.length>0?'蛋白质 '+tempValue+',':'';
+		tempValue=getRowValue('nrt_putao',_compose.nrt_putao);
+		tempRst+=tempValue.length>0?'葡萄糖 '+tempValue+',':'';
+		tempValue=getRowValue('nrt_niaodan',_compose.nrt_niaodan);
+		tempRst+=tempValue.length>0?'尿胆原 '+tempValue+',':'';
+		tempValue=getRowValue('nrt_danhong',_compose.nrt_danhong);
+		tempRst+=tempValue.length>0?'胆红素 '+tempValue+',':'';
+		tempValue=_compose.nrt_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='尿常规：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*三大常规——便常规*/
+	flag=document.getElementsByName('brt_mark')[0].checked;
+	if(flag){
+		tempValue=_compose.brt_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('brt_color',_compose.brt_color);
+		tempRst+=tempValue.length>0?'颜色 '+tempValue+',':'';
+		tempValue=getRowValue('brt_xzh',_compose.brt_xzh);
+		tempRst+=tempValue.length>0?'性状 '+tempValue+',':'';
+		tempValue=_compose.brt_rbc;
+		tempRst+=tempValue.length>0?'RBC '+tempValue+',':'';
+		tempValue=_compose.brt_wbc;
+		tempRst+=tempValue.length>0?'WBC '+tempValue+',':'';
+		tempValue=getRowValue('brt_dlsy',_compose.brt_dlsy);		
+		tempRst+=tempValue.length>0?'动力试验 '+tempValue+',':'';
+		tempValue=getRowValue('brt_zbsy',_compose.brt_zbsy);		
+		tempRst+=tempValue.length>0?'制动试验 '+tempValue+',':'';
+		tempValue=getRowValue('brt_ob',_compose.brt_ob);		
+		tempRst+=tempValue.length>0?'OB '+tempValue+',':'';
+		tempValue=getRowValue('brt_wbc2',_compose.brt_wbc2);
+		tempRst+=tempValue.length>0?'白细胞 '+tempValue+',':'';
+		tempValue=getRowValue('brt_rbc2',_compose.brt_rbc2);
+		tempRst+=tempValue.length>0?'红细胞 '+tempValue+',':'';
+		tempValue=_compose.brt_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='便常规：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*血生化——肝功*/
+	flag=document.getElementsByName('gangong_mark')[0].checked;
+	if(flag){
+		tempValue=_compose.gangong_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.gangong_alt+'';
+		tempRst+=tempValue.length>0?'ALT '+tempValue+'U/L,':'';
+		tempValue=_compose.gangong_ast+'';
+		tempRst+=tempValue.length>0?'AST '+tempValue+'U/L,':'';
+		tempValue=_compose.gangong_che+'';
+		tempRst+=tempValue.length>0?'CHE '+tempValue+'U/L,':'';
+		tempValue=_compose.gangong_tp+'';
+		tempRst+=tempValue.length>0?'Tp '+tempValue+'g/L,':'';
+		tempValue=_compose.gangong_alb+'';
+		tempRst+=tempValue.length>0?'ALB '+tempValue+'g/L,':'';
+		tempValue=_compose.gangong_tbil+'';
+		tempRst+=tempValue.length>0?'Tbil '+tempValue+'umol/L,':'';
+		tempValue=_compose.gangong_dbil+'';
+		tempRst+=tempValue.length>0?'Dbil '+tempValue+'umol/L,':'';
+		tempValue=_compose.gangong_cho+'';
+		tempRst+=tempValue.length>0?'CHO '+tempValue+'umol/L,':'';
+		tempValue=_compose.gangong_palb+'';
+		tempRst+=tempValue.length>0?'PAlB '+tempValue+'mg/L,':'';
+		tempValue=_compose.gangong_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='肝功：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*血生化——血生化*/
+	flag=document.getElementsByName('xuesh_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.xuesh_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.xuesh_k+'';
+		tempRst+=tempValue.length>0?'K<sup>+</sup> '+tempValue+'mmol/L,':'';
+		tempValue=_compose.xuesh_na+'';
+		tempRst+=tempValue.length>0?'Na<sup>+</sup> '+tempValue+'mmol/L,':'';
+		tempValue=_compose.xuesh_cl+'';
+		tempRst+=tempValue.length>0?'Cl<sup>+</sup> '+tempValue+'mmol/L,':'';
+		tempValue=_compose.xuesh_cr+'';
+		tempRst+=tempValue.length>0?'Cr '+tempValue+'umol/L,':'';
+		tempValue=_compose.xuesh_bun+'';
+		tempRst+=tempValue.length>0?'BUN '+tempValue+'mmol/L,':'';
+		tempValue=_compose.xuesh_glu+'';
+		tempRst+=tempValue.length>0?'Glu '+tempValue+'mmol/L,':'';
+		tempValue=_compose.xuesh_bla+'';
+		tempRst+=tempValue.length>0?'血氨(BLA) '+tempValue+'umol/L,':'';
+		tempValue=_compose.xuesh_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='血生化：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——乙肝*/
+	flag=document.getElementsByName('yigan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.yigan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('yigan_hbsag',_compose.yigan_hbsag);	
+		tempRst+=tempValue.length>0?'HBsAg '+tempValue+',':'';
+		tempValue=getRowValue('yigan_antihbe',_compose.yigan_antihbe);
+		tempRst+=tempValue.length>0?'Anti-HBe '+tempValue+',':'';
+		tempValue=getRowValue('yigan_hbeag',_compose.yigan_hbeag);
+		tempRst+=tempValue.length>0?'HBeAg '+tempValue+',':'';
+		tempValue=getRowValue('yigan_antihbs',_compose.yigan_antihbs);
+		tempRst+=tempValue.length>0?'Anti-HBs '+tempValue+',':'';
+		tempValue=getRowValue('yigan_antihbc',_compose.yigan_antihbc);
+		tempRst+=tempValue.length>0?'Anti-HBc '+tempValue+',':'';
+		tempValue=_compose.yigan_hbvdna+'';
+		tempRst+=tempValue.length>0?'HBV-DNA '+tempValue+'copies/ml,':'';
+		tempValue=_compose.yigan_hbvLv+'';
+		tempRst+=tempValue.length>0?'HBV基因分型 '+tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='乙肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——甲肝*/
+	flag=document.getElementsByName('jiagan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.jiagan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('jiagan_antihavlgm',_compose.jiagan_antihavlgm);
+		tempRst+=tempValue.length>0?'Anti-HAV-lgM '+tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='甲肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——丙肝*/
+	flag=document.getElementsByName('binggan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.binggan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('binggan_antihcvlg',_compose.binggan_antihcvlg);
+		tempRst+=tempValue.length>0?'Anti-HCV-lg '+tempValue+',':'';
+		tempValue=getRowValue('binggan_antihcvlgg',_compose.binggan_antihcvlgg);
+		tempRst+=tempValue.length>0?'Anti-HCV-lgG '+tempValue+',':'';
+		tempValue=_compose.binggan_hcvrna+'';
+		tempRst+=tempValue.length>0?'HCV-RNA '+tempValue+'IU/ml,':'';
+		if(tempRst.length>0){
+			rst+='丙肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——丁肝*/
+	flag=document.getElementsByName('dinggan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.dinggan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('dinggan_hdvab',_compose.dinggan_hdvab);
+		tempRst+=tempValue.length>0?'HDV-Ab '+tempValue+',':'';
+		tempValue=getRowValue('dinggan_hdvag',_compose.dinggan_hdvag);
+		tempRst+=tempValue.length>0?'HDV-Ag '+tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='丁肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——戊肝*/
+	flag=document.getElementsByName('wugan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.wugan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('wugan_hbsag',_compose.wugan_hbsag);
+		tempRst+=tempValue.length>0?'HBsAg '+tempValue+',':'';
+		tempValue=getRowValue('wugan_antihbe',_compose.wugan_antihbe);
+		tempRst+=tempValue.length>0?'Anti-HBe '+tempValue+',':'';
+		tempValue=getRowValue('wugan_antihbs',_compose.wugan_antihbs);
+		tempRst+=tempValue.length>0?'Anti-HBs '+tempValue+',':'';
+		tempValue=getRowValue('wugan_antihbc',_compose.wugan_antihbc);
+		tempRst+=tempValue.length>0?'Anti-HBc '+tempValue+',':'';
+		tempValue=getRowValue('wugan_antihevlgm',_compose.wugan_antihevlgm);
+		tempRst+=tempValue.length>0?'Anti-HEV-lgM '+tempValue+',':'';
+		tempValue=getRowValue('wugan_antihevlgg',_compose.wugan_antihevlgg);
+		tempRst+=tempValue.length>0?'Anti-HEV-lgG '+tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='戊肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*病毒标记——庚肝*/
+	flag=document.getElementsByName('genggan_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.genggan_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=getRowValue('genggan_antihiv',_compose.genggan_antihiv);
+		tempRst+=tempValue.length>0?'Anti-HIV '+tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='庚肝：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*其它化验——动脉血气*/
+	flag=document.getElementsByName('dmxq_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.dmxq_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.dmxq_po2+'';
+		tempRst+=tempValue.length>0?'PO<SUB>2</SUB> '+tempValue+'mmHg,':'';
+		tempValue=_compose.dmxq_pco2+'';
+		tempRst+=tempValue.length>0?'PCO<SUB>2</SUB> '+tempValue+'mmHg,':'';
+		tempValue=_compose.dmxq_ph+'';
+		tempRst+=tempValue.length>0?'PH '+tempValue+',':'';
+		tempValue=_compose.dmxq_sao+'';
+		tempRst+=tempValue.length>0?'SaO<SUB>2</SUB> '+tempValue+'%,':'';
+		tempValue=_compose.dmxq_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='动脉血气：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*其它化验——凝血*/
+	flag=document.getElementsByName('nx_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.nx_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.nx_inr+'';
+		tempRst+=tempValue.length>0?'INR '+tempValue+',':'';
+		tempValue=_compose.nx_fib+'';
+		tempRst+=tempValue.length>0?'FIB '+tempValue+'mg/dl,':'';
+		tempValue=_compose.nx_aptt+'';
+		tempRst+=tempValue.length>0?'APTT '+tempValue+'s,':'';
+		tempValue=_compose.nx_pta+'';
+		tempRst+=tempValue.length>0?'PTA '+tempValue+'%,':'';
+		tempValue=_compose.nx_pt+'';
+		tempRst+=tempValue.length>0?'PT '+tempValue+'s,':'';
+		tempValue=_compose.nx_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='凝血：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*其它化验——血脂*/
+	flag=document.getElementsByName('xuezhi_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.xuezhi_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.xuezhi_hdlc+'';
+		tempRst+=tempValue.length>0?'HDL-C '+tempValue+'mg/dL,':'';
+		tempValue=_compose.xuezhi_ldlc+'';
+		tempRst+=tempValue.length>0?'LDL-C '+tempValue+'mg/dL,':'';
+		tempValue=_compose.xuezhi_tg+'';
+		tempRst+=tempValue.length>0?'TG '+tempValue+'mg/dL,':'';
+		tempValue=_compose.xuezhi_chol+'';
+		tempRst+=tempValue.length>0?'CHOL '+tempValue+'mg/dL,':'';
+		tempValue=_compose.xuezhi_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='血脂：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*其它化验——肿瘤标记物*/
+	flag=document.getElementsByName('zhlbjw_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.zhlbjw_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.zhlbjw_afp+'';
+		tempRst+=tempValue.length>0?'AFP '+tempValue+'ng/ml,':'';
+		tempValue=_compose.zhlbjw_cea+'';
+		tempRst+=tempValue.length>0?'CEA '+tempValue+'ng/ml,':'';
+		tempValue=_compose.zhlbjw_ca199+'';
+		tempRst+=tempValue.length>0?'CA19_9 '+tempValue+'U/ml,':'';
+		tempValue=_compose.zhlbjw_ca242+'';
+		tempRst+=tempValue.length>0?'CA24_2 '+tempValue+'U/ml,':'';
+		tempValue=_compose.zhlbjw_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='肿瘤标记物：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	/*其它化验——血药浓度*/
+	flag=document.getElementsByName('xynd_mark')[0].checked;
+	if (flag) {
+		tempValue=_compose.xynd_checkdate;
+		tempRst=tempValue.length>0?''+tempValue+',':'';
+		tempValue=_compose.xynd_plkf+'';
+		tempRst+=tempValue.length>0?'普乐可复 '+tempValue+'ng/mL,':'';
+		tempValue=_compose.xynd_lpms+'';
+		tempRst+=tempValue.length>0?'雷帕霉素 '+tempValue+'ng/mL,':'';
+		tempValue=_compose.xynd_other+'';
+		tempRst+=tempValue.length>0?tempValue+',':'';
+		if(tempRst.length>0){
+			rst+='血药浓度：'+tempRst.substr(0,tempRst.length-1)+';'
+		}
+	}
+	return rst;
+}
+</script>
+<style type="text/css">
+body,form{
+	width:600px;
+	margin:0;
+	padding:0;
+}
+.text{
+	width:75%;
+	margin-right:2px;
+}
+.select{
+	width:75%;
+}
+.check_mark{
+	font-size:14px;
+	color:#800040;
+}
+.textarea{
+	width:90.5%;
+	height:40px;
+}
+</style>
+</head>
+<body>
+<div style="text-align:right;">
+	<input class="btn_mouseout" type="button" value="确定" onclick="closeWindow()"/>
+	<input class="btn_mouseout" type="button" value="关闭" onclick="window.close()"/>
+</div>
+<form>
+<input type="hidden" name="id" value=""/>
+<p class="title">实验室检查</p>
+<fieldset>
+	<legend><p class="check_mark"><input name="xrt_mark" type="checkbox"/><span>血常规</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="xrt_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">WBC：</td>
+			<td class="t2" width="205"><input name="xrt_wbc" type="text" class="text"/>×10<sup>9</sup>/L</td>
+			<td class="t1" width="85">NEUT：</td>
+			<td class="t2"><input name="xrt_neut1" type="text" class="text"/>×10<sup>9</sup>/L</td>
+		</tr>
+		<tr>
+			<td class="t1">PLT：</td>
+			<td class="t2"><input name="xrt_plt" type="text" class="text"/>×10<sup>9</sup>/L</td>
+			<td class="t1">NEUT：</td>
+			<td class="t2"><input name="xrt_neut2" type="text" class="text"/>%</td>
+		</tr>
+		<tr>
+			<td class="t1">LY：</td>
+			<td class="t2"><input name="xrt_ly" type="text" class="text"/>%</td>
+			<td class="t1">RBC：</td>
+			<td class="t2"><input name="xrt_rbc" type="text" class="text"/>×10<sup>12</sup>/L</td>
+		</tr>
+		<tr>
+			<td class="t1">Hb：</td>
+			<td class="t2"><input name="xrt_hb" type="text" class="text"/>g/L</td>
+			<td class="t1">ABO血型：</td>
+			<td class="t2"><input name="xrt_abo" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="xrt_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="nrt_mark" type="checkbox"/><span>尿常规</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="nrt_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">颜色：</td>
+			<td class="t2" width="205"><input name="nrt_color" type="text" class="text"/></td>
+			<td class="t1" width="85">RBC：</td>
+			<td class="t2"><input rel="nrt_pro" name="nrt_rbc" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">PRO：</td>
+			<td class="t2"><input name="nrt_pro" type="text" class="select"/></td>
+			<td class="t1">BLO：</td>
+			<td class="t2"><input rel="nrt_pro" name="nrt_blo" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">URO：</td>
+			<td class="t2"><input rel="nrt_pro" name="nrt_uro" type="text" class="select"/></td>
+			<td class="t1">Glu：</td>
+			<td class="t2"><input rel="nrt_pro" name="nrt_glu" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">KET：</td>
+			<td class="t2"><input rel="nrt_pro" name="nrt_ket" type="text" class="select"/></td>
+			<td class="t1">WBC：</td>
+			<td class="t2"><input name="nrt_wbc" type="text" class="text"/>个/HP</td>
+		</tr>
+		<tr>
+			<td class="t1">蛋白质：</td>
+			<td class="t2"><input name="nrt_danbai" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">葡萄糖：</td>
+			<td class="t2"><input name="nrt_putao" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">尿胆原：</td>
+			<td class="t2"><input name="nrt_niaodan" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">胆红素：</td>
+			<td class="t2"><input name="nrt_danhong" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="nrt_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="brt_mark" type="checkbox"/><span>便常规</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="brt_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">动力试验：</td>
+			<td class="t2" width="205"><input name="brt_dlsy" type="radio" class="radio dict-fld" checked="checked"/></td>
+			<td class="t1" width="85">制动试验：</td>
+			<td class="t2"><input name="brt_zbsy" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">颜色：</td>
+			<td class="t2"><input name="brt_color" type="text" class="select"/></td>
+			<td class="t1">性状：</td>
+			<td class="t2"><input name="brt_xzh" type="text" class="select"/></td>
+		</tr>
+		<tr>
+			<td class="t1">OB：</td>
+			<td class="t2"><input rel="nrt_pro" name="brt_ob" type="text" class="select"/></td>
+			<td class="t1">RBC：</td>
+			<td class="t2"><input name="brt_rbc" type="text" class="text"/></td>
+		</tr>
+		<tr>
+			<td class="t1">WBC：</td>
+			<td class="t2"><input name="brt_wbc" type="text" class="text"/></td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1">白细胞：</td>
+			<td class="t2"><input name="brt_wbc2" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">红细胞：</td>
+			<td class="t2"><input name="brt_rbc2" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="brt_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="gangong_mark" type="checkbox"/><span>肝功</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="gangong_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">ALT：</td>
+			<td class="t2" width="205"><input name="gangong_alt" type="text" class="text"/>U/L</td>
+			<td class="t1" width="85">AST：</td>
+			<td class="t2"><input name="gangong_ast" type="text" class="text"/>U/L</td>
+		</tr>
+		<tr>
+			<td class="t1">CHE：</td>
+			<td class="t2"><input name="gangong_che" type="text" class="text"/>U/L</td>
+			<td class="t1">Tp：</td>
+			<td class="t2"><input name="gangong_tp" type="text" class="text"/>g/L</td>
+		</tr>
+		<tr>
+			<td class="t1">PAlB：</td>
+			<td class="t2"><input name="gangong_palb" type="text" class="text"/>mg/L</td>
+			<td class="t1">ALB：</td>
+			<td class="t2"><input name="gangong_alb" type="text" class="text"/>g/L</td>
+		</tr>
+		<tr>
+			<td class="t1">Tbil：</td>
+			<td class="t2"><input name="gangong_tbil" type="text" class="text"/>umol/L</td>
+			<td class="t1">Dbil：</td>
+			<td class="t2"><input name="gangong_dbil" type="text" class="text"/>umol/L</td>
+		</tr>
+		<tr>
+			<td class="t1">CHO：</td>
+			<td class="t2"><input name="gangong_cho" type="text" class="text"/>umol/L</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="gangong_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="xuesh_mark" type="checkbox"/><span>血生化</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="xuesh_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">K<sup>+</sup>：</td>
+			<td class="t2" width="205"><input name="xuesh_k" type="text" class="text"/>mmol/L</td>
+			<td class="t1" width="85">BUN：</td>
+			<td class="t2"><input name="xuesh_bun" type="text" class="text"/>mmol/L</td>
+		</tr>
+		<tr>
+			<td class="t1">Na<sup>+</sup>：</td>
+			<td class="t2"><input name="xuesh_na" type="text" class="text"/>mmol/L</td>
+			<td class="t1">Cl<sup>+</sup>：</td>
+			<td class="t2"><input name="xuesh_cl" type="text" class="text"/>mmol/L</td>
+		</tr>
+		<tr>
+			<td class="t1">Cr：</td>
+			<td class="t2"><input name="xuesh_cr" type="text" class="text"/>umol/L</td>
+			<td class="t1">Glu：</td>
+			<td class="t2"><input name="xuesh_glu" type="text" class="text"/>mmol/L</td>
+		</tr>
+		<tr>
+			<td class="t1">血氨(BLA)：</td>
+			<td class="t2"><input name="xuesh_bla" type="text" class="text"/>umol/L</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="xuesh_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="yigan_mark" type="checkbox"/><span>乙肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="yigan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HBsAg：</td>
+			<td class="t2" width="205"><input name="yigan_hbsag" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="85">Anti-HBs：</td>
+			<td class="t2"><input name="yigan_antihbs" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HBeAg：</td>
+			<td class="t2"><input name="yigan_hbeag" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">Anti-HBe：</td>
+			<td class="t2"><input name="yigan_antihbe" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">Anti-HBc：</td>
+			<td class="t2"><input name="yigan_antihbc" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">HBV-DNA：</td>
+			<td class="t2"><input name="yigan_hbvdna" type="text" class="text" style="width:65%"/>copies/ml</td>
+		</tr>
+		<tr>
+			<td class="t1">HBV基因分型：</td>
+			<td class="t2"><input name="yigan_hbvLv" type="text" class="text"/></td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="jiagan_mark" type="checkbox"/><span>甲肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">检查日期：</td>
+			<td class="t2" colspan="3"><input name="jiagan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HAV-lgM：</td>
+			<td class="t2" width="200"><input name="jiagan_antihavlgm" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="90">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="binggan_mark" type="checkbox"/><span>丙肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">检查日期：</td>
+			<td class="t2" colspan="3"><input name="binggan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HCV-lg：</td>
+			<td class="t2" width="200"><input name="binggan_antihcvlg" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="90">HCV-lgG</td>
+			<td class="t2"><input name="binggan_antihcvlgg" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HCV-RNA：</td>
+			<td class="t2"><input name="binggan_hcvrna" type="text" class="text" style="width:65%"/>IU/ml</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="dinggan_mark" type="checkbox"/><span>丁肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">检查日期：</td>
+			<td class="t2" colspan="3"><input name="dinggan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HDV-Ab：</td>
+			<td class="t2" width="200"><input name="dinggan_hdvab" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="90">HDV-Ag：</td>
+			<td class="t2"><input name="dinggan_hdvag" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="wugan_mark" type="checkbox"/><span>戊肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">检查日期：</td>
+			<td class="t2" colspan="3"><input name="wugan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HBsAg：</td>
+			<td class="t2" width="200"><input name="wugan_hbsag" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="90">Anti-HBe：</td>
+			<td class="t2"><input name="wugan_antihbe" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">Anti-HBs：</td>
+			<td class="t2"><input name="wugan_antihbs" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">Anti-HBc：</td>
+			<td class="t2"><input name="wugan_antihbc" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1">Anti-HEV-lgM：</td>
+			<td class="t2"><input name="wugan_antihevlgm" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1">Anti-HEV-lgG：</td>
+			<td class="t2"><input name="wugan_antihevlgg" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="genggan_mark" type="checkbox"/><span>庚肝</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="90">检查日期：</td>
+			<td class="t2" colspan="3"><input name="genggan_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">Anti-HIV：</td>
+			<td class="t2" width="200"><input name="genggan_antihiv" type="radio" class="radio dict-fld" rel="brt_dlsy" checked="checked"/></td>
+			<td class="t1" width="90">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="dmxq_mark" type="checkbox"/><span>动脉血气</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="dmxq_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">PO<SUB>2</SUB>：</td>
+			<td class="t2" width="205"><input name="dmxq_po2" type="text" class="text"/>mmHg</td>
+			<td class="t1" width="85">PCO<SUB>2</SUB>：</td>
+			<td class="t2"><input name="dmxq_pco2" type="text" class="text"/>mmHg</td>
+		</tr>
+		<tr>
+			<td class="t1">PH：</td>
+			<td class="t2"><input name="dmxq_ph" type="text" class="text"/></td>
+			<td class="t1">SaO<SUB>2</SUB>：</td>
+			<td class="t2"><input name="dmxq_sao" type="text" class="text"/>%</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="dmxq_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="nx_mark" type="checkbox"/><span>凝血</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="nx_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">INR：</td>
+			<td class="t2" width="205"><input name="nx_inr" type="text" class="text"/></td>
+			<td class="t1" width="85">FIB：</td>
+			<td class="t2"><input name="nx_fib" type="text" class="text"/>mg/dl</td>
+		</tr>
+		<tr>
+			<td class="t1">PTA：</td>
+			<td class="t2"><input name="nx_pta" type="text" class="text"/>%</td>
+			<td class="t1">APTT：</td>
+			<td class="t2"><input name="nx_aptt" type="text" class="text"/>s</td>
+		</tr>
+		<tr>
+			<td class="t1">PT：</td>
+			<td class="t2"><input name="nx_pt" type="text" class="text"/>s</td>
+			<td class="t1">&nbsp;</td>
+			<td class="t2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="nx_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="xuezhi_mark" type="checkbox"/><span>血脂</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="xuezhi_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">HDL-C：</td>
+			<td class="t2" width="205"><input name="xuezhi_hdlc" type="text" class="text"/>mg/dL</td>
+			<td class="t1" width="85">LDL-C：</td>
+			<td class="t2"><input name="xuezhi_ldlc" type="text" class="text"/>mg/dL</td>
+		</tr>
+		<tr>
+			<td class="t1">TG：</td>
+			<td class="t2"><input name="xuezhi_tg" type="text" class="text"/>mg/dL</td>
+			<td class="t1">CHOL：</td>
+			<td class="t2"><input name="xuezhi_chol" type="text" class="text"/>mg/dL</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="xuezhi_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="zhlbjw_mark" type="checkbox"/><span>肿瘤标记物</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="zhlbjw_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">AFP：</td>
+			<td class="t2" width="205"><input name="zhlbjw_afp" type="text" class="text"/>ng/ml</td>
+			<td class="t1" width="85">CEA：</td>
+			<td class="t2"><input name="zhlbjw_cea" type="text" class="text"/>ng/ml</td>
+		</tr>
+		<tr>
+			<td class="t1">CA19-9：</td>
+			<td class="t2"><input name="zhlbjw_ca199" type="text" class="text"/>U/ml</td>
+			<td class="t1">CA15-3：</td>
+			<td class="t2"><input name="zhlbjw_ca242" type="text" class="text"/>U/ml</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="zhlbjw_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="xynd_mark" type="checkbox"/><span>血药浓度</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2" colspan="3"><input name="xynd_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1">普乐可复：</td>
+			<td class="t2" width="205"><input name="xynd_plkf" type="text" class="text"/>ng/mL</td>
+			<td class="t1" width="85">雷帕霉素：</td>
+			<td class="t2"><input name="xynd_lpms" type="text" class="text"/>ng/mL</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其它化验结果：</td>
+			<td class="t2" colspan="3"><textarea name="xynd_other" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<p class="title">辅助检查</p>
+<fieldset>
+	<legend><p class="check_mark"><input name="xline_mark" type="checkbox"/><span>X线平片</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="xline_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="xline_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="heart_mark" type="checkbox"/><span>心电图</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="heart_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="heart_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="bc_mark" type="checkbox"/><span>B超</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="bc_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="bc_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="ct_mark" type="checkbox"/><span>CT</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="ct_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="ct_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="mri_mark" type="checkbox"/><span>MRI</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="mri_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="mri_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="xhd_mark" type="checkbox"/><span>消化道造影</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="xhd_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="xhd_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="weijing_mark" type="checkbox"/><span>胃镜</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="weijing_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="weijing_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="jiechang_mark" type="checkbox"/><span>结肠镜</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="jiechang_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="jiechang_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="zhichang_mark" type="checkbox"/><span>十二指肠镜</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="zhichang_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="zhichang_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="jiaon_mark" type="checkbox"/><span>胶囊内镜</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="jiaon_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="jiaon_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<fieldset>
+	<legend><p class="check_mark"><input name="niaosu_mark" type="checkbox"/><span>尿素呼气试验</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="85">检查日期：</td>
+			<td class="t2"><input name="niaosu_checkdate" type="text" class="text" style="width:31.5%"/></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="niaosu_checkResult" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+<p class="title">病理检查</p>
+<fieldset>
+	<legend><p class="check_mark"><input name="bingli_mark" type="checkbox"/><span>病理检查</span></p></legend>
+	<table class="hidden" width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="110" valign="top">检查结果：</td>
+			<td class="t2"><textarea name="bingli_checkResult" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">肝病病理标准分级：</td>
+			<td class="t2"><textarea name="bingli_fenji" class="textarea"></textarea></td>
+		</tr>
+	</table>	
+</fieldset>
+</form>
+</body>
+</html>

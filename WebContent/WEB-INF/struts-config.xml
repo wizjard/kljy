@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+  <data-sources />
+  <form-beans />
+  <global-exceptions />
+  <global-forwards />
+  <action-mappings>
+	<!-- 通用Action -->
+	<action
+		  parameter="method"
+		  path="/common/CommonAction"
+		  type="com.juncsoft.KLJY.Public.action.CommonAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 系统模块管理 -->
+	<action
+		  parameter="method"
+		  path="/admin/SysModuleAction"
+		  type="com.juncsoft.KLJY.system.module.action.SysModuleAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 机构单位角色权限分配模块 -->
+	<action
+		  parameter="method"
+		  path="/admin/BelongRoleAction"
+		  type="com.juncsoft.KLJY.system.BelongAndRole.action.BelongAndRoleAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 用户管理 -->
+	<action
+		  parameter="method"
+		  path="/admin/UserAdminAction"
+		  type="com.juncsoft.KLJY.system.user.action.UserAdminAction"
+		  validate="false" 
+		  scope="request"/> 
+	<!-- 字典管理 -->
+	<action
+		  parameter="method"
+		  path="/admin/DictAction"
+		  type="com.juncsoft.KLJY.system.dict.action.DictAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 项目课题管理 -->
+	<action
+		  parameter="method"
+		  path="/admin/ResearchAdminAction"
+		  type="com.juncsoft.KLJY.system.Research.action.ResearchAdminAction"
+		  validate="false" 
+		  scope="request"/>
+	<!--项目课题设置 -->
+	<action
+		  parameter="method"
+		  path="/ResearchFollow/FollowSetUp"
+		  type="com.juncsoft.KLJY.ResearchFollowup.action.FollowSetUpAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 用户 -->
+	<action
+		  parameter="method"
+		  path="/user"
+		  type="com.juncsoft.KLJY.user.action.UserAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 病人 -->
+	<action
+		  parameter="method"
+		  path="/patient"
+		  type="com.juncsoft.KLJY.patient.action.PatientAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 住院病历主表操作 -->
+	<action parameter="method" path="/InHospitalCase/CaseMaster" type="com.juncsoft.KLJY.InHospitalCase.CaseMaster.action.CaseMasterAction" validate="false" scope="request"/>
+	<!-- 普通住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/DefaultAction" type="com.juncsoft.KLJY.InHospitalCase.Default.action.DefaultAction" validate="false" scope="request"/>
+	<!-- 肝病住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/LiverCaseAction" type="com.juncsoft.KLJY.InHospitalCase.Liver.action.LiverCaseAction" validate="false" scope="request"/>
+	<!-- 中医住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/TCMAction" type="com.juncsoft.KLJY.InHospitalCase.TraditionalChineseMedical.action.TCMAction" validate="false" scope="request"/>
+	<!-- 耳鼻喉住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/ENTCaseAction" type="com.juncsoft.KLJY.InHospitalCase.ENT.action.ENTCaseAction" validate="false" scope="request"/>
+	<!-- 口腔科住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/MouthCaseAction" type="com.juncsoft.KLJY.InHospitalCase.Mouth.action.MouthCaseAction" validate="false" scope="request"/>
+	<!-- 外科住院病历操作 -->
+	<action parameter="method" path="/InHospitalCase/SurgeryCaseAction" type="com.juncsoft.KLJY.InHospitalCase.Surgery.action.SurgeryCaseAction" validate="false" scope="request"/>
+	
+	<!-- 病程记录操作 -->
+	<action parameter="method" path="/InHospitalCase/CourseRecordingAction" type="com.juncsoft.KLJY.InHospitalCase.CourseRecording.action.CourseRecordingAction" validate="false" scope="request"/>
+	<!-- 打印Action操作 -->
+	<action
+		  parameter="method"
+		  path="/InHospitalCase/CasePrintAction"
+		  type="com.juncsoft.KLJY.InHospitalCase.CasePrint.CasePrintAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 入选课题及随访操作 -->
+	<action
+		  parameter="method"
+		  path="/ResearchFollowupAction"
+		  type="com.juncsoft.KLJY.ResearchFollowup.action.ResearchFollowupAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 门诊随访登记表操作 -->
+	<action
+		  parameter="method"
+		  path="/FollowReginAction"
+		  type="com.juncsoft.KLJY.ResearchFollowup.action.FollowReginAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 会员分组组别管理 -->
+	<action
+		  parameter="method"
+		  path="/admin/MemberGroupMngAction"
+		  type="com.juncsoft.KLJY.system.MemberGroup.MemberGroupMngAction"
+		  validate="false" 
+		  scope="request"/>
+	<!-- 阳性症状检测表 -->
+	<action
+		  parameter="method"
+		  path="/followVisit/yanxingbinAction"
+		  type="com.juncsoft.KLJY.followVisit.actions.ZhengzuangtizhengAction"
+		  validate="false" 
+		  scope="request"/>
+	 <action
+		  parameter="method"
+		  path="/caseHistory/casehistoryAction"
+		  type="com.juncsoft.KLJY.InHospitalCase.CaseAnalysis.action.CaseHistoryAction"
+		  validate="false" 
+		  scope="request"/>
+	  <action
+		  parameter="method"
+		  path="/caseHistory/printCase"
+		  type="com.juncsoft.KLJY.InHospitalCase.CaseAnalysis.action.PrintCaseHistoryAction"
+		  validate="false" 
+		  scope="request"/>
+	  <!-- 会员 -->
+	  <action
+		  parameter="method"
+		  path="/MemberAction"
+		  type="com.juncsoft.KLJY.member.action.MemberAction"
+		  validate="false" 
+		  scope="request"/>
+	  
+	  <action path="/dict/comm" 
+			parameter="method"
+			type="com.juncsoft.KLJY.InHospitalCase.common.action.CommonAction"
+		 	validate="false" 
+		  	scope="request"/>
+		 
+		 <action 
+		 	  parameter="method" 
+		 	  path="/InHospitalCase/PresentHistoryAction" 
+			  type="com.juncsoft.KLJY.InHospitalCase.Liver.PresentHistory.PresentHistoryAction" 
+			  validate="false" 
+			  scope="request"/>
+	  
+	  <!-- 麻醉科相关记录 -->	 
+		<action
+		 	path="/InHospitalCase/Anaesthetization" 
+		 	parameter="method"
+		 	type="com.juncsoft.KLJY.InHospitalCase.Anaesthetization.action.AnaesthetizationAction"
+		 	validate="false" 
+		 	scope="request"/>
+		 		 
+		<!-- 新生儿相关记录 --> 
+		<action
+			 path="/InHospitalCase/BabyRec" 
+			 parameter="method"
+			 type="com.juncsoft.KLJY.InHospitalCase.BabyRec.action.BabyRecAction"
+			 validate="false" 
+			 scope="request"/>
+	  
+	  	<!-- 检查报告模块设计 -->
+		<action
+			 path="/CheckReport/checkreport" 
+			 parameter="method"
+			 type="com.juncsoft.KLJY.InHospitalCase.CheckReport.action.CheckReportAction"
+			 validate="false" 
+			 scope="request"/>	
+			 
+		<action
+			 path="/CheckReport/combinationProject" 
+			 parameter="method"
+			 type="com.juncsoft.KLJY.InHospitalCase.CheckReport.action.CombinationProjectAction"
+			 validate="false" 
+			 scope="request"/>
+	  
+	  <!-- 骨髓检查申请单 -->
+		<action 
+			path="/MarrowApplyAction"
+			parameter="method"
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.MarrowApplyAction"
+			validate="false"
+			scope="request" />
+			
+		<!-- 肿瘤肝胆介入治疗中心介入诊断、治疗预约单 -->
+		<action 
+			path="/CancerTreatBespokeAction" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.CancerTreatBespokeAction"
+			validate="false" 
+			scope="request" />
+			
+		<!-- 肿瘤肝胆介入治疗中心介入诊断治疗申请单 -->
+		<action path="/CancerJoinApplyAction" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.CancerJoinApplyAction"
+			validate="false" 
+			scope="request" />
+			 
+		<!-- 医患沟通记录 -->
+		<action 
+			path="/CommunicationAction" 
+			parameter="method"			
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.CommunicationAction"
+			validate="false" 
+			scope="request" />
+			
+		<!-- 肝活检病理检查申请单 -->
+		<action 
+			path="/LiverCheckApplyAction" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.LiverCheckApplyAction"
+			validate="false" 
+			scope="request" />
+		
+		<!-- 病理标本检查申请单 -->
+		<action 
+			path="/SpecimenCheckApplyAction" 
+			parameter="method"
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.SpecimenCheckApplyAction"
+			validate="false" 
+			scope="request" />
+		
+		<!-- 院外会诊申请单 -->
+		<action 
+			path="/ConsultationApplyAction" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.InHospitalCase.Apply.action.ConsultationApplyAction"
+			validate="false" 
+			scope="request" />	
+	  <!-- 生物医学中心 -->
+		<action 
+			path="/biomedical" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.biomedical.action.AppAction"
+			validate="false" 
+			scope="request" />
+		<action 
+			path="/module/biomedical/member" 
+			parameter="method"		
+			type="com.juncsoft.KLJY.biomedical.member.action.MemberAction"
+			validate="false" 
+			scope="request" />
+	  
+	  <!-- 病案首页 -->	 
+	  <action
+		  path="/InHosp" 
+		  parameter="method"
+		  type="com.juncsoft.KLJY.InHospitalCase.HistoryIndexPage.action.InHospitalAction"
+		  validate="false" 
+		  scope="request"/>
+	  
+	  <action 
+		  path="/KLJY/ItemScore/TreeAction" 
+		  parameter="method"
+		  type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.TreeAction"
+		  validate="false" 
+		  scope="request"/>	
+							
+	<action 
+		path="/KLJY/fever" 
+		parameter="method"
+		type="com.juncsoft.KLJY.InHospitalCase.pitemScore.fever.action.FeverAction"
+		validate="false" 
+		scope="request"/>  	 
+								  
+	<action 
+		parameter="method" 
+		path="/InHospitalCase/PresentHistoryAction" 
+		type="com.juncsoft.KLJY.InHospitalCase.Liver.PresentHistory.PresentHistoryAction" 
+		validate="false" 
+		scope="request"/> 
+	<!-- 危重病人综合评价 -->
+	<action 
+		path="/KLJY/apache"
+		parameter="method"
+		type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.ApacheiiAction"
+		validate="false" 
+		scope="request"/>
+									
+	<!-- 肝癌进展程度评估 -->
+	<action 
+		path="/KLJY/lcde"
+		type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.LcdeGreeAction"
+		parameter="method"
+		validate="false" 
+		scope="request"/>
+						  	
+	<!-- 肝病功能评估 -->
+	<action
+		path="/KLJY/comm"
+		type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.CommonAction"
+		parameter="method"
+		validate="false" 
+		scope="request"/>
+								
+	<!-- 急诊中心急重病人综合评价(内) -->
+	<action 
+	path="/KLJY/phi"
+	type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.PhiAction"
+	parameter="method"
+	validate="false" 
+	scope="request"/>
+	  
+	<!-- 急诊中心急重病人综合评价(外) -->
+	<action 
+		path="/KLJY/ts"
+		type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.TsAction"
+		parameter="method"
+		validate="false" 
+		scope="request"/>
+	<!-- 公告管理 -->
+		<action
+		  	parameter="method"
+		  	path="/admin/notice"
+		  	type="com.juncsoft.KLJY.system.notice.action.NoticeAction"
+		  	validate="false" 
+		  	name="uploadFormtwo"
+		  	scope="request"/> 	  	 
+		
+		<!-- 图片管理 -->
+		<action
+		  	parameter="method"
+		  	path="/admin/picture"
+		  	type="com.juncsoft.KLJY.system.picture.action.PictureAction"
+		  	validate="false" 
+		  	scope="request"/>   
+		  	
+		 <!-- 最新现病史 -->  
+		<action 
+			  parameter="method" 
+			  path="/InHospitalCase/PresentHistoryActionNew" 
+			  type="com.juncsoft.KLJY.InHospitalCase.Liver.PresentHistoryNew.PresentHistoryAction" 
+			  validate="false" 
+			  scope="request"/> 
+			  
+		 <!--新评分系统-->
+		 <action
+			path="/InHospitalCase/ScoreComment"
+			type="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.action.ScoreCommentAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+	  
+	  <!-- 门诊加载HIS中医生基本信息 -->  	
+	 <action
+		  	parameter="method"
+		  	path="/OutOrMergencyDoctorAction"
+		  	type="com.juncsoft.KLJY.outoremergency.action.OutOrMergencyDoctorAction"
+		  	validate="false" 
+		  	scope="request"/> 	
+	 <action
+		  	parameter="method"
+		  	path="/OutOrMergencyPatientAction"
+		  	type="com.juncsoft.KLJY.outoremergency.action.OutOrMergencyPatientAction"
+		  	validate="false" 
+		  	scope="request"/>  
+	 <action
+		  	parameter="method"
+		  	path="/OutOrMergencyCaseAction"
+		  	type="com.juncsoft.KLJY.outoremergency.action.OutOrMergencyCaseAction"
+		  	validate="false" 
+		  	scope="request"/> 
+		  	
+     <action
+		  	parameter="method"
+		  	path="/OutOrMergencyCourseAction"
+		  	type="com.juncsoft.KLJY.outoremergency.action.OutOrMergencyCourseAction"
+		  	validate="false" 
+		  	scope="request"/>
+	<action
+		  	parameter="method"
+		  	path="/DepartmentHISAction"
+		  	type="com.juncsoft.KLJY.Public.action.DepartmentHISAction"
+		  	validate="false" 
+		  	scope="request"/>
+    <action
+		  	parameter="method"
+		  	path="/MemberSearchTotalAction"
+		  	type="com.juncsoft.KLJY.biomedical.contorl.action.MemberSearchTotalAction"
+		  	validate="false" 
+		  	scope="request"/>
+	<!--外网会员和医生 -->
+	<action
+		  	parameter="method"
+		  	path="/PatientConsultingAction"
+		  	type="com.juncsoft.KLJY.patientanddoctoroperator.action.PatientConsultingAction"
+		  	validate="false" 
+		  	scope="request"/>
+	<action
+		  	parameter="method"
+		  	path="/DoctorReplyRecordAndPatientQuestionsAction"
+		  	type="com.juncsoft.KLJY.patientanddoctoroperator.action.DoctorReplyRecordAndPatientQuestionsAction"
+		  	validate="false" 
+		  	scope="request"/>
+		  	
+	<action
+		  	parameter="method"
+		  	path="/PatientHealthRecordAction"
+		  	type="com.juncsoft.KLJY.patientanddoctoroperator.action.PatientHealthRecordAction"
+		  	validate="false" 
+		  	scope="request"/>
+		  
+	<action
+		  	parameter="method"
+		  	path="/DoctorRoundsRecordAction"
+		  	type="com.juncsoft.KLJY.patientanddoctoroperator.action.DoctorRoundsRecordAction"
+		  	validate="false" 
+		  	scope="request"/>
+		  	
+
+	<!-- 预约挂号 -->	  	
+	<action
+		  	parameter="method"
+		  	path="/PlanSignOrderAction"
+		  	type="com.juncsoft.KLJY.patientanddoctoroperator.action.PlanSignOrderAction"
+		  	validate="false" 
+		  	scope="request"/> 
+	  <!-- 内网会员组别 -->
+   	<action
+		  	parameter="method"
+		  	path="/DepartmentGrounpAction"
+		  	type="com.juncsoft.KLJY.membergrounp.action.DepartmentGrounpAction"
+		  	validate="false" 
+		  	scope="request"/> 	
+	  <!-- 十二级诊断 -->
+			<action
+		  	parameter="method"
+		  	path="/GradingDiagAction"
+		  	type="com.juncsoft.KLJY.InHospitalCase.GradingDiag.action.GradingDiagAction"
+		  	validate="false" 
+		  	scope="request"/> 
+	<!--眼科检查-->
+		 <action
+			path="/eye"
+			type="com.juncsoft.KLJY.InHospitalCase.Eye.action.EyeAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+			<!-- 麦迪 瑞科 -->
+	 	 <action
+			path="/plan"
+			type="com.juncsoft.KLJY.plan.action.PlanAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>	
+	     <action
+			path="/checkReport"
+			type="com.juncsoft.KLJY.checkreport.action.CheckReportAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+			
+			<!-- 上传下载 -->
+		<action
+		  	parameter="method"
+		  	path="/UploadAction"
+		  	type="com.juncsoft.KLJY.system.upload.UploadAction"
+		  	validate="false" 
+		  	scope="request">
+		  	<forward name="uploadFile" path="/PUBLIC/fileUpload/uploadfile.jsp"></forward>
+		  	<forward name="uploadImage" path="/PUBLIC/fileUpload/uploadPicture.jsp"></forward>
+		  	</action>
+		  	
+		 <action
+		  	parameter="method"
+		  	path="/DownloadAction"
+		  	type="com.juncsoft.KLJY.system.download.DownloadAction"
+		  	validate="false" 
+		  	scope="request">
+		  </action>
+		  
+		  	<!-- 短信管理 -->
+		<action
+		  	parameter="method"
+		  	path="/message"
+		  	type="com.juncsoft.KLJY.message.action.MessageAction"
+		  	validate="false" 
+		  	scope="request"/>
+
+		<action parameter="method" 
+			path="/eyePDF"
+			type="com.juncsoft.KLJY.InHospitalCase.pdf.eye.EyePDFAction"
+			validate="false" 
+			scope="request"/>
+		
+		<!--艾滋病史-->
+		<action
+			path="/InHospitalCase/Aids"
+			type="com.juncsoft.KLJY.InHospitalCase.aids.action.AidsHistoryAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+			
+		<!--艾滋病史打印-->
+		<action
+			path="/aidsPDFAction"
+			type="com.juncsoft.KLJY.InHospitalCase.pdf.aids.AidsPDFAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+			
+		<!-- 发热病史 -->
+		 <action
+			path="/KLJY/fever"
+			type="com.juncsoft.KLJY.InHospitalCase.Fever.PresentHistoryNew.PresentHistoryAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+
+		<!-- H1N1病史 -->
+		 <action
+			path="/InHospitalCase/H1N1"
+			type="com.juncsoft.KLJY.InHospitalCase.H1N1.action.EpidemicDisHistoryAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+		
+		<!-- 肝病PDF打印 -->
+		<action	path="/liverPDFAction"
+			type="com.juncsoft.KLJY.InHospitalCase.pdf.lever.LiverPDFAction"
+			parameter="method"
+  			validate="false" 
+			scope="request"/>
+<!-- 以上内容包括眼科、艾滋病、中西医发热、甲流病历end -->	
+		<!--与HIS交互的随访计划 -->
+		<action	path="/PlanActionForHis" type="com.juncsoft.KLJY.planhis.action.PlanHisAction"	parameter="method" 	validate="false" scope="request">
+			<forward name="list" path="/module/planhis/planList.jsp"></forward>
+		</action>
+  </action-mappings>
+</struts-config>
+

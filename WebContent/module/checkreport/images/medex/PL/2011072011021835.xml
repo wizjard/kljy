@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DocInfo operationType="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <patientInfo>
+    <patientIDInfo>
+      <localPatientID root="Clinic" extension="0000240468" />
+      <localPatientID root="IdCard" extension="" />
+      <localPatientID root="KODAK_HISID" extension="" />
+      <localPatientID root="ZyCh" extension="" />
+      <localPatientID root="SbCard" extension="" />
+      <localPatientID root="PL" extension="2011072011021835" />
+    </patientIDInfo>
+    <patientName>LUO DAN DAN^^^^=罗丹丹^^^^</patientName>
+    <patientGender>2</patientGender>
+    <patientDOB>19861026</patientDOB>
+    <patientAge>25</patientAge>
+    <patientMaritalStatus>
+    </patientMaritalStatus>
+    <patientOccupation>
+    </patientOccupation>
+    <patientCitizenship>
+    </patientCitizenship>
+    <patientType>N</patientType>
+    <patientAddressInfo>
+      <streetAddressLine>四川省剑阁县</streetAddressLine>
+      <city>
+      </city>
+      <province>
+      </province>
+      <postalCode>
+      </postalCode>
+      <country>
+      </country>
+    </patientAddressInfo>
+    <patientTelecomInfo use="HP" value="tel:" />
+    <patientTelecomInfo use="MC" value="cell:" />
+  </patientInfo>
+  <visitInfo>
+    <visitID root="PL" extension="2011072011021835" />
+    <clinicDiagnose>
+      <narrativeBlock>
+      </narrativeBlock>
+    </clinicDiagnose>
+  </visitInfo>
+  <orderInfo>
+    <requestNum root="PL" extension="2011072011021835" />
+    <applicantInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>王香荣</doctorName>
+    </applicantInfo>
+    <reqDepInfo>
+      <depID>
+      </depID>
+      <depName>妇科</depName>
+    </reqDepInfo>
+    <examDepInfo>
+      <depID>
+      </depID>
+      <depName>
+      </depName>
+    </examDepInfo>
+    <examType>
+    </examType>
+  </orderInfo>
+  <examInfo>
+    <accessNum root="PL" extension="2011072011021835" />
+    <deviceType>PL</deviceType>
+    <deviceID>
+    </deviceID>
+    <examDate>
+    </examDate>
+    <bodyPart>
+    </bodyPart>
+    <ppsInfo>
+      <performerInfo>
+        <doctorID>
+        </doctorID>
+        <doctorName>
+        </doctorName>
+      </performerInfo>
+      <methodUsed>
+      </methodUsed>
+    </ppsInfo>
+    <studyUID>2011072011021835</studyUID>
+    <imageFileName>DATA\2011072011034687.jpg</imageFileName>
+  </examInfo>
+  <reportInfo>
+    <reportID root="PL" extension="2011072011021835" />
+    <reportFileName>DATA\2011072011021835.jpg</reportFileName>
+    <reportTitle>
+    </reportTitle>
+    <reportType>9999</reportType>
+    <reportConfidentiality>N</reportConfidentiality>
+    <authorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>2386</doctorName>
+    </authorInfo>
+    <authenticatorInfo>
+      <doctorID>
+      </doctorID>
+      <doctorName>
+      </doctorName>
+    </authenticatorInfo>
+    <reportDate>2011-7-20 0:00:00</reportDate>
+    <observation>
+      <narrativeBlock><![CDATA[]]></narrativeBlock>
+    </observation>
+    <conclusion>
+      <isPositive>
+      </isPositive>
+      <diagnosis>
+        <narrativeBlock><![CDATA[]]></narrativeBlock>
+      </diagnosis>
+    </conclusion>
+  </reportInfo>
+</DocInfo>

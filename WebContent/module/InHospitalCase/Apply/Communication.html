@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>医患沟通记录</title>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var KID = null;
+var PID = null;
+var PageCode='EMR-liver-Diagnosis';
+	$(function(){
+		KID=App.util.getHtmlParameters('kid');
+		PID=App.util.getHtmlParameters('pid');
+		$('input[name="patientId"]').val(PID);
+		$('input[name="historyCaseId"]').val(KID);
+		$('input[name="id"]').val(App.util.getHtmlParameters('this'));
+		find();
+		initPage();
+	});
+function initPage(){
+	registrationPageHead(KID,'医患沟通记录','#header');
+	var _input=$('input');
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="patientDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="familyDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+	//医生字典选择
+		FormUtil.toDictSelect({
+			url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+			showEl:$('input[name="doctorsign"]')
+		});
+		var id=$('input[name="id"]').val();
+		if(id == -1){
+			setMainValue();
+			return;
+		}else{
+			setValue(id);
+		}
+}
+//查询基本信息
+function setMainValue(){
+	$.post(
+		App.App_Info.BasePath+'/CommunicationAction.do',
+		{
+			method:'get_Main_Info',
+			kid:KID
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+			}
+		},
+		'json'
+	)
+}
+//查询医患沟通记录信息
+function setValue(id){
+	$.post(
+		App.App_Info.BasePath+'/CommunicationAction.do',
+		{
+			method:'get_Patient_Info',
+			id:id
+		},
+		function(data){
+			if(data.success){
+				var json = JSON.parse(data.data);
+				$('input[type="text"]').each(function(){
+					$(this).val(json[this.name]);
+				});
+				
+				$('input[type="checkbox"]').each(function(){
+					if('<'+$(this).val()+'>'==json[this.name]){
+						$(this).attr("checked",true);
+					}
+				});
+				if($('input[name="otherNeed"]').attr("checked")){
+					$("#ht").show();
+				}
+				$('textarea').each(function(){
+					$(this).val(json[this.name]);
+				});
+				setMainValue();
+			}
+		},
+		'json'
+	)
+}
+//保存和修改
+function SaveData(){
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	var id = $('input[name="id"]').val();
+	
+	$.post(
+		App.App_Info.BasePath+'/CommunicationAction.do',
+		{
+			method:'saveOrUpdate',
+			id:id,
+			data:data
+		},
+		function(data){
+			$('input[name="id"]').val(data.id);
+			alert("保存成功");
+			parent.createIndex();
+		},
+		'json'
+	)
+}
+//删除一条信息
+function deleteData(){
+	var data = JSON.stringify(FormUtil.getFormValues('form'));
+	var yon = confirm("确认删除？");
+		if(!yon){
+		return;
+		}
+	$.post(
+		App.App_Info.BasePath+'/CommunicationAction.do',
+		{
+			method:'deleteData',
+			data:data
+		}
+	)
+		parent.location.reload();
+}
+function print(){
+	var checkdate = $('input[name="checkDate"]').val();
+	var doctorname =$('input[name="doctorsign"]').val();
+	if(doctorname == null || doctorname == ""){
+		alert("请先填写医师项并保存");
+		return;
+	}
+	if(checkdate == null || checkdate == ""){
+		alert("请先填写日期项并保存");
+		return;
+	}
+	var id=$('input[name="id"]').val();
+	if(id=="-1"){
+		alert('请先保存数据后再打印。');
+		return;
+	}
+	window.open(App.App_Info.BasePath+
+	'/module/InHospitalCase/Apply/print/CommunicationPrint.html?id='+id+'&&'+'kid='+KID);
+}
+//隐藏其他文本框
+function find(){
+	$('input[name="otherNeed"]').click(function(){
+		if($(this).attr("checked")){
+			$("#ht").show();
+		}else{
+			$("#ht").hide();
+			$('textarea[name="otherText"]').val("");
+		}
+	});
+}
+		
+</script>
+</head>
+
+<body>
+	<div id="header" style="width:600px;position:relative;"></div>
+	<form>
+		<input type="hidden" name="id" value="-1"/>
+		<input type="hidden" name="patientId"/>
+		<input type="hidden" name="historyCaseId"/>
+		<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90">患者姓名：</td>
+				<td class="t2" width="210"><input type="text" name="patientName" readonly="readonly"/></td>
+				<td class="t1" width="90">性别：</td>
+				<td class="t2" width="*"><input type="text" name="gender" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">年龄：</td>
+				<td class="t2" ><input type="text" name="age" readonly="readonly"/></td>
+				<td class="t1">沟通：</td>
+				<td class="t2">&nbsp;<span style="font-size:12px">第</span><input style="font-size:12px;width:50%" type="text" name="communicationNum"/><span style="font-size:12px">次</span></td>
+			</tr>
+			<tr>
+				<td class="t1" width="90" valign="top">临床诊断：</td>
+				<td colspan="3" width="510"><textarea class="textarea" name="diagnose" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="4" style="text-align:left">参加沟通交流人员</td>	
+			</tr>
+			<tr>
+				<td class="t1" width="90" valign="top">患方：</td>
+				<td colspan="3" width="510"><textarea class="textarea" name="joinPatient" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" width="90" valign="top">医方：</td>
+				<td colspan="3" width="510"><textarea class="textarea" name="joinDoctor" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1">沟通目的：</td>
+				<td colspan="3"  class="t1" style="text-align:left">
+				<input type="checkbox" value="病情需要" name="conditionNeed"/>病情需要
+				<input type="checkbox" value="患者要求" name="patientAsk"/>患者要求
+				<input type="checkbox" value="家属要求" name="familyAsk"/>家属要求
+				<input type="checkbox" value="患者及家属要求" name="fandpAsk"/>患者及家属要求
+				<input type="checkbox" value="其他" name="otherNeed"/>其他: </td>
+			</tr>
+			<tr id="ht" style="display: none">
+				<td width="90" class="t1">&nbsp;</td>
+				<td width="510" colspan="3">
+					<textarea class="textarea" style="width:98%"name="otherText"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" width="90" valign="top">具体内容：</td>
+				<td colspan="3" width="510"><textarea class="textarea" name="concreteContent" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top" width="90">患者/家属意见：</td>
+				<td colspan="3" width="510"><textarea class="textarea" name="pfIdea" style="width:98%"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="4" style="text-align:center">患者/家属对上述内容已全面、充分理解，并确认签字。</td>
+			</tr>
+			<tr>
+				<td class="t1">患者签字：</td>
+				<td class="t2"><input type="text" name="patientSign"/></td>
+				<td class="t1">联系电话：</td>
+				<td class="t2"><input type="text" name="patientPhone" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">签字日期：</td>
+				<td class="t2"><input type="text" name="patientDate"/></td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">家属签字：</td>
+				<td class="t2"><input type="text" name="familySign"/></td>
+				<td class="t1">与患者关系：</td>
+				<td class="t2"><input type="text" name="frelation" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">联系电话：</td>
+				<td class="t2"><input type="text" name="familyPhone" readonly="readonly"/></td>
+				<td class="t1">签字日期：</td>
+				<td class="t2"><input type="text" name="familyDate"/></td>
+			</tr>
+			<tr>
+				<td class="t1">沟通医师签字：</td>
+				<td class="t2"><input type="text" name="doctorsign"/></td>
+				<td class="t1">签字日期：</td>
+				<td class="t2"><input type="text" name="checkDate"/></td>
+			</tr>
+	</table>
+</form>
+</body>
+</html>

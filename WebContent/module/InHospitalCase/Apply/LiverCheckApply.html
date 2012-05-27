@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>肝活病理检查申请单</title>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+	<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<style type="text/css">
+		.tx1{border-top:0px;border-left:0px;border-right:0px;border-bottom:1px solid black;}
+	</style>
+	<script type="text/javascript">
+		var KID = null;
+		var PID = null;
+		$(function(){
+			KID=App.util.getHtmlParameters('kid');
+			PID=App.util.getHtmlParameters('pid');
+			$('input[name="patientId"]').val(PID);
+			$('input[name="historyCaseId"]').val(KID);
+			$('input[name="id"]').val(App.util.getHtmlParameters('this'))
+			initPage();
+		});
+	
+		function initPage(){
+			registrationPageHead(KID,'肝活检病理检查申请单','#header');
+			//时间选择框
+			FormUtil.toDateField({el:$('input[name="checkDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+			FormUtil.toDateField({el:$('input[name="acceptDate"]'),dateFormat:'yyyy-MM-dd HH:mm'});
+			FormUtil.toDateField({el:$('input[name="dateOne"]'),dateFormat:'yyyy-MM-dd'});
+			FormUtil.toDateField({el:$('input[name="dateTwo"]'),dateFormat:'yyyy-MM-dd'});
+		
+			//医生字典选择
+			FormUtil.toDictSelect({
+				url:App.App_Info.BasePath+'/PUBLIC/Modaldialog/MyDoctorSelect.html',
+				showEl:$('input[name="doctorName"]')
+			});
+			//科室字典
+			$.ajax({
+				url:App.App_Info.BasePath+'/common/CommonAction.do',
+				data:{
+					method:'QueryMyBelongs',
+					timestamp:new Date().getTime()
+				},
+				async:false,
+				dataType:'json',
+				success:function(_data){
+					var _fld=$('input[name="depRoom"]');
+					_fld.data('options',_data);
+					FormUtil.toCombobox({el:_fld});
+				}
+			});
+			$('input[type="radio"]').each(function(){
+				$(this).click(function(){
+				if($(this).val()=="否"){
+					$("#binglihao").hide();
+					$("#binglitext").hide();
+					$('input[name="checkedPathobiologyNum"]').val("");
+				}else{
+					$("#binglihao").show();
+					$("#binglitext").show();
+				}
+			});
+		});
+			
+			var id =$('input[name="id"]').val();
+			if(id==-1){
+				setMainValue();
+				return;
+			}else{
+				setValue(id);
+			}
+		}
+	
+		//查询病人基本信息
+		function setMainValue(){
+			$.post(
+				App.App_Info.BasePath+'/LiverCheckApplyAction.do',
+				{
+					method:'get_Main_Info',
+					kid:KID
+				},
+				function(data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						$('input[type="text"]').each(function(){
+							$(this).val(json[this.name]);
+					});
+					}
+				},
+				'json'
+			)
+		}
+		//查询申请单信息
+		function setValue(id){
+			$.post(
+				App.App_Info.BasePath+'/LiverCheckApplyAction.do',
+				{
+					method:'get_Patient_Info',
+					id:id
+				},
+				function(data){
+					if(data.success){
+						var json = JSON.parse(data.data);
+						$('input[type="text"]').each(function(){
+							$(this).val(json[this.name]);
+						});
+						$('textarea').each(function(){
+							$(this).val(json[this.name]);
+						});
+						$('input[type="radio"]').each(function(){
+							if($(this).attr("value") == json[this.name]){
+								$(this).attr("checked",true);
+								$(this).click();
+							}
+						});
+						var dateOne = $('input[name="dateOne"]').val().replaceAll('年','-').replaceAll('月','-').substring(0,10);
+						$('input[name="dateOne"]').val(dateOne);
+						var dateTwo = $('input[name="dateTwo"]').val().replaceAll('年','-').replaceAll('月','-').substring(0,10);
+						$('input[name="dateTwo"]').val(dateTwo);
+						setMainValue();
+						FormUtil.valueTool.setComboValue($('input[name="depRoom"]'),json.depRoom);
+					}
+				},
+				'json'
+			)
+		}
+	
+		//保存和修改信息
+		function SaveData(){
+			var checkDate=$('input[name="checkDate"]').val();
+			var doctorName=$('input[name="doctorName"]').val();
+			if(checkDate==""){
+				alert("送检日期项不能为空");
+				return;
+			}
+			if(doctorName==""){
+				alert("送检医师项不能为空");
+				return;
+			}
+			var data=JSON.stringify(FormUtil.getFormValues('form'));
+			var id = $('input[name="id"]').val();	
+			$.post(
+				App.App_Info.BasePath+'/LiverCheckApplyAction.do',
+				{
+					method:'saveOrUpdate',
+					data:data,
+					id:id
+				},
+				function(data){
+					$('input[name="id"]').val(data.id);
+					alert("保存成功");
+					parent.createIndex();
+				},
+				'json'
+			)
+		}
+	
+		//删除一条信息
+		function deleteData(){
+			var id=$('input[name="id"]').val();
+			if(id=="-1"){
+				alert("请保存后再删除");
+				return;
+			}
+			var yrn = confirm("确定删除嘛？");
+			if(!yrn){
+				return;
+			}
+			var data = JSON.stringify(FormUtil.getFormValues('form'));
+			$.post(
+				App.App_Info.BasePath+'/LiverCheckApplyAction.do',
+				{
+					method:'deleteData',
+					data:data
+				}
+			)
+			parent.location.reload();
+		}
+		function print(){
+			var id=$('input[name="id"]').val();
+			if(id=="-1"){
+				alert('请先保存数据后再打印。');
+				return;
+			}
+			window.open(App.App_Info.BasePath+
+			'/module/InHospitalCase/Apply/print/LiverCheckApplyPrint.html?id='+id+'&&'+'kid='+KID);
+		}
+	</script>
+</head>
+<body>
+	<div id="header" style="width:600px;position:relative;"></div>
+	<form>
+		<input type="hidden" name="id" value="-1"/>
+		<input type="hidden" name="patientId"/>
+		<input type="hidden" name="historyCaseId"/>
+		<table width="750" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="120">姓名：</td>
+				<td class="t2" width="255"><input type="text" name="patientName" readonly="readonly"/></td>
+				<td class="t1" width="120">&nbsp;</td>
+				<td class="t2" width="255">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">性别：</td>
+				<td class="t2"><input type="text" name="gender" readonly="readonly"/></td>
+				<td class="t1">年龄：</td>
+				<td class="t2"><input type="text" name="age" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td class="t1">职业：</td>
+				<td class="t2"><input type="text" name="career" readonly="readonly"/></td>
+				<td class="t1">科室：</td>
+				<td class="t2"><input class="select" type="text" name="depRoom" style="width:150px;"/></td>
+			</tr>
+			<tr>
+				<td class="t1">住院号：</td>
+				<td class="t2"><input type="text" name="hosNum" readonly="readonly"/></td>
+				<td class="t1">病理号：</td>
+				<td class="t2"><input type="text" name="pathobiologyNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1">电话：</td>
+				<td class="t2"><input type="text" name="phoneNum" readonly="readonly"/></td>
+				<td class="t1">收到日期：</td>
+				<td class="t2"><input type="text" name="acceptDate"/></td>
+			</tr>
+			<tr>
+				<td class="t1">饮酒：</td>
+				<td class="t2"><input style="width:50px" type="text" name="drinkYear"/>年,每日<input style="width:55px" type="text" name="everyDayGram"/>克</td>
+				<td class="t1">&nbsp;</td>
+				<td class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">是否做过病理检查：</td>
+				<td class="t2">
+					<input type="radio" name="benWaiYuan" value="否" checked="checked"/>否
+					<input type="radio" name="benWaiYuan" value="外院"/>外院
+					<input type="radio" name="benWaiYuan" value="本院"/>本院
+				</td>
+				<td class="t1" id="binglihao" style="display: none">病理号：</td>
+				<td class="t2" id="binglitext"style="display: none"><input type="text" name="checkedPathobiologyNum"/></td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">肝病史简介(体征)：</td>
+				<td class="t2" colspan="3" width="630">
+					<textarea class="textarea" name="liverHistory" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">家族史：</td>
+				<td class="t2" colspan="3" width="630">
+					<textarea class="textarea" name="familyHistory" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">手术史：</td>
+				<td class="t2" colspan="3" width="630">
+					<textarea class="textarea" name="operationHistory" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">输血史：</td>
+				<td class="t2" colspan="3" width="630">
+					<textarea class="textarea" name="bloodHistory" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">用药史：</td>
+				<td class="t2" colspan="3" width="630">
+					<textarea class="textarea" name="drugHistory" style="width:98%"></textarea>
+				</td>
+			</tr>
+		</table>
+		<table width="750" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr><td class="t1" colspan="12" style="text-align:left">肝功能检查(肝穿同期)</td></tr>
+			<tr>
+				<td width="90" class="t1" style="text-align:center">日期</td>
+				<td width="110" class="t1" style="text-align:center">ALT</td>
+				<td width="110" class="t1" style="text-align:center">AST</td>
+				<td width="110" class="t1" style="text-align:center">ALP</td>
+				<td width="110" class="t1" style="text-align:center">GGT</td>
+				<td width="110" class="t1" style="text-align:center">TBIL</td>
+				<td width="110" class="t1" style="text-align:center">DBIL</td>
+			</tr>
+			<tr>
+				<td class="t2"><input style="width:95px" type="text" name="dateOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="altOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="astOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="alpOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="ggtOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="tbilOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="dbilOne"/></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td class="t1" style="text-align:center">TBA</td>
+				<td class="t1" style="text-align:center">A</td>
+				<td class="t1" style="text-align:center">G</td>
+				<td class="t1" style="text-align:center">PTA</td>
+				<td class="t1" style="text-align:center">其他</td>
+				<td class="t1">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">&nbsp;</td>
+				<td class="t2"><input style="width:95px" type="text" name="tbaOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="asOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="gsOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="ptaOne"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="otherOne"/></td>
+				<td class="t1">&nbsp;</td>
+			</tr>
+			
+			<tr>
+				<td class="t1" style="text-align:center">日期</td>
+				<td class="t1" style="text-align:center">ALT</td>
+				<td class="t1" style="text-align:center">AST</td>
+				<td class="t1" style="text-align:center">ALP</td>
+				<td class="t1" style="text-align:center">GGT</td>
+				<td class="t1" style="text-align:center">TBIL</td>
+				<td class="t1" style="text-align:center">DBIL</td>
+			</tr>
+			<tr>
+				<td class="t2"><input style="width:95px" type="text" name="dateTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="altTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="astTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="alpTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="ggtTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="tbilTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="dbilTwo"/></td>
+			</tr>
+			<tr>
+				<td class="t1">&nbsp;</td>
+				<td class="t1" style="text-align:center">TBA</td>
+				<td class="t1" style="text-align:center">A</td>
+				<td class="t1" style="text-align:center">G</td>
+				<td class="t1" style="text-align:center">PTA</td>
+				<td class="t1" style="text-align:center">其他</td>
+				<td class="t1">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">&nbsp;</td>
+				<td class="t2"><input style="width:95px" type="text" name="tbaTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="asTow"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="gsTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="ptaTwo"/></td>
+				<td class="t2"><input style="width:95px" type="text" name="otherTwo"/></td>
+				<td class="t1">&nbsp;</td>
+			</tr>
+		</table>
+		<table width="750" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" style="text-align:left" colspan="6">病毒标志物血清检查:</td>
+			</tr>
+				<tr>
+					<td width="120" class="t1">HBsAg：</td>
+					<td width="130" class="t2"><input type="text" name="hbsag" style="width:87%"/></td>
+					<td width="120" class="t1">HBsAb：</td>
+					<td width="130" class="t2"><input type="text" name="hbsab" style="width:87%"/></td>
+					<td width="120" class="t1">HBeAg：</td>
+					<td width="130" class="t2"><input type="text" name="hbeag" style="width:87%"/></td>
+				</tr>
+			<tr>
+				<td class="t1">HBeAb：</td>
+				<td width="130" class="t2"><input type="text" name="hbeab" style="width:87%"/></td>
+				<td class="t1">HBcAb：</td>
+				<td width="130" class="t2"><input type="text" name="hbcab" style="width:87%"/></td>
+				<td class="t1">Pre-S1Ag：</td>
+				<td width="130" class="t2"><input type="text" name="pres1ag" style="width:87%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">HBVDNA：</td>
+				<td width="130" class="t2"><input type="text" name="hbvdna" style="width:87%"/></td>
+				<td class="t1">抗HBc-IgM：</td>
+				<td width="130" class="t2"><input type="text" name="khbclgm" style="width:87%"/></td>
+				<td class="t1">抗HAV-IgM：</td>
+				<td width="130" class="t2"><input type="text" name="khavlgm" style="width:87%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">&nbsp;&nbsp;&nbsp;抗HAV-IgG：</td>
+				<td width="130" class="t2"><input type="text" name="khavlgg" style="width:87%"/></td>
+				<td class="t1">抗HCV-IgM：</td>
+				<td width="130" class="t2"><input type="text" name="khcvlgm" style="width:87%"/></td>
+				<td class="t1">抗HCV-IgG：</td>
+				<td width="130" class="t2"><input type="text" name="khcvlgg" style="width:87%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">HCVRNA：</td>
+				<td width="130" class="t2"><input type="text" name="hcvrna" style="width:87%"/></td>
+				<td class="t1">HDV：</td>
+				<td width="130" class="t2"><input type="text" name="hdv" style="width:87%"/></td>
+				<td class="t1">抗HEV-IgM：</td>
+				<td width="130" class="t2"><input type="text" name="khevlgm" style="width:87%"/></td>
+			</tr>
+			<tr>
+				<td class="t1">抗HEV-IgG：</td>
+				<td width="130" class="t2"><input type="text" name="khevlgg" style="width:87%"/></td>
+				<td class="t1">&nbsp;</td>
+				<td width="130" class="t2">&nbsp;</td>
+				<td class="t1">&nbsp;</td>
+				<td width="130" class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="6" style="text-align:left">非嗜肝病毒:</td>
+			</tr>
+			<tr>
+				<td class="t1">EBV：</td>
+				<td width="130" class="t2"><input type="text" name="ebv" style="width:87%"/></td>
+				<td class="t1">CMV：</td>
+				<td width="130" class="t2"><input type="text" name="cmv" style="width:87%"/></td>
+				<td class="t1">&nbsp;</td>
+				<td width="130" class="t2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">其他：</td>
+				<td class="t2" colspan="5" width="630">
+					<textarea class="textarea" name="virusOther" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">自身抗体：</td>
+				<td class="t2" colspan="5" width="630">
+					<textarea class="textarea" name="antibody" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">肿瘤标志物：</td>
+				<td class="t2" colspan="5" width="630">
+					<textarea class="textarea" name="liverSing" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" valign="top">血脂：</td>
+				<td class="t2" colspan="5" width="630">
+					<textarea class="textarea" name="bloodFat" style="width:98%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="t1" colspan="6" style="text-align:left">肝移植专填内容:</td>	
+			</tr>
+		    <tr>
+		    	<td class="t1" valign="top">原发肝病病理诊断:</td>
+		    	<td class="t2" colspan="5" width="630">
+		    		<textarea class="textarea" name="liverDiagnose" style="width:98%"></textarea>
+		    	</td>
+		    </tr>
+		    <tr>
+		    	<td class="t1" valign="top">血药浓度：</td>
+		    	<td class="t2" colspan="5" width="630">
+		    		<textarea class="textarea" name="concentration" style="width:98%"></textarea>
+		    	</td>
+		    </tr>
+		    <tr>
+		    	<td class="t1" colspan="6" style="text-align:left">B超结果：</td>
+		    </tr>
+		    <tr>
+		    	<td class="t1">肝脏：</td>
+		    	<td class="t2" colspan="5" width="630">左叶厚<input class="tx1"style="width:60px"type="text" name="liverDeep"/>cm,左叶长<input class="tx1"style="width:60px"type="text" name="liverLength"/>cm,右叶斜<input class="tx1"style="width:60px"type="text" name="liverSlope"/>cm</td>
+		    </tr>
+		    <tr>
+		    	<td class="t1">&nbsp;</td>
+		    	<td class="t2" colspan="5" width="630">门静脉内径<input class="tx1"style="width:60px"type="text" name="inside"/>cm,肝回声<input class="tx1"style="width:60px"type="text" name="liverReecho"/>,肝占位<input class="tx1"style="width:60px"type="text" name="liverOccupy"/>(大小<input class="tx1" style="width:60px"type="text" name="occupySize"/>cm)</td>
+		    </tr>
+		    <tr>
+		    	<td class="t1">脾脏：</td>
+		    	<td class="t2" colspan="5" width="630">厚<input class="tx1"style="width:60px"type="text" name="spleenDeep"/>cm,长<input class="tx1"style="width:60px"type="text" name="spleenLength"/>cm,脾静脉内径<input class="tx1"style="width:60px"type="text" name="spleenInside"/>cm,其他<input class="tx1" type="text" name="spleenOther"/></td>
+		    </tr>
+		    <tr>
+		    	<td class="t1" valign="top">其他影像学结果：</td>
+		    	<td class="t2" colspan="5" width="630"><textarea class="textarea" name="imageResult" style="width:98%"></textarea></td>
+		    </tr>
+		    <tr>
+		    	<td class="t1" valign="top">临床诊断：</td>
+		    	<td class="t2" colspan="5" width="630"><textarea class="textarea" name="clinicalDiagnosis" style="width:98%"></textarea></td>
+		    </tr>
+		    <tr>
+		    	<td class="t1">送检医师：</td>
+		    	<td class="t2"><input type="text" name="doctorName"/></td>
+		    	<td class="t1">送检时间：</td>
+		    	<td class="t2"><input type="text" name="checkDate"/></td>
+		    	<td class="t2" colspan="2">&nbsp;</td>
+		    </tr>		
+	</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>尿液变化</title>
+<link type="text/css" rel="stylesheet" href="cssJs/case.css" />
+<script language="javascript">
+	function closeWindow(){
+		var _values = new Array();
+			_values[0] = document.getElementById("pissColorChange").value;
+			_values[1] = document.getElementById("pissVolumnChange").value;
+			_values[2] = document.getElementById("pissVolumnPtime").value;
+		var _sum="";	
+			for(var i=0;i<_values.length;i++){
+				if(_values[i]!=""){
+					_sum +=_values[i]+",";
+				}
+			}
+			
+			//查询最后一个','的下标位置
+			var _num = _sum.lastIndexOf(",");
+			//从第0个下标开始截取长度为_num的字符串
+			_sum = _sum.slice(0,_num);
+			window.returnValue = _sum;
+			window.close();
+	}
+</script>
+</head>
+
+<body>
+	<table width="511" align="center" border="0" cellpadding="2" cellspacing="0" class="myTable">
+  <tr>
+  		<td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+        <td width="92" align="right">尿色变化：</td>
+        <td width="114">
+            <select name="pissColorChange" id="pissColorChange">
+                <option value=""></option>
+                <option value="深黄色尿">深黄色尿</option>
+                <option value="淡茶水色尿">淡茶水色尿</option>
+                <option value="浓茶水色尿">浓茶水色尿</option>
+                <option value="暗红色尿">暗红色尿</option>
+                <option value="咖啡色尿">咖啡色尿</option>
+                <option value="奶白色尿">奶白色尿</option>
+                <option value="间断血尿">间断血尿</option>
+                <option value="全程血尿">全程血尿</option>
+                <option value="不变">不变</option>
+            </select>
+        </td>
+        <td width="97" align="right">尿量变化：</td>
+        <td width="192">
+            <select name="pissVolumnChange" id="pissVolumnChange">
+                <option value=""></option>
+                <option value="无变化">无变化</option>
+                <option value="多尿">多尿</option>
+                <option value="少尿">少尿</option>
+            	<option value="无尿">无尿</option>
+            </select>
+        </td>
+  </tr>
+  <tr>
+        <td align="right">总量(ml/天)：</td>
+        <td colspan="3"><input type="text" name="pissVolumnPtime" id="pissVolumnPtime"  /></td>
+  </tr>
+  <tr>
+  		<td colspan="4" align="center">
+        	<input type="button" value="确定" name="ok" id="ok" onclick="closeWindow()"/>
+        </td>
+  </tr>
+</table>
+</body>
+</html>

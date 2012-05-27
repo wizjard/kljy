@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>专科检查(外科)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../Liver/Js/validData.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-surgery-SpecialExamination';
+var KID=null;
+var PID=null;
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-surgery-SpecialExamination'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//下拉框
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Text2Checkbox
+	$('input.checkbox[type="text"]').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//Radio事件
+	RadioClick();
+	//checkbox事件
+	$('input[type="checkbox"]').filter(function(){
+		return $(this).parent().parent().next().hasClass('hidden');
+	}).click(function(){
+		if(this.checked){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+}
+//radio事件
+function RadioClick(){
+	//Show&Hide
+	var radios='eyes_jiaomo,eyes_tongkong,eyes_zhijie,eyes_jianjie,'+
+			   'ear_erkuo,nose_waiguan,fei_huxiyin,zhouweixg_zheng,'+
+			   'shengzhiqi,shenjing_xijian,shenjing_genjian,shenjing_jili,shenjing_jizhang';
+	$.each(radios.split(','),function(){
+		$('input[name="'+this+'"]').click(function(){
+			if(this.value==1){
+				$(this).parent().parent().next().show();
+			}else{
+				$(this).parent().parent().next().hide();
+			}
+		});
+	});
+	//心尖搏动位置
+	$('input[name="xinz_bodongPosi"]').click(function(){
+		if(this.value==1){
+			$(this).parent().find('span').show();
+		}else{
+			$(this).parent().find('span').hide();
+		}
+	});
+	//肌力、肌张力
+	$('input[name="shenjing_jili"],input[name="shenjing_jizhang"]').click(function(){
+		if(this.value==1){
+			$(this).parent().parent().next().show();
+			$(this).parent().parent().next().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+			$(this).parent().parent().next().next().hide();
+		}
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/SurgeryCaseAction.do',
+		{
+			method:'se_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					$('input[type="checkbox"]').each(function(){
+						if(this.name&&this.name.length>0){
+							if(_json[this.name]==1){
+								$(this).attr('checked',true);
+								$(this).parent().parent().next().show();	
+							}else{
+								$(this).attr('checked',false);
+							}
+						}
+					});
+					var radios='eyes_jiaomo,eyes_tongkong,eyes_zhijie,eyes_jianjie,'+
+					   'ear_erkuo,nose_waiguan,fei_huxiyin,zhouweixg_zheng,'+
+					   'shengzhiqi,shenjing_xijian,shenjing_genjian,shenjing_jili,'+
+					   'shenjing_jizhang,xinz_bodongPosi,shenjing_jili,shenjing_jizhang';
+					 $.each(radios.split(','),function(){
+					 	$('input[name="'+this+'"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					 });
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var _values=FormUtil.getFormValues('form');
+	$('input[type="checkbox"]').each(function(){
+		if(this.name&&this.name.length>0){
+			if(this.checked){
+				_values[this.name]=1;
+			}else{
+				_values[this.name]=0;
+			}
+		}
+	});
+	if(ValidForm(_values,'form')== false)	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/SurgeryCaseAction.do',
+		{
+			method:'se_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+<style type="text/css">
+body{
+	margin:0 0 50px;
+}
+fieldset{
+	display:block;
+	width:600px;
+	margin:5px 0 0 5px;
+	padding:5px 0;
+}
+fieldset legend{
+	font-size:14px;
+	color:#800040;
+}
+.textarea{
+	width:92%;
+	height:50px;
+}
+h1{
+	font-size:14px;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	padding-left:1em;
+}
+.red{color:red}
+</style>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！&nbsp;&nbsp;带“□”不选默认为“阴性”。</span></p>
+<!--腹部-->
+<fieldset>
+	<legend>腹部</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr><td colspan="4"><h1>视诊</h1></td></tr>
+		<tr>
+			<td class="t1" width="100"><span class="red">*&nbsp;</span>外形：</td>
+			<td class="t2" colspan="3">
+				<input name="fubu_waixing" type="text" class="checkbox" style="width:80%"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>腹式呼吸：</td>
+			<td class="t2" width="195">
+				<input name="fubu_huxi" value=0 type="radio" class="radio" checked="checked"/>存在
+				<input name="fubu_huxi" value=1 type="radio" class="radio"/>消失
+			</td>
+			<td class="t1" width="100"><span class="red">*&nbsp;</span>腹壁静脉曲张：</td>
+			<td class="t2">
+				<input name="fubu_jingmai" value=0 type="radio" class="radio" checked="checked"/>无
+				<input name="fubu_jingmai" value=1 type="radio" class="radio"/>有
+			</td>
+		</tr>
+		<tr>
+			<td class="t1">其它异常：</td>
+			<td class="t2" colspan="3"><input name="fubu_shizhen_o" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_shizhen_oDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>触诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>腹壁：</td>
+			<td class="t2"><input name="fubu_fubi" type="text" class="select"/><br/>
+						   <input name="fubu_fubi0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>肌紧张：</td>
+			<td class="t2"><input name="fubu_jijzh" type="text" class="select"/><br/>
+						   <input name="fubu_jijzh0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>压痛：</td>
+			<td class="t2"><input rel="fubu_jijzh" name="fubu_yatong" type="text" class="select"/><br/>
+						   <input name="fubu_yatong0" type="text" class="text hidden"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>反跳痛：</td>
+			<td class="t2"><input rel="fubu_jijzh" name="fubu_fantt" type="text" class="select"/><br/>
+						   <input name="fubu_fantt0" type="text" class="text hidden"/></td>
+		</tr>
+		<tr>
+			<td class="t1">包块：</td>
+			<td class="t2" colspan="3"><input name="fubu_baokuai" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_baokuaiDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>液波震颤：</td>
+			<td class="t2"><input name="fubu_yebo" value=0 type="radio" class="radio" checked="checked"/>无
+				<input name="fubu_yebo" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1"><span class="red">*&nbsp;</span>振水音：</td>
+			<td class="t2"><input name="fubu_zhenshui" value=0 type="radio" class="radio" checked="checked"/>无
+							<input name="fubu_zhenshui" value=1 type="radio" class="radio"/>有</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>Murphy's征：</td>
+			<td class="t2" colspan="3"><input name="fubu_murphy" type="radio" class="radio dict-fld" checked="checked"></td>
+		</tr>
+		<tr>
+			<td class="t1">肝脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_ganzang" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_ganzangDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">胆囊：</td>
+			<td class="t2" colspan="3"><input name="fubu_dannang" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_dannangDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">脾脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_pi" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_piDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="t1">肾脏：</td>
+			<td class="t2" colspan="3"><input name="fubu_shen" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_shenDesc" class="textarea"></textarea></td>
+		</tr>
+		<tr><td colspan="4"><h1>叩诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肝浊音界：</td>
+			<td class="t2"><input name="fubu_ganzhuo" type="radio" class="radio dict-fld" checked="checked"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>肝上界：</td>
+			<td class="t2">位于右锁骨中线第<input name="fubu_ganshangjie" type="text" class="text" style="width:50px;"/>肋间</td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肝区叩痛：</td>
+			<td class="t2"><input name="fubu_ganqukt" value=0 type="radio" class="radio" checked="checked"/>无
+							<input name="fubu_ganqukt" value=1 type="radio" class="radio"/>有</td>
+			<td class="t1"><span class="red">*&nbsp;</span>肾区叩痛：</td>
+			<td class="t2"><input rel="ear_rutu" name="fubu_shenkt" type="radio" class="radio dict-fld" checked="checked"/></td>
+		</tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>移动性浊音：</td>
+			<td class="t2"><input rel="fubu_murphy" name="fubu_yidong" type="radio" class="radio dict-fld" checked="checked"/></td>
+			<td class="t1"><span class="red">*&nbsp;</span>腹水：</td>
+			<td class="t2"><input name="fubu_fushui" type="radio" class="radio dict-fld" checked="checked"/></td>
+		</tr>
+		<tr><td colspan="4"><h1>听诊</h1></td></tr>
+		<tr>
+			<td class="t1"><span class="red">*&nbsp;</span>肠鸣音：</td>
+			<td class="t2"><input name="fubu_changming" type="text" class="text" style="width:50px"/>次/分</td>
+			<td class="t1"><span class="red">*&nbsp;</span>气过水声：</td>
+			<td class="t2"><input name="fubu_qishui" value=0 type="radio" class="radio" checked="checked"/>无
+							<input name="fubu_qishui" value=1 type="radio" class="radio"/>有</td>
+		</tr>
+		<tr>
+			<td class="t1">血管杂音：</td>
+			<td class="t2" colspan="3"><input name="fubu_xueguan" type="checkbox"></td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>
+			<td class="t2" colspan="3"><textarea name="fubu_xueguanDesc" class="textarea"></textarea></td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset>
+	<legend>其它专科检查</legend>
+	<table width="100%" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="100">&nbsp;</td>
+			<td class="t2">
+				<textarea name="specialExamOther" class="textarea"></textarea>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+</form>
+</body>
+</html>

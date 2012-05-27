@@ -1,0 +1,564 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>肝病功能评估</title>
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/reportHeader.js"></script>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			childPushScore();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+</script>
+<style type="text/css">
+	.check_mark{
+		font-size:14px;
+		color:#800040;
+	}
+	.check_mark2{
+		font-size:10px;
+		color:#800040;
+	}
+	.textarea{
+		width:90.5%;
+	}
+</style>
+</head>
+<body>
+<form id="form">
+	<table width="700" height="100%" border="0" cellpadding="0" cellspacing="1" style="font-size:14px">
+	    <tr>
+		    <td valign="top">
+		       <div id="liverEstimate" style="margin:3px 0 3px 0;width:690px">
+        	  		<fieldset>
+          		   		<legend><p class="check_mark">肝功能评分</p></legend>
+          		   		
+          		   		<fieldset>
+          		   		<legend><p class="check_mark2">ChildPush分级</p></legend>
+          		   		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+					     	<tr>
+						       <td width="120" class="t1">肝性脑病(期)：</td>
+						       <td width="205" class="t2">
+						           <select name="hepaticEp" class="input" id="hepaticEp" style="width:120px" onChange="ChildPushScore(this)">
+						               <option value=""></option>
+						               <option value="1">无</option>
+						               <option value="2">1</option>
+						               <option value="2">2</option>
+						               <option value="3">3</option>
+						               <option value="3">4</option>
+						           </select>
+					            </td>
+					            <td width="120" class="t1">腹水：</td>
+					            <td width="205">
+					                <select name="ascites" class="input" id="ascites" style="width:120px" onChange="ChildPushScore(this)">
+					                  	<option value=""></option>
+					                  	<option value="1">无</option>
+					                  	<option value="2">轻度</option>
+					                  	<option value="3">中度</option>
+					                </select>
+					            </td>
+			            	</tr>
+		            		<tr>
+					            <td class="t1">胆红素(μmol/L)：</td>
+						        <td>
+						           <select name="bilirubin" class="input" id="bilirubin" style="width:120px" onChange="ChildPushScore(this)">
+						              <option value=""></option>
+						              <option value="1">&lt;34.2</option>
+						              <option value="2">34.2-51.3</option>
+						              <option value="3">&gt;51.3</option>
+						           </select>
+						        </td>
+					            <td align="right" class="t1">白蛋白(g/L)：</td>
+						        <td>
+						            <select name="albumin" class="input" id="albumin" style="width:120px" onChange="ChildPushScore(this)">
+						               <option value=""></option>
+						               <option value="3">&lt;28</option>
+						               <option value="2">28-35</option>
+						               <option value="1">&gt;35</option>
+						            </select>
+						         </td>
+		            		</tr>
+				            <tr>
+				               	<td align="right" class="t1">凝血酶原时间PT(s)：</td>
+					            <td>
+						            <select name="prothrombinTime" class="input" id="prothrombinTime" style="width:120px" onChange="ChildPushScore(this)">
+							            <option value=""></option>
+							            <option value="1">&lt;4</option>
+							            <option value="2">4-6</option>
+							            <option value="3">&gt;6</option>
+						             </select>
+					             </td>
+					            <td align="right" class="t1">Child-Pugh总积分：</td>
+								<td>
+									 <input name="totalScore" type="text" id="totalScore" style="width:120px; height:20px; color:#F00" readonly/>
+								</td>
+				           </tr>
+				           <tr>
+								<td align="right" class="t1">Child-Pugh分级：</td>
+								<td>
+									<input name="scoreGrade" type="text" id="scoreGrade" style="width:120px; height:20px;" readonly/>
+								</td>
+								<td class="t1">&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+          				</table>
+          				</fieldset>
+          				
+          				<fieldset>
+          		   		<legend><p class="check_mark2">MELD/PELD评分</p></legend>
+          		   		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		            		<tr>
+		              			  <td width="120" class="t1">肌酐：</td>
+		              			  <td width="205" class="t2" >
+		              				  <input name="MELDC1" type="text" id="MELDC1" style="width:120px;"  onChange="MELDScore()"/>&nbsp;umol/L
+		              			  </td>
+				                  <td width="120" class="t1" >胆红素：</td>
+				                  <td width="205" class="t2">
+				              	     <input name="MELDC2" type="text" id="MELDC2" style="width:120px;" onChange="MELDScore()"/>&nbsp;umol/L
+				                  </td>
+		            		</tr>
+		            		<tr>
+		              			<td class="t1">INR：</td>
+		              			<td class="t2">
+		             				<input name="MELDC3" type="text" id="MELDC3" style="width:120" onChange="MELDScore()"/>
+		             			</td>
+		              			<td class="t1">病因：</td>
+				                <td class="t2">
+				                	<select name="MELDC4" id="MELDC4" style="width:120px" onChange="MELDScore()">
+				                  		<option value=""></option>
+				                  		<option value="0">胆汁淤积性</option>
+				                  		<option value="0">酒精性肝硬化</option>
+				                  		<option value="1">其它</option>
+				                	</select>
+				                </td>
+		            		</tr>
+				            <tr>
+				              	<td class="t1">结果：</td>
+				                <td class="t2">
+				              	   <input name="MELDS" type="text" id="MELDS" style="width:120px;color:#F00" readonly/>
+				                </td>
+				                <td class="t1">&nbsp;</td>
+				                <td class="t2">&nbsp;</td>
+				            </tr>
+          			</table>
+          			</fieldset>
+        		</fieldset>
+        		<fieldset>
+          			<legend><p class="check_mark">肾功能评估</p></legend>
+          			<span style="font-size:13">尿液检查</span>
+          			<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			            <tr>
+				            <td width="120" class="t1">尿量：</td>
+				            <td width="205" class="t2">
+				              	<input name="shen1" type="text" id="shen1" style="width:120"/>&nbsp;mL/d
+				            </td>
+				            <td class="t1" width="120">尿红细胞：</td>
+				            <td class="t2" width="205">
+				            	<input name="shen2" type="text" id="shen2" style="width:120px;"/>&nbsp;/HP
+				            </td>
+			            </tr>
+	            		<tr>
+				            <td class="t1"width="120">24小时尿蛋白定量：</td>
+				            <td width="175" class="t2">
+				              	  <input name="shen3" type="text" id="shen3" style="width:120" />&nbsp;mg/d
+				            </td>
+				            <td class="t1" width="120">尿渗透压：</td>
+				            <td class="t2">
+				              	<input name="shen4" type="text" id="shen4" style="width:120px;"/>
+				            </td>
+			            </tr>
+			            <tr>
+				            <td class="t1">尿液比重：</td>
+				            <td class="t2">
+				              <input name="shen5" type="text" id="shen5" style="width:120px;"/>
+				            </td>
+				            <td class="t1"><span class="label">&nbsp;</span></td>
+				            <td class="t2"><span class="label">&nbsp;</span></td>
+			            </tr>
+          	     	</table>
+	          		<span style="font-size:13">血液检查</span>
+	          		<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		               <tr>
+			                <td class="t1" width="120">血尿素氮：</td>
+			                <td width="205" class="t2">
+			              		<input name="shen6" type="text" id="shen6" style="width:120;"/> mmol/L
+			                </td>
+			                <td class="t1" width="120">血肌酐：</td>
+			                <td width="205" class="t2">
+			              	   <input name="shen7" type="text" id="shen7" style="width:120px;"/>μmol/L
+			               </td>
+		             </tr>
+		             <tr>
+			              <td class="t1">血钠：</td>
+			              <td class="t2">
+			              	  <input name="shen8" type="text" id="shen8" style="width:120px;"/> mmol/L</td>
+			              <td class="t1">血渗透压：</td>
+			              <td class="t2">
+			              	  <input name="shen9" type="text" id="shen9" style="width:120px;"/> (mOsmol)/L
+			              </td>
+		             </tr>
+		             <tr>
+			              <td class="t1">β2-微球蛋白：</td>
+			              <td class="t2">
+			              	  <input name="shen10" type="text" id="shen10" style="width:120px;"/> mg/L
+			              </td>
+			              <td class="t1">肾有效血浆流量：</td>
+			              <td class="t2">
+			              	  <input name="shen11" type="text" id="shen11" style="width:120px;"/> ml/min
+			              </td>
+		             </tr>
+		             <tr>
+		                  <td class="t1">肾小球滤过率：</td>
+		                  <td class="t2">
+		              		  <input name="shen12" type="text" id="shen12" style="width:120px;"/> ml/min
+		                  </td>
+		              	  <td class="t1">肌酐酸廓清率：</td>
+		              	  <td class="t2">
+		              		  <input name="shen13" type="text" id="shen13" style="width:120px; height:20px"/> ml/min
+		              	  </td>
+		             </tr>
+	          	</table>
+	          	<span>&nbsp;</span>
+	          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		            <tr>
+		                 <td class="t1" width="120;">肾脏指数：</td>
+		                 <td class="t2" width="530"><input name="shen14" type="text" id="shen14" style="width:120px;"/> %</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1" valign="top">超声检查：</td>
+		              	<td><textarea class="textarea" id="shen15" name="shen15"></textarea></td>
+		            </tr>
+		            <tr>
+			             <td class="t1">肝肾综合征：</td>
+			             <td class="t2">
+			              	<select name="shen16" class="input" id="shen16" style="width:120px">
+			                  	<option value=""></option>
+			                  	<option value="1">有</option>
+			                  	<option value="0">无</option>
+			                </select>
+			             </td>
+		            </tr>
+		            <tr>
+			            <td class="t1">肾功能损害程度：</td>
+			            <td class="t2">
+			              	<select name="shen17" class="input" id="shen17" style="width:120px">
+			                   <option value=""></option>
+			                   <option value="1">正常</option>
+			                   <option value="2">轻度损害</option>
+			                   <option value="3">中度损害</option>
+			                   <option value="4">重度损害</option>
+			                 </select>
+			              </td>
+		            </tr>
+		            <tr>
+			             <td class="t1" valign="top">其它评估结果：</td>
+			             <td class="t2"><textarea name="shen18" id="shen18"  class="textarea"></textarea></td>
+		            </tr>
+	          	</table>
+	        	</fieldset>
+	        	<fieldset>
+	             	<legend><p class="check_mark">心功能评估</p></legend>
+	             	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			            <tr>
+				             <td class="t1" width="120" valign="top">心电图：</td>
+				             <td class="t2" colspan="3" width="530">
+				              	<textarea name="xin1" id="xin1" class="textarea"></textarea>
+				             </td>
+			            </tr>
+			            <tr>
+			                 <td class="t1" valign="top">爬梯试验：</td>
+			                 <td colspan="3">
+			              	   <textarea name="xin2" id="xin2" class="textarea"></textarea>
+			                 </td>
+			            </tr>
+			            <tr>
+			                 <td class="t1" valign="top">阿托品试验：</td>
+			              	 <td class="t2" colspan="3">
+			              		<textarea name="xin3" id="xin3" class="textarea"></textarea>
+			                 </td>
+			            </tr>
+			            <tr>
+			                <td class="t1" valign="top">24h动态心电图：</td>
+			                <td class="t2" colspan="3">
+			                	<textarea name="xin4" id="xin4" class="textarea"></textarea>
+			              	</td>
+			            </tr>
+		            	<tr>
+			                <td class="t1" valign="top">超声检查：</td>
+			                <td class="t2" colspan="3">
+			              	   <textarea name="xin5" id="xin5" class="textarea"></textarea>
+			              </td>
+		               </tr>
+		               <tr>
+		              		<td class="t1">心衰程度：</td>
+		              		<td class="t2" colspan="3">
+		              			<input name="xin7" type="text" id="xin7" style="width:120px;"/>
+		              		</td>
+		               <tr>
+		               <tr>
+			                <td class="t1">肝心综合征：</td>
+			                <td class="t2" colspan="3">
+			                	<select name="xin6" class="input" id="xin6" style="width:120px">
+			                  		<option value=""></option>
+			                  		<option value="1">有</option>
+			                  		<option value="0">无</option>
+			                	</select>
+			                </td>
+		              </tr>
+		              <tr>
+			              <td class="t1" valign="top">其它评估结果：</td>
+			              <td class="t2" colspan="3">
+			              	<textarea name="xin8" id="xin8" class="textarea"></textarea>
+			              </td>
+		              </tr>
+	           		</table>
+	        	</fieldset>
+		        <fieldset>
+		          <legend><p class="check_mark">肺功能评估</p></legend>
+		          <table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		             <tr>
+		                <td class="t1" width="120" valign="top">胸部X线检查：</td>
+		                <td class="t2" width="530" colspan="3">
+		              	    <textarea name="fei1" id="fei1" class="textarea"></textarea>
+		                </td>
+		             </tr>
+		             <tr>
+		                <td class="t1" valign="top">肺部CT：</td>
+		                <td class="2" colspan="3">
+		                	<textarea name="fei2" id="fei2" class="textarea"></textarea>
+		                </td>
+		             </tr>
+		            <tr>
+		                <td class="t1" valign="top">肺功能呼气试验：</td>
+		                <td class="t2" colspan="3">
+		                	<textarea name="fei3" id="fei3" class="textarea"></textarea>
+		                </td>
+		            </tr>
+		            <tr>
+		            	 <td class="t1">肺衰程度：</td>
+			             <td colspan="3">
+			              	<input name="fei4" type="text" id="fei4" style="width:120px;"/>
+			              </td>
+		             </tr>
+		             <tr>
+		                 <td class="t1">肝肺综合征：</td>
+		                 <td class="t2" colspan="3">
+			              	<select name="fei5" class="input" id="fei5" style="width:120px">
+			                  <option value=""></option>
+			                  <option value="1">有</option>
+			                  <option value="0">无</option>
+			                </select>
+		                 </td>
+		             </tr>
+		             <tr>
+		                 <td class="t1" valign="top">其它评估结果：</td>
+		                 <td class="t2" colspan="3">
+		                 	<textarea name="fei6" id="fei6" class="textarea"></textarea>
+		                 </td>
+		              </tr>
+	           		</table>
+	        	</fieldset>
+		        <fieldset>
+		            <legend><p class="check_mark">神经系统功能评估</p></legend>
+		            <span style="font-size:13">特殊智力定量检查</span>
+		          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			            <tr>
+			                <td class="t1" width="120" valign="top">数学连接试验：</td>
+			                <td colspan="3" class="t2" width="530">
+			                	<textarea name="shenjing1" id="shenjing1" class="textarea"></textarea>
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="t1" width="120" valign="top">数字符号试验：</td>
+			                <td colspan="3" class="t2">
+			                	<textarea name="shenjing2" id="shenjing2" class="textarea"></textarea>
+			                </td>
+			            </tr>
+			            <tr>
+			                <td class="t1" width="120" valign="top">木块图试验：</td>
+			                <td class="t2" colspan="3">
+			                	<textarea name="shenjing3" id="shenjing3" class="textarea"></textarea>
+			                </td>
+			            </tr>
+		          	</table>
+		            <span class='groupTitle'>&nbsp;</span>
+		            <table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			            <tr>
+			                <td class="t1" width="120" valign="top">诱发电位：</td>
+			                <td class="t2" width="530" colspan="3"><textarea name="shenjing4" id="shenjing4" class="textarea"></textarea></td>
+			            </tr>
+			            <tr>
+			                <td class="t1" width="120">脑电地形图：</td>
+			                <td class="t2" colspan="3"><input name="shenjing5" type="text" id="shenjing5" style="width:90.5%;"/></td>
+			            </tr>
+			            <tr>
+			              	<td class="t1" width="120">CT：</td>
+			              	<td class="t2" colspan="3"><input name="shenjing6" type="text" id="shenjing6" style="width:90.5%;"/></td>
+			            </tr>
+			            <tr>
+			              	<td class="t1" width="120">MRI：</td>
+			              	<td colspan="3"><input name="shenjing7" type="text" id="shenjing7" style="width:90.5%;"/></td>
+			            </tr>
+			            <tr>
+			              	<td class="t1" width="120">肝昏迷：</td>
+			              	<td class="t2" colspan="3"><input name="shenjing8" type="text" id="shenjing8" style="width:90.5%;"/></td>
+			            </tr>
+			            <tr>
+			              	<td class="t1" width="120">肝昏迷分期：</td>
+			              	<td class="t2" width="175">
+				              	<select name="shenjing9" class="input" id="shenjing9" style="width:120px">
+				                  <option value=""></option>
+				                  <option value="1">Ⅰ期(前驱期)</option>
+				                  <option value="2">Ⅱ期（昏迷前期）</option>
+				                  <option value="3">Ⅲ期(昏睡期)</option>
+				                  <option value="4">Ⅳ期(昏迷期)</option>
+				                </select>
+			                </td>
+			             </tr>
+			             <tr>
+			              	<td class="t1">肝性脑病：</td>
+			              	<td class="t2" colspan="3">
+				              	<select name="shenjing10" class="input" id="shenjing10" style="width:120px">
+					                  <option value=""></option>
+					                  <option value="1">有</option>
+					                  <option value="0">无</option>
+				                </select>
+			              </td>
+			            </tr>
+			            <tr>
+			              	<td class="t1">肝性脊髓病：</td>
+			              	<td class="t2" colspan="3">
+				              	<select name="shenjing11" class="input" id="shenjing11" style="width:120px">
+				                  <option value=""></option>
+				                  <option value="1">有</option>
+				                  <option value="0">无</option>
+				                </select>
+			                </td>
+			            </tr>
+			            <tr>
+			              	<td class="t1" valign="top">其它评估结果：</td>
+			              	<td class="t2" colspan="3">
+			              		<textarea name="shenjing12" id="shenjing12" class="textarea"></textarea>
+			                </td>
+			            </tr>
+		          	</table>
+	        </fieldset>
+	        <fieldset>
+	          	<legend><p class="check_mark">凝血功能评估</p></legend>
+	          	<span style="font-size:13">常规凝血</span>
+	          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		            <tr>
+		              	<td class="t1" width="120">PT：</td>
+		              	<td class="t2" width="205">
+		              		<input name="ningxue1" type="text" id="ningxue1" style="width:120px;"/> S
+		              	</td>
+		              	<td class="t1" width="120">APTT：</td>
+		              	<td class="t2" width="205">
+		              		<input name="ningxue2" type="text" id="ningxue2" style="width:120px;height:20px"/> S
+		              	</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1" width="120">PLt：</td>
+		              	<td class="t2">
+		              		<input name="ningxue3" type="text" id="ningxue3" style="width:120px;"/> x10<sup>-9</sup>/L
+		              	</td>
+		              	<td class="t1">FIB-C：</td>
+		              	<td class="t2">
+		              		<input name="ningxue4" type="text" id="ningxue4" style="width:120px;"/> g/L
+		              	</td>
+		            </tr>
+	          	</table>
+	          	<span style="font-size:13">TEG血栓弹力图试验</span>
+	          	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		            <tr>
+		              	<td class="t1" width="120">R值：</td>
+		              	<td class="t2" width="205">
+		              		<input name="ningxue5" type="text" id="ningxue5" style="width:120px;"/> min
+		              	</td>
+		              	<td class="t1" width="120">K值：</td>
+		              	<td class="t2" width="205">
+		              		<input name="ningxue6" type="text" id="ningxue6" style="width:120px;"/> min
+		              	</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1" width="120">Angle角：</td>
+		              	<td class="t2">
+		              		<input name="ningxue7" type="text" id="ningxue7" style="width:120px;"/> deg
+		              	</td>
+		              	<td class="t1">MA值：</td>
+		              	<td class="t2">
+		              		<input name="ningxue8" type="text" id="ningxue8" style="width:120px;"/> mm
+		              	</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1">EPL值：</td>
+		              	<td class="t2">
+		              		<input name="ningxue9" type="text" id="ningxue9" style="width:120px;"/> %
+		              	</td>
+		              	<td class="t1">LY30值：</td>
+		              	<td class="t2">
+		              		<input name="ningxue10" type="text" id="ningxue10" style="width:120px;"/> %
+		              	</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1">CI指数：</td>
+		              	<td class="t2">
+		              		<input name="ningxue11" type="text" id="ningxue11" style="width:120px;"/>
+		                </td>
+		              	<td class="t1"></td>
+		              	<td class="t2">&nbsp;</td>
+		            </tr>
+		            <tr>
+		              	<td class="t1" valign="top">其它评估结果：</td>
+		              	<td class="t2" colspan="3" width="530">
+		              		<textarea name="ningxue12" id="ningxue12" class="textarea"></textarea>
+		                </td>
+		            </tr>
+	          	</table>
+	        </fieldset>
+	        <fieldset>
+	          <legend><p class="check_mark">其它系统功能评估结果</p></legend>
+	          <table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	            <tr>
+	              	<td class="t1" valign="top" width="120">评估结果：</td>
+	              	<td class="t2" colspan="3" width="530">
+	              		<textarea name="other" id="other" class="textarea"></textarea>
+	                </td>
+	            </tr>
+	          </table>
+	        </fieldset>
+      </div>
+    </td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>全部用户</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	new Ext.Viewport({
+		layout:'fit',
+		items:centerGrid()
+	});
+});
+function centerGrid(){
+	var _sm=new Ext.grid.RowSelectionModel({sigleSelect:true});
+	var _cm=new Ext.grid.ColumnModel([
+		new Ext.grid.RowNumberer(),//自动行号
+    	{header:'姓名',dataIndex:'name'},
+    	{header:'账号',dataIndex:'account'},
+		{header:'机构',dataIndex:'belong',renderer:function(value,cellMeta,record,rowIndex,colIndex,store){
+			if(value&&(value+'').length>0){
+				Ext.Ajax.request({
+					sync:true,
+					url:App.App_Info.BasePath+'/common/CommonAction.do',
+					params:{
+						method:'GetIndependentDictionaryText',
+						code:'parent_belong',
+						value:value
+					},
+					success:function(_response,_options){
+						value=_response.responseText;
+					}
+				});
+				return value;
+			}else{
+				return '';
+			}
+		}},
+    	{header:'单位',dataIndex:'belong',renderer:function(value,cellMeta,record,rowIndex,colIndex,store){
+			if(value&&(value+'').length>0){
+				Ext.Ajax.request({
+					sync:true,
+					url:App.App_Info.BasePath+'/common/CommonAction.do',
+					params:{
+						method:'GetIndependentDictionaryText',
+						code:'belong',
+						value:value
+					},
+					success:function(_response,_options){
+						value=_response.responseText;
+					}
+				});
+				return value;
+			}else{
+				return '';
+			}
+		}},
+    	{header:'角色',dataIndex:'role',renderer:function(value,cellMeta,record,rowIndex,colIndex,store){
+			if(value&&(value+'').length>0){
+				Ext.Ajax.request({
+					sync:true,
+					url:App.App_Info.BasePath+'/common/CommonAction.do',
+					params:{
+						method:'GetIndependentDictionaryText',
+						code:'role',
+						value:value
+					},
+					success:function(_response,_options){
+						value=_response.responseText;
+					}
+				});
+				return value;
+			}else{
+				return '';
+			}
+		}},
+    	{header:'生日',dataIndex:'birthday',renderer:function(value){
+			if(value&&value!='null'&&value.length>0){
+				return new Date(value.time).format('Y-m-d');
+			}else{
+				return '';
+			}
+		}},
+    	{header:'性别',dataIndex:'sex',renderer:function(value,cellMeta,record,rowIndex,colIndex,store){
+			if(value&&(value+'').length>0){
+				Ext.Ajax.request({
+					sync:true,
+					url:App.App_Info.BasePath+'/common/CommonAction.do',
+					params:{
+						method:'GetIndependentDictionaryText',
+						code:'gender',
+						value:value
+					},
+					success:function(_response,_options){
+						value=_response.responseText;
+					}
+				});
+				return value;
+			}else{
+				return '';
+			}
+		}},
+    	{header:'电话',dataIndex:'phoneNo'},
+    	{header:'邮箱',dataIndex:'email'},
+    	{header:'状态',dataIndex:'valid',renderer:function(value){
+			if(value&&value==1){
+				return '有效';
+			}else{
+				return '无效';
+			}
+		}},
+    	{header:'创建日期',dataIndex:'createDate',renderer:function(value){
+			if(typeof value=='object'){
+				return new Date(value.time).format('Y-m-d');
+			}else{
+				return '';
+			}
+		}},
+    	{header:'更新日期',dataIndex:'modifyDate',renderer:function(value){
+			if(typeof value=='object'){
+				return new Date(value.time).format('Y-m-d');
+			}else{
+				return '';
+			}
+		}}
+	]);
+	var _ds=new Ext.data.Store({
+		proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/UserAdminAction.do'}),
+		reader:new Ext.data.JsonReader({totalProperty:'total',root:'root'},
+									   [
+										{name:'id'},
+										{name:'name'},
+										{name:'account'},
+										{name:'password'},
+										{name:'role'},
+										{name:'belong'},
+										{name:'birthday'},
+										{name:'sex'},
+										{name:'phoneNo'},
+										{name:'email'},
+										{name:'selfMemo'},
+										{name:'valid'},
+										{name:'createDate'},
+										{name:'modifyDate'}
+									   ])});
+	_ds.baseParams={method:'queryAll'};
+	_ds.load({params:{start:0,limit:20}});
+	var _grid=new Ext.grid.GridPanel({
+		title:'系统用户列表',
+		id: 'grid',
+        ds: _ds,
+        cm: _cm,
+        sm: _sm,
+        autoScroll: true,
+		border:false,
+		viewConfig:{
+			forceFit:true
+		},
+		bbar: new Ext.PagingToolbar({
+            pageSize: 20,
+            store: _ds,
+            displayInfo: true,
+            displayMsg: '显示第<font color="red"> {0} </font>条' +
+            '到<font color="red"> {1} </font>条记录，' +
+            '一共<font color="red"> {2} </font>条',
+            emptyMsg: "没有记录"
+        }),
+		tbar:[
+			{
+				xtype:'textfield',
+				id:'keyword',
+				width:150,
+				emptyText:'用户姓名或账号'
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'搜索',handler:function(){
+					var _keyword=Ext.getCmp('keyword').getValue().trim();
+					if(_keyword.length==0){
+						alert('请输入搜索关键字。');
+						return;
+					}
+					var store=Ext.getCmp('grid').getStore();
+					store.baseParams={method:'search',keyword:_keyword};
+					store.load({params:{start:0,limit:20}});
+				}
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'全部用户',handler:function(){
+					var store=Ext.getCmp('grid').getStore();
+					store.baseParams={method:'queryAll'};
+					store.load({params:{start:0,limit:20}});
+				}
+			},'->',{
+				text:'刷新列表',handler:function(){
+					Ext.getCmp('grid').getStore().reload();
+				}
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'新增用户',handler:function(){
+					App.util.addNewMainTab('/module/SystemAdmin/user/UserInfo.html?id=-1','新增用户');
+				}
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'修改密码',handler:function(){
+					alert('未实现');
+				}
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'更新信息',handler:function(){
+					var _ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+					if(_ss.length==0){
+						alert('请先选择一个用户。');
+						return;
+					}
+					App.util.addNewMainTab('/module/SystemAdmin/user/UserInfo.html?id='+_ss[0].data.id,'用户信息更新');
+				}
+			},{
+				xtype:'tbseparator'
+			},{
+				text:'删除用户',handler:function(){
+					var _ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+					if(_ss.length==0){
+						alert('请先选择一个用户。');
+						return;
+					}
+					if(!confirm('确定要删除用户->'+_ss[0].data.name))
+						return;
+					Ext.Ajax.request({
+						url:App.App_Info.BasePath+'/admin/UserAdminAction.do',
+						params:{method:'delete',id:_ss[0].data.id},
+						success:function(_response,_options){
+							var _res=Ext.util.JSON.decode(_response.responseText);
+							if(_res.success){
+								alert('删除成功。');
+								Ext.getCmp('grid').getStore().reload();
+							}else{
+								alert('删除失败。');
+							}
+						}
+					});
+				}
+			}
+		]
+	});
+	return _grid;
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

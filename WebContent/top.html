@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户信息显示页面</title>
+<script type="text/javascript" src="PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="PUBLIC/Scripts/jsloader_ext.js"></script>
+
+<style type="text/css">
+body{
+	margin:0;
+}
+#topDiv{
+	position:relative;
+	background:url(topBk2.jpg) left center no-repeat;
+	height:110px;
+	border:none;
+}
+#userInfoDiv{
+	position:absolute;
+	right:80px;
+	width:370px;
+	top:10px;
+}
+#opeDiv{
+	text-align:left;
+	position:absolute;
+	width:70px;
+	right:0;
+	top:10px;
+}
+td.t1 {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: right;
+	padding-bottom: 1px;
+	color:#03488b;
+	font-weight:bold;
+	line-height:18px;
+}
+td.t2 {
+	font-size: 12px;
+	padding-top: 1px;
+	text-align: left;
+	padding-bottom: 1px;
+	border-bottom:solid #669 1px;
+	color:red;
+}
+ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+li{
+	font-size:12px;
+	line-height:20px;
+	color:blue;
+	text-decoration:underline;
+	cursor:pointer;
+}
+</style>
+<script type="text/javascript">
+function cancelLogin(){
+	if(window.confirm("您确定要退出系统吗？")){
+		$.post(
+		App.App_Info.BasePath+'/OutOrMergencyPatientAction.do',
+		{
+			method:'oneYiZhou'
+		},function(data){
+			if(data.success){
+				alert('成功退出系统。');
+				App.util.getRootWin().close();
+				//App.util.getRootWin().location.href=App.App_Info.BasePath+'/module/biomedical/member/login.jsp';
+			}else{
+				alert('退出登录失败。');
+			}
+		},'json');
+	}
+}
+
+</script>
+</head>
+<body>
+<div id="topDiv">
+	<div id="userInfoDiv">
+		<input type="hidden" id="userId">
+		<table width="100%" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+			<tr>
+				<td class="t1" width="50">姓&nbsp;名：</td>
+				<td class="t2" width="150" id="name">&nbsp;</td>
+				<td class="t1" width="50">机&nbsp;构：</td>
+				<td class="t2" id="belong1">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">账&nbsp;号：</td>
+				<td class="t2" id="account">&nbsp;</td>
+				<td class="t1">科&nbsp;室：</td>
+				<td class="t2" id="belong2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="t1">时&nbsp;间：</td>
+				<td class="t2" id="date">&nbsp;</td>
+				<td class="t1">角&nbsp;色：</td>
+				<td class="t2" id="role">&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="opeDiv">
+		<ul>
+			<li onclick="cancelLogin()">退出登录</li>
+			<li onclick="changePassword()">修改密码</li>
+			<li onclick="addToFav()">加入收藏</li>
+		</ul>
+	</div>
+	<div style="position:absolute;padding-top:72px;padding-left:200px">
+		<div style="position:absolute;padding-top:3px;padding-left:400px" class="d1" id="div1" onmouseover="clearInterval(timer)" onmouseout="timer=setInterval(mar,50)">
+		    <div class="scroll" id="scroll">
+		    	<div class="div2" id="div2">
+		    		<ul>
+		    			 <li>
+		       		 		<div id="innerCon" style="width:530px"></div>
+		       			 </li>
+		       			 
+		       		 </ul>
+		       	</div>
+		       	<div id="div3" class="div2"></div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

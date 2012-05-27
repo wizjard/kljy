@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>时间与诱因</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript">
+var itemName = App.util.getHtmlParameters('nodeText');
+var spanContent = parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan;
+var jquerObj = null;
+var otherInfo = '<input name="otherInfo" type="text" />';
+$(function(){
+	initPage();
+	if(spanContent != null){
+		spanContent = $(spanContent).html();
+		var jqueryObj = $('<div>' + spanContent + '</div>');
+		jqueryObj.appendTo($('#composeInfo'));
+		spanContent = jqueryObj.find("span").html();
+		FormUtil.setFormValues('form',JSON.parse(spanContent));
+		showOrHide(JSON.parse(spanContent));
+	}
+});
+		
+function showOrHide(json){
+	if(json.otherTimeCausesFlag == 1){
+		$('input[name="otherTimeCausesFlag"]').parent().parent().next().removeClass("hidden");
+	}else{
+		$('input[name="otherTimeCauses"]').val('');
+	}
+}	
+		
+function initPage(){
+	var dict=FormUtil.getPageDictionaryNew('EMR-liver-PresentIllnessHistory-IllThis');
+	//初始化公共字典值
+	$.each(dict,function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	//Radio初始化
+	$('input.dict-fld').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Checkbox初始化
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this)});
+	});
+	//raido显示隐藏事件
+	$('input[type="radio"]').filter(function(){
+		return $(this).parent().parent().next().attr('class')=='hidden';
+	}).each(function(){
+		$(this).click(function(){
+			var tr=$(this).parent().parent().next();
+			var val=0;
+			$('*[name="'+$(this).attr('name')+'"]').each(function(){
+				if(this.checked){
+					val=$(this).val();
+					return false;
+				}
+			});
+			if(val==0){
+				tr.hide();
+			}else{
+				tr.show();
+			}
+		});
+	});
+	$('input[name="causesFlag"]').unbind('click');
+	$('input[name="causesFlag"]').click(function(){
+		if($(this).val()==1){
+			$(this).parent().parent().next().show();
+		}else{
+			$(this).parent().parent().next().hide();
+		}
+	});
+	//确定事件
+	$('#ok-btn').click(function(){
+		var value = FormUtil.getFormValues('form');
+		var oldOperation = JSON.stringify(value);
+		var rst = "";
+		var leftInputItem = '';
+		var rightInputItem = '';
+		rst = Compose(value);	
+		if(rst.length > 0){
+			leftInputItem = '<input name="otherCauses" type="text" />';
+			rightInputItem = '<input name="otherCauses" type="text" value="，"  />';
+			if($('input[name="otherCauses"]').size() > 0){
+				$('input[name="otherCauses"]').eq(0).wrap("<div id='wrap'></div>");
+				leftInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());		
+				$('input[name="otherCauses"]').eq(1).wrap("<div id='wrap'></div>");
+				rightInputItem = $('#wrap').html();
+				$('#wrap').replaceWith($('#wrap').html());
+			}
+			rst = leftInputItem + rst + rightInputItem;
+			rst = '<span ondblclick="' + "{dbclickedSpan=$(this);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');parent.hideAidsHis();parent.symptomInfoIfr('cases_qiTaShiJian.html', itemName);}" + '" onclick="' + "{var i; for(i = 0; i < store.getCount(); i++){if(store.getAt(i).get('serialNo') == $(this).attr('name')) break;} Ext.getCmp('symptomItemList').getSelectionModel().clearSelections();if($(this).css('color') == 'red'){$('span').addClass('blackstyle');}else{Ext.getCmp('symptomItemList').getSelectionModel().selectRow(i);$('span').addClass('blackstyle');$(this).removeClass('blackstyle');$(this).addClass('redstyle');}}" + '">' + rst + '<span style="display:none">' + oldOperation + '</span>' + '</span>';
+			var iframe = parent.document.getElementById('aidsHistory');
+			iframe.contentWindow.itemValue = rst;
+			if(iframe.contentWindow.dbclickedSpan){
+				iframe.contentWindow.setReturnValue(iframe.contentWindow.dbclickedSpan);
+			}else{
+				iframe.contentWindow.setReturnValue();
+			}
+		}	
+		backToPreIllWindow();
+	});
+}
+	
+function backToPreIllWindow(){
+	parent.document.getElementById('aidsHistory').contentWindow.dbclickedSpan = null;
+	parent.hideSymptomInfoIfr();
+	parent.showAidsHis();	
+}	
+	
+function Compose(value){
+	var rst='';
+	var temp='';
+	if(value.otherTimeCausesFlag&&value.otherTimeCausesFlag!=0){
+		rst+=value.otherTimeCauses;
+	}
+	return rst;
+}
+</script>
+<style type="text/css">
+*{
+	font-size:12px;
+}
+</style>
+</head>
+<body>
+<div id="toolbar" style="text-align:right;width:800px">
+	<button class="btn" id="ok-btn">确定</button>
+	<button class="btn" id="cancel-btn" onclick="backToPreIllWindow()">取消</button>
+</div>
+<form>
+<table id="table-con" width="800" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr style="display:none">
+		<td class="t1" width="100">发病时间：</td>
+		<td class="t2" width="500"><input name="time" type="text" class="text" style="width:80px"/>
+					   <input name="timeUnit" type="text" class="select" style="width:60px"/>
+					   <input name="timeUnitSuffix" type="text" class="select" style="width:60px"/>
+		</td>
+	</tr>
+	<tr style="display:none">
+		<td class="t1" width="100">发病诱因：</td>
+		<td class="t2">
+			<input type="radio" name="causesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><input name="causes" type="text" class="checkbox" style="width:90%"/></td>
+	</tr>
+	<tr>
+		<td class="t1" width="100">其它事件：</td>
+		<td class="t2">
+			<input type="radio" name="otherTimeCausesFlag" class="radio dict-fld"/>
+		</td>
+	</tr>
+	<tr class="hidden">
+		<td class="t1">&nbsp;</td>
+		<td class="t2"><textarea name="otherTimeCauses" class="textarea"></textarea></td>
+	</tr>
+</table>
+</form>
+<div id="composeInfo" style="display:none"></div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	var caseId = App.util.getHtmlParameters('caseId');
+	var scId = App.util.getHtmlParameters('scId');
+	$(function(){
+		parent.document.getElementById(subScoreItem).height = document.body.scrollHeight;
+		$('select').change(function(){
+			getBclcStage();
+		});
+		$("#caseId").val(caseId);
+		$("#scId").val(scId);
+		initPage();
+	});
+	
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+	}
+	
+	function SaveData(){
+		var data=FormUtil.getFormValues('form');
+		parent.setIframeValue(subScoreItem, data);
+	}
+	
+	function getBclcStage(){
+		var pstIllScore = $('#pstIllScore').val();
+		var tumorStage = $('#tumorStage').val();
+		var okudaStage = $('#okudaStage').val();
+		var liverFun = $('#liverFun').val();
+		if(pstIllScore == -1 || tumorStage == -1 || okudaStage == -1 || liverFun == -1){
+			$('#bclcStage').val('');
+			return;
+		}
+		if(pstIllScore == 0){
+			if(tumorStage == 0 && okudaStage == 0){
+				if(liverFun == 0){
+					$('#bclcStage').val('StageA1(早期肝癌)');
+				}else if(liverFun == 1){
+					$('#bclcStage').val('StageA2(早期肝癌)');
+				}else if(liverFun == 2){
+					$('#bclcStage').val('StageA3(早期肝癌)');
+				}else{
+					$('#bclcStage').val('');
+				}
+			}else if(tumorStage == 1 && (okudaStage == 0 || okudaStage == 1) && (liverFun == 3 || liverFun == 4)){
+				$('#bclcStage').val('StageA4(早期肝癌)');
+			}else if(tumorStage == 2 && (okudaStage == 0 || okudaStage == 1) && (liverFun == 3 || liverFun == 4)){
+				$('#bclcStage').val('StageB(中期肝癌)');
+			}else{
+				$('#bclcStage').val('');
+			}
+		}
+		if(pstIllScore == 1 || pstIllScore == 2 || tumorStage == 3 || tumorStage == 4){
+			$('#bclcStage').val('StageC(晚期肝癌)');
+		}
+		if(pstIllScore == 3 || pstIllScore == 4 || okudaStage == 2 || liverFun == 5){
+			$('#bclcStage').val('StageD(末期肝癌)');
+		}
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<input type="hidden" name="fiag" value="Y">
+	<table width="700" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="5" style="font-size:20px;color:red;height:30px" align="center"><B>巴塞罗那（BCLC）肝癌分期系统</B></td></tr>
+		<tr>
+			<td bgcolor="#D4D4D4" align="right" width="120">PST病情评分：</td>
+			<td bgcolor="#D4D4D4" width="230">
+				<select name="pstIllScore" id="pstIllScore" style="width:190px">
+					<option value="-1"></option>
+					<option value="0">正常活动</option>
+					<option value="1">有症状，但几乎不影响下床活动</option>
+					<option value="2">白天卧床时间少于50％</option>
+					<option value="3">白天卧床时间多于50％</option>
+					<option value="4">完全卧床</option>
+				</select>
+			</td>
+			<td bgcolor="#D4D4D4" align="right" width="120">肿瘤分期：</td>
+			<td bgcolor="#D4D4D4" width="230">
+				<select name="tumorStage" id="tumorStage" style="width:190px">
+					<option value="-1"></option>
+					<option value="0">单一肿瘤</option>
+					<option value="1">3个小于3cm</option>
+					<option value="2">大，多个结节</option>
+					<option value="3">血管侵入</option>
+					<option value="4">肝外转移</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">Okuda分期：</td>
+			<td>
+				<select name="okudaStage" id="okudaStage" style="width:190px">
+					<option value="-1"></option>
+					<option value="0">I</option>
+					<option value="1">II</option>
+					<option value="2">III</option>
+				</select>
+			</td>
+			<td align="right">肝脏功能：</td>
+			<td>
+				<select name="liverFun" id="liverFun" style="width:190px">
+					<option value="-1"></option>
+					<option value="0">没有门脉高压，正常胆红素</option>
+					<option value="1">门脉高压，正常胆红素</option>
+					<option value="2">门脉高压，不正常胆红素</option>
+					<option value="3">Child-Pugh A</option>
+					<option value="4">Child-Pugh B</option>
+					<option value="5">Child-Pugh C</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#D4D4D4" align="right">BCLC分期：</td>
+			<td bgcolor="#D4D4D4" colspan="3"><input type="text" name="bclcStage" id="bclcStage" style="width:190"/></td>
+		</tr>
+    </table>
+</form>
+</body>
+</html>

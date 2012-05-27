@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+										<table width="650" border="1" cellSpacing="0" borderColorDark="#ffffff" cellPadding="2" style="font-size:14px">
+										   <tr><td colspan="6" style="font-size:20px;color:red;">格拉斯哥昏迷评分</td></tr>
+						                   <tr align="center">
+							                    <td rowspan="4" width="80"style="font-size:16px;">GCS评分</td>
+			                    			    <td height="25" width="95">检验项目</td>
+			                    			    <td width="105">检验结果</td>
+			                    			    <td width="85">积分</td>
+			                    			    <td width="80">GCS积分</td>
+											    <td width="105">GCS意义</td>
+			                    			</tr>
+		                  					<tr align="center">
+		                    					<td height="30">睁&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;眼</td>
+							                    <td >
+													<select name="openEyeResult" id="openEyeResult" style="width:95%">
+														  <option value=""></option>
+														  <option value="4">自动睁眼</option>
+														  <option value="3">呼唤睁眼</option>
+														  <option value="2">刺疼睁眼</option>
+														  <option value="1">不睁眼</option>
+													</select>
+							                    </td>
+		                    					<td><input name="openEyeScore" type="text" id="openEyeScore" style="width:95%"/></td>
+		                    					<td rowspan="3"><input name="gcsScore" type="text" id="gcsScore" style="width:95%"/></td>
+												<td rowspan="3"><input name="gcsMeaning" type="text" id="gcsMeaning" style="width:95%"/></td>
+		                  					</tr>
+						                    <tr align="center">
+						                    	<td height="30">语言反应</td>
+						                    	<td>
+													<select name="languageRespResult" id="languageRespResult" style="width:95%">
+														<option value=""></option>
+														<option value="5">回答切题</option>
+														<option value="4">回答不切题</option>
+														<option value="3">答非所问</option>
+														<option value="2">只能发音</option>
+														<option value="1">不能言语</option>
+													</select>
+						                     	</td>
+						                    	<td><input name="languageRespScore" type="text" id="languageRespScore" style="width:95%"/></td>
+						                    </tr>
+							                <tr align="center">
+							                    <td height="30">运动反应</td>
+							                    <td>
+													<select name="moveRespResult" id="moveRespResult" style="width:95%">
+														<option value=""></option>
+														<option value="6">按吩咐动作</option>
+														<option value="5">刺痛能定位</option>
+														<option value="4">刺痛能躲避</option>
+														<option value="3">刺痛肢体屈曲</option>
+														<option value="2">刺痛肢体伸展</option>
+														<option value="1">不能活动</option>
+													</select>
+							                     </td>
+							                     <td><input name="moveRespScore" type="text" id="moveRespScore" style="width:95%"/></td>
+							                 </tr>
+											</table>
+	</div>
+</form>
+</body>
+</html>

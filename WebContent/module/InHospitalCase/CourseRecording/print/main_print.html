@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>病程记录-打印</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/Lodop/CheckActivX.js"></script>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0></object>
+<link type="text/css" rel="stylesheet" href="css.css"/>
+<script type="text/javascript" src="js.js"></script>
+<script type="text/javascript">
+var _KID=null;//病历主键
+var LODOP=null;//LODOP插件
+var _start=0;//打印开始
+var _end=0;//打印结束
+var _InHspInfo=null;//住院信息
+$(function(){
+	_KID=App.util.getHtmlParameters('KID');
+	LODOP=document.getElementById("LODOP");
+	_start=App.util.getHtmlParameters('start');
+	_end=App.util.getHtmlParameters('end');
+	CheckLodop();
+	layout();
+	$('button').button();
+});
+function layout(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/CourseRecordingAction.do',
+		{
+			method:'DailyCourseRec_findAllByCaseID',
+			id:_KID
+		},
+		function(data){
+			if(data){
+				$.each(data,function(_index){
+					$('#div-content').append(layout_record(this));
+				});
+				$('#div-content p').css({'padding':0,'margin':'0','line-height':'26px','font-size':'18px'});
+				$('#div-content div').css({'line-height':'26px','font-size':'18px'});
+				if(_start&&_end){
+					$('div.record-item').each(function(_index){
+						if(!((_index+1)>=_start&&(_index+1)<=_end)){
+							$(this).css({'color':'#FFF'});
+							$(this).find('td').css({'color':'#FFF'});
+							$(this).find('p').css({'color':'#FFF'});
+						}
+					});
+				}
+			}else{
+				alert('数据初始化失败。');
+			}
+		},
+		'json'
+	);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+		{
+			method:'queryPersonalInfoByCaseID',
+			id:_KID
+		},
+		function(data){
+			if(data.success){
+				_InHspInfo=JSON.parse(data.data);
+				$(tableHeaderNode('病程记录',_InHspInfo.InHspTimes,_InHspInfo.PatientName,_InHspInfo.PatientNo).innerHTML).appendTo($('#div-header'));
+			}else{
+				alert('数据初始化失败。');
+			}
+		},
+		'json'
+	);
+}
+function layout_record(_json,_fontColor){
+	var _html='<div class="record-item">'+
+			'<table width="100%" border=0 cellspacing=0 cellpadding=0>'+
+				'<tr>'+
+					'<td width="160"><p>'+_json.time+'</p></td>'+
+					'<td width="*" align="center"><p>'+_json.title+'</p></td>'+
+					'<td width="160">&nbsp;</td>'+
+				'</tr>'+
+				'<tr>'+
+					'<td colspan="3">'+_json.content+'</td>'+
+				'</tr>'+
+				'<tr>'+
+					'<td colspan="3"><table width="100%" border=0 cellspacing=0 cellpadding=0>'+
+					'<tr><td align="right"><p>医师签字：</p></td>'+
+					'<td width="80"><p>'+getUserNameById(_json.submiter)+'</p></td>'+
+					'<td width="100"><p>'+getUserNameById(_json.checker)+'</p></td></tr></table></td>'+
+				'</tr>'+
+			'</table>'+
+		'</div>';
+	return _html;
+}
+function getUserNameById(_id){
+	var _val='';
+	if(_id&&_id>0){
+		$.ajax({
+			url:App.App_Info.BasePath+'/common/CommonAction.do',
+			data:{
+				method:'GetIndependentDictionaryText',
+				code:'userName',
+				value:_id
+			},
+			async:false,
+			dataType:'text',
+			success:function(_data){
+				_val=_data;
+			}
+		});
+	}
+	return _val;
+}
+function CreatePrintPage(){
+	LODOP.PRINT_INIT('康乐家园-电子病历-病程记录-全部打印');
+	LODOP.SET_PRINT_PAGESIZE(1,0,0,'A4');
+	if(_start&&_start>0){}else{
+		LODOP.SET_PRINT_STYLE("ItemType",1);
+		LODOP.SET_PRINT_STYLE("FontSize",17);
+		LODOP.ADD_PRINT_IMAGE(20,80,70,86,'<img width="70" height="86" src="'+App.App_Info.BasePath+'/PUBLIC/images/youanLogo.jpg"/>');
+		LODOP.SET_PRINT_STYLE("Bold",1);
+		LODOP.ADD_PRINT_TEXT(40,150,400,40,'首都医科大学附属北京佑安医院');
+		LODOP.SET_PRINT_STYLE("FontSize",9);
+		LODOP.ADD_PRINT_TEXT(70,152,400,40,'BeiJing YouAn Hospital,Capital Medical University');
+		LODOP.SET_PRINT_STYLE("FontSize",20);
+		LODOP.ADD_PRINT_TEXT(85,310,400,40,'病 程 记 录');
+		LODOP.SET_PRINT_STYLE("FontSize",9);
+		LODOP.SET_PRINT_STYLE("Bold",0);
+		LODOP.ADD_PRINT_TEXT(115,150,100,20,'第'+_InHspInfo.InHspTimes+'次住院');
+		LODOP.ADD_PRINT_TEXT(115,650,100,20,'病案号：'+_InHspInfo.PatientNo);
+		LODOP.ADD_PRINT_TEXT(100,650,100,20,'姓  名：'+_InHspInfo.PatientName);
+		LODOP.ADD_PRINT_LINE(129,80,129,750,0,1);
+		LODOP.SET_PRINT_STYLE("ItemType",2);
+		LODOP.ADD_PRINT_TEXT(115,380,100,20,'第 # 页');
+	}
+	LODOP.SET_PRINT_STYLE("ItemType",0);
+	LODOP.SET_PRINT_STYLE("FontSize",13);
+	LODOP.ADD_PRINT_HTM(130,70,660,900,$('#div-content').html());
+}
+function doPrint(){
+	CreatePrintPage();
+	LODOP.PREVIEW();
+}
+function doPrintSETUP(){
+	CreatePrintPage();
+	LODOP.PRINT_SETUP();
+}
+</script>
+</head>
+<body>
+<div id="toolbar">
+<button onclick="doPrint()">打印</button>
+</div>
+<div id="div-con">
+	<div id="div-header"></div>
+	<div id="div-content"></div>
+</div>
+</body>
+</html>

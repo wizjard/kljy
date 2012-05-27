@@ -1,0 +1,42 @@
+
+	续页：
+	
+		新增四张表：t_InHsp_InHospitalPage_ContinuePage_Sysptom
+		
+					t_InHsp_InHospitalPage_ContinuePage_Ops
+					
+					t_InHsp_InHospitalPage_ContinuePage_Ward
+					
+					t_InHsp_InHospitalPage_ContinuePage_Doctor
+					
+					
+		前台：
+		
+			新增续页打印页面：CaseHistoryIndexPage/print/be_InHp_Continue_Print.html	
+			
+			新增续页登记页面：CaseHistoryIndexPage/beInHospitalPage.html
+			
+			修改main页面函数：新增xuye()函数
+			
+			新增JS文件：be_InHp_Continue.js和FormUtil.js
+			
+			
+		后台：
+		
+			新增四个实体类：	ContinuePage_Doctor.java
+			
+							ContinuePage_Ops.java
+							
+							ContinuePage_Sysptom.java
+							
+							ContinuePage_Ward.java
+							
+			修改配置文件：新增四个实体类的配置文件
+			
+			修改Dao类方法：新增三个续页方法ContinuePage_SaveOrUpDate，ContinuePage_FindByCaseId和ContinuePage_Print。
+			
+			修改Impl类方法：实现新增三个方法
+			
+			修改Action类方法：新增ContinuePage_SaveOrUpdate，ContinuePage_FindByCaseId和ContinuePage_Print。
+			
+			新建续页实体四张表，见建表语句。				

@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>门诊记录</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="scripts/OutOrEmergencyCaseList.js"></script>
+<script type="text/javascript">
+var PID=App.util.getHtmlParameters('id');
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'border',
+		items:[
+			{
+				region:'north',
+				border:false,
+				height:23,
+				html:'<div id="PatSimInfo-DIV"></div>'
+			},{
+				title:'选择操作',
+				region:'west',
+				width:115,
+				split:true,
+				collapsible:true,
+				xtype:'treepanel',
+				autoScroll:true,
+				containerScroll:true,
+				dataUrl:'../InHospitalCase/EMR_TREE_CFG.json',
+				root:{
+					nodeType:'async',
+					text:'字典树',
+					draggable:false,
+					id:-1
+				},
+				rootVisible:false,
+				listeners:{
+					render:function(){
+						this.expandAll();
+					}
+				}
+			},Ext.apply(CaseGrid(),{
+				region:'center',
+				xtype:'grid',
+				border:true,
+				id:'case-list-grid', 
+				title:'门诊记录列表',
+				tbar:createToolbar(),
+				listeners:{
+					render:function(){
+						this.getStore().baseParams={method:'followup_findByPatientId',id:PID};
+						this.getStore().load();
+					}
+				}
+			})
+		]
+	});
+	loadPatSimInfo();
+});
+function createToolbar(){
+	return new Ext.Toolbar({items:[
+		{
+			xtype:'tbseparator'
+		},{
+			text:'刷新',
+			tooltip:'刷新当前门诊记录',
+			handler:function(){
+				Ext.getCmp('case-list-grid').getStore().reload();
+			}
+		},{
+			xtype:'tbseparator'
+		},{
+			text:'门诊病历',handler:function(){
+				FollowupReg('/module/Followup/RegisterTable/OutPatientCase.html');
+			}
+		},{
+			xtype:'tbseparator'
+		},{
+			text:'入选课题',
+			tooltip:'病人入选课题管理',
+			handler:function(){
+				App.util.addNewMainTab('/module/Research/main.html?id='+PID,'入选课题');
+			}
+		},{
+			xtype:'tbseparator'
+		},
+		'->',
+		{
+			text:'新增病历',handler:function(){
+						new Ext.Window({
+							title:'新增门诊记录',
+							closable:false,
+							frame:true,
+							autoHeight:true,
+							layout:'fit',
+							width:300,
+							buttonAlign:'center',
+							items:{
+								xtype:'form',
+								labelWidth:60,
+								labelAlign:'right',
+								bodyStyle:'padding:5px 0 0 0',
+								autoHeight:true,
+								items:[
+									{
+										xtype:'numberfield',
+										fieldLabel:'第几次门诊',
+										allowBlank:false,
+										name:'followTimes',
+										anchor:'95%',
+										value:1
+									},{
+										xtype:'textfield',
+										fieldLabel:'项目',
+										name:'followContent',
+										anchor:'95%'
+									},{
+										xtype:'datefield',
+										fieldLabel:'登记时间',
+										readOnly:true,
+										allowBlank:false,
+										format:'Y-m-d',
+										name:'comeDate',
+										anchor:'95%',
+										value:new Date()
+									},{
+										xtype:'textarea',
+										fieldLabel:'备注',
+										name:'remarkContent',
+										anchor:'95%'
+									}
+								]
+							},
+							buttons:[
+								{
+									text:'保存',handler:function(){
+										var _form=this.ownerCt.items.get(0).form;
+										if (!_form.isValid()) {
+											alert('请先完成表单内容再提交保存。');
+											return
+										};
+										var _json=_form.getValues();
+										Ext.apply(_json,{patientId:PID});
+										Ext.Ajax.request({
+											url:App.App_Info.BasePath+'/ResearchFollowupAction.do',
+											params:{
+												method:'followup_saveOrUpdate',
+												data:Ext.util.JSON.encode(_json)
+											},
+											scope:this,
+											success:function(_response){
+												if(Ext.util.JSON.decode(_response.responseText).success){
+													alert('保存成功。');
+													Ext.getCmp('case-list-grid').getStore().reload();
+													this.ownerCt.close();
+												}else{
+													alert('保存失败。');
+												}
+											}
+										});
+									}
+								},{
+									text:'关闭',handler:function(){
+										this.ownerCt.close();
+									}
+								}
+							]
+						}).show();
+					}
+		},{
+			text:'删除病历',handler:function(){
+						var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+						if(_ss.length==0||_ss.length>1){
+							alert('请选择一条记录。');
+							return;
+						}
+						
+						if(!confirm('确定要删除选中的记录？'))return;
+						Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/ResearchFollowupAction.do',
+							params:{
+								method:'followup_delete',
+								id:_ss[0].data.id
+							},
+							scope:this,
+							success:function(_response){
+								if(Ext.util.JSON.decode(_response.responseText).success){
+									alert('删除成功。');
+									Ext.getCmp('case-list-grid').getStore().reload();
+								}else{
+									alert('删除失败。');
+								}
+							}
+						});
+					}
+		},
+		{
+			text:'&nbsp;返回&nbsp;',
+			tooltip:'返回全院门诊病人列表',
+			handler:function(){
+				location.href=App.App_Info.BasePath+'/module/outPatientOrEmergencyService/AllOutOrEmergencyPatients.html';
+			}
+		}
+	]});
+}
+Do={
+	SelectionRow:function(){
+		var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+		if(_ss.length==0){
+			alert('请选择需要操作的门诊记录。');
+			return null;
+		}
+		return _ss[0];
+	},
+	PatientInfo:function(){//病人基本信息
+		App.util.addNewMainTab('/module/Patient/AllPatientInfo.html?id='+PID,'病人基本信息');
+	},
+	CourseRecord:function(is_tcm_wm){//中西医日常病程记录********************************************************按照下面修改该函数
+		
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		if(is_tcm_wm=='wm'){
+			location.href='CourseRecord/AllDailyRecrod/main.html?KID='+_record.data.id+'&PID='+PID;
+		}
+		if(is_tcm_wm=='tcm'){
+			location.href='CourseRecord/AllTcmdailyRecrod/main.html?KID='+_record.data.id+'&PID='+PID;
+		}		
+	},
+	Consultation:function(){//会诊记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		location.href='CourseRecord/Allsigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('会诊记录')
+			+'&entity=Consultation';
+	},
+	InHspRec:function(){//入院记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var _hspCfgId=_record.data.caseModuleId;
+		if(!_hspCfgId||_hspCfgId.length==0){
+			alert('病历未关联入院记录!');
+		}else{
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+				params:{
+					method:'toInHspRec',
+					caseModuleId:_hspCfgId
+				},
+				success:function(_response,_options){
+					var _res=Ext.util.JSON.decode(_response.responseText);
+					if(_res.success){
+						var _cfg=Ext.util.JSON.decode(_res.data);
+						var oldUrl = _cfg.url;	
+						var temp = oldUrl.split("/");
+						var pageName = temp[temp.length-1];
+						var index = oldUrl.length - pageName.length;
+						var newUrl = oldUrl.substr(0, index)+ "All" + pageName;	
+						location.href=App.App_Info.BasePath+newUrl+'?KID='+_record.data.id+'&PID='+PID;
+					}else{
+						alert('获取入院记录信息失败。');
+					}
+				}
+			});
+		}
+	}
+}
+function toNagaPage(){
+		var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0||_ss.length>1){
+		alert('请选择需要操作的住院记录');
+		return;
+	}
+	location.href='../../followVisit/allzhengzuangtizheng.html?id='+_ss[0].data.id+'&pname='+PID
+}
+function linkInHspRec(_cfgs,_id){
+	var _data=[];
+	Ext.each(_cfgs,function(_item){
+		_data.push([_item.code,_item.name]);
+	});
+	new Ext.Window({
+		title:'选择入院病历类型',
+		frame:true,
+		width:400,
+		closable:false,
+		closeAction:'close',
+		buttonAlign:'center',
+		autoHeight:true,
+		buttons:[
+			{
+				text:'保存',handler:function(){
+					var _val=this.ownerCt.items.get(0).items.get(0).getValue();
+					if(_val.length==0){
+						alert('必须选择入院记录的 类型');
+						return;
+					}
+					Ext.Ajax.request({
+						url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+						params:{
+							method:'updateInHspRecCfg',
+							caseModuleId:_val,
+							id:_id
+						},
+						scope:this,
+						success:function(_response,_options){
+							var _res=Ext.util.JSON.decode(_response.responseText);
+							if(_res.success){
+								alert('保存成功。');
+								Ext.getCmp('case-list-grid').getStore().reload();
+								this.ownerCt.close();
+							}else{
+								alert('保存失败。');
+							}
+						}
+					});
+				}
+			},{
+				text:'关闭',handler:function(){
+					this.ownerCt.close();
+				}
+			}
+		],
+		items:{
+			xtype:'form',
+			labelAlign:'right',
+			labelWidth:70,
+			frame:true,
+			border:false,
+			autoHeight:true,
+			items:[
+				{
+					xtype:'combo',
+					fieldLabel:'病历类型',
+					anchor:'95%',
+					name:'caseModuleId',
+					mode:'local',
+					displayField:'text',
+					valueField:'value',
+					readOnly:true,
+					allowBlank:false,
+					triggerAction:'all',
+					store:new Ext.data.SimpleStore({
+						fields:['value','text'],
+						data:_data
+					}),
+					listeners:{
+						select:function(){
+							var _value=this.getValue();
+							Ext.each(_cfgs,function(_item){
+								if(_value==_item.code){
+									this.ownerCt.items.get(1).setValue(_item.desc);
+									return false;
+								}
+							},this);
+						}
+					}
+				},{
+					xtype:'textarea',
+					fieldLabel:'病历描述',
+					anchor:'95%',
+					height:60,
+					readOnly:true
+				}
+			]
+		}
+	}).show();
+}
+function loadPatSimInfo(){
+	var _div=Ext.get('PatSimInfo-DIV');
+	if (!_div) {
+		Ext.DomHelper.append(Ext.getBody(), {
+			tag: 'div',
+			id: 'PatSimInfo-DIV'
+		});
+		_div=Ext.get('PatSimInfo-DIV');
+	}
+	_div.load({
+		url:App.App_Info.BasePath+'/module/Patient/PatSimpleInfo.jsp?id='+PID,
+		scripts:true,
+		text:'正在获取病人基本信息......'
+	});
+}
+
+
+function FollowupReg(_url){
+	var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0||_ss.length>1){
+		alert('请选择一条记录。');
+		return;
+	}
+	if(!_ss[0].data.comeDate||_ss[0].data.comeDate.length==0){
+		new Ext.Window({
+			title:'门诊登记时间',
+			closable:false,
+			frame:true,
+			autoHeight:true,
+			layout:'fit',
+			width:300,
+			buttonAlign:'center',
+			items:{
+				xtype:'form',
+				labelWidth:60,
+				labelAlign:'right',
+				bodyStyle:'padding:10px 0',
+				autoHeight:true,
+				items:[
+					{
+						xtype:'datefield',
+						fieldLabel:'登记时间',
+						readOnly:true,
+						allowBlank:false,
+						format:'Y-m-d',
+						name:'comeDate',
+						anchor:'95%'
+					}
+				]
+			},
+			buttons:[
+				{
+					text:'确定',handler:function(){
+						var _value=this.ownerCt.items.get(0).form.findField('comeDate').getRawValue();
+						if(_value.length==0){
+							alert('请先填写本次门诊登记时间。');
+							return;
+						}
+						Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/ResearchFollowupAction.do',
+							params:{
+								method:'followup_saveOrUpdate',
+								data:Ext.util.JSON.encode(Ext.apply(_ss[0].data,{comeDate:_value}))
+							},
+							scope:this,
+							success:function(_response){
+								if(Ext.util.JSON.decode(_response.responseText).success){
+									this.ownerCt.close();
+									FollowupReg(_url);
+								}else{
+									alert('登记时间保存失败。');
+								}
+							}
+						});
+					}
+				},{
+					text:'取消',handler:function(){
+						this.ownerCt.close();
+					}
+				}
+			]
+		}).show();
+	}else{
+		if(_url.indexOf('CRF')!=-1){
+			if(!(_ss[0].data.patientResearchId>0)){
+				alert('非课题随访不能登记CRF表。');
+				return;
+			}
+		}
+		location.href=App.App_Info.BasePath+_url+'?kid='+_ss[0].data.id+'&date='+_ss[0].data.comeDate+'&pid='+PID+'&rid='+_ss[0].data.patientResearchId;
+	}
+}
+</script>
+<style type="text/css">
+#PatSimInfo-DIV{
+	top:0;
+	left:0;
+	width:100%;
+	background:url(../../PUBLIC/images/label_line_bg.gif) center repeat;
+}
+.icon-none{display:none  !important}
+</style>
+</head>
+<body>
+
+</body>
+</html>

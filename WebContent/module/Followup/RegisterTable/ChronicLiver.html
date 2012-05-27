@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>慢性肝量表</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+table{
+	background:#000;
+}
+tr{
+	background:#fff;
+}
+td{
+	font-size:14px;
+	line-height:22px;
+	padding-left:2px;
+}
+p{
+	padding:0;
+	margin:0;
+	line-height:20px;
+	text-indent:1em;
+}
+</style>
+<script type="text/javascript">
+var kid=App.util.getHtmlParameters('kid');
+$(function(){
+	$('input[name="followupId"]').val(kid);
+	initPage();
+	setValue();
+});
+var array=[
+	['','在过去两周内，你有没有被腹胀困扰？'],
+	['','在过去两周内，你有没有感觉到疲乏和劳累？'],
+	['','在过去两周内，你有没有感到过身体上的疼痛？'],
+	['','在过去两周内，你每天觉得想睡觉吗？'],
+	['','在过去两周内，你经常出现腹痛吗？'],
+	['','在过去两周内，你感到气促、气短吗？'],
+	['','在过去两周内，你食欲不振、不愿吃东西有几次？'],
+	['','在过去两周内，你是否被乏力所困扰？'],
+	['','在过去两周内，你提重物时感觉到吃力？'],
+	['','在过去两周内，你为你的病担忧吗？'],
+	['','在过去两周内，你感到你的精力不足吗？'],
+	['','在过去两周内，你感到不高兴吗？'],
+	['','在过去两周内，你感到沉闷、昏昏欲睡吗？'],
+	['','在过去两周内，你为你的食欲不振感到烦恼吗？'],
+	['','在过去两周内，你容易激动吗？'],
+	['','在过去两周内，你是否出现入睡困难？'],
+	['','在过去两周内，你是否因为腹部不适感到困扰？'],
+	['','在过去两周内，你是否担心你的肝病会影响你的家庭？'],
+	['','在过去两周内，你是否出现情绪波动（情绪时好时坏）？'],
+	['','在过去两周内，你是否在晚上失眠？'],
+	['','在过去两周内，你是否出现肌肉痉挛？'],
+	['','在过去两周内，你是否担心你的症状会发展为一个很严重的问题？'],
+	['','在过去两周内，你是否出现过口干？'],
+	['','在过去两周内，你是否出现过压抑？'],
+	['','在过去两周内，你是否担心你的身体状况越来越差？'],
+	['','在过去两周内，你是否精力不能集中？'],
+	['','在过去两周内，你是否因皮肤痛痒而困扰？'],
+	['','在过去两周内，你是否经常担心你的病不可治愈？'],
+	['','在过去两周内，如果你无偿可以获得一次肝移植的机会，而且人你确定需要肝移植你会非常担心所移值脏的存活问题吗？']
+];
+function initPage(){
+	var html='';
+	$.each(array,function(i){
+		html+='<tr>'+
+				'<td>'+(i+1)+'</td>'+
+				'<td>'+this[1]+'</td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="1"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="2"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="3"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="4"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="5"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="6"/></td>'+
+				'<td align="center"><input type="checkbox" name="cl'+i+'" value="7"/></td>'+
+			'</tr>';
+		array[i][0]=='cl'+i;
+	});
+	$('table tbody').append($(html));
+	$('input[type="checkbox"]').click(function(){
+		var checked=$(this).attr('checked');
+		$('input[name="'+$(this).attr('name')+'"]').attr('checked',false);
+		if(checked){
+			$(this).attr('checked',true);
+		}else{
+			$(this).attr('checked',false);
+		}
+	});
+	$('tr').mouseover(function(){
+		$(this).css('background','#eee');
+	}).mouseout(function(){
+		$(this).css('background','#FFF');
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'ChronicLiver_findByFollowupId',
+			id:kid
+		},
+		function(data){
+			if(data.success){
+				var json=JSON.parse(data.data);
+				if(json){
+					$.each(json,function(key){
+						if(key=='id'||key=='followupId'){
+							$('input[name="'+key+'"]').val(json[key]);
+						}else{
+							$('input[name="'+key+'"]').each(function(){
+								if(this.value==json[key]){
+									$(this).attr('checked',true);
+									return false;
+								}
+							});
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){// alert($('input[name="followupId"]').val()); return;
+	var json={
+		id:$('input[name="id"]').val(),
+		followupId:$('input[name="followupId"]').val()
+	};
+	$('input[type="checkbox"][checked]').each(function(){
+		json[$(this).attr('name')]=$(this).val();
+	});
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'ChronicLiver_SaveOrUpdate',
+			data:JSON.stringify(json)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				$('input[name="id"]').val(JSON.parse(data.data)['id']);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+</script>
+</head>
+<body>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="followupId" value=""/>
+<table width="700" border="0" cellpadding="0" cellspacing="1">
+	<tr>
+	    <td colspan="9">
+	    	<p style="font-weight:bold; font-size:26px;line-height:36px;text-align:center;letter-spacing:10px;text-indent:0;">慢性肝病量表</p>
+			<p>此量表用于评测你在近两周的总体感觉，所问问题涉度病的症状、生活受影响的程度以及情绪改变</p>
+			<p>请认真阅读以下问题，针对每一个问题选择你认为最合适的答案，并在对应的框内打上钩。</p>
+			<p>选择项：1.总是如此; 2.大部分时间如此; 3.经常如此； 4.有时如此； 5。偶尔如此； 6.很少如此； 7.从来没有</p>
+		</td>
+	</tr>
+	<tr>
+		<td width="40" align="center">序号</td>
+		<td>问题</td>
+		<td width="30" align="center">1</td>
+		<td width="30" align="center">2</td>
+		<td width="30" align="center">3</td>
+		<td width="30" align="center">4</td>
+		<td width="30" align="center">5</td>
+		<td width="30" align="center">6</td>
+		<td width="30" align="center">7</td>
+	</tr>
+</table>
+</body>
+</html>

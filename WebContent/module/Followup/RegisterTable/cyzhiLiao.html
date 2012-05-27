@@ -1,0 +1,730 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>治疗及疗效评价</title>
+		<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/jsloader.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+		<script type="text/javascript"
+			src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="../../InHospitalCase/scripts/print.js"></script>
+		<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+
+		<style type="text/css">
+			td {
+				font-size: 12px;
+			}
+
+			h1 {
+				margin: 0;
+				padding: 0;
+				font-size: 14px;
+				line-height: 20px;
+			}
+
+			p {
+				padding: 0;
+				margin: 0;
+				line-height: 18px;
+				text-indent: 2em;
+			}
+			
+			.title {
+				line-height: 22px;
+				font-weight: bold;
+				font-size: 16px;
+				text-align: center;
+			}
+			
+			td.t1 {
+				line-height: 20px;
+			}
+
+			td.t2 {
+				padding-left: 20px;
+				line-height: 20px;
+			}
+			body {
+				margin-top: 0px;
+			}
+</style>
+<script language=javascript>
+	var rid=App.util.getHtmlParameters('rid');
+    var id=App.util.getHtmlParameters('id');
+	var timesText=App.util.getHtmlParameters('timesText');
+	var pid = App.util.getHtmlParameters('pid');
+	var struts = false;
+	$(function(){
+		CheckLodop(App.App_Info.BasePath+'/PUBLIC/Scripts/Lodop/');
+		
+		$('input[name="ketiId"]').val(rid);
+		$('input[name="timesText"]').val(timesText);
+		
+		setValue();
+		
+		$('#printView').click(function(){
+			/*GetPatientInfo函数参数：pid病人ID,第二个参数标题，第三个参数打印方向，第四个参数打印目标*/
+			/*如果更改标题值，请更改scripts/print.js文件中CreatePrintCRFPage()函数cfg.title判断语句的值*/
+			PrintViewCRF(GetPatientInfo(pid,'治疗方案及疗效评价表',2,'table-div'));
+		});
+	
+		$('#PRINT').click(function(){
+			PRINTCRF(GetPatientInfo(pid,'治疗方案及疗效评价表',2,'table-div'));
+		});
+		
+		$('#downLoad').click(function(){
+			$('#downLoad').attr('href', App.App_Info.BasePath + '/module/Followup/DownLoad/治疗情况及疗效评价调查表.doc');
+		});
+	});
+
+function addNewRow1(_btn){
+	var _table=_btn.parentNode.parentNode.parentNode;
+	var _html="<tr class='zhiliaoId'><td><input size=15 name='name'><input type='hidden' name='hid'value='-1'></td><td><input size=9 name='dose'></td><td><input size=9 name='yongfa'></td><td><input size=9 name='liaocheng'></td>"+
+	" <td>"+
+	"<input size=9 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+	" <td><input size=9 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp' style='cursor:pointer' onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) /></td>"+
+	"<td><input size=9 name='result'></td><td><input type='button' value='删除' onclick='deleteRow(this)'/></td></tr>";
+	$(_html).appendTo(_table);
+}
+function addNewRow(_btn){
+	var _table=_btn.parentNode.parentNode.parentNode;
+	var _html="<tr class='rengong'><td><input size=15 name='name'><input type='hidden' name='hid' value='-1'></td><td><input size=9 name='dose'></td><td><input size=9 name='yongfa'></td><td><input size=9 name='liaocheng'></td>"+
+			  " <td>"+
+	          "<input size=9 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			  " style='cursor:pointer' "+ 
+			  " onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	          "</td>"+
+	          " <td>"+
+	          "<input size=9 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			  " style='cursor:pointer' "+ 
+			  " onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	          "</td>"+
+	          "<td><input size=9 name='result'></td><td><input type='button' value='删除' onclick='deleteRow(this)'/></td></tr>";
+	$(_html).appendTo(_table);
+	
+}
+function deleteRow(_delBtn){
+	var _tr=_delBtn.parentNode.parentNode;
+	_tr.parentNode.removeChild(_tr);
+	var currentTr=_delBtn.parentElement.parentElement;
+	var inputObjs=currentTr.getElementsByTagName("input");
+	for(var i=0;i<inputObjs.length;i++){
+		if("hid"==inputObjs[i].name){
+			var id=inputObjs[i].value;
+			if(-1!=id){
+				deleteData(id);
+			}
+		}
+	}
+}
+function deleteData(rid) {
+	$.post(App.App_Info.BasePath+'/FollowReginAction.do', {method:"delZLR", id:rid}, function (data) {
+		if (data.success) {
+			alert("删除成功");
+		}else{
+			alert('删除失败')
+		}
+	}, "json");
+}
+function addMuqianNewRow(_btn){
+	var _table=_btn.parentNode.parentNode.parentNode;
+	var _html="<tr class='diagnosisId'> <td><input size=5 name='diagnosis'></td>"+
+                	" <td>"+
+	"<input size=7 type='text' name='diagnosisDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+            	"<td><input size=15 name='name'><input type='hidden' name='hid' value='-1'></td>"+
+                "<td><input size=6 name='dose'></td>"+
+            	"<td><input size=6 name='yongfa'></td>"+
+                "<td><input size=6 name='liaocheng'></td>"+
+                       	" <td>"+
+	"<input size=7 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+                               	" <td>"+
+	"<input size=7 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+                "<td><input size=9 name='result'></td><td><input type='button' value='删除' onclick='deleteRow(this)'/></td></tr>";
+	$(_html).appendTo(_table);
+}
+function showNextTr(_obj){
+		var _tr=_obj.parentNode.parentNode.nextSibling;
+		var _val=_obj.value;
+		if(_val==1){
+			_tr.style.display='block';	
+		}else{
+			_tr.style.display='none';	
+		}
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'Zhiliao_findByFollowupId',
+				id:id
+		},
+		function(data){
+			if(data.success){
+			var _data=JSON.parse(data.data)
+			if(_data!=''){
+				struts = true;
+				var json=_data[0];
+				if(json){
+					$.each(json,function(key){
+					if(key=='id'||key=='dateTime'||key=='ketiId'||key=='qitatext'||key=='timesText'){
+							$('input[name="'+key+'"]').val(json[key]);
+						}else{
+							$('input[name="'+key+'"]').each(function(){
+								if(this.value==json[key]){
+									$(this).attr('checked',true);
+									return false;
+								}
+								if(json[key]==1){
+									$(this).attr('checked',true);
+									return false;
+								}
+							});
+							
+							
+						}
+					});
+				}
+				var json1=_data[1];
+		$("input[name=\"yongyao\"]").each(function () {
+			if (this.value == json.yongyao) {
+				this.checked = true;
+				if (this.value == 1) {
+					var tr = this.parentNode.parentNode.nextSibling;
+					tr.style.display = "block";
+					for (var i = 1; i < json1.length; i++) {
+						var _table = $("#listtable1");
+						var _html = "<tr class='zhiliaoId'><td><input size=15 name='name'><input type='hidden' name='hid'value='-1'></td><td><input size=9 name='dose'></td><td><input size=9 name='yongfa'></td><td><input size=9 name='liaocheng'></td>"+
+						         	" <td>"+
+	"<input size=9 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						" <td>"+
+	"<input size=9 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						"<td><input size=9 name='result'></td><td><input type='button' value='\u5220\u9664' onclick='deleteRow(this)'/></td></tr>";
+						$(_html).appendTo(_table);
+					}
+					$("#listtable1 tr.zhiliaoId").each(function (i) {
+						if ("" != json1) {
+							var trdata = json1[i];
+							if(trdata["name"]=='null'){$(this).find("input[name=\"name\"]").val('');}else{$(this).find("input[name=\"name\"]").val(trdata["name"]);}
+							$(this).find("input[name=\"hid\"]").val(trdata["id"]);
+							if(trdata["dose"]=='null'){$(this).find("input[name=\"dose\"]").val('');}else{$(this).find("input[name=\"dose\"]").val(trdata["dose"]);}
+							if(trdata["yongfa"]=='null'){$(this).find("input[name=\"yongfa\"]").val('');}else{$(this).find("input[name=\"yongfa\"]").val(trdata["yongfa"]);}
+							if(trdata["liaocheng"]=='null'){$(this).find("input[name=\"liaocheng\"]").val('');}else{$(this).find("input[name=\"liaocheng\"]").val(trdata["liaocheng"]);}
+							if(trdata["startDate"]=='null'){$(this).find("input[name=\"startDate\"]").val('');}else{$(this).find("input[name=\"startDate\"]").val(trdata["startDate"].split(" "))[0];}
+							if(trdata["endDate"]=='null'){$(this).find("input[name=\"endDate\"]").val('');}else{$(this).find("input[name=\"endDate\"]").val(trdata["endDate"].split(" "))[0];}
+							if(trdata["result"]=='null'){$(this).find("input[name=\"result\"]").val('');}else{$(this).find("input[name=\"result\"]").val(trdata["result"]);}
+						}
+					});
+				}
+			}
+		});
+		var json2=_data[2];
+		$("input[name=\"hepatitisFlag\"]").each(function () {
+			if (this.value == json.hepatitisFlag) {
+				this.checked = true;
+				if (this.value == 1) {
+					var tr = this.parentNode.parentNode.nextSibling;
+					tr.style.display = "block";
+					for (var i = 1; i < json2.length; i++) {
+						var _table = $("#listtable2");
+						var _html = "<tr class='rengong'><td><input size=15 name='name'><input type='hidden' name='hid'value='-1'></td><td><input size=9 name='dose'></td><td><input size=9 name='yongfa'></td><td><input size=9 name='liaocheng'></td>"+
+						         	" <td>"+
+	"<input size=9 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						" <td>"+
+	"<input size=9 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						"<td><input size=9 name='result'></td><td><input type='button' value='\u5220\u9664' onclick='deleteRow(this)'/></td></tr>";
+						$(_html).appendTo(_table);
+					}
+					$("#listtable2 tr.rengong").each(function (i) {
+						if ("" != json2) {
+							var trdata = json2[i];
+						if(trdata["name"]=='null'){$(this).find("input[name=\"name\"]").val('');}else{$(this).find("input[name=\"name\"]").val(trdata["name"]);}
+							$(this).find("input[name=\"hid\"]").val(trdata["id"]);
+							if(trdata["dose"]=='null'){$(this).find("input[name=\"dose\"]").val('');}else{$(this).find("input[name=\"dose\"]").val(trdata["dose"]);}
+							if(trdata["yongfa"]=='null'){$(this).find("input[name=\"yongfa\"]").val('');}else{$(this).find("input[name=\"yongfa\"]").val(trdata["yongfa"]);}
+							if(trdata["liaocheng"]=='null'){$(this).find("input[name=\"liaocheng\"]").val('');}else{$(this).find("input[name=\"liaocheng\"]").val(trdata["liaocheng"]);}
+							if(trdata["startDate"]=='null'){$(this).find("input[name=\"startDate\"]").val('');}else{$(this).find("input[name=\"startDate\"]").val(trdata["startDate"].split(" "))[0];}
+							if(trdata["endDate"]=='null'){$(this).find("input[name=\"endDate\"]").val('');}else{$(this).find("input[name=\"endDate\"]").val(trdata["endDate"].split(" "))[0];}
+							if(trdata["result"]=='null'){$(this).find("input[name=\"result\"]").val('');}else{$(this).find("input[name=\"result\"]").val(trdata["result"]);}
+						
+						}
+					});
+				}
+			}
+		});
+		var json3=_data[3];
+		$("input[name=\"qitajibing\"]").each(function () {
+			if (this.value == json.qitajibing) {
+				this.checked = true;
+				if (this.value == 1) {
+					var tr = this.parentNode.parentNode.nextSibling;
+					tr.style.display = "block";
+					for (var i = 1; i < json3.length; i++) {
+						var _table = $("#listtable3");
+						var _html = "<tr class='diagnosisId'> <td><input size=5 name='diagnosis'></td>" + 
+													" <td>"+
+	"<input size=7 type='text' name='diagnosisDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						 "<td><input size=15 name='name'><input type='hidden' name='hid' value='-1'></td>" + "<td><input size=6 name='dose'></td>" + "<td><input size=6 name='yongfa'></td>" + "<td><input size=6 name='liaocheng'></td>" + 
+						 										" <td>"+
+	"<input size=7 type='text' name='startDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						  		 										" <td>"+
+	"<input size=7 type='text' name='endDate' class='input-text' readonly='readonly'/><img src='../../../PUBLIC/images/calendar.bmp'"+ 
+			" style='cursor:pointer' "+ 
+			" onclick=WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'}) />"+
+	"</td>"+
+						   "<td><input size=9 name='result'></td><td><input type='button' value='\u5220\u9664' onclick='deleteRow(this)'/></td></tr>";
+						$(_html).appendTo(_table);
+					}
+					$("#listtable3 tr.diagnosisId").each(function (i) {
+						if ("" != json3) {
+							var trdata = json3[i];
+							if(trdata["name"]=='null'){$(this).find("input[name=\"name\"]").val('');}else{$(this).find("input[name=\"name\"]").val(trdata["name"]);}
+							$(this).find("input[name=\"hid\"]").val(trdata["id"]);
+							if(trdata["dose"]=='null'){$(this).find("input[name=\"dose\"]").val('');}else{$(this).find("input[name=\"dose\"]").val(trdata["dose"]);}
+							if(trdata["yongfa"]=='null'){$(this).find("input[name=\"yongfa\"]").val('');}else{$(this).find("input[name=\"yongfa\"]").val(trdata["yongfa"]);}
+							if(trdata["liaocheng"]=='null'){$(this).find("input[name=\"liaocheng\"]").val('');}else{$(this).find("input[name=\"liaocheng\"]").val(trdata["liaocheng"]);}
+							if(trdata["startDate"]=='null'){$(this).find("input[name=\"startDate\"]").val('');}else{$(this).find("input[name=\"startDate\"]").val(trdata["startDate"].split(" "))[0];}
+							if(trdata["endDate"]=='null'){$(this).find("input[name=\"endDate\"]").val('');}else{$(this).find("input[name=\"endDate\"]").val(trdata["endDate"].split(" "))[0];}
+							if(trdata["result"]=='null'){$(this).find("input[name=\"result\"]").val('');}else{$(this).find("input[name=\"result\"]").val(trdata["result"]);}
+							if(trdata["diagnosis"]=='null'){$(this).find("input[name=\"diagnosis\"]").val('');}else{$(this).find("input[name=\"diagnosis\"]").val(trdata["diagnosis"]);}
+							if(trdata["diagnosisDate"]=='null'){$(this).find("input[name=\"diagnosisDate\"]").val('');}else{$(this).find("input[name=\"diagnosisDate\"]").val(trdata["diagnosisDate"]);}
+						}
+					});
+				}
+			}
+		});
+				$("input[name=\"liverDisContactFlag\"]").each(function () {
+			if (this.value == json.liverDisContactFlag) {
+				this.checked = true;
+				if (this.value == 1) {
+						var tr = this.parentNode.parentNode.nextSibling;
+					tr.style.display = "block";
+				}
+			}
+		});
+			}}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var json={
+		id:$('input[name="id"]').val(),
+		dateTime:$('input[name="dateTime"]').val(),
+		ketiId:$('input[name="ketiId"]').val(),
+		qitatext:$('input[name="qitatext"]').val(),
+		timesText:$('input[name="timesText"]').val()
+	};
+		$('input[type="checkbox"]').each(function(){
+	if(this.checked){
+		json[$(this).attr('name')]=1;
+		}
+	});
+	$('input[type="radio"]').each(function(){
+	if(this.checked){
+		json[$(this).attr('name')]=$(this).val();
+		}
+		}
+	);
+	
+	var _submit1 = [];
+	var _submit2 = [];
+	var _submit3 = [];
+	$.each($("tr.zhiliaoId"), function () {
+		var _tds = this.getElementsByTagName("td");
+		var _json = {sign:'1',name:_tds[0].getElementsByTagName("input")[0].value, rid:_tds[0].getElementsByTagName("input")[1].value, dose:_tds[1].getElementsByTagName("input")[0].value, yongfa:_tds[2].getElementsByTagName("input")[0].value, liaocheng:_tds[3].getElementsByTagName("input")[0].value, startDate:_tds[4].getElementsByTagName("input")[0].value, endDate:_tds[5].getElementsByTagName("input")[0].value, result:_tds[6].getElementsByTagName("input")[0].value};
+		_submit1.push(_json);
+	});
+	$.each($("tr.rengong"), function () {
+		var _tds = this.getElementsByTagName("td");
+		var _json = {sign:'2',name:_tds[0].getElementsByTagName("input")[0].value, rid:_tds[0].getElementsByTagName("input")[1].value, dose:_tds[1].getElementsByTagName("input")[0].value, yongfa:_tds[2].getElementsByTagName("input")[0].value, liaocheng:_tds[3].getElementsByTagName("input")[0].value, startDate:_tds[4].getElementsByTagName("input")[0].value, endDate:_tds[5].getElementsByTagName("input")[0].value, result:_tds[6].getElementsByTagName("input")[0].value};
+		_submit2.push(_json);
+	});
+		$.each($("tr.diagnosisId"), function () {
+		var _tds = this.getElementsByTagName("td");
+		var _json = {sign:'3',diagnosis:_tds[0].getElementsByTagName("input")[0].value, diagnosisDate:_tds[1].getElementsByTagName("input")[0].value, name:_tds[2].getElementsByTagName("input")[0].value, rid:_tds[2].getElementsByTagName("input")[1].value, dose:_tds[3].getElementsByTagName("input")[0].value, yongfa:_tds[4].getElementsByTagName("input")[0].value, liaocheng:_tds[5].getElementsByTagName("input")[0].value, startDate:_tds[6].getElementsByTagName("input")[0].value, endDate:_tds[7].getElementsByTagName("input")[0].value, result:_tds[8].getElementsByTagName("input")[0].value};
+		_submit3.push(_json);
+	});
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'Zhiliao_SaveOrUpdate',
+			data:JSON.stringify(json),
+			Relation1:JSON.stringify(_submit1),
+			Relation2:JSON.stringify(_submit2),
+			Relation3:JSON.stringify(_submit3)
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				document.location.reload();
+			//	var json=JSON.parse(data.data);
+			//$('input[name="id"]').val((json[0])['id']);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+		
+</script>
+	</head>
+	<body style="width:850px">
+		<input type="button" value="打印预览" id="printView"/>
+	    <input type="button" value="打印"    id="PRINT" />
+		<input type="hidden" name="id" value="" />
+		<input type="hidden" name="ketiId" value="" />
+		<input type="hidden" name="dateTime" value="" />
+		<input type="hidden" name="timesText" value=""/>&nbsp;&nbsp;
+		<a id="downLoad" href="" >治疗方案及疗效评价调查表下载</a>
+		<div id="table-div">
+			<table width="100%" border="1" id="cyz" cellpadding="0" style="font-size:12px;" cellspacing="0" class="myTable">
+				<!--  
+				<tr>
+					<th colspan="6">
+					   <p style="font-weight:bold; font-size:26px;line-height:36px;text-align:center;letter-spacing:10px;text-indent:0;">治疗方案及疗效评价表</p>
+					</th>
+				</tr>
+				-->
+				<tr>
+					<td width="24%"><p class="label">治疗方法	</p></td>
+					<td>
+						<input name="ss" type="radio" class="input-radio" value="0" checked="checked" />中医&nbsp;&nbsp;
+					</td>
+				    <td><input name="ss" type="radio" class="input-radio" value="1" />西医&nbsp;&nbsp;</td>
+				    <td><input name="ss" type="radio" class="input-radio" value="2" />中西医结合 </td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td><p class="label">治疗用药</p></td>
+					<td>
+						<input name="yongyao" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="0" checked="checked" />无
+					</td>
+				    <td>
+				        <input name="yongyao" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="1" />有
+	 				</td>
+				    <td>
+				    	<input name="yongyao" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="9" />未说明
+				    </td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				</tr>
+				<tr style="display:none">
+					<td colspan="6">
+						<table width="100%" height="20" style="font-size:12px;" border="1" align="center" cellpadding=0 cellspacing=0 id=listtable1>
+							<tr>
+								<td colspan="9" style="border-bottom: none">
+									<input type=button value="新增用药/治疗" onClick="addNewRow1(this)">
+								</td>
+							</tr>
+							<tr align=center height=20>
+								<td bgcolor=#FFFFFF style="border-bottom: none">
+									<p class="label">药物／方法名称</p>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">剂量</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">用法</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">疗程</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">起始时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">停用时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">治疗效果说明</label>
+								</td>
+								<td bgcolor=#FFFFFF style="border-bottom: none">
+									<b>&nbsp;&nbsp;</b>
+								</td>
+							</tr>
+							<tr class='zhiliaoId'>
+								<td>
+									<input size=15 name="name">
+									<input type='hidden' name='hid' value='-1'>
+								</td>
+								<td><input size=9 name="dose"></td>
+								<td><input size=9 name="yongfa"></td>
+								<td><input size=9 name="liaocheng"></td>
+								<td>
+									<input size=9 type="text" name="startDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td>
+									<input size=9 type="text" name="endDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td><input size=9 name="result"></td>
+								<td><input type="button" value="删除" onClick="deleteRow(this)" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><p class="label">人工肝治疗</p></td>
+					<td>
+						<input name="hepatitisFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="0" checked="checked" />无
+					</td>
+				    <td>
+				    	<input name="hepatitisFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="1" />有
+				    </td>
+				    <td>
+				    	<input name="hepatitisFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="9" />未说明
+				    </td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				</tr>
+				<tr style="display: none">
+					<td colspan="6">
+						<table width="100%" style="font-size:12px;" height="20" border="1" align="center" cellpadding=0 cellspacing=0 id=listtable2>
+							<tr>
+								<td colspan="9" style="border-bottom: none"><input type=button value="新增用药/治疗" onClick="addNewRow(this)"></td>
+							</tr>
+							<tr align=center height=20>
+								<td bgcolor=#FFFFFF style="border-bottom: none">
+									<p class="label">药物／方法名称</p>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">剂量</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">用法</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">疗程</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">起始时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">停用时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">治疗效果说明</label>
+								</td>
+								<td bgcolor=#FFFFFF style="border-bottom: none">
+									<b>&nbsp;&nbsp;</b>
+								</td>
+							</tr>
+							<tr class='rengong'>
+								<td>
+									<input size=15 name="name">
+									<input type='hidden' name='hid' value='-1'>
+								</td>
+								<td><input size=9 name="dose"></td>
+								<td><input size=9 name="yongfa"></td>
+								<td><input size=9 name="liaocheng"></td>
+								<td>
+									<input size=9 type="text" name="startDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td>
+									<input size=9 type="text" name="endDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td><input size=9 name="result"></td>
+								<td><input type="button" value="删除" onClick="deleteRow(this)" /></td>
+							</tr>
+						</table>				
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p class="label">目前患有的其他疾病及用药</p></td>
+					<td>
+						<input name="qitajibing" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="0" checked="checked" />无
+					</td>
+				    <td>
+				    	<input name="qitajibing" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="1" />有
+				    </td>
+				    <td>
+				    	<input name="qitajibing" type="radio" class="input-radio-event"onClick="showNextTr(this)" value="9" />未说明
+				    </td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				</tr>
+				<tr style="display: none">
+					<td colspan="6" nowrap>
+						<table width="100%" style="font-size:12px;" height="20" border="1" align="center"
+							cellpadding=0 cellspacing=0 id=listtable3>
+							<tr>
+								<td colspan="11" style="border-bottom: none">
+									<input type=button value="新增用药/治疗" onClick="addMuqianNewRow(this)">							</td>
+							</tr>
+							<tr align=center height=20>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">诊断</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none" >
+									<label style="color: #00F">诊断日期</label>
+								</td>
+								<td bgcolor=#FFFFFF style="border-bottom: none">
+									<p class="label">药物／方法名称</p>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">剂量</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">用法</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">疗程</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">起始时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">停用时间</label>
+								</td>
+								<td align="center" bgcolor=#FFFFFF style="border-bottom: none">
+									<label style="color: #00F">治疗效果说明</label>
+								</td>
+								<td bgcolor=#FFFFFF style="border-bottom: none"><b>&nbsp;&nbsp;</b></td>
+							</tr>
+							<tr class='diagnosisId'>
+								<td><input size=5 name="diagnosis"></td>
+								<td width="100">
+									<input size=7 type="text" name="diagnosisDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td>
+									<input size=15 name="name">
+									<input type='hidden' name='hid' value='-1'>
+								</td>
+								<td><input size=6 name="dose"></td>
+								<td><input size=6 name="yongfa"></td>
+								<td><input size=6 name="liaocheng"></td>
+								<td width="100">
+									<input size=7 type="text" name="startDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td width="100">
+									<input size=7 type="text" name="endDate" class="input-text" readonly="readonly" />
+									<img src="../../../PUBLIC/images/calendar.bmp" style="cursor: pointer"
+										onclick="WdatePicker({el:$(this.parentNode).find('input:text').get(0),dateFmt:'yyyy-MM-dd'})" />
+								</td>
+								<td><input size=9 name="result"></td>
+								<td><input type="button" value="删除" onClick="deleteRow(this)" /></td>
+							</tr>
+					  </table>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">
+						<p class="label">疗效及评价</p></td>
+					<td>
+						<input name="liverDisContactFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="0"
+							checked="checked" />无效
+					</td>
+				    <td>
+				    	<input name="liverDisContactFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="1" />死亡
+				    </td>
+				    <td>
+				    	<input name="liverDisContactFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="9" />临床基本治愈
+				    </td>
+				    <td>
+				    	<input name="liverDisContactFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="9" />显效
+				    </td>
+				    <td>
+				    	<input name="liverDisContactFlag" type="radio" class="input-radio-event" onClick="showNextTr(this)" value="9" />有效
+				    </td>
+				</tr>
+				<tr style="display: none">
+					<td></td><td></td>
+					<td >
+						<table>
+							  <tr>
+								    <td>死亡原因: </td>
+							        <td>
+							        	<input type="checkbox" id="fushui" name="fushui" class="input-checkbox" />腹水
+							        </td>
+							        <td>
+							        	<input type="checkbox" id="fumoyan" name="fumoyan" class="input-checkbox" />自发性腹膜炎
+									</td>
+							        <td>
+							        	<input type="checkbox" id="dianjiezhi" name="dianjiezhi" class="input-checkbox" />电解质紊乱
+									</td>
+							  </tr>
+							  <tr>
+								    <td>&nbsp;</td>
+							        <td>
+							        	<input type="checkbox" id="naobing" name="naobing" class="input-checkbox" />肝性脑病
+							        </td>
+							        <td>
+							        	<input type="checkbox" id="zhuxue" name="zhuxue" class="input-checkbox" />消化道出血
+							        </td>
+							        <td>
+							        	<input type="checkbox" id="zonghezheng" name="zonghezheng" class="input-checkbox" />肝肾综合征
+							        </td>
+							  </tr>
+							  <tr>
+								    <td>&nbsp;</td>
+							        <td>
+							        	<input type="checkbox" id="ganran" name="ganran" class="input-checkbox" />感染
+							        </td>
+							        <td>&nbsp;</td>
+							        <td>&nbsp;</td>
+							  </tr>
+							  <tr>
+								  <td>&nbsp;</td>
+								  <td colspan="4">
+								  	<input type="checkbox" id="qita" name="qita" class="input-checkbox" />其他
+						        	<input type="text" name="qitatext" id="qitatext" />
+						          </td>
+					       </tr>				
+	              		</table>
+	           	 	</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

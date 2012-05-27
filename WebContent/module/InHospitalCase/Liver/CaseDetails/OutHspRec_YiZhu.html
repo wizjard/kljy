@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>出院医嘱</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+var tplType=[['0','治疗建议'],['1','生活指导'],['2','检查']];
+var tplCourseUnit=[['',''],['0','月'],['1','周'],['2','天']];
+//var MemberGroupId=window.dialogArguments['groupId'];
+//var KID=window.dialogArguments['kid'];
+var MemberGroupId=1;
+var KID=2;
+Ext.onReady(function(){
+	var sm=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var sm2=new Ext.grid.CheckboxSelectionModel({sigleSelect:true});
+	var cm=new Ext.grid.ColumnModel([
+		new Ext.grid.RowNumberer(),
+		{header:'类型',dataIndex:'type',width:60,renderer:function(value){
+			Ext.each(tplType,function(){
+				if(value==this[0]){
+					value=this[1];
+					return false;
+				}
+			});
+			return value;
+		}},
+		{header:'名称',dataIndex:'name',width:250},
+		{header:'用量',dataIndex:'perValumon',width:40},
+		{header:'单位',dataIndex:'unit',width:40},
+		{header:'用法',dataIndex:'useFn',width:120},
+		{header:'疗程',dataIndex:'course',width:40,renderer:function(value,metadata,record,rowIndex,colIndex,store){
+			if(value>0){
+				Ext.each(tplCourseUnit,function(){
+					if((record.data.courseUnit+'')==this[0]){
+						value+=this[1];
+						return false;
+					}
+				});
+				return value;
+			}
+			return '';
+		}},
+		{header:'备注',dataIndex:'memo',width:200}
+	]);
+	new Ext.Viewport({
+		layout:'border',
+		defaults:{
+			xtype:'grid',
+			autoScroll:null,
+			cm:cm
+		},
+		items:[
+			{
+				region:'north',
+				id:'north-grid',
+				title:'参考模板',
+				store:new Ext.data.Store({
+					proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/admin/MemberGroupMngAction.do?method=tpl_findByGroupId&id='+MemberGroupId}),
+					reader:new Ext.data.JsonReader({
+						root: ''
+					},[
+						{name:'id'},
+						{name:'groupId'},
+						{name:'type'},
+						{name:'name'},
+						{name:'perValumon'},
+						{name:'unit'},
+						{name:'useFn'},
+						{name:'course'},
+						{name:'courseUnit'},
+						{name:'memo'}
+					])
+				}),
+				sm:sm,
+				listeners:{
+					render:function(){
+						if(!isNaN(MemberGroupId)&&MemberGroupId>0)
+							this.getStore().load();
+						this.setHeight(Ext.getBody().getSize().height*0.4);
+					}
+				},
+				tbar:[
+					'-',{
+						text:'移动所选到我的模板',handler:function(){
+							var _ss=Ext.getCmp('north-grid').getSelectionModel().getSelections();
+							if(_ss.length==0){
+								alert('未选择任何列');
+							}
+							if(!confirm('确定要移动选中的模板？')) return;
+							var store=Ext.getCmp('center-grid').getStore();
+							var count=store.getCount();
+							Ext.each(_ss,function(_item,_i){
+								var data=Ext.apply({
+									caseId:KID,
+									orderNo:count+_i+1
+								},_item.data);
+								data.id=-1;
+								var record=new Ext.data.Record(data);
+								store.add(record);
+							});
+						}
+					}
+				]
+			},{
+				region:'center',
+				id:'center-grid',
+				title:'我的模板',
+				store:new Ext.data.Store({
+					proxy:new Ext.data.HttpProxy({url:App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do?method=OutHspRecYiZhu_findByCaseID&id='+KID}),
+					reader:new Ext.data.JsonReader({
+						root: ''
+					},[
+						{name:'id'},
+						{name:'caseId'},
+						{name:'type'},
+						{name:'name'},
+						{name:'perValumon'},
+						{name:'unit'},
+						{name:'useFn'},
+						{name:'course'},
+						{name:'courseUnit'},
+						{name:'memo'}
+					])
+				}),
+				listeners:{
+					render:function(){
+						this.getStore().load();
+					}
+				},
+				tbar:[
+					'-',{
+						text:'新增',handler:function(){
+							TplEditWin(new Ext.data.Record({
+								id:-1,
+								caseId:KID
+							}));
+						}
+					},'-',{
+						text:'编辑',handler:function(){
+							var _ss=Ext.getCmp('center-grid').getSelectionModel().getSelections();
+							if(_ss.length==0||_ss.length>1){
+								alert('请选择一条记录。');
+								return;
+							}
+							TplEditWin(_ss[0]);
+						}
+					},'-',{
+						text:'删除',handler:function(){
+							var _ss=Ext.getCmp('center-grid').getSelectionModel().getSelections();
+							if(_ss.length==0||_ss.length>1){
+								alert('请选择一条记录。');
+								return;
+							}
+							if(!confirm('确定要删除选中记？'))return;
+							var store=Ext.getCmp('center-grid').getStore();
+							if(_ss[0].data.id==-1){
+								store.remove(_ss[0]);
+								return;
+							}
+							Ext.Ajax.request({
+								url:App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do?method=OutHspRecYiZhu_delete&id='+_ss[0].data.id,
+								success:function(_response){
+									if (Ext.decode(_response.responseText).success) {
+										store.remove(_ss[0]);
+										return;
+									}else{
+										alert('服务端删除数据失败。');
+									}
+								}
+							});
+						}
+					}
+				],
+				buttonAlign:'center',
+				buttons:[
+					{
+						text:'保存',handler:function(){
+							var _submit=[];
+							var _tpl='';
+							var fn=function(_value){
+								var _txt='';
+								Ext.each(tplCourseUnit,function(_item){
+									if(new String(_value)==_item[0]){
+										_txt=_item[1];
+										return false;
+									}
+								});
+								return _txt;
+							}
+							Ext.getCmp('center-grid').getStore().each(function(_record,_i){
+								_submit.push(_record.data);
+								_tpl+=eval(_i+1)+'、';
+								if(_record.data.type==0){
+									_tpl+=_record.data.name+'，'
+										+_record.data.perValumon+_record.data.unit+'，'
+										+_record.data.useFn+'，'
+										+'疗程'+_record.data.course+fn(_record.data.courseUnit)+'。\n';
+								}else if(_record.data.type==1){
+									_tpl+=_record.data.name+'。\n';
+								}else if(_record.data.type==2){
+									_tpl+=_record.data.name+_record.data.course+fn(_record.data.courseUnit)+'后检查。\n';
+								}
+							});
+							Ext.Ajax.request({
+								url:App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do?method=OutHspRecYiZhu_saveOrUpdate',
+								params:{
+									data:Ext.encode(_submit)
+								},
+								success:function(_response){
+									if(Ext.decode(_response.responseText).success){
+										window.returnValue=_tpl.trim();
+										window.close();
+									}else{
+										alert('保存失败。');
+									}
+								}
+							});
+						}
+					},{
+						text:'取消',handler:function(){
+							window.close();
+						}
+					}
+				]
+			}
+		]
+	});
+});
+function TplEditWin(_record){
+	new Ext.Window({
+		title:'模板编辑窗口',
+		modal:true,
+		frame:true,
+		width:Ext.getBody().getSize().width*0.8,
+		height:Ext.getBody().getSize().height*0.8,
+		closable:false,
+		buttonAlign:'center',
+		layout:'fit',
+		items:{
+			xtype:'form',
+			frame:true,
+			autoScroll:true,
+			labelAlign:'right',
+			labelWidth:80,
+			bodyStyle:'padding:5px 0;',
+			defaults:{
+				anchor:'90%',
+				xtype:'textfield'
+			},
+			items:[
+				{
+					xtype:'combo',
+					fieldLabel:'医嘱类型',
+					mode:'local',
+					hiddenName:'type',
+					displayField:'text',
+					valueField:'value',
+					triggerAction:'all',
+					value:'0',
+					store:new Ext.data.SimpleStore({
+						data:tplType,
+						fields:['value','text']
+					})
+				},{
+					fieldLabel:'医嘱名称',
+					name:'name'
+				},{
+					xtype:'panel',
+					layout:'column',
+					defaults:{
+						layout:'form'
+					},
+					items:[
+						{
+							columnWidth:.5,
+							items:{
+								xtype:'numberfield',
+								fieldLabel:'每次用量',
+								name:'perValumon',
+								anchor:'95%'
+							}
+						},{
+							columnWidth:.5,
+							items:{
+								xtype:'textfield',
+								fieldLabel:'单位',
+								name:'unit',
+								anchor:'95%'
+							}
+						}
+					]
+				},{
+					fieldLabel:'用法',
+					name:'useFn'
+				},{
+					xtype:'panel',
+					layout:'column',
+					defaults:{
+						layout:'form'
+					},
+					items:[
+						{
+							columnWidth:.5,
+							items:{
+								xtype:'numberfield',
+								fieldLabel:'疗程',
+								name:'course',
+								anchor:'95%'
+							}
+						},{
+							columnWidth:.5,
+							items:{
+								xtype:'combo',
+								mode:'local',
+								displayField:'text',
+								valueField:'value',
+								triggerAction:'all',
+								store:new Ext.data.SimpleStore({
+									data:tplCourseUnit,
+									fields:['value','text']
+								}),
+								fieldLabel:'单位',
+								hiddenName:'courseUnit',
+								anchor:'95%'
+							}
+						}
+					]
+				},{
+					xtype:'textarea',
+					fieldLabel:'备注',
+					name:'memo'
+				},{
+					xtype:'hidden',
+					name:'caseId',
+					value:'-1'
+				},{
+					xtype:'hidden',
+					name:'id',
+					value:'-1',
+					listeners:{
+						render:function(){
+							if(_record){
+								this.ownerCt.form.loadRecord(_record);
+							}
+						}
+					}
+				}
+			]
+		},
+		buttons:[
+			{
+				text:'确定',handler:function(){
+					var _value=this.ownerCt.items.get(0).form.getValues();
+					if(_value.name.trim().length==0){
+						alert('医嘱名称不能为空。');
+						return;
+					}else if(_value.type==2){
+						if((_value.course+'').length==0){
+							alert('疗程不能为空。');
+							return;
+						}
+						if((_value.courseUnit+'').length==0){
+							alert('疗程单位不能为空。');
+							return;
+						}
+					}else if(_value.type==0){
+						if((_value.perValumon+'').length==0){
+							alert('每次用量不能为空。');
+							return;
+						}
+						if(_value.unit.length==0){
+							alert('用量单位不能为空。');
+							return;
+						}
+						if(_value.useFn.length==0){
+							alert('用法不能为空。');
+							return;
+						}
+						if((_value.course+'').length==0){
+							alert('疗程不能为空。');
+							return;
+						}
+						if((_value.courseUnit+'').length==0){
+							alert('疗程单位不能为空。');
+							return;
+						}
+					}
+					Ext.getCmp('center-grid').getStore().add(new Ext.data.Record(Ext.apply(_record,_value)))
+					this.ownerCt.close();
+				}
+			},{
+				text:'关闭',handler:function(){
+					this.ownerCt.close();
+				}
+			}
+		]
+	}).show();
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

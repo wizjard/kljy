@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>会员组别选择窗口</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	var data=[
+		['病毒性肝炎 甲型组','自填',3],
+		['病毒性肝炎 乙型 急性组','自填',3],
+	
+		['病毒性肝炎 乙型 慢性组','自填',3],
+		['病毒性肝炎 乙型 慢性组->小三阳组','自填',3],
+		['病毒性肝炎 乙型 慢性组->大三阳组','自填',3],
+	
+		['病毒性肝炎 丙肝组','自填',3],
+	
+		['肝硬化组','自填',3],
+		['乙型肝炎肝硬化组','自填',3],
+		['丙型肝炎肝硬化组','自填',3],
+	
+		['肝癌组','自填',3],
+		['其它肝病组','自填',3]
+	];
+	var store=new Ext.data.SimpleStore({
+		data:data,
+		fields:['name','content','cycle']
+	});
+	var sm=new Ext.grid.CheckboxSelectionModel({singleSelect:true});
+	var cm=new Ext.grid.ColumnModel([
+		new Ext.grid.RowNumberer(),
+		sm,
+		{header:'组别',dataIndex:'name'},
+		{header:'检查项目',dataIndex:'content'},
+		{header:'随访周期',dataIndex:'cycle'}
+	]);
+	var grid=new Ext.grid.GridPanel({
+		title:'会员组别列表',
+		border:false,
+		sm:sm,
+		ds:store,
+		cm:cm,
+		id:'grid',
+		viewConfig:{
+			forceFit:true
+		},
+		tbar:[
+			'->',{
+				text:'确定',
+				handler:function(){
+					var ss=Ext.getCmp('grid').getSelectionModel().getSelections();
+					if(ss.length==0){
+						alert('未选择组别。');
+						return;
+					}
+					window.returnValue=ss[0].data;
+					window.close();
+				}
+			},'-',{
+				text:'关闭',handler:function(){
+					window.close();
+				}
+			}
+		]
+	});
+	new Ext.Viewport({
+		layout:'fit',
+		items:grid
+	});
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>家族史(肝病)</title>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../Js/validData.js"></script>
+<script type="text/javascript" src="../Js/validRadio.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-FamilyHistory';
+var KID=null;
+var PID=null;
+//Radio事件字段
+var eventArray=['childHealthStatus','brosisHealthStatus'];
+var eventArray2=['hepatitisFlag','neoplasmFlag','heredityFlag','otherDisFlag','otherFlag','zinu','brothersOrSisters','otherFlag'];
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-FamilyHistory'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Radio选项初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//弹出框
+	$('#dialog1').dialog({
+		title:'家族史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposeFamilyHistory();$(this).dialog("close");}
+		}
+	});
+	//Radio事件
+	/*$.each(eventArray,function(){
+		$('input[name="fatherHealthStatus"],input[name="motherHealthStatus"]').each(function(){
+			$(this).click(function(){
+				if($(this).val()!=0){
+					$(this).parent().parent().next().show();
+				}else{
+					$(this).parent().parent().next().hide();
+				}
+				
+				if($(this).val() == 1 && ($('textarea[name="fatherHealthDesc"]').val() == "" || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况一般") != -1 || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况较差") != -1  || $('textarea[name="fatherHealthDesc"]').val().search("父亲已故") != -1)){
+					$('textarea[name="fatherHealthDesc"]').val("父亲健康状况良好");
+				}
+				if($(this).val() == 2 && ($('textarea[name="fatherHealthDesc"]').val() == "" || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况较差") != -1 || $('textarea[name="fatherHealthDesc"]').val().search("父亲已故") != -1  || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况良好") != -1)){
+					$('textarea[name="fatherHealthDesc"]').val("父亲健康状况一般");
+				}
+				if($(this).val() == 3 && ($('textarea[name="fatherHealthDesc"]').val() == "" || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况一般") != -1 || $('textarea[name="fatherHealthDesc"]').val().search("父亲已故") != -1  || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况良好") != -1)){
+					$('textarea[name="fatherHealthDesc"]').val("父亲健康状况较差");
+				}	
+				if($(this).val() == 4 && ($('textarea[name="fatherHealthDesc"]').val() == "" || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况一般") != -1 || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况较差") != -1  || $('textarea[name="fatherHealthDesc"]').val().search("父亲健康状况良好") != -1)){
+					$('textarea[name="fatherHealthDesc"]').val("父亲已故");
+				}
+				if($(this).val() == 5){
+					$('textarea[name="fatherHealthDesc"]').val("");
+				}
+	
+				if($(this).val() == 1 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况一般") != -1 || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况较差") != -1  || $('textarea[name="motherHealthDesc"]').val().search("母亲已故") != -1)){
+					$('textarea[name="motherHealthDesc"]').val("母亲健康状况良好");
+				}
+				if($(this).val() == 2 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况较差") != -1 || $('textarea[name="motherHealthDesc"]').val().search("母亲已故") != -1  || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况良好") != -1)){
+					$('textarea[name="motherHealthDesc"]').val("母亲健康状况一般");
+				}
+				if($(this).val() == 3 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况一般") != -1 || $('textarea[name="motherHealthDesc"]').val().search("母亲已故") != -1  || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况良好") != -1)){
+					$('textarea[name="motherHealthDesc"]').val("母亲健康状况较差");
+				}	
+				if($(this).val() == 4 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况一般") != -1 || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况较差") != -1  || $('textarea[name="motherHealthDesc"]').val().search("母亲健康状况良好") != -1)){
+					$('textarea[name="motherHealthDesc"]').val("母亲已故");
+				}
+				if($(this).val() == 5){
+					$('textarea[name="motherHealthDesc"]').val("");
+				}
+			});
+		});*/
+	//});
+	var parentStatus = {
+	     a1: '健康状况良好',
+	     a2: '健康状况一般',
+	     a3: '健康状况较差',
+	     a4: '已故'
+	};
+	/*2011年2月25日17:05:24 allnef 新增父亲母亲健康状况事件*/
+	$('input[name="fatherHealthStatus"],input[name="motherHealthStatus"]').click(function(){
+		var tr = $(this).parent().parent().next();
+		var val = $(this).val();
+		var textarea = tr.find('textarea');
+		var flag = false;
+		var suffix = $(this).attr('name') =='fatherHealthStatus'?'父亲' : '母亲';
+		$.each(parentStatus,function(){
+			if (textarea.val() == suffix + this) {
+				flag = true
+				return false;
+			}
+		});
+			if (val == 0){
+				tr.hide();
+			}
+			else
+			  if (val == 5){
+				  tr.show();
+				  if (flag)
+					  textarea.val('');
+			}
+			else {
+				 tr.show();
+				 if (flag || textarea.val().length == 0)
+					 textarea.val(suffix+parentStatus['a' + val]);
+				 }
+	 }); 
+	/*2011年2月25日17:15:55 allnef 新增子女健康状况事件*/
+	$('input[name="childHealthStatus"]').click(function(){
+		var tr = $(this).parent().parent().next();
+		var val = $(this).val();
+		var suffix="";
+		var ziNum=$('*[name="son"]').val();
+		var nvNum=$('*[name="daughter"]').val();
+		if(ziNum>0&&nvNum==0){
+			suffix="儿子";
+		}else if(ziNum==0&&nvNum>0){
+			suffix="女儿";
+		}else if(ziNum>0&&nvNum>0){
+			suffix="子女";
+		}
+		var textarea = tr.find('textarea');
+		var flag=false;
+		$.each(parentStatus,function(){
+			if (textarea.val()=='已故'||textarea.val().substr(2,textarea.val().length) == this) {
+				flag = true
+				return false;
+			}
+		});
+		if(val==0){
+			tr.hide();
+		}else if(val==5){
+			tr.show();
+			if (flag)
+				textarea.val('');
+		}else if(val==4){
+			tr.show();
+			if (flag||textarea.val().length==0){
+				if(ziNum==1&&nvNum==0){
+					textarea.val('儿子已故');
+				}else if(ziNum==0&&nvNum==1){
+					textarea.val('女儿已故');
+				}else{
+					textarea.val('已故');
+				}
+			}
+		}else{
+			tr.show();
+			if(flag||textarea.val().length==0)
+				textarea.val(suffix+parentStatus['a' + val]);
+		}
+	});
+	/*2011年2月25日17:15:55 allnef 新增兄弟姐妹健康状况事件*/
+	$('input[name="brosisHealthStatus"]').click(function(){
+		var tr = $(this).parent().parent().next();
+		var val = $(this).val();
+		var textarea = tr.find('textarea');
+		var flag=false;
+		$.each(parentStatus,function(){
+			if (textarea.val() == this) {
+				flag = true
+				return false;
+			}
+		});
+		if(val==0){
+			tr.hide();
+		}else if(val==5){
+			tr.show();
+			if (flag)
+				textarea.val('');
+		}else{
+			tr.show();
+			if(flag||textarea.val().length==0)
+				textarea.val(parentStatus['a' + val]);
+		}
+	});
+	
+	$.each(eventArray2,function(){
+		if(this =='zinu'||this =='brothersOrSisters'){
+			$('input[name="'+this+'"]').each(function(){
+				$(this).click(function(){
+					if($(this).val()==1){
+						$(this).parent().parent().next().show();
+						$(this).parent().parent().next().next().show();
+						$.each(eventArray,function(){
+							$('input[name="'+this+'"]').each(function(){
+								$(this).click(function(){
+									if($(this).val()!=0){
+										$(this).parent().parent().next().show();
+									}else{
+										$(this).parent().parent().next().hide();
+									}
+									/*if($(this).attr("name") == "childHealthStatus"){
+										if($(this).val() == 1 && ($('textarea[name="childHealthDesc"]').val() == "" || $('textarea[name="childHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="childHealthDesc"]').val().search("健康状况较差") != -1  || $('textarea[name="childHealthDesc"]').val().search("已故") != -1)){
+											$('textarea[name="childHealthDesc"]').val("健康状况良好");
+										}
+										if($(this).val() == 2 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="childHealthDesc"]').val().search("健康状况较差") != -1 || $('textarea[name="childHealthDesc"]').val().search("已故") != -1  || $('textarea[name="childHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="childHealthDesc"]').val("健康状况一般");
+										}
+										if($(this).val() == 3 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="childHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="childHealthDesc"]').val().search("已故") != -1  || $('textarea[name="childHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="childHealthDesc"]').val("健康状况较差");
+										}	
+										if($(this).val() == 4 && ($('textarea[name="motherHealthDesc"]').val() == "" || $('textarea[name="childHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="childHealthDesc"]').val().search("健康状况较差") != -1  || $('textarea[name="childHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="childHealthDesc"]').val("");
+										}
+										if($(this).val() == 5){
+											$('textarea[name="childHealthDesc"]').val("");
+										}
+									}
+	
+									if($(this).attr("name") == "brosisHealthStatus"){
+										if($(this).val() == 1 && ($('textarea[name="brosisHealthDesc"]').val() == "" || $('textarea[name="brosisHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="brosisHealthDesc"]').val().search("健康状况较差") != -1  || $('textarea[name="brosisHealthDesc"]').val().search("已故") != -1)){
+											$('textarea[name="brosisHealthDesc"]').val("健康状况良好");
+										}
+										if($(this).val() == 2 && ($('textarea[name="brosisHealthDesc"]').val() == "" || $('textarea[name="brosisHealthDesc"]').val().search("健康状况较差") != -1 || $('textarea[name="brosisHealthDesc"]').val().search("已故") != -1  || $('textarea[name="brosisHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="brosisHealthDesc"]').val("健康状况一般");
+										}
+										if($(this).val() == 3 && ($('textarea[name="brosisHealthDesc"]').val() == "" || $('textarea[name="brosisHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="brosisHealthDesc"]').val().search("已故") != -1  || $('textarea[name="brosisHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="brosisHealthDesc"]').val("健康状况较差");
+										}	
+										if($(this).val() == 4 && ($('textarea[name="brosisHealthDesc"]').val() == "" || $('textarea[name="brosisHealthDesc"]').val().search("健康状况一般") != -1 || $('textarea[name="brosisHealthDesc"]').val().search("健康状况较差") != -1  || $('textarea[name="brosisHealthDesc"]').val().search("健康状况良好") != -1)){
+											$('textarea[name="brosisHealthDesc"]').val("");
+										}
+										if($(this).val() == 5){
+											$('textarea[name="brosisHealthDesc"]').val("");
+										}
+									}
+									*/
+	
+								});
+							});
+						});
+					}else{
+						$(this).parent().parent().next().hide();
+						$(this).parent().parent().next().next().hide();
+						$(this).parent().parent().next().next().next().hide();
+					}
+				});
+			});
+		}else{
+			$('input[name="'+this+'"]').each(function(){
+				$(this).click(function(){
+					if($(this).val()==1){
+						$(this).parent().parent().next().show();
+					}else{
+						$(this).parent().parent().next().hide();
+					}
+				});
+			});
+		}
+	});
+	
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'FamilyHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+					//$.each(eventArray,function(){
+						$('input[name="fatherHealthStatus"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+						$('input[name="motherHealthStatus"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					//});
+					$.each(eventArray2,function(){
+						if(this =='zinu'||this =='brothersOrSisters'){
+							if(_json.childHealthStatus!=0){
+								$('input[name="childHealthStatus"]').parent().parent().next().show();
+							}
+							if(_json.brosisHealthStatus!=0){
+								$('input[name="brosisHealthStatus"]').parent().parent().next().show();
+							}
+							$('input[name="'+this+'"]').each(function(){
+								if(this.checked){
+									$(this).click();
+									return false;
+								}
+							});
+						}else{
+							$('input[name="'+this+'"]').each(function(){
+								if(this.checked){
+									$(this).click();
+									return false;
+								}
+							});
+						}
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	json.caseId = KID;//2011-04-18突发情况caseId无法自动赋值
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function ComposeFamilyHistory(){
+	var _compose=CollectionData();
+	var rst='';
+	var flag='';
+	var tempValue='';
+	//父亲健康情况
+	if(getRowValue('fatherHealthStatus',_compose.fatherHealthStatus)=='体健' && getRowValue('motherHealthStatus',_compose.motherHealthStatus)=='体健'){
+		rst+='父母体健；';
+	}else{
+		tempValue=getRowValue('fatherHealthStatus',_compose.fatherHealthStatus);
+		if(tempValue.length>0){
+			if(tempValue=='体健'){
+				rst+='父亲体健；';
+			}else if(tempValue=='其他情况'){
+				rst += '父亲' +  _compose.fatherHealthDesc + "；";
+			}else{
+				tempValue= $('textarea[name="fatherHealthDesc"]').val();
+				tempValue += "；"
+				rst += tempValue;
+			}
+		}
+		/*母亲健康状况*/
+		tempValue=getRowValue('motherHealthStatus',_compose.motherHealthStatus);
+		if(tempValue.length>0){
+			if(tempValue=='体健'){
+				rst+='母亲体健；';
+			}else if(tempValue=='其他情况'){
+				rst += '母亲' + _compose.motherHealthDesc + "；";
+			}else{
+				tempValue= $('textarea[name="motherHealthDesc"]').val();
+				tempValue += "；"
+				rst += tempValue;
+			}
+		}
+	}
+	
+	//子女情况
+	tempValue = _compose.zinu;
+	if(tempValue==1){
+//		rst += _compose.son.length> 0 ?'育子' + _compose.son + '个，' : '';
+//		rst += _compose.daughter.length > 0 ? '育女' + _compose.daughter + '个，' : '';
+		var _temp = getRowValue('childHealthStatus',_compose.childHealthStatus);
+		if(_temp.length>0){
+//			if(_temp=='体健'){
+//				rst+='体健，';
+//			}else{
+//				_temp=_compose.childHealthDesc;
+//				_temp=_temp.length>0?_temp+'，':'';
+//				rst+=_temp;
+//			}
+			if(_temp=='体健'){
+				if(_compose.son.length > 0 && _compose.daughter.length <= 0){
+					rst+='儿子体健；';
+				}
+				if(_compose.son.length <= 0 && _compose.daughter.length > 0){
+					rst+='女儿体健；';
+				}
+				if(_compose.son.length > 0 && _compose.daughter.length > 0){
+					rst+='子女体健；';
+				}
+			}else if(_temp=='其他情况'){
+				if(_compose.childHealthDesc != ""){
+					rst += _compose.childHealthDesc + "；";
+				}
+			}else{
+				/*tempValue= $('textarea[name="childHealthDesc"]').val();
+				tempValue += "；"
+				if(_compose.son.length > 0 && _compose.daughter.length <= 0 && tempValue != "；" && _temp != "死亡"){
+					rst += '儿子' + tempValue;
+				}
+				if(_compose.son.length > 0 && _compose.daughter.length <= 0 && tempValue != "；" && _temp == "死亡"){
+					rst += tempValue;
+				}
+				if(_compose.son.length <= 0 && _compose.daughter.length > 0 && tempValue != "；" && _temp != "死亡"){
+					rst += '女儿' + tempValue;
+				}
+				if(_compose.son.length <= 0 && _compose.daughter.length > 0 && tempValue != "；" && _temp == "死亡"){
+					rst += tempValue;
+				}
+				if(_compose.son.length > 0 && _compose.daughter.length > 0 && tempValue != "；" && _temp != "死亡"){
+					rst +='子女' + tempValue;
+				}
+				if(_compose.son.length > 0 && _compose.daughter.length > 0 && tempValue != "；" && _temp == "死亡"){
+					rst +=tempValue;
+				}*/
+				if(_compose.childHealthDesc != ""){
+					rst += _compose.childHealthDesc + "；";
+				}
+			}
+		}
+	}else if(tempValue==0){
+		rst += '无子女；';
+	}
+	//兄妹情况
+	tempValue = _compose.brothersOrSisters;
+	if(tempValue==0){
+		rst +='无兄弟姐妹；'
+	}else if(tempValue==1){
+		tempValue=_compose.oldBroCount+'';
+		tempValue=tempValue.length>0?'兄'+tempValue+'个，':'';
+		rst+=tempValue;
+		tempValue=_compose.oldSisCount+'';
+		tempValue=tempValue.length>0?'姐'+tempValue+'个，':'';
+		rst+=tempValue;
+		tempValue=_compose.littleBroCount+'';
+		tempValue=tempValue.length>0?'弟'+tempValue+'个，':'';
+		rst+=tempValue;
+		tempValue=_compose.littleSisCount+'';
+		tempValue=tempValue.length>0?'妹'+tempValue+'个，':'';
+		rst += tempValue;
+		tempValue=getRowValue('brosisHealthStatus',_compose.brosisHealthStatus);
+		if(tempValue.length>0){
+//			if(tempValue=='体健'){
+//				rst+='体健，';
+//			}else{
+//				tempValue=_compose.brosisHealthDesc;
+//				tempValue=tempValue.length>0?tempValue+'，':'';
+//				rst+=tempValue;
+//			}
+			
+			if(tempValue=='体健'){
+				rst+='体健；';
+			}else if(tempValue=='其他情况'){
+				rst += _compose.brosisHealthDesc + "；";
+			}else{
+				if($('textarea[name="brosisHealthDesc"]').val() != ""){
+					tempValue= $('textarea[name="brosisHealthDesc"]').val();
+					tempValue += "；"
+					rst += tempValue;
+				}
+			}
+		}
+	}
+	//rst+=tempValue;
+	//肝病家族史
+	flag=_compose.hepatitisFlag;
+	if(flag=='0'){
+		rst+='否认肝病家族史，';
+	}else if(flag=='1'){
+		tempValue=_compose.hepatitisDesc;
+		tempValue=tempValue.length>0?tempValue+'，':'有肝病家族史，';
+		rst+=tempValue;
+	}
+	//肿瘤家族史
+	flag=_compose.neoplasmFlag;
+	if(flag=='0'){
+		rst+='否认肿瘤家族史，';
+	}else if(flag=='1'){
+		tempValue=_compose.neoplasmDesc;
+		tempValue=tempValue.length>0?tempValue+'，':'有肿瘤家族史，';
+		rst+=tempValue;
+	}
+	//遗传性疾病家族史
+	flag=_compose.heredityFlag;
+	if(flag=='0'){
+		rst+='否认遗传性疾病家族史，';
+	}else if(flag=='1'){
+		tempValue=_compose.heredityDesc;
+		tempValue=tempValue.length>0?tempValue+'，':'有遗传性疾病家族史，';
+		rst+=tempValue;
+	}
+	//其它传染性、家族性疾病史
+	flag=_compose.otherDisFlag;
+	if(flag=='0'){
+		rst+='否认其它传染性、家族性疾病史，';
+	}else if(flag=='1'){
+		tempValue=_compose.otherDisDesc;
+		tempValue=tempValue.length>0?tempValue+'，':'有其它传染性、家族性疾病史，';
+		rst+=tempValue;
+	}
+	//其他家族史
+	flag = _compose.otherFlag;
+	if(flag==1){
+		rst+= _compose.otherFamFlag + '，';
+	}
+	rst = rst;
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'。';
+	}
+	var _sum = $('textarea[name="faimlyHistoryDesc"]').attr('value');
+	if(_sum.length > 0){
+		Ext.Msg.show({
+			title:'提示',
+			width:300,
+			msg:'是否替换原有的值？',	
+			buttons:{yes:'否',no:'是'},
+			fn: function(_btn){
+			   	if(_btn=='no'){
+			   		$('textarea[name="faimlyHistoryDesc"]').attr('value',rst);
+				}
+		    },
+			icon:Ext.MessageBox.QUESTION
+		});
+	}else {
+		$('textarea[name="faimlyHistoryDesc"]').attr('value',rst);
+	}
+	$('#dialog1').dialog("close");
+}
+function SaveData(){
+	var _values=CollectionData();
+	var raPrem =['fatherHealthStatus','motherHealthStatus','zinu','brothersOrSisters','hepatitisFlag','neoplasmFlag','heredityFlag','otherDisFlag'];
+	if(validRad('div',raPrem)==false)	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'FamilyHistory_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">家族史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="faimlyHistoryDesc" class="textarea" style="width:95%" readOnly></textarea>
+		<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！</span></p>
+	<fieldset class="model-fldset">
+		<legend>父亲情况</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90"><span style="color:red">*&nbsp;</span>健康状况：</td>
+				<td class="t2"><input type="radio" class="radio dict-fld" name="fatherHealthStatus" /></td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="fatherHealthDesc" class="textarea" style="width:90%;"></textarea></br><font style="color:red">(注：系统预置了组合文字，如不需要，请自行修改，句末不加标点)</font></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset">
+		<legend>母亲情况</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90"><span style="color:red">*&nbsp;</span>健康状况：</td>
+				<td class="t2"><input type="radio" rel="fatherHealthStatus" class="radio dict-fld" name="motherHealthStatus" /></td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="motherHealthDesc" class="textarea" style="width:90%;"></textarea></br><font style="color:red">(注：系统预置了组合文字，如不需要，请自行修改，句末不加标点)</font></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset">
+		<legend>子女情况</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90"><span style="color:red">*&nbsp;</span>子女情况：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="zinu" /><span>无子女</span>
+					<input type="radio" class="radio" value="1" name="zinu"/><span>有子女</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1">子女数量：</td>
+				<td class="t2">
+					<p>育子&nbsp;<input name="son" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					   育女&nbsp;<input name="daughter" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					</p>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" width="90">健康状况：</td>
+				<td class="t2"><input rel="fatherHealthStatus" type="radio" class="radio dict-fld" name="childHealthStatus" /></td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="childHealthDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset">
+		<legend>兄弟姐妹情况</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90"><span style="color:red">*</span>兄弟姐妹情况：</td>
+				
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="brothersOrSisters" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="brothersOrSisters"/><span>有</span>
+					<input type="radio" class="radio" value="2" name="brothersOrSisters"/><span>未说明</span>
+				</td>
+			
+			</tr>
+			<tr class="hidden">
+				<td class="t1" width="90">兄弟姐妹数量：</td>
+				<td class="t2">
+					<p>兄&nbsp;<input name="oldBroCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					        弟&nbsp;<input name="littleBroCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					        姐&nbsp;<input name="oldSisCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					        妹&nbsp;<input name="littleSisCount" type="text" class="text" style="width:40px"/>&nbsp;个&nbsp;&nbsp;
+					</p>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1">健康状况：</td>
+				<td class="t2"><input rel="fatherHealthStatus" type="radio" class="radio dict-fld" name="brosisHealthStatus" /></td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="brosisHealthDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset">
+		<legend>家族性疾病史</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="165"><span style="color:red">*&nbsp;</span>肝病家族史：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="hepatitisFlag" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="hepatitisFlag"/><span>有</span>
+					<input type="radio" class="radio" value="9" name="hepatitisFlag"/><span>未说明</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="hepatitisDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1"><span style="color:red">*&nbsp;</span>肿瘤家族史：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="neoplasmFlag" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="neoplasmFlag"/><span>有</span>
+					<input type="radio" class="radio" value="9" name="neoplasmFlag"/><span>未说明</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="neoplasmDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1"><span style="color:red">*&nbsp;</span>遗传性疾病家族史：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="heredityFlag" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="heredityFlag"/><span>有</span>
+					<input type="radio" class="radio" value="9" name="heredityFlag"/><span>未说明</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="heredityDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+			<tr>
+				<td class="t1"><span style="color:red">*</span>其它传染性、家族性疾病史：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="otherDisFlag" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="otherDisFlag"/><span>有</span>
+					<input type="radio" class="radio" value="9" name="otherDisFlag"/><span>未说明</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1" valign="top">具体描述：</td>
+				<td class="t2"><textarea name="otherDisDesc" class="textarea" style="width:90%;"></textarea></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="model-fldset">
+		<legend>其他家族史</legend>
+		<table width="480" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+			<tr>
+				<td class="t1" width="90">其他家族史：</td>
+				<td class="t2">
+					<input type="radio" class="radio" value="0" name="otherFlag" /><span>无</span>
+					<input type="radio" class="radio" value="1" name="otherFlag"/><span>有</span>
+					<input type="radio" class="radio" value="9" name="otherFlag"/><span>未说明</span>
+				</td>
+			</tr>
+			<tr class="hidden">
+				<td class="t1">&nbsp;</td>
+				<td class="t2">
+					<textarea name="otherFamFlag" class="textarea" style="width:90%;"></textarea>
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+</div>
+</body>
+</html>

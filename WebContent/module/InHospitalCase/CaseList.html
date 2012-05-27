@@ -1,0 +1,694 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>住院记录</title>
+<script type="text/javascript" src="../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="scripts/CaseGrid.js"></script>
+<script type="text/javascript" src="../../module/biomedical/MemberInfoForm.js"></script>
+<script type="text/javascript">
+var PID=App.util.getHtmlParameters('id');
+var patientNo = App.util.getHtmlParameters('patientNo');
+var patientName = App.util.getHtmlParameters('patientName');
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	new Ext.Viewport({
+		layout:'border',
+		items:[
+			{
+				region:'north',
+				border:false,
+				height:23,
+				html:'<div id="PatSimInfo-DIV"></div>'
+			},{
+				title:'选择操作',
+				region:'west',
+				width:115,
+				split:true,
+				collapsible:true,
+				xtype:'treepanel',
+				autoScroll:true,
+				containerScroll:true,
+				dataUrl:'EMR_TREE_CFG.json',
+				root:{
+					nodeType:'async',
+					text:'字典树',
+					draggable:false,
+					id:-1
+				},
+				rootVisible:false,
+				listeners:{
+					render:function(){
+						this.expandAll();
+					}
+				}
+			},Ext.apply(CaseGrid(),{
+				region:'center',
+				xtype:'grid',
+				border:true,
+				id:'case-list-grid', 
+				title:'住院记录列表',
+				tbar:createToolbar(),
+				listeners:{
+					render:function(){
+						this.getStore().baseParams={method:'queryAllByPatient',id:PID};
+						this.getStore().load();
+					}
+				}
+			})
+		]
+	});
+	loadPatSimInfo();
+});
+function createToolbar(){
+	return new Ext.Toolbar({items:[
+		{
+			xtype:'tbseparator'
+		},{
+			text:'刷新',
+			tooltip:'刷新当前住院记录',
+			handler:function(){
+				Ext.getCmp('case-list-grid').getStore().reload();
+			}
+		},{
+			xtype:'tbseparator'
+		},{
+			text:'出入院记录',
+			tooltip:'编辑入院记录与出院记录',
+			menu:[
+				{
+					text:'入院记录',handler:Do.HospInfo
+				},{
+					text:'出院记录',handler:Do.OutHspRec
+				}
+			]
+		},{
+			xtype:'tbseparator'
+		},{
+			text:'病程记录',
+			tooltip:'编辑病程记录',
+			menu:[
+				{
+					text:'西医病程记录',handler:function(){Do.CourseRecord('wm');}
+				},{
+					text:'会诊记录',handler:Do.Consultation
+				},{
+					text:'中医病程记录',handler:function(){Do.CourseRecord('tcm');}
+				},{
+					text:'新生儿记录',handler:function(){Do.BabyRecord();}
+				},{
+					text:'术前讨论',handler:Do.PreviousCaseDiscuss
+				},{
+					text:'术前小结',handler:Do.PreviousSurgerySummary
+				},{
+					text:'手术记录',handler:Do.SurgeryRecord
+				},{
+					text:'死亡记录',handler:Do.DeathRecord
+				},{
+					text:'死亡讨论记录',handler:Do.DeathCaseDiscuss
+				},{
+					text:'24小时入出院记录',handler:Do.InHspRec24
+				}
+			]
+		},{
+			xtype:'tbseparator'
+		},{
+			text:'入选课题',
+			tooltip:'病人入选课题管理',
+			handler:function(){
+				App.util.addNewMainTab('/module/Research/main.html?id='+PID,'入选课题');
+			}
+		},{
+			xtype:'tbseparator'
+		},
+		'->',
+		{
+			text:'新增病历',
+			tooltip:'为病人新添一份病历',
+			menu:[
+				{
+					text:'普通新增',handler:function(){
+						location.href='CaseMaster/InHspCaseMasterInfo.html?KID=-1&PID='+PID;
+					}
+				},{
+					text:'复制新增',handler:function(){
+						var _record=Do.SelectionRow();
+						if(!_record)	return;
+						location.href='CaseMaster/InHspCaseMasterInfo_copy.html?KID='+_record.data.id+'&PID='+PID;
+					}
+				},{
+					text:'复制西医病历到中医',handler:function(){
+						var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+						if(_ss.length!=2){
+							alert('请选择两份病历。');
+							return;
+						}
+						var liverID=0;
+						var tcmID=0;
+						if(_ss[0].data.caseModuleId=='liver'&&_ss[1].data.caseModuleId=='TCM'){
+							liverID=_ss[0].data.id;
+							tcmID=_ss[1].data.id;
+						}else if(_ss[1].data.caseModuleId=='liver'&&_ss[0].data.caseModuleId=='TCM'){
+							liverID=_ss[1].data.id;
+							tcmID=_ss[0].data.id;
+						}else{
+							alert('两份病历的病历类型不符合要求。');
+						}
+						if(!confirm('确定要复制西医病历内容到中医病历中？'))
+							return;
+						Ext.Ajax.request({
+							url:App.App_Info.BasePath+'/InHospitalCase/TCMAction.do',
+							params:{
+								method:'copyLiver2TCM',
+								liverID:liverID,
+								tcmID:tcmID
+							},
+							success:function(response){
+								if(Ext.util.JSON.decode(response.responseText).success){
+									alert('复制成功。');
+								}else{
+									alert('复制失败。');
+								}
+							}
+						});
+					}
+				}
+			]
+		},{
+			text:'删除病历',
+			tooltip:'删除误操作新增的病历，不可撤销，慎重操作。',
+			handler:function(){
+				var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+				if(_ss.length!=1){
+					alert('请选中需要删除的病历。');
+					return;
+				}
+				if(!confirm('确定要删除选中的病历？删除后操作不可恢复，请确认。'))
+					return;
+				Ext.Ajax.request({
+					url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+					params:{method:'delete',id:_ss[0].data.id},
+					success:function(response){
+						if(Ext.decode(response.responseText).success){
+							alert('删除成功。');
+							Ext.getCmp('case-list-grid').getStore().reload();
+						}else{
+							alert('删除失败。');
+						}
+					}
+				});
+			}
+		},{
+			text:'&nbsp;返回&nbsp;',
+			tooltip:'返回我的病人列表',
+			handler:function(){
+				location.href=App.App_Info.BasePath+'/module/InHospitalCase/MyPatients.html';
+			}
+		}
+	]});
+}
+Do={
+	SelectionRow:function(){
+		var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+		if(_ss.length==0){
+			alert('请选择需要操作的住院记录。');
+			return null;
+		}
+		return _ss[0];
+	},
+	PatientInfo:function(){//病人基本信息
+		App.util.addNewMainTab('/module/Patient/PatientInfo.html?id='+PID,'病人基本信息');
+	},
+	GradingDiag:function(){//十二级诊断系统
+		var _record = Do.SelectionRow();
+		if(!_record) return;
+		App.util.addNewMainTab('/module/InHospitalCase/GradingDiag/grading.html?KID='+_record.get('id')+'&PID='+PID,'肝病十二级分类诊断系统');
+	},
+	HospInfo:function(){//入院记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var _hspCfgId=_record.data.caseModuleId;
+		if(!_hspCfgId||_hspCfgId.length==0){
+			alert('病历未关联入院记录，请先完成此操作。');
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+				params:{
+					method:'queryMyInHspRecCfg',
+					id:_record.data.id
+				},
+				success:function(_response,_options){
+					var _res=Ext.util.JSON.decode(_response.responseText);
+					if(_res.success){
+						var _cfgs=Ext.util.JSON.decode(_res.data);
+						linkInHspRec(_cfgs,_record.data.id);
+					}else{
+						alert('获取入院记录配置失败。');
+					}
+				}
+			});
+		}else{
+			Ext.Ajax.request({
+				url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+				params:{
+					method:'toInHspRec',
+					caseModuleId:_hspCfgId
+				},
+				success:function(_response,_options){
+					var _res=Ext.util.JSON.decode(_response.responseText);
+					if(_res.success){
+						var _cfg=Ext.util.JSON.decode(_res.data);
+						location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+_cfg.url;
+					}else{
+						alert('获取入院记录信息失败。');
+					}
+				}
+			});
+		}
+	},
+	
+	MemberInfo:function(){//会员入会信息
+		var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+		if(_ss.length==0){
+			alert('请选择一条入院记录作为入会病历。');
+			return;
+		}
+		App.util.addNewMainTab('/module/biomedical/MemberInfoForm.html?id='+PID+'&inHspTimes='+_ss[0].data.inHspTimes+'&caseId='+_ss[0].data.id,'会员基本信息');
+	/**
+		var win=Ext.getCmp('MemberInfoWindow');
+		if(!win){
+			win=new Biomedical.MemberInfoWindow({
+				id:'MemberInfoWindow'
+			});
+			win.show();
+			win.items.get(0).items.get(0).items.get(0).el.dom.parentNode.parentNode.style.display='none';
+			win.items.get(0).items.get(1).items.get(0).el.dom.parentNode.parentNode.style.display='none';
+			win.hide();
+			win.show();
+		}else{
+			win.show();
+		}
+		Ext.Ajax.request({
+			url:App.App_Info.BasePath + '/biomedical.do',
+			params:{
+				method:'getMemberByPatientId',
+				patientId:PID
+			},
+			success:function(response){
+				var res=Ext.decode(response.responseText);
+				loadPatSimInfo();
+				if(res.success){
+					var data=Ext.decode(res.data);
+					if(!data)
+						data={};
+					Ext.apply(data,{patientId:PID});
+					win.items.get(0).getForm().loadRecord(new Ext.data.Record(data));
+					var _deptNameObjectValue=Ext.getCmp('deptNameObject');
+      				_deptNameObjectValue.setValue(data.deptName);
+					var _storeValue=Ext.getCmp('grounp');
+      				_storeValue.setValue(data.grounpName);
+				}else{
+					alert('获取病人会员信息失败。');
+				}
+			}
+		});
+		**/
+	},
+	InHospitalPage:function(){//病案首页
+		var _record = Do.SelectionRow();
+		if(!_record) return;
+		var str = '/module/InHospitalCase/CaseHistoryIndexPage/main.html?kid='+_record.data.id+'&pid='+PID;
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	CourseRecord:function(is_tcm_wm){//日常病程记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '';
+		if(is_tcm_wm=='wm'){
+			str = '/module/InHospitalCase/CourseRecord/dailyRecrod/main.html?KID='+_record.data.id+'&PID='+PID;
+		}
+		if(is_tcm_wm=='tcm'){
+			str = '/module/InHospitalCase/CourseRecord/tcmdailyRecrod/main.html?KID='+_record.data.id+'&PID='+PID;
+		}
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	CourseRecord2:function(){//日常病程记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/dailyRecrod/main2.html?KID='+_record.data.id+'&PID='+PID;
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	BabyRecord:function(){//新生儿记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/babyRecrod/main.html?KID='+_record.data.id+'&PID='+PID;	
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	Consultation:function(){//会诊记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('会诊记录')
+			+'&entity=Consultation';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	PreviousSurgerySummary:function(){//术前小结
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('术前小结')
+			+'&entity=PreviousSurgerySummary';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	PreviousCaseDiscuss:function(){//术前病历讨论
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('术前病历讨论')
+			+'&entity=PreviousCaseDiscuss';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	SurgeryRecord:function(){//手术记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('手术记录')
+			+'&entity=SurgeryRecord';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	DeathRecord:function(){//死亡记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('死亡记录')
+			+'&entity=DeathRecord';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	DeathCaseDiscuss:function(){//死亡病历讨论记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('死亡病历讨论记录')
+			+'&entity=DeathCaseDiscuss';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	InHspRec24:function(){//24小时出入院记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('24小时出入院记录')
+			+'&entity=InHspRec24';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	}
+	,
+	InHspDied24:function(){//24小时入院死亡记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/CourseRecord/sigle/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('24小时入院死亡记录')
+			+'&entity=InHspDied24';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	}
+	,
+	OutHspRec:function(){//出院记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Liver/OutHspRec.html?KID='+_record.data.id+'&PID='+PID;
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	Download:function(){//知情同意书
+		window.open(App.App_Info.BasePath+'/module/InHospitalCase/Doctments/index.jsp');
+	},
+	APACHEII:function(){//APACHEII.html评分
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/ItemScore/scoreIndex.html?KID='+_record.data.id+'&PID='+PID;
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	//新评分系统
+	ScoreCommentTemplate:function(){
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/ItemScore/table/main.html?KID='+_record.data.id+'&PID='+PID+'&entity=scoreCommentTemplate'+'&title='+encodeURIComponent('评分套餐');
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	zhengzuangtizheng:function(){//阳性症状监测表
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/followVisit/allzhengzuangtizheng.html?id='+_ss[0].data.id+'&pname='+PID
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},MarrowApply:function(){//骨髓检查申请单===========================10-22====================
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('骨髓检查申请单')
+			+'&entity=MarrowApply'+'&action=MarrowApplyAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	CancerTreatBespoke:function(){//肿瘤肝胆介入治疗中心介入诊断、治疗预约单
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('肿瘤肝胆介入治疗中心介入诊断、治疗预约单')
+			+'&entity=CancerTreatBespoke'+'&action=CancerTreatBespokeAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	Communication:function(){//医患沟通记录
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('医患沟通记录')
+			+'&entity=Communication'+'&action=CommunicationAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	CancerJoinApply:function(){//肿瘤肝胆介入治疗中心介入诊断治疗申请单
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('肿瘤肝胆介入治疗中心介入诊断治疗申请单')
+			+'&entity=CancerJoinApply'+'&action=CancerJoinApplyAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	LiverCheckApply:function(){//肝活检病理检查申请单
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('肝活检病理检查申请单')
+			+'&entity=LiverCheckApply'+'&action=LiverCheckApplyAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	SpecimenCheckApply:function(){//病理标本检查申请单
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('病理标本检查申请单')
+			+'&entity=SpecimenCheckApply'+'&action=SpecimenCheckApplyAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	},
+	ConsultationApply:function(){//院外会诊申请单
+		var _record=Do.SelectionRow();
+		if(!_record)	return;
+		var str = '/module/InHospitalCase/Apply/main.html?KID='
+			+_record.data.id+'&PID='
+			+PID+'&title='+encodeURIComponent('院外会诊申请单')
+			+'&entity=ConsultationApply'+'&action=ConsultationApplyAction';
+		location.href='HospInfo.html?KID='+_record.data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+	}
+	//liugang 2011-08-22 start
+	//综合检查
+	,Jyresult:function(){//检验结果
+		window.showModalDialog('Liver/CheckReport/combinationList.html?patientId=' + PID+'&KID=0','','dialogWidth=950px;dialogHeight=650px');			
+	}
+	,Pacs:function(){//放射医学影像检查结果
+		App.util.addNewMainTab('/module/checkreport/pacs.html?id='+
+                        		PID+'&look=1',
+                        		'放射影像检查结果');
+	},
+	MaiDi:function(){//综合医学影像检查结果
+        App.util.addNewMainTab('/module/checkreport/maidi.html?id='+
+                       PID+'&look=1',
+                       '综合影像检查结果');
+	}
+	//liugang 2011-08-22 end
+}
+
+/*阳性症状监测表
+,{
+		id:'Cr-deathTalkRec-node514',
+		text:'阳性症状监测表',
+		iconCls:'icon-none',
+		leaf:true,
+		href:'javascript:toNagaPage()'
+}
+
+
+function toNagaPage(){
+	var _ss=Ext.getCmp('case-list-grid').getSelectionModel().getSelections();
+	if(_ss.length==0||_ss.length>1){
+		alert('请选择需要操作的住院记录');
+		return;
+	}
+	var str = '/followVisit/allzhengzuangtizheng.html?id='+_ss[0].data.id+'&pname='+PID
+	location.href='HospInfo.html?KID='+_ss[0].data.id+'&PID='+PID+'&caseModuleId='+_record.data.caseModuleId+'&ifrUrl='+str;
+}
+*/
+
+function linkInHspRec(_cfgs,_id){
+	var _data=[];
+	Ext.each(_cfgs,function(_item){
+		_data.push([_item.code,_item.name]);
+	});
+	new Ext.Window({
+		title:'选择入院病历类型',
+		frame:true,
+		width:400,
+		closable:false,
+		closeAction:'close',
+		buttonAlign:'center',
+		autoHeight:true,
+		buttons:[
+			{
+				text:'保存',handler:function(){
+					var _val=this.ownerCt.items.get(0).items.get(0).getValue();
+					if(_val.length==0){
+						alert('必须选择入院记录的类型');
+						return;
+					}
+					Ext.Ajax.request({
+						url:App.App_Info.BasePath+'/InHospitalCase/CaseMaster.do',
+						params:{
+							method:'updateInHspRecCfg',
+							caseModuleId:_val,
+							id:_id
+						},
+						scope:this,
+						success:function(_response,_options){
+							var _res=Ext.util.JSON.decode(_response.responseText);
+							if(_res.success){
+								alert('保存成功。');
+								Ext.getCmp('case-list-grid').getStore().reload();
+								this.ownerCt.close();
+							}else{
+								alert('保存失败。');
+							}
+						}
+					});
+				}
+			},{
+				text:'关闭',handler:function(){
+					this.ownerCt.close();
+				}
+			}
+		],
+		items:{
+			xtype:'form',
+			labelAlign:'right',
+			labelWidth:70,
+			frame:true,
+			border:false,
+			autoHeight:true,
+			items:[
+				{
+					xtype:'combo',
+					fieldLabel:'病历类型',
+					anchor:'95%',
+					name:'caseModuleId',
+					mode:'local',
+					displayField:'text',
+					valueField:'value',
+					readOnly:true,
+					allowBlank:false,
+					triggerAction:'all',
+					store:new Ext.data.SimpleStore({
+						fields:['value','text'],
+						data:_data
+					}),
+					listeners:{
+						select:function(){
+							var _value=this.getValue();
+							Ext.each(_cfgs,function(_item){
+								if(_value==_item.code){
+									this.ownerCt.items.get(1).setValue(_item.desc);
+									return false;
+								}
+							},this);
+						}
+					}
+				},{
+					xtype:'textarea',
+					fieldLabel:'病历描述',
+					anchor:'95%',
+					height:60,
+					readOnly:true
+				}
+			]
+		}
+	}).show();
+}
+function loadPatSimInfo(){
+	var _div=Ext.get('PatSimInfo-DIV');
+	if (!_div) {
+		Ext.DomHelper.append(Ext.getBody(), {
+			tag: 'div',
+			id: 'PatSimInfo-DIV'
+		});
+		_div=Ext.get('PatSimInfo-DIV');
+	}
+	_div.load({
+		url:App.App_Info.BasePath+'/module/Patient/PatSimpleInfo.jsp?timestamp='+new Date().getTime()+'&id='+PID,
+		scripts:true,
+		text:'正在获取病人基本信息......'
+	});
+}
+</script>
+<style type="text/css">
+#PatSimInfo-DIV{
+	top:0;
+	left:0;
+	width:100%;
+	background:url(../../PUBLIC/images/label_line_bg.gif) center repeat;
+}
+.icon-none{display:none  !important}
+</style>
+</head>
+<body>
+<!-- 
+	,{
+		id:'Cr-deathTalkRec-node513',
+		text:'旧版器官功能评估系统',
+		iconCls:'icon-none',
+		leaf:true,
+		href:'javascript:Do.APACHEII()'
+	}
+
+	,{
+		id:'OutPatientNode4',
+		text:'门诊病历',
+		iconCls:'icon-none',
+		leaf:true
+	}
+	,{
+		id:'CaseInfoNode3',
+		text:'病历概要',
+		iconCls:'icon-none',
+		leaf:true
+	}
+
+ -->
+</body>
+</html>

@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+
+.input-text{border: solid 1px red;}
+.input-select-o{background:red;}
+.input-select-c{background: #FFF;}
+.input-o-text{ background-color:#FFF; border:solid #9FF 1px;}
+.input-radion{background-color:red;}        

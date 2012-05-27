@@ -1,0 +1,3 @@
+1、门急诊病人AllOutOrEmergencyPatients.html
+2、门急诊病人管理OutOrEmergencyPatientList.html
+3、门急诊病人基本信息OutOrEmergencyPatientInfo.html

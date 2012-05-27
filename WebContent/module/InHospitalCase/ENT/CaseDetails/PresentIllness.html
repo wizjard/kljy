@@ -1,0 +1,583 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>现病史(肝病)</title>
+<link type="text/css" rel="stylesheet" href="css/case.css"/>
+<link type="text/css" rel="stylesheet" href="../../css/InHspRec.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/EditPlus/editplus.js"></script>
+<script type="text/javascript"><!--
+var eventArray=['bodyWeight'];
+	/*定义全局变量*/
+	var KID=null;
+	var PID=null;
+	var onset = '';
+	var pId = '';
+	var se = new Array();
+	
+	var defaultValue={
+		id:'',
+		caseId:KID,
+		content1:'',
+		illThis:{},
+		onsets:[]
+	};
+
+	var _js= {ccs:''};
+	var _s = new Array();
+
+	$(function(){
+		KID=App.util.getHtmlParameters('KID');
+		$('input[name="caseId"]').val(KID);
+		PID=App.util.getHtmlParameters('PID');
+		initPage();
+		readDate();
+		$("#tabs").tabs();
+		var page = new Page();
+	
+		$('#add-btn').click(function(){
+			var p = new Page();
+			page.addTab(p.defaultValue);
+		});
+		$('#del-btn').click(function(){
+			page.removeTab();
+		});
+		$('#ok-btn').click(function(){
+			page.ok();
+		});
+		$('#predisposingfactors').change(function(){
+			page.chan(this);
+		});
+		
+	});
+	
+	/*初始化页面*/
+	function initPage(){
+		//初始化公共字典值
+		$.each(FormUtil.getPageDictionary('EMP-erbih-ChiefComplaint'),function(code){
+			$('input[name="'+code+'"]').data('options',this);
+			if(code =='predisposingfactors'){
+				var op = '<option value="" ></option>';
+				$.each(this,function(){
+					se.push(this[1]);
+					op += '<option value="'+this[0] + '">'+this[1]+'</option>';
+				});
+				$('#predisposingfactors').append(op);
+			}
+		});
+		//Btn
+		$('button').mouseover(function(){
+			$(this).addClass('btn-hover');
+		}).mouseout(function(){
+			$(this).removeClass('btn-hover');
+		});
+		//Checkbox
+		$('input.checkbox').each(function(){
+			FormUtil.toCheckbox({el:$(this),columns:4});
+		});
+		//Select
+		$('input.select').each(function(){
+			FormUtil.toCombobox({el:$(this)});
+		});
+		//Radio初始化
+		$('input.dict-fld').each(function(){
+			FormUtil.initDictRadio($(this));
+		});
+
+		$.each(eventArray,function(){
+			$('input[name="'+this+'"]').each(function(){
+				$(this).click(function(){
+					if($(this).val()==1||$(this).val==2){
+						$(this).parent().parent().next().show();
+					}else{
+						$(this).parent().parent().next().hide();
+					}
+				});
+			});
+		});
+		
+		//体重事件
+		$('input[name="bodyWeight"]').click(function(){
+			var _val=$(this).val();
+			if(_val==1){
+				$(this).parent().parent().next().show();
+				$('#bodyWeight-span').text('增加');
+			}else if(_val==2){
+				$(this).parent().parent().next().show();
+				$('#bodyWeight-span').text('减轻');
+			}else{
+				$(this).parent().parent().next().hide();
+			}
+		});
+	}
+	
+	 /*读取后台数据*/
+	function readDate(){
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+			{
+				method:'getPreentByCaseId',
+				id:KID
+			},
+			function(data){
+				if(data.success){
+					var _json=null;
+					if(data.data.length>0){
+						_json=JSON.parse(data.data);
+					}
+					if(_json){
+						$.extend(defaultValue,_json);
+						FormUtil.setFormValues('form',defaultValue);
+					}
+					$('#id').data('data',defaultValue);
+					if(_json.id){
+						pId = _json.id;
+					}
+					if(!_json.onsets){
+						onset = '';
+					}
+					var p = new Page();
+					setThisPage(p,$('#id').data('data').onsets);
+				}else{
+					alert('页面赋值错误。');
+				}
+			},
+			'json'
+		);
+	}
+	
+	/*为现病史页面赋值*/
+	function setThisPage(_this,_da){
+		if(_da){
+			$.each(_da,function(i){
+				if(i==0){
+					_this.setContentValue($('#tabs-0'),this);
+				}else{
+					_this.addTab(this);
+				}
+			});
+		}
+	}
+	
+function Page(){
+	this.tab=$('#tabs');//代表整个页面
+	this.defaultValue={
+		id:'',
+		illTime:'',
+		illTimeUnit:'',
+		causes:'',
+		sysptomMain:'',
+		sysptomSide:'',
+		evolution:'',
+		evolution0:'',
+		seeDoct:'',
+		seeDoct0:'',
+		examination:'',
+		diagnosis:'',
+		diagnosis0:'',
+		treatment:'',
+		ccs:null
+	};
+	this.addTab=function(record){
+		var _size = this.tab.find('li').size();
+		$('<li><a href="#tabs-'+_size+'">第'+(_size+1)+'次发病记录</a></li>').appendTo(this.tab.find('ul'));//添加新增标题
+		var _content=$('div.tabs-content').eq(0).clone(true);//clone(true)方法是复制一个元素及其所有事件  复制第一条记录及其事件
+		_content.attr('id','tabs-'+_size);//为复制的记录添加id
+		_content.find('input.select').removeAttr('isInit').removeAttr('showId');
+		_content.find('input.checkbox').removeAttr('isInit').removeAttr('showId');
+		_content.find('select[name="predisposingfactors"]').val('');
+		_content.appendTo(this.tab);
+		this.tab.tabs('destroy');
+		var _thisRecord;
+		if(record){
+			$.extend(this.defaultValue,record);
+		}
+		var _thisRecord=this.defaultValue;
+		this.setContentValue(_content,_thisRecord);
+		this.tab.tabs();
+		this.tab.tabs( "select" , _size ); 
+	}
+	/*_content第几条记录页面对象，_thisRecord第几条记录的对应值的对象*/
+	this.setContentValue = function(_content,_thisRecord){
+		/*从现病史页面中传的的值赋值_js.ccs以便传入主要症状与伴随症状页面*/
+			if(_thisRecord['ccs']){
+				_s.push(_thisRecord['ccs']);
+				$("#main").data('data',_s);
+			}
+			
+			_content.find('input').each(function(){
+				if(this.className=='select'){
+					$(this).attr('inputValue',_thisRecord[this.name]);
+					$(this).val(getRowValue(this.name,_thisRecord[this.name]));
+				}else{
+					$(this).val(_thisRecord[this.name]);
+				}
+			});
+			
+			_content.find('select[name="predisposingfactors"]').val(_thisRecord['predisposingfactors']);
+			var o = _thisRecord['predisposingfactors'];
+			if(o==1){
+				_content.find('select[name="predisposingfactors"]').parent().parent().next().show();
+			}else{
+				_content.find('select[name="predisposingfactors"]').parent().parent().next().hide();
+			}
+			
+			_content.find('textarea').each(function(){
+				$(this).val(_thisRecord[this.name]);
+			});
+	}
+	this.removeTab=function(){
+		var _select=this.tab.tabs('option', 'selected');
+		if(_select==0){
+			alert('首次起病记录不能删除。');
+			return;
+		}
+		if(!confirm('确定 要删除此记录？'))	return;
+		/*获取ID值*/
+		var _id=$('#tabs-'+_select).find('input[name="id"]').val();
+		if(!isNaN(_id)&&_id>0){
+			var _tab=this.tab;
+			$.post(
+				App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+				{
+					method:'delePreOnsetById',
+					id:_id
+				},
+				function(data){
+					if(data.success){
+						_tab.tabs('remove',_select);
+					}else{
+						alert('删除失败。');
+					}
+				},
+				'json'
+			);
+		}else{
+			this.tab.tabs('remove',_select);
+		}
+	}
+	this.ok=function(){
+		var _values = [];
+		var _compsoe = '';
+		$('div.tabs-content').each(function(i){
+			var json = FormUtil.getFormValues('#tabs-'+i);
+			json.ccs = _s[i];
+			
+			_values.push(json);
+			var _temp='    患者于'+json.illTime + getRowValue('illTimeUnit',json.illTimeUnit);
+			var p = $('select[name="predisposingfactors"]').eq(i).val();
+			if(p==1){
+				if(json.causes.length>0){
+					_temp += '有明显诱因出现'+json.causes;
+				}
+				json.predisposingfactors=1;
+			}else if(p==2){
+				var p_v= '体检时发现';
+				_temp += p_v;
+				json.predisposingfactors=2;
+			}else if(p==0){
+				var p_v= '无明显诱因出现';
+				_temp += p_v;
+				json.predisposingfactors=0;
+			}else{
+				json.predisposingfactors='';
+			}
+			
+			var t = json.sysptomMain;
+			if(t.length>0){
+				_temp += t ;
+			}
+			if(json.evolution==99){
+				if(json.evolution0.length>0)
+					_temp+=json.evolution0+'，';
+			}else{
+				var str = getRowValue('evolution',json.evolution);
+				if(str.length>0)
+					_temp+=str+'，';
+			}
+			if(json.seeDoct==99){
+				if(json.seeDoct0.length>0)
+					_temp+=json.seeDoct0+'，';
+			}else{
+				var str = getRowValue('seeDoct',json.seeDoct);
+				if(str.length>0)
+					_temp+=str+'，';
+			}
+			if(json.examination.length>0){
+				_temp+=json.examination+'，';
+			}
+			if(json.diagnosis==99){
+				if(json.diagnosis0.length>0)
+					_temp+=json.diagnosis0+'，';
+			}else{
+				var str = getRowValue('diagnosis',json.diagnosis);
+				if(str.length>0)
+					_temp+=str+'，';
+			}
+			if(json.treatment.length > 0){
+				_temp+=json.treatment+'，';
+			}
+			if(_temp.length>0){
+				_temp=_temp.substr(0,_temp.length-1)+'。\n';
+				if(_compsoe.length>0){
+					_compsoe+= _temp;
+				}else
+					_compsoe+= _temp;
+			}
+		});
+		_compsoe += ComposeCurrentStatu();
+		$('#content1').val(_compsoe);
+		defaultValue.onsets = _values;
+		$('.item_content').css('display','none');
+	}
+	this.chan = function(_this){
+		var _v = $(_this).val();
+		if(_v ==1){
+			$(_this).parent().parent().next().show();
+		}else {
+			$(_this).parent().parent().next().hide();
+		}
+	}
+}
+	/*目前情况*/
+	function ComposeCurrentStatu(){
+		var json = FormUtil.getFormValues('#evolution-fldset');
+		var rst='';
+		var tempValue='';
+		rst+='    患者自发病以来，';
+		rst+='精神'+getRowValue('spiritStatu',json.spiritStatu)+'，';
+		tempValue=json.positiveSysptom;
+		tempValue=tempValue.length>0?('无'+tempValue+'，'):'';
+		rst+=tempValue;
+		rst+='食量'+getRowValue('eatVolume',json.eatVolume)+'，';
+		rst+='睡眠'+getRowValue('sleep',json.sleep)+'，';
+		rst+='小便'+getRowValue('piss',json.piss)+'，';
+		rst+='大便'+getRowValue('excrement',json.excrement)+'，';
+		tempValue=getRowValue('bodyWeight',json.bodyWeight);
+		if(tempValue=='无变化'){
+			rst+='体重无变化，';
+		}else if(tempValue=='增加'){
+			tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'增加'+json.bodyWeight_kg+'Kg，';
+			rst+='体重'+tempValue;
+		}else if(tempValue=='减轻'){
+			tempValue=json.bodyWeight_time+getRowValue('bodyWeight_timeUnit',json.bodyWeight_timeUnit)+'减轻'+json.bodyWeight_kg+'Kg，';
+			rst+='体重'+tempValue;
+		}
+		rst= rst.substr(0,rst.length-1)+'。';
+		return rst;
+	}
+
+	/*打开主要症状与伴随症状合并页面*/
+	function openCardAndCon(_this){
+		/*获取当前是第几个DIV*/
+		var pag = new Page();
+		var c = pag.tab.tabs('option', 'selected');
+		
+		if(!_s[c]){
+			_s[c]='';
+		}
+		var returnValue = window.showModalDialog('cardinalSymptomAndConcomitantSymptom.html',_s[c],'dialogWidth:705px;dialogHeight:530px;status:yes;scroll:yes;resizable:yes;center:yes');
+		if(returnValue){
+			/*赋值给主诉文本框*/
+			$(_this).prev().val(returnValue.compose);
+			var _d = _s[c].id;
+			if( c >= 0){
+				/*修改这个页面的值*/
+				if(_d > 0){
+					_s[c] = returnValue.values;
+				}else {
+					if(!_s[c]){
+						_s[c] = returnValue.values;
+					}
+				}
+			}
+			$("#main").data('data',_s);
+		}
+	}
+	
+	/*提取页面字段值*/
+	function CollectionData(){
+		var json = FormUtil.getFormValues('form');
+		FormUtil.apply(json,FormUtil.getFormValues('#evolution-fldset'));
+		var onsets =[];
+		json.id = pId;
+		FormUtil.apply(json,{onsets:defaultValue.onsets});
+		return json;
+	}
+
+	/*保存函数*/
+	function SaveData(){
+		var _data = CollectionData();
+		$.post(
+			App.App_Info.BasePath+'/InHospitalCase/ENTCaseAction.do',
+			{
+				method:'pre_saveOrUpdate',
+				data:JSON.stringify(_data)
+			},
+			function(data){
+				if(data.success){
+					alert('保存成功。');
+					var _json=JSON.parse(data.data);
+					$.extend(defaultValue,_json);
+					$('#id').val(_json.id);
+					$('#id').data('data',defaultValue);
+					
+					var _json=JSON.parse(data.data);
+					$('form input[name="id"]').val(_json.id);
+					$('#dialog1 fieldset').each(function(i){
+						if(this.id!='evolution-fldset')
+							$(this).find('input[name="id"]').val(_json.onsets[i].id);
+					});
+				}else{
+					alert('保存失败。');
+				}
+			},
+			'json'
+		);
+	}
+
+	/*切换*/
+	function ToggleComposePanel(){
+		if($('.item_content').css('display')=='none'){
+			$('.item_content').css('display','block');
+		}else if($('.item_content').css('display')=='block'){
+			$('.item_content').css('display','none');
+		}
+	}
+--></script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="caseId" value=""/>
+	<!-- 点击图片显示或关闭 -->
+	<div class="item_head title" onclick="ToggleComposePanel()" style="width:610px">
+		<div class="item_title" style="padding-left:10px">现病史</div>
+		<div class="ico_expand" style="float:right;padding-right:13px">
+			<img src="../../../../PUBLIC/images/sign.gif" style="float:right;padding-right:13px"/>
+		</div>
+	</div>
+	<!-- 以下页面内容  -->
+	<div class="item_content" style="width:600px;display:none">
+		<!-- 菜单栏 -->
+		<div id="toolbar" style="text-align:right;width:600px;">
+			<button class="btn" style="color:#000" id="add-btn">新增</button>
+			<button class="btn" style="color:#000" id="del-btn">删除</button>
+			<button class="btn" style="color:#000" id="ok-btn">确定</button>
+			<button class="btn" style="color:#000" id="cancel-btn" onclick="window.close()">取消</button>
+		</div>
+		<!-- 具体内容 -->
+		<div id="tabs" style="width:600px;">
+			<ul>
+				<li><a href="#tabs-0">首次发病记录</a></li>
+			</ul>
+			<div class="tabs-content" id="tabs-0">
+				<table width="600" border=1 cellSpacing=0 cellPadding=2>
+					<tr>
+						<td class="t1" width="100" valign="top">发病时间：</td>
+						<td class="t2" width="*">
+							<input name="illTime" type="text" class="text" style="width:20%"/>
+							<input name="illTimeUnit" type="text" class="select" style="width:10%"/>
+							<input type="hidden" name="id" id="id" value=""/>
+							<input type="hidden" name="main" id="main" />
+						</td>
+					</tr>
+					<tr>
+						<td class="t1">发病途径：</td>
+						<td class="t2">
+							<select name="predisposingfactors" id="predisposingfactors" style="width:20%"></select>
+						</td>
+					</tr>
+					<tr class="hidden">
+						<td class="t1" valign="top">诱因：</td>
+						<td><input name="causes" type="text" class="checkbox" style="width:91%"/></td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">主要/伴随症状：</td>
+						<td>
+							<textarea name="sysptomMain" id="sysptomMain" style="width:91%;height:100px;"></textarea>
+							<img src="../../../../PUBLIC/images/sign.gif" onclick="openCardAndCon(this)" />
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">病情演变：</td>
+						<td><input name="evolution" type="text" class="select" style="width:91%"/>
+						<input name="evolution0" type="text" class="text hidden" style="width:91%"/></td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">就诊医院：</td>
+						<td><input name="seeDoct" type="text" class="select" style="width:91%"/>
+						<input name="seeDoct0" type="text" class="text hidden" style="width:91%"/></td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">检查结果：</td>
+						<td><textarea name="examination" style="width:91%;height:70"></textarea></td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">诊断结果：</td>
+						<td><input name="diagnosis" type="text" class="select" style="width:91%"/>
+							<input name="diagnosis0" type="text" class="text hidden" style="width:91%"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="t1" valign="top">治疗情况：</td>
+						<td><textarea name="treatment" style="width:91%;height:70"></textarea></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="dialog1" style="width:590">
+	  		<fieldset id="evolution-fldset">
+	  			<legend>目前状况</legend>
+				<table width="600" border=1 cellSpacing=0 cellPadding=2>
+					<tr>
+							<td class="t1" width="100">精神状态：</td>
+							<td width="*"><input name="spiritStatu" type="text" class="select" style="width:25%"/></td>
+						</tr>
+						<tr>
+							<td class="t1" width="100"><span style="color:red">重要阴性症状</span>：</td>
+							<td width="*"><span style="color:red">无</span><input name="positiveSysptom" type="text" class="checkbox" style="width:91%"/></td>
+						</tr>
+						<tr>
+							<td class="t1">食量：</td>
+							<td><input name="eatVolume" type="text" class="select" style="width:25%"/></td>
+						</tr>
+						<tr>
+							<td class="t1">睡眠：</td>
+							<td ><input name="sleep" type="text" class="select" style="width:25%"/></td>
+						</tr>
+						<tr>
+							<td class="t1">小便：</td>
+							<td><input name="piss" type="text" class="select" style="width:25%"/></td>
+						</tr>
+						<tr>
+							<td class="t1">大便：</td>
+							<td><input rel="piss" name="excrement" type="text" class="select" style="width:25%"/></td>
+						</tr>
+						<tr>
+							<td class="t1">体重：</td>
+							<td><input name="bodyWeight" type="radio" class="radio dict-fld" checked="checked"/></td>
+						</tr>
+						<tr class="hidden">
+							<td class="t1">&nbsp;</td>
+							<td>
+								<p>&nbsp;<input name="bodyWeight_time" type="text" class="text" style="width:40px"/><input rel="timeUnit" name="bodyWeight_timeUnit" type="text" class="select" style="width:15%"/>&nbsp;&nbsp;<span id="bodyWeight-span">增加</span><input name="bodyWeight_kg" type="text" class="text" style="width:40px"/>Kg</p>
+							</td>
+						</tr>
+				</table>
+	  		</fieldset>
+	  	</div>
+	</div><!-- 页面内容结束 -->
+	<div id="FCKEditor_normal"></div>
+	<!--返回组合值  -->
+	<div id="FCKEditor" style="width:610px;">
+		<textarea name="content1" id="content1" class="textarea" style="width:100%;"></textarea>
+	</div>
+    
+</form>
+</body>
+</html>

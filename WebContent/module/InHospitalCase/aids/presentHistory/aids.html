@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>现病史</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript">
+var KID=null;
+var PID=null;
+var content = '';
+var isSave = "false";
+var aidsHistory_cases = [];
+var aidsHistory_mainSymptom = [];
+var aidsHistory_otherPositive = [];
+var aidsHistory_currentStatus = [];
+var aidsHistory_sideSysptom = [];
+var aidsHistory_otherDisease = [];
+var aidsHistory_negaSymptom = [];
+var aidsHistory_treat = [];
+var aidsHistory_sysptomEvolution = [];
+
+Ext.onReady(function(){
+	KID=App.util.getHtmlParameters('KID');
+	PID=App.util.getHtmlParameters('PID');
+	$('*[name="caseId"]').val(KID);
+	initPage();
+});
+
+function initPage(){
+	var response=null;
+	var data=null;
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/Aids.do',
+		params:{
+			method:'findContent',
+			caseId:KID
+		},
+		sync:false,
+		scope:this,
+		success:function(_response){
+			response=Ext.decode(_response.responseText);
+		}
+	});
+	if(response&&response.success){
+		data=Ext.decode(response.data);
+		if(!data){
+			data={
+				id:-1,
+				caseId:KID
+			};
+		}
+		FormUtil.setFormValues('#contentDiv',data);
+		content = $("#content").val();
+	}else{
+		alert('获取数据失败。');
+		return;
+	}
+}
+
+function getData(){
+	var value=FormUtil.getFormValues('#contentDiv');
+	value.aidsHistory_cases = aidsHistory_cases;
+	value.aidsHistory_mainSymptom = aidsHistory_mainSymptom;
+	value.aidsHistory_otherPositive = aidsHistory_otherPositive;
+	value.aidsHistory_currentStatus = aidsHistory_currentStatus;
+	value.aidsHistory_sideSysptom = aidsHistory_sideSysptom;
+	value.aidsHistory_treat = aidsHistory_treat;
+//	value.aidsHistory_otherDisease = prehis_otherDisease;
+//	value.aidsHistory_negaSymptom = prehis_negaSymptom;
+//	value.aidsHistory_sysptomEvolution = prehis_sysptomEvolution;
+	return value;
+}
+function SaveData(){
+	if(isSave == "false"){
+		alert("无数据需要保存");
+		return;
+	}
+	var value=getData();
+	Ext.Ajax.request({
+		url:App.App_Info.BasePath+'/InHospitalCase/Aids.do',
+		params:{
+			method:'saveOrUpdateContent',
+			data:JSON.stringify(value)
+		},
+		success:function(_reponse){
+			var res=Ext.decode(_reponse.responseText);
+			if(res.success){
+				alert('保存成功。');
+			}else{
+				alert('保存失败。');
+			}
+		}
+	});
+}
+function aidsHistorys(){
+	hideSymptomInfoIfr();
+	$('#aidsHistory').attr('src', 'aidsInfo.html');
+	$('#aidsHistory').width(840);
+	$('#aidsHistory').height($(window).height());
+}
+function showAidsHis(){
+	hideSymptomInfoIfr();
+	$('#aidsHistory').width(840);
+	$('#aidsHistory').height($(window).height());
+}
+function destroyAidsHis(){
+	$('#aidsHistory').width(0);
+	$('#aidsHistory').height(0);
+	$('#aidsHistory').attr('src', '');
+}
+function hideAidsHis(){
+	$('#aidsHistory').width(0);
+	$('#aidsHistory').height(0);
+}
+function symptomInfoIfr(sysptomPage, nodeText){
+	$('#symptomInfoIfr').width(840);
+	$('#symptomInfoIfr').height(1000);
+	$('#symptomInfoIfr').attr('src', sysptomPage + '?nodeText=' + nodeText);
+}	
+function hideSymptomInfoIfr(){
+	$('#symptomInfoIfr').width(0);
+	$('#symptomInfoIfr').height(0);
+	$('#symptomInfoIfr').attr('src', '');
+}
+function setRetValue(retoldOperations, retContent){
+	if(retoldOperations){
+		$('#oldOperations').val(retoldOperations);
+	}
+	if(retContent){
+		$('#content').val(retContent);
+	}
+}
+function getOldOperations(){
+	return $('#oldOperations').val();
+}
+</script>
+</head>
+<body>
+<div id="tab"></div>
+
+<table width="850" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+<tr><td class="title">现病史</td></tr>
+</table>
+	
+<div id="contentDiv">
+<input type="hidden" name="id" value="-1"/>
+<input type="hidden" name="caseId" value="-1"/>
+<input type="hidden" id="oldOperations" name="oldOperations" value=""/>
+<textarea id="content" name="content" class="textarea" style="width:800px;" readOnly></textarea>
+<img src="../../../../PUBLIC/images/sign.gif" class="hand" onclick="aidsHistorys();"/>
+</div>
+<iframe name="aidsHistory" id="aidsHistory" src="" width="0" height="0"></iframe>
+<iframe name="symptomInfoIfr" id="symptomInfoIfr" src="" width="0" height="0" scrolling="auto"></iframe>
+</body>
+</html>

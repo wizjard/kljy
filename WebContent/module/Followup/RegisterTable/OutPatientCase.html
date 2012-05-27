@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>门诊病历登记</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<style type="text/css">
+.textarea{
+	width:92%;
+}
+</style>
+<script type="text/javascript">
+var fid=App.util.getHtmlParameters('kid');
+var pid=App.util.getHtmlParameters('pid');
+$(function(){
+	//时间选择框
+	FormUtil.toDateField({el:$('input[name="reginDate"]'),dateFormat:'yyyy-MM-dd'});
+	$('input[name="reginDate"]').val(App.util.getHtmlParameters('date'));
+	//隐藏域
+	$('input[name="patientId"]').val(pid);
+	$('input[name="followupId"]').val(fid);
+	//赋值
+	setValue();
+});
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{method:'OutPutientCase_findByFollowupId',id:fid},
+		function(data){
+			if(data.success){
+				var json=JSON.parse(data.data);
+				if(json){
+					$('input[name="id"]').data('json',json);
+					$('input[name="oldOperation"]').val(_json.oldOperation);
+					FormUtil.setFormValues('form',json);
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function setFormValues_onComplete(){
+	var _id=$('input[name="doctorId"]').val();
+	if(_id&&_id>0){
+		$('input[name="doctorId_show"]').val(FormUtil.getIndependentDictionaryText('userName',_id));
+		$.post(
+			App.App_Info.BasePath+'/user.do',
+			{
+				method:'getLoginUserInfo'
+			},
+			function(data){
+				if(data.id){
+					if(data.id==_id){
+						$('#sign-btn').attr('value','撤销');
+					}else{
+						$('#sign-btn').attr('disabled',true);
+					}
+				}else{
+					alert('无登陆用户，请重新登录。');
+				}
+			},
+			'json'
+		);
+	}
+}
+function SignDocName(_this){
+	if(_this.value=='撤销'){
+		if(!confirm('确定要撤销签名？'))return;
+		$('input[name="doctorId"]').val('');
+		$('input[name="doctorId_show"]').val('');
+		_this.value='签字';
+		return;
+	}
+	$.post(
+		App.App_Info.BasePath+'/user.do',
+		{
+			method:'getLoginUserInfo'
+		},
+		function(data){
+			if(data.id){
+				if(!confirm('确定要签入您的名字< '+data.name+' >？'))return;
+				$('input[name="doctorId"]').val(data.id);
+				$('input[name="doctorId_show"]').val(data.name);
+			}else{
+				alert('无登陆用户，请重新登录。');
+			}
+		},
+		'json'
+	);
+}
+function SaveData(){
+	var _values=$('input[name="id"]').data('json');
+	if(!_values) _values={};
+	_values=FormUtil.apply(_values,FormUtil.getFormValues('form'));
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/FollowReginAction.do',
+		{
+			method:'OutPutientCase_SaveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+				$('form input[name="id"]').data('json',_json);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ShowDialog(){
+	var _json=$('input[name="id"]').data('json');
+	var _lab={};
+	if(_json){
+		_lab=_json.lab;
+	}else{
+		_json={};
+	}
+	var sheight = screen.height*0.75;
+	var swidth = 620;
+	var winoption ="dialogHeight:"+sheight+"px;dialogWidth:"+ swidth +"px;status:yes;scroll:yes;resizable:yes;center:yes";
+	var returnValue=window.showModalDialog(App.App_Info.BasePath+'/module/InHospitalCase/Liver/CaseDetails/LabExamination.html',_lab?_lab:null,winoption);
+	if(returnValue){
+		var _text=returnValue.text;
+		var _value=returnValue.value;
+		_json.lab=_value;
+		$('input[name="id"]').data('json',_json);
+		$('textarea[name="labExam"]').val(_text);
+	}
+}
+	
+	 <!-- ---------------修改的地方-------------- -->
+function relateCheckReport(){
+	var returnValue = window.showModalDialog('../../InHospitalCase/Liver/CheckReport/combinationListofOutPatientCase.html?patientId=' + pid + '&KID=' + fid,'','dialogWidth=950px;dialogHeight=650px');
+	if(returnValue){
+		$('#labExam').val(returnValue.retValue);
+		$('#oldOperation').val(returnValue.oldOperation);
+	}
+}
+</script>
+</head>
+<body>
+<div id="toolbar" style="text-align:right">
+	<input type="button" value="保存" class="btn_mouseout" onclick="SaveData()"/>&nbsp;&nbsp;
+	<input type="button" value="返回" class="btn_mouseout" onclick="history.go(-1)"/>&nbsp;&nbsp;
+</div>
+<form>
+<input type="hidden" name="id" value=""/>
+	<input type="hidden" name="oldOperation" id="oldOperation" value=""/>
+<input type="hidden" name="patientId" value=""/>
+<input type="hidden" name="followupId" value=""/>
+<input type="hidden" name="doctorId" value=""/>
+<table width="660" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td colspan=2 class="title">门诊病历登记</td>
+	</tr>
+	<tr>
+		<td class="t1" width="80">登记日期：</td>
+		<td class="t2"><input name="reginDate" type="text" class="text" style="width:32%"/></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">主诉：</td>
+		<td class="t2" valign="top"><textarea name="chiefComplaint" class="textarea" style="height:40px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">现病史：</td>
+		<td class="t2" valign="top"><textarea name="pressentIllness" class="textarea" style="height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">其它病史：</td>
+		<td class="t2" valign="top"><textarea name="otherDisHistroy" class="textarea" style="height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">体格检查：</td>
+		<td class="t2" valign="top"><textarea name="physicalExam" class="textarea" style="height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">实验室及&nbsp;&nbsp;&nbsp;&nbsp;<br/>辅助检查：</td>
+		<td class="t2" valign="top">
+			<textarea name="labExam" id="labExam" class="textarea" style="height:100px;"></textarea>
+			<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="ShowDialog()"/>
+			<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="relateCheckReport()"/>
+			第二张图片为新版化验检查
+		</td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">初步诊断：</td>
+		<td class="t2" valign="top"><textarea name="chubu_diag" class="textarea" style="height:40px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">治疗及建议：</td>
+		<td class="t2" valign="top"><textarea name="treatAd" class="textarea" style="height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1" valign="top">其它备注：</td>
+		<td class="t2" valign="top"><textarea name="otherMemo" class="textarea" style="height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td class="t1">就诊医生：</td>
+		<td class="t2"><input readonly="readonly" name="doctorId_show" type="text" class="text" style="width:32%"/><input id="sign-btn" type="button" value="签字" class="btn_mouseout" onclick="SignDocName(this)"/></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

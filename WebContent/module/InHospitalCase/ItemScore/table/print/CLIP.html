@@ -1,0 +1,114 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link type="text/css" rel="stylesheet" href="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../../../../../PUBLIC/Scripts/My97DatePicker/WdatePicker.js"></script>
+<title></title>
+<style type="text/css"></style>
+<script type="text/javascript">
+	var subScoreItem = App.util.getHtmlParameters('subScoreItem');
+	$(function(){
+		initPage();
+	});
+	function initPage(){
+		var json = parent.getIframeValue(subScoreItem);
+		if(json){
+			FormUtil.setFormValues('form',json);
+		}
+		getPrintPageData();
+		parent.pageCount++;
+		if(parent.pageCount == parent.totalPageCount){
+			parent.printPage();
+		}
+	}
+	function getPrintPageData(){
+		parent.appendToPrintDiv(subScoreItem,$('#print').html());
+	}
+</script>
+</head>
+<body>
+<form>
+	<input type="hidden" name="id" id="id" value="-1"/>
+	<input type="hidden" name="scId" id="scId" value=""/>
+	<input type="hidden" name="caseId" id="caseId" value=""/>
+	<div id="print">
+	<table width="650" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2 style="font-size:14px">
+		<tr><td colspan="5" style="font-size:20px;color:red;">意大利肿瘤计划（CLIP）分期系统</td></tr>
+		<tr align="center">
+			<td style="font-size:16px;" rowspan="2" width="120">指&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标</td>
+			<td colspan="3" width="420">分值</td>
+			<td width="110">得分</td>
+		</tr>
+		<tr align="center">
+			<td width="140">0</td>
+			<td width="140">1</td>
+			<td width="140">2</td>
+			<td width="140">&nbsp;</td>
+		</tr>
+		<tr align="center">
+			<td>Child-Pugh分级</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="0" /></div><div style="float:left;">A级</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="1" /></div><div style="float:left;">B级</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="cpGrade" value="2" /></div><div style="float:left;">C级</div></div>
+			</td>
+			<td><input type="text" name="cpGrade2" value="" style="width:95%;"/></td>
+		</tr>
+		<tr align="center">
+			<td>肿瘤形态</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="knubType" value="0" /></div><div style="float:left;">单一且≤肝脏50%</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="knubType" value="1" /></div><div style="float:left;">多发且≤肝脏50%</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="knubType" value="2" /></div><div style="float:left;">巨块型＞肝脏50%</div></div>
+			</td>
+			<td><input type="text" name="knubType2" value="" style="width:95%;"/></td>
+		</tr>
+		<tr align="center">
+			<td>甲胎蛋白</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="jtAlbumen" value="0" /></div><div style="float:left;">＜400</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="jtAlbumen" value="1" /></div><div style="float:left;">≥400</div></div>
+			</td>
+			<td>&nbsp;</td>
+			<td><input type="text" name="jtAlbumen2" value="" style="width:95%;"/></td>
+		</tr>
+		<tr align="center">
+			<td>门静脉栓塞</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="pvEmbolism" value="0" /></div><div style="float:left;">无</div></div>
+			</td>
+			<td>
+				<div><div style="float:left;"><input type="radio" name="pvEmbolism" value="1" /></div><div style="float:left;">有</div></div>
+			</td>
+			<td>&nbsp;</td>
+			<td><input type="text" name="pvEmbolism2" value="" style="width:95%;"/></td>
+		</tr>
+		<tr align="center">
+			<td colspan="4" align="center">总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;积&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分</td>
+			<td><input type="text" name="totalScore" value="" style="width:95%;"/></td>
+		</tr>
+		<tr align="center">
+			<td colspan="4" align="center">分&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期</td>
+			<td><input type="text" name="stage" value="" style="width:95%;"/></td>
+		</tr>
+    </table>
+   </div>
+</form>
+</body>
+</html>

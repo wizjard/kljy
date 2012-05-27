@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>死亡病历讨论打印</title>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../../CasePrint/scripts/button.js"></script>
+<script type="text/javascript" src="../../../../CasePrint/scripts/init.js"></script>
+<script type="text/javascript" src="../../../../../../PUBLIC/Scripts/MyJavascripts/ReportHead.js"></script>
+<!--<script type="text/javascript" src="print.js"></script>-->
+<script type="text/javascript">
+	var kid=App.util.getHtmlParameters('kid');//id
+	var cid=App.util.getHtmlParameters('cid');//kid
+	$(function(){
+		singlePageInit(kid,2,'死亡病历讨论');
+	});
+</script>
+</head>
+<body>
+<div id="page-toolbar">
+	<button id="singlePage">打印预览</button>
+</div>
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+<div id="page-con">
+	<div id="page-header"></div>
+	<div id="table-div">
+		<link type="text/css" rel="stylesheet" href="../../../../css/print.css"/>
+		<table class="conTable" border=0 cellpadding=0 cellspacing=0>
+			<tr>
+				<td class="td2" width="50%">姓名：<span name="name">&nbsp;</span></td>
+				<td class="td2" width="25%">性别：<span name="gender">&nbsp;</span></td>
+				<td class="td2" width="25%">年龄：<span name="age">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">科别：<span name="ward">&nbsp;</span></td>
+				<td class="td2" colspan="2">讨论日期：<span name="discussTime">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">讨论地点：<span name="discussPlace"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">主&nbsp;持&nbsp;者：<span name="chairPerson"></span></td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">参&nbsp;加&nbsp;者：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="joinPerson">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">主管医师简述病历：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="caseSummary">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">讨论发言主要内容：（分别记录每位发言医师的技术职称，主要观点）</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="discussContent">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">临床死亡原因：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="deathReason">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">临床死亡诊断：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="deathDiag">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3">参照本例应借鉴的问题：</td>
+			</tr>
+			<tr>
+				<td class="td2" colspan="3" name="discussResult">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;</td>
+				<td class="td2" colspan=2>记&nbsp;录&nbsp;者：<span name="recName">&nbsp;</span></td>
+			</tr>
+			<tr>
+				<td class="td2">&nbsp;</td>
+				<td class="td2" colspan=2>记录日期：<span name="time">&nbsp;</span></td>
+			</tr>
+		</table>
+	</div>
+	<div id="page-footer"></div>
+</div>
+</body>
+</html>

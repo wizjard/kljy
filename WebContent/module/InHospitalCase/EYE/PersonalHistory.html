@@ -1,0 +1,427 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>个人史(肝病)</title>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/common.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/jsloader_ext.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../PUBLIC/Scripts/MyJavascripts/tableform/table.css"/>
+<script type="text/javascript" src="../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+<script type="text/javascript" src="../Liver/Js/validData.js"></script>
+<script type="text/javascript" src="../Liver/Js/validRadio.js"></script>
+<script type="text/javascript" src="../Liver/Js/validText.js"></script>
+<script type="text/javascript">
+var PageCode='EMR-liver-PersonalHistory';
+var KID=null;
+var PID=null;
+//Radio事件字段
+var eventArray=['rayContactFlag','smokingFlag','drinkFlag','fourteenFlag','otherflag','dirtySexFlag'];
+	var valiPrem = ['rayContactFlag','smokingFlag','drinkFlag','yeyouFlag','dirtySexFlag'];
+$(function(){
+	KID=App.util.getHtmlParameters('KID');
+	$('input[name="caseId"]').val(KID);
+	PID=App.util.getHtmlParameters('PID');
+	initPage();
+	setValue();
+});
+function initPage(){
+	//初始化公共字典值
+	$.each(FormUtil.getPageDictionary('EMR-liver-PersonalHistory'),function(code){
+		$('input[name="'+code+'"]').data('options',this);
+	});
+	//Radio选项初始化
+	$('input.dict-fld[type="radio"]').each(function(){
+		FormUtil.initDictRadio($(this));
+	});
+	//Select初始化
+	$('input.select').each(function(){
+		FormUtil.toCombobox({el:$(this)});
+	});
+	
+	$('input.checkbox').each(function(){
+		FormUtil.toCheckbox({el:$(this),columns:3});
+	});
+	
+	//弹出框
+	$('#dialog1').dialog({
+		title:'个人史',
+		autoOpen:false,
+		closeOnEscape:true,
+		height:350,
+		width:550,
+		resizable:true,
+		zIndex:99,
+		buttons:{
+			'关闭':function(){$(this).dialog("close");},
+			'确定':function(){ComposePersonalHistory();$(this).dialog("close");}
+		}
+	});
+	//Radio事件
+	$.each(eventArray,function(){
+		$('input[name="'+this+'"]').each(function(){
+			$(this).click(function(){
+				if($(this).val()==1){
+					$(this).parent().parent().next().show();
+				}else{
+					$(this).parent().parent().next().hide();
+				}
+			});
+		});
+	});
+}
+function setValue(){
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PersonalHistory_findByCaseID',
+			id:KID
+		},
+		function(data){
+			if(data.success){
+				var _json=JSON.parse(data.data);
+				if(_json){
+					FormUtil.setFormValues('form',_json);
+					FormUtil.setFormValues('#dialog1',_json);
+					$.each(eventArray,function(){
+						$('input[name="'+this+'"]').each(function(){
+							if(this.checked){
+								$(this).click();
+								return false;
+							}
+						});
+					});
+				}
+			}else{
+				alert('页面赋值错误。');
+			}
+		},
+		'json'
+	);
+}
+function CollectionData(){
+	var json=FormUtil.getFormValues('form');
+	FormUtil.apply(json,FormUtil.getFormValues('#dialog1'));
+	return json;
+}
+function ComposePersonalHistory(){
+	var _compose=CollectionData();
+	var rst='';
+	var flag='';
+	var tempValue='';
+	//出生地
+	tempValue=_compose.birthPlace;
+	if(tempValue.length>0)
+		tempValue+='出生，';
+	rst+=tempValue;
+	//长期放射线或毒物接触史
+	flag=_compose.rayContactFlag;
+	if(flag=='0'){
+		rst+='无放射线或毒物接触史，';
+	}else if(flag=='1'){
+		tempValue=_compose.rayType;
+		tempValue=tempValue.length>0?('接触'+tempValue):'';
+		rst+=tempValue;
+		tempValue=_compose.rayContactTime+getRowValue('rayContactTimeID',_compose.rayContactTimeID);
+		tempValue=tempValue.length>0?(tempValue+'，'):'';
+		rst+=tempValue;
+	}
+	//吸烟史
+	flag=_compose.smokingFlag;
+	if (flag == '0') {
+		rst += '无吸烟史，';
+	}else if (flag == '1') {
+		tempValue=_compose.smokingTime+'';
+		tempValue=tempValue.length>0?('吸烟'+tempValue+'年，'):'';
+		rst+=tempValue;
+		tempValue=_compose.smokingCount+'';
+		tempValue=tempValue.length>0?('日均吸烟'+tempValue+'支，'):'';
+		rst+=tempValue;
+		tempValue=_compose.noSmokingTime+'';
+		tempValue=tempValue.length>0?('戒烟'+tempValue+'年，'):'';
+		rst+=tempValue;
+	}else if(flag=='2'){
+		rst += '平时偶尔吸烟，'
+	}
+	//饮酒史
+	flag=_compose.drinkFlag;
+	if(flag=='0'){
+		rst += '无饮酒史，';
+	}else if(flag=='1'){
+		tempValue=_compose.drinkTime+'';
+		tempValue=tempValue.length>0?('饮酒'+tempValue+'年，'):'';
+		rst+=tempValue;
+		tempValue=getRowValue('drinkType',_compose.drinkType);
+		tempValue=tempValue.length>0?('主要饮'+tempValue+'，'):'';
+		rst+=tempValue;
+		/*---------------*/
+		tempValue=getRowValue('drinkRate',_compose.drinkRate);
+		tempValue=tempValue.length>0?(tempValue+'，'):'';
+		
+		rst+=tempValue;
+		tempValue=_compose.drinkCount+'';
+		tempValue=tempValue.length>0?(tempValue+'次/周，'):'';
+		rst+=tempValue;
+		tempValue=_compose.drinkAvg;
+		tempValue=tempValue.length>0?('平均'+tempValue
+					+getRowValue('drinkAvgUnit',_compose.drinkAvgUnit)+'，'):'';
+		rst+=tempValue;
+		tempValue=_compose.noDrinkTime+'';
+		tempValue=tempValue.length>0?('戒酒'+tempValue+'年，'):'';
+		rst+=tempValue;
+	}else if(flag=='2'){
+		rst +='平时偶尔饮酒，'
+	}
+	//冶游史
+	flag=_compose.yeyouFlag;
+	if(flag=='0'){
+		rst+='无冶游史，';
+	}else if(flag=='1'){
+		rst+='有冶游史，';
+	}
+	//不洁性生活史
+	flag=_compose.dirtySexFlag;
+	if(flag=='0'){
+		rst+='无不洁性生活史，';
+	}else if(flag=='1'){
+		rst+='有不洁性生活史';
+		if(_compose.dirtySexDetail.length > 0){
+			rst = rst + '，';
+		} 
+		rst = rst + _compose.dirtySexDetail + '，';
+	}
+	//14岁以下儿童免疫接种史
+	flag=_compose.fourteenFlag;
+	if(flag=='0'){
+		rst+='';
+	}else if(flag=='1'){
+		tempValue=_compose.birthNum+'';
+	
+		rst+=tempValue.length>0?('患者为第'+tempValue+'胎，'):'';
+		
+		tempValue=getRowValue('foetusStatu',_compose.foetusStatu);
+	
+		rst+=tempValue.length>0?('母孕期'+tempValue+'，'):'';
+		
+		tempValue=getRowValue('birthKind',_compose.birthKind);
+		rst+=tempValue.length>0?(tempValue+'，'):'';
+		
+		tempValue=_compose.birthCircu;
+		rst+=tempValue.length>0?(tempValue+'，'):'';
+		
+		tempValue=getRowValue('feedKind',_compose.feedKind);
+		rst+=tempValue.length>0?(tempValue+'，'):'';
+		tempValue=getRowValue('solidFood',_compose.solidFood);
+		rst+=tempValue.length>0?(tempValue+'，'):'';
+		tempValue=getRowValue('growndevelopment',_compose.growndevelopment);
+		rst+=tempValue.length>0?('生长发育'+tempValue+'，'):'';
+		tempValue=getRowValue('intellectualdevelopment',_compose.intellectualdevelopment);
+		rst+=tempValue.length>0?('智力发育'+tempValue+'，'):'';
+		
+		tempValue=getRowValue('vaccinationStatu',_compose.vaccinationStatu);
+		if(tempValue=='其它'){
+			var temp = _compose.vaccinationStatu0;
+			rst += temp.length > 0 ?temp + '，' :''; 
+		}else{
+			rst+=tempValue.length>0?(tempValue+'，'):'';
+		}
+	}
+	flag =_compose.otherflag;
+	if(flag=='1'){
+		rst += _compose.otherPerFlag +'，';
+	}
+	rst = rst;
+	if(rst.length>0){
+		rst=rst.substr(0,rst.length-1)+'。';
+	}
+	var _sum = $('textarea[name="personalHistoryDesc"]').val();
+	if(_sum.length > 0){
+		Ext.Msg.show({
+			title:'提示',
+			width:300,
+			msg:'是否替换原有的值？',	
+			buttons:{yes:'否',no:'是'},
+			fn: function(_btn){
+			   	if(_btn=='no'){
+			   		$('textarea[name="personalHistoryDesc"]').attr('value',rst);
+				}
+		    },
+			icon:Ext.MessageBox.QUESTION
+		});
+	}else {
+		$('textarea[name="personalHistoryDesc"]').attr('value',rst);
+	}
+	$('#dialog1').dialog("close");
+}
+function SaveData(){
+	var _values=CollectionData();
+	var tePrem =['birthPlace'];
+	//alert(validRad('div',valiPrem)==false + '    ' + validText('div',tePrem)==false);
+	//if(validRad('div',valiPrem)==false || validText('div',tePrem)==false ||(validRad('div',valiPrem)==false&&validText('div',tePrem)==false))	return;
+	var _data=JSON.stringify(_values);
+	$.post(
+		App.App_Info.BasePath+'/InHospitalCase/LiverCaseAction.do',
+		{
+			method:'PersonalHistory_saveOrUpdate',
+			data:_data
+		},
+		function(data){
+			if(data.success){
+				alert('保存成功。');
+				var _json=JSON.parse(data.data);
+				$('form input[name="id"]').val(_json.id);
+			}else{
+				alert('保存失败。');
+			}
+		},
+		'json'
+	);
+}
+function ValidForm(){
+	return true;
+}
+</script>
+</head>
+<body>
+<form>
+<input type="hidden" name="id" value=""/>
+<input type="hidden" name="caseId" value=""/>
+<table width="600" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+	<tr>
+		<td class="title">个人史</td>
+	</tr>
+	<tr>
+		<td class="t2" valign="top"><textarea name="personalHistoryDesc" class="textarea" style="width:95%"></textarea>
+		<img src="../../../PUBLIC/images/sign.gif" class="hand" onclick="FormUtil.showJqueryDialog('dialog1');"/></td>
+	</tr>
+</table>
+</form>
+<div id="dialog1">
+	<p><span style="color:red;font-size:12px;"/>&nbsp;&nbsp;带&nbsp;*&nbsp;为必填项或必选项！</span></p>
+	<table width="495" border=1 cellSpacing=0 borderColorDark=#ffffff cellPadding=2>
+		<tr>
+			<td class="t1" width="150"><span style="color:red">*&nbsp;</span>出生地：</td>
+			<td class="t2">
+				<input type="text" class="text" name="birthPlace" style="width:90%"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*</span>长期放射线或毒物接触史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="rayContactFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="rayContactFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="rayContactFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="150">&nbsp;</td>
+			<td class="t2">
+				<p>射线种类：<input name="rayType" type="text" class="text" style="width:70%"/></p>
+				<p>接触时长：<input name="rayContactTime" type="text" class="text" style="width:40px"/><input class="radio dict-fld" type="radio" name="rayContactTimeID" checked/></p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>吸烟史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="smokingFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="smokingFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="smokingFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="150">&nbsp;</td>
+			<td class="t2">
+				<p>吸烟年限：<input name="smokingTime" type="text" class="text" style="width:50px"/>&nbsp;年</p>
+				<p>日吸烟量：<input name="smokingCount" type="text" class="text" style="width:50px"/>&nbsp;支/天</p>
+				<p>戒烟年限：<input name="noSmokingTime" type="text" class="text" style="width:50px"/>&nbsp;年</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>饮酒史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="drinkFlag" /><span>无</span>
+				<input type="radio" class="radio" value="2" name="drinkFlag"/><span>偶尔</span>
+				<input type="radio" class="radio" value="1" name="drinkFlag"/><span>经常</span>
+				<input type="radio" class="radio" value="9" name="drinkFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="150">&nbsp;</td>
+			<td class="t2">
+				<p>饮酒年限：<input name="drinkTime" type="text" class="text" style="width:100px"/>&nbsp;年</p>
+				<p>饮酒种类：<input name="drinkType" type="text" class="select" style="width:100px"/></p>
+				<p>饮酒频度：<input name="drinkRate" type="text" class="text" style="width:100px"/></p>
+				<p>均饮酒量：<input name="drinkAvg" type="text" class="text" style="width:100px"/><input class="radio dict-fld" type="radio" name="drinkAvgUnit" checked/></p>
+				<p>饮酒次数：<input name="drinkCount" type="text" class="text" style="width:100px"/>&nbsp;次/周</p>
+				<p>戒酒年限：<input name="noDrinkTime" type="text" class="text" style="width:100px"/>&nbsp;年</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>冶游史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="yeyouFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="yeyouFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="yeyouFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span style="color:red">*&nbsp;</span>不洁性生活史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="dirtySexFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="dirtySexFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="dirtySexFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>	
+			<td class="t2">
+				<textarea name="dirtySexDetail" class="textarea" style="width:90%"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1"><span>&nbsp;</span>14岁以下儿童个人史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="fourteenFlag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="fourteenFlag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="fourteenFlag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1" width="150">&nbsp;</td>
+			<td class="t2">
+				<p style="padding-left:4.7em">第&nbsp;<input name="birthNum" type="text" class="text" style="width:40px"/>&nbsp;胎</p>
+				<p style="padding-left:2em">母孕期：<input name="foetusStatu" type="text" class="select" style="width:240px"/></p>
+				
+				<p style="padding-left:1em">生产方式：<input name="birthKind" type="text" class="checkbox" style="width:230px"/></p>
+				
+				<p style="padding-left:1em">出生情况：<input name="birthCircu" type="text" class="text" style="width:240px"/></p>
+				<p style="padding-left:1em">喂养方式：<input name="feedKind" type="text" class="select" style="width:240px"/></p>
+				<p style="padding-left:1em">辅食添加：<input name="solidFood" type="text" class="select" style="width:240px"/></p>
+				<p style="padding-left:1em">生长发育：<input name="growndevelopment" type="text" class="select" style="width:240px"/></p>
+				<p style="padding-left:1em">智力发育：<input name="intellectualdevelopment" type="text" class="select" style="width:240px"/></p>
+				
+				<p>预防接种史：<input name="vaccinationStatu" type="text" class="select" style="width:240px"/><br>
+							  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						      <input name="vaccinationStatu0" type="text" class="text hidden" style="width:240px;"/>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="t1" valign="top">其他个人史：</td>
+			<td class="t2">
+				<input type="radio" class="radio" value="0" name="otherflag" /><span>无</span>
+				<input type="radio" class="radio" value="1" name="otherflag"/><span>有</span>
+				<input type="radio" class="radio" value="9" name="otherflag"/><span>未说明</span>
+			</td>
+		</tr>
+		<tr class="hidden">
+			<td class="t1">&nbsp;</td>	
+			<td class="t2">
+				<textarea name="otherPerFlag" class="textarea" style="width:90%"></textarea>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

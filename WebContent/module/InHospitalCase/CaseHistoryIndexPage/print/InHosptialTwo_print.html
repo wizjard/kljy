@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>InHosptialTwo_print.html</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link type="text/css" rel="stylesheet" href="../../css/print.css"/>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/common.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/jsloader_jquery.js"></script>
+	<script type="text/javascript" src="../../../../PUBLIC/Scripts/MyJavascripts/tableform/FormUtil.js"></script>
+	<script type="text/javascript" src="../Js/InHospitalPage.js"></script>
+	<script type="text/javascript">
+		var pid = null,kid = null;
+		$(function(){
+			kid = App.util.getHtmlParameters('kid');
+			pid = App.util.getHtmlParameters('pid');
+			
+			setValues();
+			
+			$('#all-double').click(function(){
+				print();
+			});
+		});
+		
+		function setValues(){
+			$.post(
+				App.App_Info.BasePath+'/InHosp.do',
+				{
+					method:'getInHospTwoByCaseId',
+					kid:kid
+				},function(data){
+					if(data.success){
+						if(data.data==""){
+							alert("暂无数据！");
+							return;
+						}
+						var followupDate = 0;
+						var json = JSON.parse(data.data);
+						if(json){
+							if(json.hunmi == 1){
+								$('td[name="hunmiTd"]').hide();
+								$('td[name="hunmiTd"]').next().hide();
+								$('td[name="hunmiTd"]').next().next().hide();
+								$('td[name="hunmiShijianTd"]').show();
+								$('td[name="hunmiShijianTd"]').next().show();
+								$('td[name="hunmiShijianTd"]').next().next().show();
+							}
+						
+							$.each(json,function(key){
+								if(typeof(json[key])=='number'){
+									json[key] = new String(json[key]);
+								}
+								if(key == "fuc_timelimit"){
+									followupDate = json[key];
+								}
+								if(key=="fuc_timelimit_unit"){									
+									$('input[name="fuc_timelimit_unit"]').each(function(){
+										var _va = json['fuc_timelimit_unit'];
+										if(this.value==_va){
+											this.checked = true;
+											if(_va == '1'){		
+												$('#fuc_timelimit').html((followupDate + " " + "周").replaceAll(' ', '<span>&nbsp;&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));
+											}else if(_va == '2'){
+												$('#fuc_timelimit').html((followupDate + " " + "月").replaceAll(' ', '<span>&nbsp;&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));
+											}else if(_va == '3'){
+												$('#fuc_timelimit').html((followupDate + " " + "年").replaceAll(' ', '<span>&nbsp;&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));
+											}else if(_va == '4'){
+												$('#fuc_timelimit').html((followupDate).replaceAll(' ', '<span>&nbsp;&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));
+											}
+										}									
+									});									
+								}
+								if(json.followUpClinic == 1){
+									$('div[name="fuc_timelimitDiv"]').show();
+									$('div[name="fuc_timelimitDiv"]').next().show();
+									$('div[name="fuc_timelimitDiv"]').next().next().show();
+								}																														
+								if(json[key]){									
+									if(key=="tdate"||key=="tdate2"||key=="tdate3"||key=="tdate4"||key=="tdate5"){
+										var temp = json[key];
+										json[key] = temp.length > 0 ? temp.substr(0,10) : '';
+										$('*[name="' + key + '"]').html(json[key].replaceAll(' ', '<span>&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));	
+									}else if(key != "fuc_timelimit_unit" && key != "fuc_timelimit"){
+										$('*[name="' + key + '"]').html(json[key].replaceAll(' ', '<span>&nbsp;</span>').replaceAll('\n', '<p>').replaceAll(',', '，'));									
+									}else{}									
+								}														
+							});
+						}
+					}
+					print();
+				},'json'
+			);
+		}
+		
+		function print(){
+			createHeadTwo('病案首页反页面');
+			LODOP.ADD_PRINT_HTM(70,15,680,1100,$('#print').html());//第一个参数控制上边距，第二个参数控制左边距，第三个控制宽度，第四个控制高度
+			LODOP.SET_PRINT_STYLEA(5,"ItemType",0);
+			LODOP.SET_PRINT_STYLEA(5,"HOrient",3);
+			LODOP.SET_PRINT_STYLEA(5,"VOrient",0);
+			LODOP.PREVIEW();
+		}
+	</script>
+  </head>
+  
+  <body>
+    	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0"></object>
+		<div id="page-toolbar">
+			<table border=0 style="border:0px;" cellpadding=0 cellspacing=0>
+				<tr>
+					<td style="border:0px;" align="center"><button id="all-double">打印预览</button></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<p>&nbsp;</p>
+			<table style="width:675px;" class="head" align="center" border=0 cellSpacing=0 borderColorDark=#ffffff cellPadding=0>
+				<tr>
+		    		<td colspan="5" class="noBottom" style="font-size:12px;"><b>医疗机构代码：</b>0 0 6 7 0 5 1 1 0 1 0 6 2 1 0 2 1 1</td>
+		    	</tr>
+		    	<tr><td colspan="5" class="noBottom">&nbsp;</td></tr>
+		    	<tr>
+					<td class="noBottom" colspan="5" align="center">
+						<span style="font-size:14px;"><b>首 都 医 科 大 学 附 属 北 京 佑 安 医 院</b></span>
+					</td>	
+				</tr>
+				<tr>
+					<td colspan="5" class="noBottom">&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<div id="print">
+			<link type="text/css" rel="stylesheet" href="../css/IndexHospticalPrint.css"/> 
+
+			<table style="width:675px;" class="surgery" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>
+				<tr align="center">
+						<td rowspan="2" width="60px;"><b>手术操<br>作编码</b></td>
+						<td rowspan="2" width="75px;"><b>手术操<br>作日期</b></td>
+						<td rowspan="2" width="165px;"><b>手术操<br>作名称</b></td>
+						<td colspan="3" width="153px;"><b>手术操作医师</b></td>
+						<td rowspan="2" width="100px;"><b>麻醉方式</b></td>
+						<td rowspan="2" width="45px;"><b>切口愈合等级</b></td>
+						<td rowspan="2" width="51px;"><b>麻醉<br>医师</b></td>
+					</tr>
+					<tr align="center">
+						<td width="51px;"><b>术者</b></td>
+						<td width="51px;"><b>Ⅰ助</b></td>
+						<td width="51px;"><b>Ⅱ助</b></td>
+					</tr>
+					<tr>
+						<td width="60"><span name="operationNo">&nbsp;</span></td>
+						<td width="75px;"align="center"><span name="tdate">&nbsp;</span></td>
+						<td width="165px;"><span name="surgeryName">&nbsp;</span></td>
+						<td width="51px;"><span name="surgeryDocName">&nbsp;</span></td>
+						<td width="51px;"><span name="surgeryAssistant1">&nbsp;</span></td>
+						<td width="51px;"><span name="surgeryAssistant2">&nbsp;</span></td>
+						<td width="100px;"><span name="anesthesiaMode">&nbsp;</span></td>
+						<td width="45px;"><span name="cut">&nbsp;</span></td>
+						<td width="51px;"><span name="anesthesiologist">&nbsp;</span></td>
+					</tr>
+					<tr>
+						<td><span name="operationNo2">&nbsp;</span></td>
+						<td align="center"><span name="tdate2">&nbsp;</span></td>
+						<td><span name="surgeryName2">&nbsp;</span></td>
+						<td><span name="surgeryDocName2">&nbsp;</span></td>
+						<td><span name="surgeryAssistant21">&nbsp;</span></td>
+						<td><span name="surgeryAssistant22">&nbsp;</span></td>
+						<td><span name="anesthesiaMode2">&nbsp;</span></td>
+						<td><span name="cut2">&nbsp;</span></td>
+						<td><span name="anesthesiologist2">&nbsp;</span></td>
+					</tr>
+					  <tr>
+						<td><span name="operationNo3">&nbsp;</span></td>
+						<td align="center"><span name="tdate3">&nbsp;</span></td>
+						<td><span name="surgeryName3">&nbsp;</span></td>
+						<td><span name="surgeryDocName3">&nbsp;</span></td>
+						<td><span name="surgeryAssistant31">&nbsp;</span></td>
+						<td><span name="surgeryAssistant32">&nbsp;</span></td>
+						<td><span name="anesthesiaMode3">&nbsp;</span></td>
+						<td><span name="cut3">&nbsp;</span></td>
+						<td><span name="anesthesiologist3">&nbsp;</span></td>
+					</tr>
+					<tr>
+						<td><span name="operationNo4">&nbsp;</span></td>
+						<td align="center"><span name="tdate4">&nbsp;</span></td>
+						<td><span name="surgeryName4">&nbsp;</span></td>
+						<td><span name="surgeryDocName4">&nbsp;</span></td>
+						<td><span name="surgeryAssistant41">&nbsp;</span></td>
+						<td><span name="surgeryAssistant42">&nbsp;</span></td>
+						<td><span name="anesthesiaMode4">&nbsp;</span></td>
+						<td><span name="cut4">&nbsp;</span></td>
+						<td><span name="anesthesiologist4">&nbsp;</span></td>
+					</tr>
+					<tr>
+						<td><span name="operationNo5">&nbsp;</span></td>
+						<td align="center"><span name="tdate5">&nbsp;</span></td>
+						<td><span name="surgeryName5">&nbsp;</span></td>
+						<td><span name="surgeryDocName5">&nbsp;</span></td>
+						<td><span name="surgeryAssistant51">&nbsp;</span></td>
+						<td><span name="surgeryAssistant52">&nbsp;</span></td>
+						<td><span name="anesthesiaMode5">&nbsp;</span></td>
+						<td><span name="cut5">&nbsp;</span></td>
+						<td><span name="anesthesiologist5">&nbsp;</span></td>
+					</tr>
+				</table>
+				<table align="center" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>		
+					<tr>
+						<td width="75px;" style="border-right:solid 1px #000;"><b>护理级别/天</b></td>
+						<td><b>特级护理</b><span class="span" name="criticalCare">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+						<td><b>Ⅰ级护理</b><span class="span" name="oneRank">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+						<td><b>Ⅱ级护理</b><span class="span" name="twoRank">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+						<td><b>Ⅲ级护理</b><span class="span" name="threeRank">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+						<td>ICU<span class="span" name="icu">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+						<td style="border-right:solid 1px #000;">CCU<span class="span" name="ccu">&nbsp;&nbsp;&nbsp;</span><b>天</b></td>
+					</tr>
+				</table>
+				<table style="width:675px;" class="icu" align="center" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>
+					<tr align="center">
+						<td width="250" style="border-bottom:solid 1px #000;"><b>重症监护室名称</b></td>
+						<td class="tdLeft" width="185" style="border-bottom:solid 1px #000;"><b>进入时间(_年_月_日_时_分)</b></td>
+						<td class="tdLeft tdRight" width="185" style="border-bottom:solid 1px #000;"><b>退出时间(_年_月_日_时_分)</b></td>
+					</tr>
+					<tr>
+						<td style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuName1"></span></td>
+						<td class="tdLeft" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuTurnInto1"></span></td>
+						<td class="tdLeft tdRight" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuDropOut1"></span></td>
+					</tr>
+					<tr>
+						<td class="td" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuName2"></span></td>
+						<td class="tdLeft" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuTurnInto2"></span></td>
+						<td class="tdLeft tdRight" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuDropOut2"></span></td>
+					</tr>
+					<tr>
+						<td class="td" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuName3"></span></td>
+						<td class="td tdLeft" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuTurnInto3"></span></td>
+						<td class="td tdLeft tdRight" style="text-align:center;border-bottom:solid 1px #000;">&nbsp;<span name="icuDropOut3"></span></td>
+					</tr>
+				</table>
+				
+				<table align="center" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>	
+					<tr>
+						<td width="180">
+							<b>呼吸机使用时间</b><span name="hixi" class="span">&nbsp;&nbsp;&nbsp;&nbsp;</span><b>小时。</b>
+						</td>
+						
+						
+						
+						<td name="hunmiTd" width="248"><div class="nopane"><b>昏迷(颅脑损伤患者):</b></div><div class="pane"><span name="hunmi">&nbsp;</span></div>&nbsp;&nbsp;<b>1.是&nbsp;2.否</td>
+						<td width="148">&nbsp;</td>
+						<td width="148" class="rightTd">&nbsp;</td>
+						
+						
+						<td name="hunmiShijianTd" style="width:148px;display:none"><b>昏迷时间(颅脑损伤患者)</b></td>
+						<td style="width:148px;display:none">	
+							<b>入院前</b>
+								<span name="hunmi_ruyuanqian_hour" class="span">&nbsp;&nbsp;&nbsp;&nbsp;</span><b>小时</b>
+								<span name="hunmi_ruyuanqian_minute" class="span">&nbsp;&nbsp;</span><b>分钟</b>
+						</td>
+						<td style="width:148px;display:none" class="rightTd">	
+							<b>入院后</b><span name="hunmi_ruyuanhou_hour" class="span">&nbsp;&nbsp;&nbsp;&nbsp;</span><b>小时</b>
+								<span name="hunmi_ruyuanhou_minute" class="span">&nbsp;&nbsp;</span><b>分钟</b>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>离院方式：</b></div>
+							<div class="pane"><span name="liyuanType"></span></div>
+							<span style="margin-left:20px;"><b>1.转院</b></span>
+							<span style="margin-left:20px;"><b>转入医院的机构名称：</b></span><span name="shiftTo" class="spanline">&nbsp;</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd"><span style="margin-left:100px;"><b>2.非医嘱离院</b></span>&nbsp;
+							<span style="margin-left:20px;"><b>3.转社区卫生服务机构</b></span>
+							<span style="margin-left:20px;"><b>4.回常驻地</b></span>
+							<span style="margin-left:20px;"><b>5.死亡</b></span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>产科情况：</b></div>
+							<div class="pane"><span name="obstetrics"></span></div>
+							<div class="nopane"><b>1.有2.无</b></div>
+							<div class="nopane">&nbsp;<b>产前检查开始孕周</b></div>
+							<div class="nopane" style="width:15px"><span class="span" name="obs_checkUp">&nbsp;&nbsp;</span></div>
+							<div class="nopane"><b>周</b></div>
+							<div class="nopane">&nbsp<b>检查次数</b></div>
+							<div class="nopane" style="width:10px"><span class="span" name="obs_checkUp_times">&nbsp;&nbsp;</span></div>
+							<div class="nopane"><b>次</b></div>
+							<div class="nopane">&nbsp;&nbsp;<b>分娩时间：</b><span name="deliveryTime" class="span">&nbsp;</span></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>产程：总产程时间</b></div>
+							<div class="pline" style="width:10px"><span class="span" name="obs_totalTime_hour">&nbsp;&nbsp;</span></div>
+							<div class="nopane"><b>小时</b></div>
+							<div class="pline" style="width:10px"><span class="span" name="obs_totalTime_minute">&nbsp;&nbsp;</span></div>
+							<div class="nopane"><b>分钟</b></div>
+							<div class="nopane">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>分娩方式</b></div>
+							<div class="nopane"><span name="deliveryType"></span></div>
+							<div class="nopane">&nbsp;&nbsp;<b>1.自娩&nbsp;2.剖宫产&nbsp;3.阴道助产</b></div>
+						</td>
+					</tr>
+				
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane" style="width:210px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>出生体重</b><span class="span" name="weight">&nbsp;</span><b>克</b></div>
+							<div class="nopane">&nbsp;&nbsp;<b>出生胎方位：</b></div>
+							<div class="nopane" style="width:100px;">
+								<span name="birth_position" class="nospan">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							</div>
+							<div style="float:left;width:200px">
+								<span style="float:left;width:80px;">&nbsp;<b>Apgar评分：</b></span>
+								<span name="apgar" style="float:left;width:100px;">&nbsp;</span>
+								<span style="float:left;width:20px;">&nbsp;<b>分</b></span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane" style="width:180px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>产后出血量</b><span class="span" name="obs_amountOfBleeding">&nbsp;</span><b>ml</b></div>
+							<div class="nopane">&nbsp;&nbsp;<b>围产保健：</b></div>
+							<div class="nopane" style="width:140px;">
+								<span name="healthCare"></span>&nbsp;&nbsp;<b>1.本市&nbsp;2.外埠</b>
+							</div>
+							<div class="nopane">&nbsp;&nbsp;<b>计划生育指导：</b></div>
+							<div class="pane"><span name="gcaaoc"></span></div>
+							<div class="nopane">&nbsp;&nbsp;<b>1.有&nbsp;2.无</b></div>
+						</td>
+					</tr>
+				</table>
+				
+				<table align="center" style="border-top:none;border-bottom:none;border-right:none;width:675px;" cellSpacing=0 borderColorDark=#ffffff cellPadding=3>
+					<tr>
+						<td colspan="3">
+							<div class="nopane"><b>新生儿情况：</b></div>
+							<div class="pane"><span name="neonatus"></span></div>
+							<div class="nopane" style="line-width:13px"><b>1.有2.无</b></div>
+							<div class="nopane">&nbsp;<b>性别:</b></div>
+							<div class="pane"><span name="neonatus_sex"></span></div>
+							<div class="nopane" style=""><b>1.男&nbsp;2.女</b></div>
+						</td>
+						<td class="rightTd">
+							<div class="nopane"><b>入院体重</b></div>
+							<div class="pline"><span class="span" name="neonatus_ruyuan_weight">&nbsp;</span>&nbsp;<b>克</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<div class="nopane">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>喂养方式:</b></div>
+							<div class="pane"><span name="feedType"></span></div>
+							<div class="nopane"><b>1.母乳 2.混合 3.人工</b></div>
+						</td>
+						<td class="rightTd">
+							<div class="nopane"><b>出院体重</b></div>
+							<div class="pline"><span class="span" name="neonatus_chuyuan_weight">&nbsp;</span>&nbsp;<b>克</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>卡介苗：</b></div>
+							<div class="pane"><span name="bcg"></span></div>
+							<div class="nopane">&nbsp;<b>1.接种2.未接种&nbsp;乙肝疫苗：</b></div>
+							<!--<div class="nopane" style="margin-left:10px"></div>-->
+							<div class="pane"><span name="yigan"></span></div>
+							<div class="nopane">&nbsp;<b>1.接种2.未接种&nbsp;</b></div>
+							<div class="nopane" style="margin-left:5px"><b>乙肝免疫球蛋白：</b></div>
+							<div class="pane"><span name="hibg"></span></div>
+							<div class="nopane"><b>1.注射2.未注射</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane" style="margin-left:30px"><b>新生儿疾病诊断</b> </div><div class="nopane"><b>1.</b><span name="neonatus_disease1"></span></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div style="margin-left:121px"><b>2.</b><span name="neonatus_disease2"></span></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div style="margin-left:121px"><b>3.</b><span name="neonatus_disease3"></span></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>尸检：</b></div>
+							<div class="pane"><span name="autopsy"></span></div>
+							<div class="nopane">&nbsp;<b>1.是&nbsp;&nbsp;2.否</b></div>
+							<div class="nopane" style="margin-left:80px"><b>手术、治疗、检查、诊断为本院第一例</b></div><div class="pane"><span name="ops_treat_checkUp_dia"></span></div>
+							<span>&nbsp;<b>1.是&nbsp;&nbsp;2.否</b></span>
+						</td>
+					</tr>
+					<tr> 
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>随诊：</b></div>
+							<div class="pane"><span name="followUpClinic"></span></div>
+							<div class="nopane">&nbsp;<b>1.是&nbsp;&nbsp;2.否</b></div>
+							<div name="fuc_timelimitDiv" class="nopane" style="margin-left:80px;display:none;"><b>随诊期限：</b></div>
+							<div class="nopane" style="display:none;"><span class="span" name="fuc_timelimit" id='fuc_timelimit'>&nbsp;&nbsp;</span></div>
+							<div class="nopane" style="width:70px;margin-top:0px;display:none;">
+								<input type="radio" name="fuc_timelimit_unit" style="border:0;display:none;" value="1"/>
+								<input type="radio" name="fuc_timelimit_unit" style="border:0;display:none;" value="2"/>
+								<input type="radio" name="fuc_timelimit_unit" style="border:0;display:none;" value="3"/>
+								<input type="radio" name="fuc_timelimit_unit" style="border:0;display:none;" value="4"/>&nbsp;&nbsp;
+							</div>
+							<div class="nopane" style="width:70px;margin-left:30px;"><b>示教病例：</b></div>
+							<div class="pane" style="width:10px;margin-left:-10px;"><span  name="teach"></span></div>
+							<div class="nopane">&nbsp;<b>1.是&nbsp;2.否</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>血型：</b></div>
+							<div class="pane"><span name="bloodType"></span></div>
+							<div class="nopane">&nbsp;<b>1.A&nbsp;2.B&nbsp;3.AB&nbsp;4.O&nbsp;5.其它&nbsp;6.未作&nbsp;7.待回报&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div>
+							<div class="nopane">&nbsp;&nbsp;<b>Rh：</b></div>
+							<div class="pane"><span name="rh"></span></div>
+							<div class="nopane">&nbsp;<b>1.阴&nbsp;&nbsp;2.阳&nbsp;&nbsp;3.未作&nbsp;&nbsp;4.待回报</b></div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+							<div class="nopane"><b>输血反应：</b></div>
+							<div class="pane"><span name="transfusion"></span></div>
+							<div class="nopane"><b>1.有&nbsp;&nbsp;2.无&nbsp;&nbsp;3.未输&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div>
+							<div>
+								<div class="" style="float:left;width:60px"><b>输血品种:</b></div>
+								<div class="" style="float:left;width:100px"><span style= "border-bottom:solid 1px #000;" name="tf_variety"></span></div>
+							</div>					
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="rightTd">
+						<div class="nopane"><b>1.红细胞</b></div>
+						<div class="pline" style="width:10px"><span class="span" name="redBloodCell_unit"></span></div>
+						<div class="nopane"><b>单位&nbsp;&nbsp;</b></div> 
+						<div class="nopane" style="margin-left:3px"><b>2.血小板</b></div>
+						<div class="nopane" style="width:10px"><span class="span" name="bloodCells"></span></div>
+						<div class="nopane"><b>袋</b>&nbsp;&nbsp;</div>
+						<div class="nopane" style="margin-left:3px"><b>3.血浆</b></div>
+						<div class="nopane" style="width:25px"><span class="span" name="bloodPlasma"></span></div>
+						<div class="nopane">ml&nbsp;&nbsp;</div> 
+						<div class="nopane" style="margin-left:3px"><b>4.全血</b></div>
+						<div class="nopane" style="width:25px"><span class="span" name="wholeBlood"></span></div>
+						<div class="nopane">ml&nbsp;&nbsp;</div>
+						<div class="nopane" style="margin-left:3px"><b>5.自体回收</b></div>
+						<div class="nopane" style="width:25px"><span class="span" name="auto_blood"></span></div>
+						<div class="nopane">ml&nbsp;&nbsp;</div> 
+						<div class="nopane" style="margin-left:3px"><b>6.其它</b></div>
+						<div class="nopane" style="width:25px"><span class="span" name="other_blood"></span></div>
+						<div class="nopane">ml&nbsp;</div>
+						<div class="nopane" style="margin-left:5px"><b>7.未输</b></div> 
+						</td>
+					</tr>
+				</table>
+				<table style="width:675px;" align="center" class="head">
+					<tr>
+						<td class="noBottom">
+							说明：医疗付款方式：1.社会基本医疗保险(补充保险、特大病保险) 2.商业保险 3.自费 4.公费 5.大病
+								统筹 6.其它。年龄：年龄不足一周岁的患儿，要求按实际天数填写。 新生儿体重：空格内填入
+								四位数，精确到10克；活产儿为产后一小时内、入院新生儿为入院当日体重
+						</td>
+					</tr>
+				</table>
+		</div>
+  </body>
+</html>
