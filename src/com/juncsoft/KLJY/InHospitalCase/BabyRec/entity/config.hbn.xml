@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.BabyRec.entity">
+	<!--现病史映射-->
+	<class name="BabyRec" table="t_CourseRec_Baby">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="birthDate"/>
+		<property name="birthWeight"/>
+		<property name="pid"/>
+		<property name="pcid"/>
+	</class>
+	
+	<!-- 婴儿病程实体映射 -->
+	<class name="BabyCourseRec" table="t_CourseRec_BabyCourseRec">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="patientId"/>
+		<property name="time"/>
+		<property name="title"/>
+		<property name="content"/>
+		<property name="submiter"/>
+		<property name="submitTime"/>
+		<property name="checker"/>
+		<property name="checkTime"/>
+		<property name="verifyStatus"/>
+		<property name="createTime"/>
+		<property name="modifyTime"/>
+	</class>
+</hibernate-mapping>

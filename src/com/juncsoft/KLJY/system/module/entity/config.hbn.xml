@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.system.module.entity">
+	<class name="SysModule" table="SYS_CFG_ModuleCfg">
+		<id column="ID" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="moduleCode" column="ModuleCode"/>
+		<property name="moduleName" column="ModuleName"/>
+		<property name="parentModuleCode" column="ParentModuleCode"/>
+		<property name="icon" column="Icon"/>
+		<property name="onClick" column="OnClick"/>
+		<property name="orderNo" column="OrderNo"/>
+	</class>
+</hibernate-mapping>

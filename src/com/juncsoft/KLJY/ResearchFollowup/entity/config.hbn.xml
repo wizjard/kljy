@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.ResearchFollowup.entity">
+	<!-- 病人入选课题实体 -->
+	<class name="PatientResearch" table="t_Patient_Research">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId"/>
+		<property name="startDate"/>
+		<property name="endDate"/>
+		<property name="researchId"/>
+		<property name="subGroup"/>
+		<property name="serialNum"/>
+		<property name="random"/>
+		<property name="caseId"/>
+		<property name="followupStart"/>
+	</class>
+	<!-- 随访及门诊记录实体 -->
+	<class name="Followup" table="t_Patient_Followup">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientResearchId"/>
+		<property name="patientId"/>
+		<property name="followTimes"/>
+		<property name="followCycle"/>
+		<property name="followContent"/>
+		<property name="followupPlanDate"/>
+		<property name="noticeDate"/>
+		<property name="reserveDate"/>
+		<property name="comeDate"/>
+		<property name="remarkContent"/>
+	</class>
+	
+	<!--  -->
+	<class name="FollowupCheckResult" table="t_Patient_FollowupCheckResult">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="followupId"/>
+		<property name="result"/>
+	</class>
+	
+	<!-- 随访方案设置 -->
+	<class name="ResearchFollowSetUp" table="SYS_ResearchFollowup">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="followTimes"/>
+		<property name="followCycle"/>
+		<property name="followContent"/>
+		<property name="researchTopicId"/>
+	</class>
+	
+	<!-- 门诊病历实体 -->
+	<class name="OutPutientCase" table="t_Followup_OutPutientCase">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId"/>
+		<property name="followupId"/>
+		<property name="reginDate"/>
+		<property name="chiefComplaint"/>
+		<property name="pressentIllness"/>
+		<property name="otherDisHistroy"/>
+		<property name="physicalExam"/>
+		<property name="labExam"/>
+		<property name="chubu_diag"/>
+		<property name="treatAd"/>
+		<property name="otherMemo"/>
+		<property name="doctorId"/>
+		<property name="oldOperation"/>
+		<many-to-one name="lab" class="com.juncsoft.KLJY.InHospitalCase.Liver.entity.LabExamination" cascade="all" column="pk_labExam_id" unique="true" lazy="false"/>
+	</class>
+	<!-- 健康调查简表 -->
+	<class name="HealthSurvey" table="t_Followup_HealthSurvey">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="followupId"/>
+		<property name="normalHealth"/>
+		<property name="compare1year"/>
+		<property name="limitActive"/>
+		<property name="limitActive2"/>
+		<property name="limitActive3"/>
+		<property name="limitActive4"/>
+		<property name="limitActive5"/>
+		<property name="limitActive6"/>
+		<property name="limitActive7"/>
+		<property name="limitActive8"/>
+		<property name="limitActive9"/>
+		<property name="limitActive10"/>
+		<property name="fourWeeks_work"/>
+		<property name="fourWeeks_work2"/>
+		<property name="fourWeeks_work3"/>
+		<property name="fourWeeks_work4"/>
+		<property name="fourWeeks_mood"/>
+		<property name="fourWeeks_mood2"/>
+		<property name="fourWeeks_mood3"/>
+		<property name="fourWeeks_contact"/>
+		<property name="fourWeeks_pain"/>
+		<property name="fourWeeks_pain_eff"/>
+		<property name="oneMonthStatus"/>
+		<property name="oneMonthStatus2"/>
+		<property name="oneMonthStatus3"/>
+		<property name="oneMonthStatus4"/>
+		<property name="oneMonthStatus5"/>
+		<property name="oneMonthStatus6"/>
+		<property name="oneMonthStatus7"/>
+		<property name="oneMonthStatus8"/>
+		<property name="oneMonthStatus9"/>
+		<property name="healthless_eff"/>
+		<property name="personalSituation"/>
+		<property name="personalSituation2"/>
+		<property name="personalSituation3"/>
+		<property name="personalSituation4"/>
+	</class>
+	<!-- 健康调查简表 -->
+	<class name="ChronicLiver" table="t_Followup_ChronicLiver">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="followupId"/>
+		<property name="cl0"/>
+		<property name="cl1"/>
+		<property name="cl2"/>
+		<property name="cl3"/>
+		<property name="cl4"/>
+		<property name="cl5"/>
+		<property name="cl6"/>
+		<property name="cl7"/>
+		<property name="cl8"/>
+		<property name="cl9"/>
+		<property name="cl10"/>
+		<property name="cl11"/>
+		<property name="cl12"/>
+		<property name="cl13"/>
+		<property name="cl14"/>
+		<property name="cl15"/>
+		<property name="cl16"/>
+		<property name="cl17"/>
+		<property name="cl18"/>
+		<property name="cl19"/>
+		<property name="cl20"/>
+		<property name="cl21"/>
+		<property name="cl22"/>
+		<property name="cl23"/>
+		<property name="cl24"/>
+		<property name="cl25"/>
+		<property name="cl26"/>
+		<property name="cl27"/>
+		<property name="cl28"/>
+	</class>
+	<!-- 中医症候积分 -->
+	<class name="TCMSysptomScore" table="t_Followup_TCMSysptomScore">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="followupId"/>
+		<property name="sym001"/>
+		<property name="sym002"/>
+		<property name="sym003"/>
+		<property name="sym004"/>
+		<property name="sym005"/>
+		<property name="sym006"/>
+		<property name="sym007"/>
+		<property name="sym008"/>
+		<property name="sym009"/>
+		<property name="sym010"/>
+		<property name="sym011"/>
+		<property name="sym012"/>
+		<property name="sym013"/>
+		<property name="sym014"/>
+		<property name="sym015"/>
+		<property name="sym016"/>
+		<property name="sym017"/>
+		<property name="sym018"/>
+		<property name="sym019"/>
+		<property name="sym020"/>
+		<property name="sym021"/>
+		<property name="sym022"/>
+		<property name="sym023"/>
+		<property name="sym024"/>
+		<property name="sym025"/>
+		<property name="sym026"/>
+		<property name="sym027"/>
+		<property name="sym028"/>
+		<property name="sym029"/>
+		<property name="sym030"/>
+		<property name="sym031"/>
+		<property name="sym032"/>
+		<property name="sym033"/>
+		<property name="sym034"/>
+		<property name="sym035"/>
+		<property name="sym036"/>
+		<property name="sym037"/>
+		<property name="sym038"/>
+		<property name="sym039"/>
+		<property name="sym040"/>
+		<property name="sym041"/>
+		<property name="sym042"/>
+		<property name="sym043"/>
+		<property name="sym044"/>
+		<property name="sym045"/>
+		<property name="sym046"/>
+		<property name="sym047"/>
+		<property name="sym048"/>
+		<property name="sym049"/>
+		<property name="sym050"/>
+		<property name="sym051"/>
+		<property name="sym052"/>
+		<property name="sym053"/>
+		<property name="sym054"/>
+		<property name="sym055"/>
+		<property name="sym056"/>
+		<property name="sym057"/>
+		<property name="sym058"/>
+		<property name="sym059"/>
+		<property name="sym060"/>
+		<property name="sym061"/>
+		<property name="sym062"/>
+		<property name="sym063"/>
+		<property name="sym064"/>
+		<property name="sym065"/>
+		<property name="sym066"/>
+		<property name="sym067"/>
+		<property name="sym068"/>
+		<property name="sym069"/>
+		<property name="sym070"/>
+		<property name="sym071"/>
+		<property name="sym072"/>
+		<property name="sym073"/>
+		<property name="sym074"/>
+		<property name="sym075"/>
+		<property name="sym076"/>
+		<property name="sym077"/>
+		<property name="sym078"/>
+		<property name="sym079"/>
+		<property name="sym080"/>
+		<property name="sym081"/>
+		<property name="sym082"/>
+		<property name="sym083"/>
+		<property name="sym084"/>
+		<property name="sym085"/>
+		<property name="sym086"/>
+		<property name="sym087"/>
+		<property name="sym088"/>
+		<property name="sym089"/>
+	</class>
+</hibernate-mapping>

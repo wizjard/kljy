@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.GradingDiag.entity">
+	<class name="DiagItem" table="SYS_ZD_DiagItem">
+		<id column="code" name="code"></id>
+		<many-to-one name="parent" column="parent" class="DiagItem"/>
+		<property name="nodeText"/>
+		<property name="printText"/>
+		<property name="multiLine"/>
+		<property name="leaf"/>
+		<property name="checkAction"/>
+		<property name="orderNo"/>
+		<property name="standard"/>
+	</class>
+	<class name="GradingDiag" table="t_InHsp_Liver_GradingDiag">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="cid"/>
+		<property name="date"/>
+		<property name="code"/>
+		<property name="doc1"/>
+		<property name="doc2"/>
+		<property name="doc3"/>
+		<property name="diag1"/>
+		<property name="diag2"/>
+		<property name="diag3"/>
+		<property name="diag4"/>
+		<property name="diag5"/>
+		<property name="diag6"/>
+		<property name="diag7"/>
+		<property name="diag8"/>
+		<property name="diag9"/>
+		<property name="diag10"/>
+		<property name="diag11"/>
+		<property name="diag12"/>
+		<property name="diagnose"/>
+		<property name="diagGrounp"/>
+		<property name="fiag"/>
+	</class>
+</hibernate-mapping>

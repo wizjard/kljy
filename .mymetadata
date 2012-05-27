@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="TCMP"
+  id="myeclipse.1275388657906"
+  context-root="/TCMP"
+  j2ee-spec="1.4"
+  archive="TCMP.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebContent" />
+  </attributes>
+</project-module>
+

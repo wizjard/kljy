@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.patientanddoctoroperator.entity">
+	<!-- 病人健康记录实体映射 -->
+	<class name="PatientHealthRecord" table="t_PatientHealthRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="patientId"/>
+        <property name="writeRecordDate"/>
+        <property name="spiritStatus"/>
+        <property name="diet"/>
+        <property name="sleep"/>
+        <property name="piss"/>
+        <property name="defecate"/>
+        <property name="weight"/>
+        <property name="healthStatus"/>
+        <property name="treatmentStatus"/>
+        <property name="improveStatus"/>
+        <property name="uploadFile"/>
+        <property name="signature"/>
+        <property name="uploadImage"/>
+        <property name="deptCode"/>
+        <property name="deptName"/>
+        <property name="entityName"/>
+        <property name="typeFlag"/>
+        <property name="grounpId"/>
+	<!-- liugang 2011-08-06 start -->
+	<property name="isNotUpdate"/>
+	<!-- liugang 2011-08-06 end -->
+	</class>
+	
+	<!-- 咨询我的医生实体（病人问题实体）实体映射 -->
+	<class name="PatientConsulting" table="t_PatientConsulting">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="patientId"/>
+        <property name="consultingCount"/>
+        <property name="consultingDate"/>
+        <property name="spiritStatus"/>
+        <property name="diet"/>
+        <property name="sleep"/>
+        <property name="piss"/>
+        <property name="defecate"/>
+        <property name="weight"/>
+        <property name="healthStatus"/>
+        <property name="treatmentStatus"/>
+        <property name="improveStatus"/>
+        <property name="uploadFile"/>
+        <property name="signature"/>
+        <property name="deptCode"/>
+        <property name="deptName"/>
+        <property name="mainProblem"/>
+        <property name="uploadImage"/>
+        <property name="grounpId"/>
+        <property name="isNotSend"/>
+        <property name="currentDetptMessage"/>
+        <property name="applicationDeptMessage"/>
+        <property name="pcMeetingState"/>
+        <property name="readCount"/>
+         <property name="isNotUpdate"/>
+	</class>
+	
+	<!-- 医生网上查房记录实体映射 -->
+	<class name="DoctorRoundsRecord" table="t_DoctorRoundsRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="patientId"/>
+        <property name="phrId"/>
+         <property name="doctorId"/>
+        <property name="roundsTitle"/>
+        <property name="roundsContent"/>
+        <property name="roundsDate"/>
+        <property name="doctorName"/>
+        <property name="entityName"/>
+        <!-- liugang 2011-08-06 start -->
+        <property name="deptCode"/>
+        <property name="grounpId"/>
+        <!-- liugang 2011-08-06 end -->
+	</class>
+	
+	<!-- 医生回复和病人提问实体映射 -->
+	<class name="DoctorReplyRecordAndPatientQuestions" table="t_DoctorReplyRecordAndPatientQuestions">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="pcId"/>
+        <property name="drAndpqDate"/>
+         <property name="drAndpqContent"/>
+        <property name="drAndpqId"/>
+        <property name="drAndpqName"/>
+        <property name="drAndpqFlag"/>
+        <property name="drAndpgReadPatient"/>
+        <property name="drAndpgCancel"/>
+        <property name="deptCode"/>
+        <property name="grounpId"/>
+	</class>
+	
+	<!-- 外网预约挂号 选择日期 -->
+	<class name="PlanSignDateEntity" table="t_PlanSignDateEntity">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="dateList"/>
+        <property name="dateValue"/>
+	</class>
+	
+	<!-- 外网预约挂号 护士站维护基表-->
+	<class name="PlanSignOrderEntity" table="t_PlanSignOrderEntity">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="doctorId"/>
+        <property name="deptCodeId"/>
+        <property name="currentDate"/>
+        <property name="bsAPId"/>
+        <property name="designTime"/>
+        <property name="userId"/>
+        <property name="dayNum"/>
+        <property name="weekDay"/>
+	</class>
+	
+	<!-- 外网预约挂号 护士站维护基表-->
+	<class name="BaseSignAPEntity" table="t_BaseSignAPEntity">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="timeAP"/>
+        <property name="outType"/>
+        <property name="outCount"/>
+	</class>
+	
+	<!-- 外网预约挂号 护士站维护基表-->
+	<class name="PlanSignOrderPatientEntity" table="t_PlanSignOrderPatientEntity">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="deptCode"/>
+        <property name="doctorId"/>
+        <property name="patientId"/>
+        <property name="bsAPId"/>
+        <property name="planDate"/>
+        <property name="bsTSId"/>
+        <property name="saveDate"/>
+	</class>
+	<!-- 外网预约挂号 外网上午下午预约时间段划分-->
+	<class name="BaseSignTimeSegmentEntity" table="t_BaseSignTimeSegmentEntity">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="timeSegment"/>
+        <property name="timeAP"/>
+	</class>
+	
+	<class name="PatientConsultingMessage" table="t_PatientConsultingMessage">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="pcId"/>
+        <property name="deptCode"/>
+        <property name="doctorId"/>
+        <property name="mesDdate"/>
+        <property name="message"/>
+        <property name="grounpId"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.membergrounp.entity">
+	<class name="DepartmentAndGrounpMiddle" table="t_DepartmentAndGrounpMiddle">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="deptCode"/>
+		<property name="grounpId"/>
+	</class>
+	<class name="DepartmentGrounp" table="t_DepartmentGrounp">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="grounpName"/>
+	</class>
+	<class name="MemberGrounpAndDoctor" table="t_MemberGrounpAndDoctor">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="grounpId"/>
+		<property name="doctorId"/>
+	</class>
+	<class name="MemberApplicationRecord" table="t_MemberApplicationRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId"/>
+		<property name="applicationDeptCode"/>
+		<property name="applicationBacuse"/>
+		<property name="applicatinDate"/>
+		<property name="applicationStateContent"/>
+		<property name="result"/>
+		<property name="oldDeptCode"/>
+		<property name="oldGrounpId"/>
+		<property name="autoFlag"/>
+		<property name="currentDeptBecause"/>
+		<property name="applicationDeptBecause"/>
+		<property name="currentFlag"/>
+		<property name="applicationFlag"/>
+		<property name="optrole"/>
+		<property name="flag"/>
+		<property name="appsendDate"/>
+		<property name="appuserName"/>
+		<property name="transappDate"/>
+		<property name="transappuserName"/>
+	</class>
+	<class name="MemberDeptOrGrounpRecord" table="t_MemberDeptOrGrounpRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="oldDeptCode"/>
+		<property name="oldGrounpId"/>
+		<property name="appDate"/>
+		<property name="deptCode"/>
+		<property name="grounpId"/>
+		<property name="patientId"/>
+	</class>
+</hibernate-mapping>

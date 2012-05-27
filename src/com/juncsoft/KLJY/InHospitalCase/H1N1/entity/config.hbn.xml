@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.H1N1.entity">
+	<class name="H1N1EpidemicDisHistory" table="t_InHsp_H1N1_EpidemicDisHis">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="lvxing"/>
+		<property name="lxTime"/>
+		<property name="lxNum"/>
+		<property name="lxGongju"/>
+		<property name="lxArea"/>
+		<property name="lxArrivingTime"/>
+		<property name="lxArrivingArea"/>
+		<property name="lxOtherDesc"/>
+		<property name="h1n1Contact"/>
+		<property name="h1n1Country"/>
+		<property name="h1n1ContactTime"/>
+		<property name="hcBeforeIllCount"/>
+		<property name="h1n1ContactWay"/>
+		<property name="h1n1Show"/>
+		<property name="beforeIllInner7"/>
+		<property name="h1n1ShowOdd"/>
+		<property name="h1n1ShowTime"/>
+		<property name="hsBeforeIllCount"/>
+		<property name="h1n1ShowWay"/>
+		<property name="epidemicDisOther"/>
+	</class>
+</hibernate-mapping>

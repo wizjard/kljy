@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.plan.entity">
+
+	<class name="PlanItem" table="t_planItem">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="itemNo"/>
+		<property name="planId"/>
+		<property name="checkItemCode"/>
+		<property name="checkItemName"/>
+		<property name="circle"/>
+		<property name="comment"/>	
+		<property name="visitDate"/>
+		<property name="resultURL"/>
+		<property name="state"/>
+		<property name="outOMCid"/>
+		<property name="circleType"/>
+		<property name="reportDate"/>
+		<property name="planDate"/>
+		<property name="crossd"/>
+		<property name="visitState"/>
+		<property name="recordURL"/>
+		<property name="messageFlag"/>		
+		<many-to-one name="checkItem" class="com.juncsoft.KLJY.plan.entity.CheckItem" cascade="none"  fetch="join">
+			<column name="checkId"></column>
+		</many-to-one>	
+	</class>
+	<class name="CheckItem" table="t_checkItem">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="SLIPNO"/>
+		<property name="ORDERCODE"/>
+		<property name="ORDERNAMEK"/>
+		<property name="HCODE"/>
+		<property name="circle"/>
+		<property name="comment"/>
+	</class>
+	<class name="CheckType" table="t_checkType">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="slipno"/>
+		<property name="daebun"/>
+		<property name="midbun"/>
+		<property name="lstbun"/>
+	</class>
+	<class name="PlanCount" table="t_PlanCount">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pcount"/>
+		<property name="patientId"/>
+		
+	</class>
+	<class name="Plan" table="t_Plan">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="planTime"/>
+		<property name="memberId"/>
+		<property name="sex"/>
+		<property name="name"/>
+		<property name="beginDate"/>
+		<property name="circle"/>
+		<property name="state"/>
+		<property name="enterDate"/>		
+		<property name="deptCode"/>
+		<property name="deptname"/>
+		<property name="groupId"/>
+		<property name="teamname"/>
+		<property name="createDate"/>
+		<property name="modifyDate"/>
+		<property name="doctorCode"/>
+		<property name="doctorName"/>
+		<property name="isUse"/>
+		<property name="memGroupId"/>
+		<many-to-one name="patient" class="com.juncsoft.KLJY.patient.entity.Patient" cascade="none"  fetch="join">
+			<column name="patientId"></column>
+		</many-to-one>
+		<many-to-one name="user" class="com.juncsoft.KLJY.user.entity.User" cascade="none"  fetch="join">
+			<column name="account"></column>
+		</many-to-one>
+
+	</class>
+	
+	<class name="PlanModule" table="t_module">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="moduleName"/>
+		<property name="createDate"/>
+		<many-to-one name="user" class="com.juncsoft.KLJY.user.entity.User" cascade="none"  fetch="join">
+			<column name="doctorId"></column>
+		</many-to-one>
+	</class>
+	
+	<class name="PlanModuleItem" table="t_moduleItems">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="moduleId"/>
+		
+		<property name="checkItemCode"/>
+		<property name="checkItemName"/>
+		<property name="circle"/>
+		<property name="circleType"/>
+		<property name="checkId"/>	
+		<property name="comment"/>
+		
+		<!--  <property name="itemNo"/>
+		<property name="reportDate"/>
+		<property name="planDate"/>
+		<property name="crossd"/>
+		<property name="visitState"/>
+		<property name="state"/>
+		<property name="visitDate"/>
+		<property name="resultURL"/>	
+		<property name="outOMCid"/>  -->
+			
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.biomedical.entity">
+	<class name="PatientIndex" table="PatientIndex">
+		<id column="pid" name="pid">
+			<generator class="native"></generator>
+		</id>
+		<property name="kid"/>
+		<property name="name"/>
+		<property name="patNo"/>
+		<property name="gender"/>
+		<property name="birthday"/>
+		<property name="province"/>
+		<property name="job"/>
+		<property name="marriageStatus"/>
+		<property name="homeTel"/>
+		<property name="conName"/>
+		<property name="conTel"/>
+		<property name="inDate"/>
+		<property name="inTimes"/>
+		<property name="inWard"/>
+		<property name="memberNo"/>
+	</class>
+	<class name="MemberInfo" table="MemberInfo">
+		<id column="memberNo" name="memberNo">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="account"/>
+		<property name="password"/>
+		<property name="inDate"/>
+		<property name="inWard"/>
+		<property name="memberStatus"/>
+		<property name="memberType"/>
+		<property name="memo"/>
+		<property name="currentGroup"/>
+		<property name="biaoben"/>
+		<property name="inHspTimes"/>
+		<property name="currentWard"/>
+		<property name="inDoctor"/>
+		<many-to-one name="cm" class="com.juncsoft.KLJY.InHospitalCase.CaseMaster.entity.InHspCaseMaster" 
+				cascade="none" fetch="join">
+			<column name="cm"></column>
+		</many-to-one>
+		<many-to-one name="patient" class="com.juncsoft.KLJY.patient.entity.Patient" cascade="none"  fetch="join">
+			<column name="patient"></column>
+		</many-to-one>
+		<property name="deptCode"/>
+		<property name="grounpId"/>
+		<property name="deptName"/>
+		<property name="grounpName"/>
+		<property name="inWardCode"/>
+		<property name="inOutTimesDate"/>
+	</class>
+	<class name="OutpatientGenerator" table="OutpatientGenerator">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="startDate"/>
+		<property name="groupName"/>
+		<property name="cycle"/>
+		<property name="checkContent"/>
+		<property name="planDate"/>
+		<property name="noticeDate"/>
+		<property name="reserveDate"/>
+		<property name="smsContent"/>
+		<property name="memo"/>
+		<many-to-one name="patient" class="com.juncsoft.KLJY.patient.entity.Patient" cascade="none" fetch="join">
+			<column name="patientId"></column>
+		</many-to-one>
+	</class>
+	<class name="OutpatientRecord" table="OutpatientRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="comeDate"/>
+		<property name="times"/>
+		<property name="zhusu"/>
+		<property name="xianbingshi"/>
+		<property name="qitabingshi"/>
+		<property name="tige"/>
+		<property name="fuzhu"/>
+		<property name="zhenduan"/>
+		<property name="jianyi"/>
+		<property name="beizhu"/>
+		<property name="yisheng"/>
+		<property name="biaoben"/>
+		<many-to-one name="patient" class="com.juncsoft.KLJY.patient.entity.Patient" cascade="none">
+			<column name="patientId"></column>
+		</many-to-one>
+		<many-to-one name="generator1" class="OutpatientGenerator" cascade="none" fetch="join">
+			<column name="generator1"></column>
+		</many-to-one>
+		<many-to-one name="generator2" class="OutpatientGenerator" cascade="none" fetch="join">
+			<column name="generator2"></column>
+		</many-to-one>
+	</class>
+	<class name="MemberChangeWard" table="MemberChangeWard">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="memNo"/>
+		<property name="changeDate"/>
+		<property name="ward"/>
+		<property name="memo"/>
+	</class>
+</hibernate-mapping>

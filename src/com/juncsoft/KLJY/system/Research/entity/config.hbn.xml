@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.system.Research.entity">
+	<class name="ResearchTopic" table="SYS_ResearchTopic">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="serialNum"/>
+		<property name="responser"/>
+		<property name="secretLv"/>
+		<property name="topicType"/>
+		<property name="belongUnit"/>
+		<property name="belongWard"/>
+		<property name="pj_createDate"/>
+		<property name="pj_completeDate"/>
+		<property name="pj_class1"/>
+		<property name="pj_class2"/>
+		<property name="pj_status"/>
+		<property name="pj_localCost"/>
+		<property name="pj_icpNum"/>
+		<property name="pj_comInvest"/>
+		<property name="pj_totalCost"/>
+		<property name="pj_bankInvest"/>
+		<property name="pj_centerCost"/>
+		<property name="pj_otherCost"/>
+		<property name="pj_desc"/>
+		<property name="tj_subjectClass"/>
+		<property name="tj_researchType"/>
+		<property name="tj_inteClass1"/>
+		<property name="tj_inteClass2"/>
+		<property name="tj_projectFrom"/>
+		<property name="tj_cooperType"/>
+		<property name="tj_societyTarget"/>
+		<property name="tj_projectPersonNum"/>
+		<property name="tj_desc"/>
+	</class>
+	<class name="ResearchMember" table="SYS_ResearchMember">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="birthday"/>
+		<property name="mem_title"/>
+		<property name="mem_positon"/>
+		<property name="professional"/>
+		<property name="workVol"/>
+		<property name="task"/>
+		<property name="belongUnit"/>
+	</class>
+</hibernate-mapping>

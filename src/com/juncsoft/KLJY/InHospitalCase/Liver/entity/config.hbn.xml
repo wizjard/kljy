@@ -1,0 +1,1101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.Liver.entity">
+	<!--现病史映射-->
+	<class name="PresentIllnessHistory" table="t_InHsp_Liver_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content1"/>
+		<property name="content2"/>
+		<bag name="onsets" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistory_OnSet"/>
+		</bag>
+		<bag name="treats" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistory_Treat"/>
+		</bag>
+		<many-to-one name="illThis" class="PresentIllnessHistory_This" cascade="all" column="this_id" unique="true" lazy="false"/>
+	</class>
+	<class name="PresentIllnessHistory_OnSet" table="t_InHsp_Liver_PresentIllnessHistory_OnSet">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>
+		<property name="illTime"/>
+		<property name="illTimeUnit"/>
+		<property name="causes"/>
+		<property name="sysptomMain"/>
+		<property name="sysptomSide"/>
+		<property name="evolution"/>
+		<property name="evolution0"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+	</class>
+	<class name="PresentIllnessHistory_Treat" table="t_InHsp_Liver_PresentIllnessHistory_Treat">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>
+		<property name="evolution"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+	</class>
+	<class name="PresentIllnessHistory_This" table="t_InHsp_Liver_PresentIllnessHistory_This">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="time"/>
+		<property name="timeUnit"/>
+		<property name="causes"/>
+		<property name="fali"/>
+		<property name="fansuan"/>
+		<property name="yanyou"/>
+		<property name="tunyan"/>
+		<property name="exin"/>
+		<property name="xiaohua"/>
+		<property name="aiqi"/>
+		<property name="fuzhang"/>
+		<property name="shiyu"/>
+		<property name="ouxue"/>
+		<property name="shishao"/>
+		<property name="shishao_performance"/>
+		<property name="shishao_reduce"/>
+		<property name="outu"/>
+		<property name="outu_shape"/>
+		<property name="outu_thing"/>
+		<property name="outu_countDay"/>
+		<property name="outu_volumeDay"/>
+		<property name="outu_countTotal"/>
+		<property name="outu_volumeTotal"/>
+		<property name="futong"/>
+		<property name="futong_position"/>
+		<property name="futong_performance"/>
+		<property name="futong_rate"/>
+		<property name="futong_change"/>
+		<property name="dabian"/>
+		<property name="dabian_fuxie"/>
+		<property name="dabian_huibai"/>
+		<property name="dabian_hei"/>
+		<property name="dabian_bmi"/>
+		<property name="dabian_xue"/>
+		<property name="dabian_liji"/>
+		<property name="dabian_color"/>
+		<property name="dabian_shape"/>
+		<property name="dabian_countDay"/>
+		<property name="dabian_volumeDay"/>
+		<property name="dabian_countTotal"/>
+		<property name="dabian_volumeTotal"/>
+		<property name="niaoye"/>
+		<property name="niaoye_color"/>
+		<property name="niaoye_volume"/>
+		<property name="niaoye_volumeTotal"/>
+		<property name="xiazhi"/>
+		<property name="xiazhi_position"/>
+		<property name="xiazhi_degree"/>
+		<property name="fare"/>
+		<property name="fare_type"/>
+		<property name="fare_topt"/>
+		<property name="fare_performance"/>
+		<property name="fare_side"/>
+		<property name="huangran"/>
+		<property name="huangran_degree"/>
+		<property name="huangran_performance"/>
+		<property name="shenzhi"/>
+		<property name="shenzhi_performance"/>
+		<property name="shenzhi_answer"/>
+		<property name="xingwei"/>
+		<property name="xingwei_performance"/>
+		<property name="order_positive"/>
+		<property name="order_negative"/>
+		<property name="sideSysptomDesc"/>
+		<property name="treatmentDesc"/>
+		<property name="spiritStatu"/>
+		<property name="positiveSysptom"/>
+		<property name="eatVolume"/>
+		<property name="sleep"/>
+		<property name="piss"/>
+		<property name="excrement"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<property name="side_xiaohua"/>
+		<property name="side_xunhuan"/>
+		<property name="side_xunhuan0"/>
+		<property name="side_huxi"/>
+		<property name="side_huxi0"/>
+		<property name="side_miniao"/>
+		<property name="side_miniao0"/>
+		<property name="side_xueye"/>
+		<property name="side_xueye0"/>
+		<property name="side_nei"/>
+		<property name="side_nei0"/>
+		<property name="side_shenjing"/>
+		<property name="side_shenjing0"/>
+		<property name="side_jirou"/>
+		<property name="side_jirou0"/>
+		<property name="side_qita"/>
+		<property name="side_qita0"/>
+		<!-- ==================================== -->
+		<property name="main_other"/>
+		<property name="main_otherDesc"></property>
+	</class>
+	<!-- 主诉映射 -->
+	<class name="ChiefComplaint" table="t_InHsp_Liver_ChiefComplaint">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="dataGetDate"/>
+		<property name="narrator"/>
+		<property name="narrator0"/>
+		<property name="reliability"/>
+		<property name="ccContent"/>
+		<property name="evolution"/>
+		<property name="evolAccompanyingSysptoms"/>
+		<property name="evolASTime"/>
+		<property name="evolASTimeUnit"/>
+		<bag name="sysptoms" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="ccId" not-null="true"/>
+			<one-to-many class="ChiefComplaintSysptom"/>
+		</bag>
+	</class>
+	<class name="ChiefComplaintSysptom" table="t_InHsp_Liver_ChiefComplaintSysptom">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="cc" column="ccId" class="ChiefComplaint"/>
+		<property name="sysptom"/>
+		<property name="accompanyingSysptom"/>
+		<property name="sysptomTime"/>
+		<property name="sysptomTimeUnit"/>
+	</class>
+	<!-- 既往史映射 -->
+	<class name="PastHistory" table="t_InHsp_Liver_PastHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="noInfect_other"/>
+		<property name="pastHistoryDesc"/>
+		<property name="bloodType"/>
+		<property name="rhType"/>
+		<property name="normalHealth"/>
+		<property name="allergy_flag"/>
+		<property name="allergySource"/>
+		<property name="allergySym"/>
+		<property name="allergyDesc"/>
+		<property name="sexDis_flag"/>
+		<property name="infect_flag"/>
+		<property name="noInfect_flag"/>
+		<property name="outerHurt_flag"/>
+		<property name="surgery_flag"/>
+		<property name="otherFlag"/>
+		<property name="otherPasttFlag"/>
+		
+		<property name="blood"/>
+		<property name="byear"/>
+		<property name="bloodYear"/>
+		<property name="bloodHeight"/>
+		<property name="useDrug"/>
+		<property name="otherText"/>
+		<property name="bloodBefor"/>
+		<property name="bloodAfter"/>
+		<!-- 09-17 add -->
+		<!-- 糖尿病 -->
+		<property name="diabetes"/>
+		<property name="dyear"/>
+		<property name="diabetesYear"/>
+		<property name="limosisDiabetes"/>
+		<property name="eatDiabetes"/>
+		<property name="duseDrug"/>
+		<property name="dotherText"/>
+		<property name="peacetimeBefor"/>
+		<property name="peacetimeAfter"/>
+		<property name="eatBefor"/>
+		<property name="eatAfter"/>
+		<!-- 09-17 add -->
+		<!-- 心脏病 -->
+		<property name="heart"/>
+		<property name="heartDiagnose"/>
+		<property name="hyear"/>
+		<property name="heartYear"/>
+		<property name="huseDrug"/>
+		<property name="hotherText"/>
+		<property name="nowThing"/>
+		
+		<bag name="infects" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="phId" not-null="true"/>
+			<one-to-many class="PastHistory_Infect"/>
+		</bag>
+		<bag name="noInfects" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="phId" not-null="true"/>
+			<one-to-many class="PastHistory_NoInfect"/>
+		</bag>
+		<bag name="outerHurts" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="phId" not-null="true"/>
+			<one-to-many class="PastHistory_OuterHurt"/>
+		</bag>
+		<bag name="surgerys" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="phId" not-null="true"/>
+			<one-to-many class="PastHistory_Surgery"/>
+		</bag>
+	</class>
+	<class name="PastHistory_Infect" table="t_InHsp_Liver_PastHistory_Infect">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="ph" column="phId" class="PastHistory"/>
+		<property name="happenTime"/>
+		<property name="infectTimeUnit" column="timeUnit"/>
+		<property name="disName"/>
+		<property name="outCome"/>
+	</class>
+	<class name="PastHistory_NoInfect" table="t_InHsp_Liver_PastHistory_NoInfect">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="ph" column="phId" class="PastHistory"/>
+		<property name="happenTime"/>
+		<property name="noInfectTimeUnit" column="timeUnit"/>
+		<property name="disName"/>
+		<property name="currentStatu"/>
+	</class>
+	<class name="PastHistory_OuterHurt" table="t_InHsp_Liver_PastHistory_OuterHurt">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="ph" column="phId" class="PastHistory"/>
+		<property name="hurtTime"/>
+		<property name="outerHurtTimeUnit" column="timeUnit"/>
+		<property name="hurtName"/>
+		<property name="currentStatu"/>
+	</class>
+	<class name="PastHistory_Surgery" table="t_InHsp_Liver_PastHistory_Surgery">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="ph" column="phId" class="PastHistory"/>
+		<property name="surgeryTime"/>
+		<property name="surgeryTimeUnit" column="timeUnit"/>
+		<property name="surgeryName"/>
+		<property name="surgeryDesc"/>
+		<property name="surgeryCause"/>
+	</class>
+	<!--流行病史-->
+	<class name="EpidemicDisHistory" table="t_InHsp_Liver_EpidemicDisHis">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="epidemicDisDesc"/>
+		<property name="liverDisContactFlag"/>
+		<property name="liverDisContactDesc"/>
+		<property name="liverDisFamilyFlag"/>
+		<property name="liverDisFamilyDesc"/>
+		<property name="hepatitisVaccineFlag"/>
+		<property name="vocationFlag"/>
+		<property name="spreadFactorsFlag"/>
+		<property name="spreadFactorsDesc"/>
+		<property name="transfusionBloodFlag"/>
+		<property name="otherInfectFlag"/>
+		<property name="otherInfectDesc"/>
+		<property name="otherVaccineFlag"/>
+		<property name="epiAreaLivingFlag"/>
+		<property name="epiAreaLivingTime"/>
+		<property name="epiAreaLivingTimeID"/>
+		<property name="epiAreaName"/>
+		<property name="epiAreaLivingAllTime"/>
+		<property name="epiAreaLivingAllTimeID"/>
+		<property name="otherflag"/>
+		<property name="otherEpidemFlag"/>
+	</class>
+	<!-- 个人史 -->
+	<class name="PersonalHistory" table="t_InHsp_Liver_PersonalHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="personalHistoryDesc"/>
+		<property name="birthPlace"/>
+		<property name="rayContactFlag"/>
+		<property name="rayType"/>
+		<property name="rayContactTime"/>
+		<property name="rayContactTimeID"/>
+		<property name="smokingFlag"/>
+		<property name="smokingTime"/>
+		<property name="smokingCount"/>
+		<property name="noSmokingTime"/>
+		<property name="drinkFlag"/>
+		<property name="drinkTime"/>
+		<property name="drinkType"/>
+		<property name="drinkRate"/>
+		<property name="drinkCount"/>
+		<property name="drinkAvg"/>
+		<property name="drinkAvgUnit"/>
+		<property name="noDrinkTime"/>
+		<property name="yeyouFlag"/>
+		<property name="dirtySexFlag"/>
+		<property name="fourteenFlag"/>
+		<property name="birthNum"/>
+		<property name="foetusStatu"/>
+		<property name="birthKind"/>
+		<property name="feedKind"/>
+		<property name="solidFood"/>
+		<property name="intellectualdevelopment"/>
+		<property name="vaccinationStatu"/>
+		
+		<property name="vaccinationStatu0"/>
+		
+		<property name="birthCircu"/>
+		<property name="growndevelopment"/>
+		<property name="otherflag"/>
+		<property name="otherPerFlag"/>
+	</class>
+	<!-- 月经史映射 -->
+	<class name="MenstrualHistory" table="t_InHsp_Liver_MenstrualHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="menstrualDesc"/>
+		<property name="menarcheAge"/>
+		<property name="menstrualCycleFrom"/>
+		<property name="menstrualCycleTo"/>
+		<property name="menstrualPeriodFrom"/>
+		<property name="menstrualPeriodTo"/>
+		<property name="lastMenstrualDate"/>
+		<property name="menopauseAge"/>
+		<property name="menstrualVolume"/>
+		<property name="menstrualDate"/>
+		<property name="painfulMenstruation"/>
+		<property name="otherFlag"/>
+		<property name="otherMenstFlag"/>
+ 	</class>
+	<!-- 婚育史映射 -->
+	<class name="MarritalChildbearingHistory" table="t_InHsp_Liver_MarritalChildbearingHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="marriageChildDesc"/>
+		<property name="marriageStatus"/>
+		<property name="marriageStatus0"/>
+		<property name="marriageAge"/>
+		<property name="consortHealthStatus"/>
+		<property name="consorDisDesc"/>
+		<property name="hasChildFlag"/>
+		<property name="sunCount"/>
+		<property name="daughterCount"/>
+		<property name="gestation"/>
+		<property name="shunchan"/>
+		<property name="liuchan"/>
+		<property name="zaochan"/>
+		<property name="sitai"/>
+		<property name="childOther"/>
+		<property name="otherFlag"/>
+		<property name="otherMarrFlag"/>
+		<property name="biyun"/>
+		<property name="lastScDate"/>
+ 	</class>
+	<!-- 家族史映射 -->
+	<class name="FamilyHistory" table="t_InHsp_Liver_FamilyHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="faimlyHistoryDesc"/>
+		<!-- =====修改09-12===== -->
+		<property name="fatherHealthStatus"/>
+		<property name="fatherHealthDesc"/>
+		<property name="motherHealthStatus"/>
+		<property name="motherHealthDesc"/>
+		
+		<property name="childHealthStatus"/>
+		<property name="childHealthDesc"/>
+		<property name="littleBroCount"/>
+		<property name="oldBroCount"/>
+		<property name="littleSisCount"/>
+		<property name="oldSisCount"/>
+		<property name="brosisHealthStatus"/>
+		<property name="brosisHealthDesc"/>
+		<property name="hepatitisFlag"/>
+		<property name="hepatitisDesc"/>
+		<property name="neoplasmFlag"/>
+		<property name="neoplasmDesc"/>
+		<property name="heredityFlag"/>
+		<property name="heredityDesc"/>
+		<property name="otherDisFlag"/>
+		<property name="otherDisDesc"/>
+		<property name="zinu"/>
+		<property name="son"/>
+		<property name="daughter"/>
+		<property name="brothersOrSisters"/>
+		<property name="otherFlag"/>
+		<property name="otherFamFlag"/>
+ 	</class>
+	<!-- 体格检查映射 -->
+	<class name="PhysicalExamination" table="t_InHsp_Liver_PhysicalExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="smtz_tiwen"/>
+		<property name="smtz_xueya"/>
+		<property name="smtz_maibo"/>
+		<property name="smtz_huxi"/>
+		<property name="ybzc_fayu"/>
+		<property name="ybzc_shenzhi"/>
+		<property name="ybzc_mianrong"/>
+		<property name="ybzc_butai"/>
+		<property name="ybzc_yingyang"/>
+		<property name="ybzc_biaoqing"/>
+		<property name="ybzc_tiwei"/>
+		<property name="ybzc_chati"/>
+		<property name="ybzc_fayu0"/>
+		<property name="ybzc_shenzhi0"/>
+		<property name="ybzc_mianrong0"/>
+		<property name="ybzc_butai0"/>
+		<property name="ybzc_yingyang0"/>
+		<property name="ybzc_biaoqing0"/>
+		<property name="ybzc_tiwei0"/>
+		<property name="ybzc_chati0"/>
+		<property name="pfnm_seze"/>
+		<property name="pfnm_tanxing"/>
+		<property name="pfnm_wenshi"/>
+		<property name="pfnm_maofa"/>
+		<property name="pfnm_seze0"/>
+		<property name="pfnm_tanxing0"/>
+		<property name="pfnm_wenshi0"/>
+		<property name="pfnm_maofa0"/>
+		<property name="pfnm_ganzhang"/>
+		<property name="pfnm_maoxi"/>
+		<property name="pfnm_pizhen"/>
+		<property name="pfnm_pizhenDesc"/>
+		<property name="pfnm_pixia"/>
+		<property name="pfnm_pixiaDesc"/>
+		<property name="pfnm_banhen"/>
+		<property name="pfnm_banhenDesc"/>
+		<property name="pfnm_shuizhong"/>
+		<property name="pfnm_shuizhongDesc"/>
+		<property name="pfnm_qita"/>
+		<property name="pfnm_qitaDesc"/>
+		<!-- 新增09-13=========== -->
+		<property name="pfnm_zhizhu"/>
+		<property name="linbajie_zhongda"/>
+		<property name="linbajie_zhongdaDesc"/>
+		<property name="linbajie_jieyan"/>
+		<property name="linbajie_jieyantd"/>
+		<property name="linbajie_jieyanbs"/>
+		<property name="head_daxiao"/>
+		<property name="head_jixing"/>
+		<property name="head_daxiao0"/>
+		<property name="head_jixing0"/>
+		<property name="head_other"/>
+		<property name="head_otherDesc"/>
+		<property name="eyes_yanjian"/>
+		<property name="eyes_yanjian0"/>
+		<property name="eyes_jiemo"/>
+		<property name="eyes_jiaomo"/>
+		<property name="eyes_jiaomoDesc"/>
+		<property name="eyes_gongmo"/>
+		<property name="eyes_yanqiu"/>
+		<property name="eyes_yanqiu0"/>
+		<property name="eyes_tongkong"/>
+		<property name="eyes_tongkongDesc"/>
+		<property name="eyes_zhijie"/>
+		<property name="eyes_zhijieDesc"/>
+		<property name="eyes_jianjie"/>
+		<property name="eyes_jianjieDesc"/>
+		<property name="ear_erkuo"/>
+		<property name="ear_erkuoDesc"/>
+		<property name="ear_waier"/>
+		<property name="ear_waierPosi"/>
+		<property name="ear_waierxingzhi"/>
+		<property name="ear_waierxingzhi0"/>
+		<property name="ear_rutu"/>
+		<property name="ear_tingli"/>
+		<property name="nose_waiguan"/>
+		<property name="nose_waiguanDesc"/>
+		<property name="nose_zhongge"/>
+		<property name="nose_bidou"/>
+		<property name="nose_bidouPosi"/>
+		<property name="nose_other"/>
+		<property name="nose_otherDesc"/>
+		<property name="mouth_kouchun"/>
+		<property name="mouth_nianmo"/>
+		<property name="mouth_shenshe"/>
+		<property name="mouth_qiwei"/>
+		<property name="mouth_kouchun0"/>
+		<property name="mouth_nianmo0"/>
+		<property name="mouth_shenshe0"/>
+		<property name="mouth_qiwei0"/>
+		<property name="mouth_yayin"/>
+		<property name="mouth_chilie"/>
+		<property name="mouth_yanbu"/>
+		<property name="mouth_biantaoti"/>
+		<property name="mouth_shenyin"/>
+		<property name="mouth_yayin0"/>
+		<property name="mouth_chilie0"/>
+		<property name="mouth_yanbu0"/>
+		<property name="mouth_biantaoti0"/>
+		<property name="mouth_shenyin0"/>
+		<property name="saix_zhongda"/>
+		<property name="saix_zhongdaDesc"/>
+		<property name="neck_dichu"/>
+		<property name="neck_qiguan"/>
+		<property name="neck_jmhuiliu"/>
+		<property name="neck_jingmai"/>
+		<property name="neck_dongmai"/>
+		<property name="neck_jiazhx"/>
+		<property name="neck_jiazhxDesc"/>
+		<property name="xiong_kuo"/>
+		<property name="xiong_rufangDc"/>
+		<property name="xiong_fufang"/>
+		<property name="xiong_rufangDesc"/>
+		<property name="xiong_yatong"/>
+		<property name="fei_huxi"/>
+		<property name="fei_yuchan"/>
+		<property name="fei_zuokou"/>
+		<property name="fei_youkou"/>
+		<property name="fei_zuoxiajie"/>
+		<property name="fei_youxiajie"/>
+		<property name="fei_huxiyin"/>
+		<property name="fei_huxiyinDesc"/>
+		<property name="fei_xiongmo"/>
+		<property name="fei_xiongmoDesc"/>
+		<property name="fei_luoyin"/>
+		<property name="fei_luoyinxzhi"/>
+		<property name="fei_luoyinPosi"/>
+		<property name="xinz_penglong"/>
+		<property name="xinz_bodongPosi"/>
+		<property name="xinz_xinjie"/>
+		<property name="xinz_xinrate"/>
+		<property name="xinz_xinbao"/>
+		<property name="xinz_bodong"/>
+		<property name="xinz_bodongCM"/>
+		<property name="xinz_xinlv"/>
+		<property name="xinz_xinyin"/>
+		<property name="xinz_zayin"/>
+		<property name="zhouweixg_zheng"/>
+		<property name="zhouweixg_zhengDesc"/>
+		<property name="fubu_waixing"/>
+		<property name="fubu_huxi"/>
+		<property name="fubu_jingmai"/>
+		<property name="fubu_shizhen_o"/>
+		<property name="fubu_shizhen_oDesc"/>
+		<property name="fubu_fubi"/>
+		<property name="fubu_jijzh"/>
+		<property name="fubu_yatong"/>
+		<property name="fubu_fantt"/>
+		<property name="fubu_fubi0"/>
+		<property name="fubu_jijzh0"/>
+		<property name="fubu_yatong0"/>
+		<property name="fubu_fantt0"/>
+		<property name="fubu_baokuai"/>
+		<property name="fubu_baokuaiDesc"/>
+		<property name="fubu_yebo"/>
+		<property name="fubu_zhenshui"/>
+		<property name="fubu_murphy"/>
+		<property name="fubu_ganzang"/>
+		<property name="fubu_ganzangDesc"/>
+		<property name="fubu_dannang"/>
+		<property name="fubu_dannangDesc"/>
+		<property name="fubu_pi"/>
+		<property name="fubu_piDesc"/>
+		<property name="fubu_shen"/>
+		<property name="fubu_shenDesc"/>
+		<property name="fubu_ganzhuo"/>
+		<property name="fubu_ganqukt"/>
+		<property name="fubu_shenkt"/>
+		<property name="fubu_shenkt0"/>
+		<property name="fubu_ganshangjie"/>
+		<property name="fubu_yidong"/>
+		<property name="fubu_fushui"/>
+		<property name="fubu_changming"/>
+		<property name="fubu_qishui"/>
+		<property name="fubu_xueguan"/>
+		<property name="fubu_xueguanDesc"/>
+		<property name="shengzhiqi"/>
+		<property name="shengzhiqiDesc"/>
+		<property name="jisi_waixing"/>
+		<property name="jisi_yatong"/>
+		<property name="jisi_kouji"/>
+		<property name="jisi_xiazhi"/>
+		<property name="jisi_xiazhi0"/>
+		<property name="jisi_huodong"/>
+		<property name="jisi_other"/>
+		<property name="jisi_otherDesc"/>
+		<property name="shenjing_fubi"/>
+		<property name="shenjing_jiaomo"/>
+		<property name="shenjing_xijian"/>
+		<property name="shenjing_xijianPosi"/>
+		<property name="shenjing_xijianXZ"/>
+		<property name="shenjing_genjian"/>
+		<property name="shenjing_genjianPosi"/>
+		<property name="shenjing_genjianXZ"/>
+		<property name="shenjing_babinski"/>
+		<property name="shenjing_kerning"/>
+		<property name="shenjing_brudzinski"/>
+		<property name="shenjing_puyi"/>
+		<property name="shenjing_huai"/>
+		<property name="shenjing_jili"/>
+		<property name="shenjing_jilitl"/>
+		<property name="shenjing_jilitr"/>
+		<property name="shenjing_jilibl"/>
+		<property name="shenjing_jilibr"/>
+		<property name="shenjing_jizhang"/>
+		<property name="shenjing_jizhangtl"/>
+		<property name="shenjing_jizhangtr"/>
+		<property name="shenjing_jizhangbl"/>
+		<property name="shenjing_jizhangbr"/>
+		<!-- ============================ -->
+		<property name="eyes_other"/>
+		<property name="eyes_otherDesc"/>
+		<property name="ear_other"/>
+		<property name="ear_otherDesc"/>
+		<property name="mouth_other"/>
+		<property name="mouth_otherDesc"/>
+		<property name="neck_other"/>
+		<property name="neck_otherDesc"/>
+		<property name="xiong_other"/>
+		<property name="xiong_otherDesc"/>
+		<property name="fei_other"/>
+		<property name="fei_otherDesc"/>
+		<property name="xinz_other"/>
+		<property name="xinz_otherDesc"/>
+		<property name="shenjing_other"/>
+		<property name="shenjing_otherDesc"/>
+		<property name="fubu_chu_other"/>
+		<property name="fubu_chu_otherDesc"/>
+		<property name="fubu_k_other"/>
+		<property name="fubu_k_otherDesc"/>
+		<property name="fubu_tz_other"/>
+		<property name="fubu_tz_otherDesc"/>
+		<property name="smtz_xueya2"/>
+		
+		<property name="linbajie_fangwei"/>
+		<property name="linbajie_buwei"/>
+		<property name="linbajie_shumu"/>
+		<property name="linbajie_zhijing"/>
+		<property name="linbajie_zhidi"/>
+		<property name="linbajie_yidong"/>
+		<property name="linbajie_chutong"/>
+		<property name="linbajie_guan"/>
+		<property name="linbajie_fenmiwu"/>
+		<property name="linbajie_banhen"/>
+		<property name="neck_chengdu"/>
+		<property name="neck_weizhi"/>
+		<property name="neck_xingzhi"/>
+		<property name="neck_zhidi"/>
+		<property name="neck_jiaother"/>
+		<property name="baokuai_weizhi"/>
+		<property name="baokuai_shumu"/>
+		<property name="baokuai_zhijing"/>
+		<property name="baokuai_zhidi"/>
+		<property name="baokuai_yidong"/>
+		<property name="baokuai_chutong"/>
+		<property name="ganzang_leixia"/>
+		<property name="ganzang_jiantuxia"/>
+		<property name="ganzang_zhidi"/>
+		<property name="ganzang_yatong"/>
+		<property name="ganzang_biaomain"/>
+		<property name="ganzang_bianyuan"/>
+		<property name="dannang_yadong"/>
+		<property name="pi_leixia"/>
+		<property name="pi_jiantuxia"/>
+		<property name="pi_zhidi"/>
+		<property name="pi_yatong"/>
+		<property name="pi_biaomain"/>
+		<property name="pi_bianyuan"/>
+		<property name="shen_weizhi"/>
+		<property name="shen_yatong"/>
+		<property name="shen_shuniaoguan"/>
+		
+		<property name="eyes_jiemo0"/>
+		<property name="eyes_gongmo0"/>
+		<property name="ear_rutu0"/>
+		<property name="ear_tingli0"/>
+		<property name="neck_jingmai0"/>
+		<property name="neck_qiguan0"/>
+		<property name="neck_dongmai0"/>
+		<property name="xiong_kuo0"/>
+		<property name="fei_huxi0"/>
+		<property name="fei_yuchan0"/>
+		<property name="fei_zuokou0"/>
+		<property name="fei_youkou0"/>
+		<property name="xinz_bodong0"/>
+		<property name="xinz_xinrate0"/>
+		<property name="xinz_xinyin0"/>
+		<property name="xinz_zayin0"/>
+		<property name="jisi_waixing0"/>
+		<property name="shenjing_fubi0"/>
+		<property name="shenjing_jiaomo0"/>
+		<property name="shenjing_babinski0"/>
+		<property name="shenjing_kerning0"/>
+		<property name="shenjing_puyi0"/>
+		<property name="shenjing_huai0"/>
+		<property name="shenjing_brudzinski0"/>
+		<property name="xinz_xinjie0"/>
+ 	</class>
+	<!-- 实验室、辅助、病理检查映射 -->
+	<class name="LabDiagnosticExamination" table="t_InHsp_Liver_LabDiagnosticExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="result"/>
+		<property name="oldOperation"/>
+		<many-to-one name="lab" class="LabExamination" cascade="all" column="pk_labExam_id" unique="true" lazy="false"/>
+	</class>
+	<!-- 实验室、辅助、病理检查映射 -->
+	<class name="LabExamination" table="t_InHsp_Liver_LabExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="xrt_mark"/>
+		<property name="xrt_checkdate"/>
+		<property name="xrt_wbc"/>
+		<property name="xrt_neut1"/>
+		<property name="xrt_neut2"/>
+		<property name="xrt_plt"/>
+		<property name="xrt_ly"/>
+		<property name="xrt_rbc"/>
+		<property name="xrt_hb"/>
+		<property name="xrt_abo"/>
+		<property name="xrt_other"/>
+		<property name="nrt_mark"/>
+		<property name="nrt_checkdate"/>
+		<property name="nrt_color"/>
+		<property name="nrt_pro"/>
+		<property name="nrt_blo"/>
+		<property name="nrt_uro"/>
+		<property name="nrt_glu"/>
+		<property name="nrt_ket"/>
+		<property name="nrt_wbc"/>
+		<property name="nrt_rbc"/>
+		<property name="nrt_other"/>
+		<property name="brt_mark"/>
+		<property name="brt_checkdate"/>
+		<property name="brt_dlsy"/>
+		<property name="brt_zbsy"/>
+		<property name="brt_ob"/>
+		<property name="brt_color"/>
+		<property name="brt_xzh"/>
+		<property name="brt_rbc"/>
+		<property name="brt_wbc"/>
+		<property name="brt_other"/>
+		<property name="gangong_mark"/>
+		<property name="gangong_checkdate"/>
+		<property name="gangong_alt"/>
+		<property name="gangong_ast"/>
+		<property name="gangong_che"/>
+		<property name="gangong_tp"/>
+		<property name="gangong_alb"/>
+		<property name="gangong_tbil"/>
+		<property name="gangong_dbil"/>
+		<property name="gangong_cho"/>
+		<property name="gangong_palb"/>
+		<property name="gangong_other"/>
+		<property name="xuesh_mark"/>
+		<property name="xuesh_checkdate"/>
+		<property name="xuesh_k"/>
+		<property name="xuesh_bun"/>
+		<property name="xuesh_na"/>
+		<property name="xuesh_cl"/>
+		<property name="xuesh_glu"/>
+		<property name="xuesh_cr"/>
+		<property name="xuesh_other"/>
+		<property name="yigan_mark"/>
+		<property name="yigan_checkdate"/>
+		<property name="yigan_hbsag"/>
+		<property name="yigan_antihbe"/>
+		<property name="yigan_hbeag"/>
+		<property name="yigan_antihbs"/>
+		<property name="yigan_antihbc"/>
+		<property name="yigan_hbvdna"/>
+		<property name="jiagan_mark"/>
+		<property name="jiagan_checkdate"/>
+		<property name="jiagan_antihavlgm"/>
+		<property name="binggan_mark"/>
+		<property name="binggan_checkdate"/>
+		<property name="binggan_antihcvlg"/>
+		<property name="binggan_antihcvlgg"/>
+		<property name="binggan_hcvrna"/>
+		<property name="dinggan_mark"/>
+		<property name="dinggan_checkdate"/>
+		<property name="dinggan_hdvab"/>
+		<property name="dinggan_hdvag"/>
+		<property name="wugan_mark"/>
+		<property name="wugan_checkdate"/>
+		<property name="wugan_hbsag"/>
+		<property name="wugan_antihbe"/>
+		<property name="wugan_antihbs"/>
+		<property name="wugan_antihbc"/>
+		<property name="wugan_antihevlgm"/>
+		<property name="wugan_antihevlgg"/>
+		<property name="genggan_mark"/>
+		<property name="genggan_checkdate"/>
+		<property name="genggan_antihiv"/>
+		<property name="dmxq_mark"/>
+		<property name="dmxq_checkdate"/>
+		<property name="dmxq_po2"/>
+		<property name="dmxq_pco2"/>
+		<property name="dmxq_ph"/>
+		<property name="dmxq_sao"/>
+		<property name="dmxq_other"/>
+		<property name="nx_mark"/>
+		<property name="nx_checkdate"/>
+		<property name="nx_inr"/>
+		<property name="nx_fib"/>
+		<property name="nx_aptt"/>
+		<property name="nx_pta"/>
+		<property name="nx_pt"/>
+		<property name="nx_other"/>
+		<property name="xuezhi_mark"/>
+		<property name="xuezhi_checkdate"/>
+		<property name="xuezhi_hdlc"/>
+		<property name="xuezhi_ldlc"/>
+		<property name="xuezhi_tg"/>
+		<property name="xuezhi_chol"/>
+		<property name="xuezhi_other"/>
+		<property name="zhlbjw_mark"/>
+		<property name="zhlbjw_checkdate"/>
+		<property name="zhlbjw_afp"/>
+		<property name="zhlbjw_cea"/>
+		<property name="zhlbjw_ca199"/>
+		<property name="zhlbjw_ca242"/>
+		<property name="zhlbjw_other"/>
+		<property name="xynd_mark"/>
+		<property name="xynd_checkdate"/>
+		<property name="xynd_plkf"/>
+		<property name="xynd_lpms"/>
+		<property name="xynd_other"/>
+		<property name="xline_mark"/>
+		<property name="xline_checkdate"/>
+		<property name="xline_checkResult"/>
+		<property name="heart_mark"/>
+		<property name="heart_checkdate"/>
+		<property name="heart_checkResult"/>
+		<property name="bc_mark"/>
+		<property name="bc_checkdate"/>
+		<property name="bc_checkResult"/>
+		<property name="ct_mark"/>
+		<property name="ct_checkdate"/>
+		<property name="ct_checkResult"/>
+		<property name="mri_mark"/>
+		<property name="mri_checkdate"/>
+		<property name="mri_checkResult"/>
+		<property name="xhd_mark"/>
+		<property name="xhd_checkdate"/>
+		<property name="xhd_checkResult"/>
+		<property name="weijing_mark"/>
+		<property name="weijing_checkdate"/>
+		<property name="weijing_checkResult"/>
+		<property name="jiechang_mark"/>
+		<property name="jiechang_checkdate"/>
+		<property name="jiechang_checkResult"/>
+		<property name="zhichang_mark"/>
+		<property name="zhichang_checkdate"/>
+		<property name="zhichang_checkResult"/>
+		<property name="jiaon_mark"/>
+		<property name="jiaon_checkdate"/>
+		<property name="jiaon_checkResult"/>
+		<property name="niaosu_mark"/>
+		<property name="niaosu_checkdate"/>
+		<property name="niaosu_checkResult"/>
+		<property name="bingli_mark"/>
+		<property name="bingli_checkResult"/>
+		<property name="bingli_fenji"/>
+		<!-- ==== add ======-->
+		<property name="lab_other"/>
+		<property name="lab_otherDesc"/>
+		<property name="niaosu_other"/>
+		<property name="niaosu_otherDesc"/>
+		<!-- 08-23 -->
+		<property name="check_danwei"/>
+		<property name="check_danwei0"/>
+		<!-- ===09-05=== -->
+		<property name="auxi_check"/>
+ 	</class>
+	<!-- 初步确定诊断映射 -->
+	<class name="Diagnosis" table="t_InHsp_Liver_Diagnosis">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="chubu_checkdate"/>
+		<property name="chubu_bianbing"/>
+		<property name="chubu_diagnosis1"/>
+		<property name="chubu_diagnosis2"/>
+		<property name="chubu_diagnosis3"/>
+		<property name="chubu_diagnosis4"/>
+		<property name="chubu_diagnosis5"/>
+		<property name="chubu_diagnosis6"/>
+		<property name="chubu_diagnosis7"/>
+		<property name="chubu_diagnosis8"/>
+		<property name="chubu_diagnosis9"/>
+		<property name="chubu_diagnosis10"/>
+		<property name="chubu_diagnosis11"/>
+		<property name="chubu_diagnosis12"/>
+		<property name="chubu_diagnosis13"/>
+		<property name="chubu_diagnosis14"/>
+		<property name="chubu_zhizefangyao"/>
+		<property name="chubu_inhspDoctorId"/>
+		<property name="chubu_treatDoctorId"/>
+		<property name="chubu_inhspSignDate"/>
+		<property name="chubu_treatSignDate"/>
+		<property name="queding_checkdate"/>
+		<property name="queding_diagnosis1"/>
+		<property name="queding_diagnosis2"/>
+		<property name="queding_diagnosis3"/>
+		<property name="queding_diagnosis4"/>
+		<property name="queding_diagnosis5"/>
+		<property name="queding_diagnosis6"/>
+		<property name="queding_diagnosis7"/>
+		<property name="queding_diagnosis8"/>
+		<property name="queding_diagnosis9"/>
+		<property name="queding_diagnosis10"/>
+		<property name="queding_diagnosis11"/>
+		<property name="queding_diagnosis12"/>
+		<property name="queding_diagnosis13"/>
+		<property name="queding_diagnosis14"/>
+		
+		<!-- =================新增条数 09-13========= -->
+		<property name="queding_diagnosis15"/>
+		<property name="queding_diagnosis16"/>
+		<property name="queding_diagnosis17"/>
+		<property name="queding_diagnosis18"/>
+		<property name="queding_diagnosis19"/>
+		<property name="queding_diagnosis20"/>
+		
+		<property name="queding_inhspDoctorId"/>
+		<property name="queding_treatDoctorId"/>
+		<property name="queding_directorDoctorId"/>
+		<property name="queding_inhspSignDate"/>
+		<property name="queding_treatSignDate"/>
+		<property name="queding_directorSignDate"/>
+	</class>
+	<!-- 订正诊断映射 -->
+	<class name="RevisedDiagnosis" table="t_InHsp_Liver_RevisedDiagnosis">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="dz_checkdate"/>
+		<property name="dz_diagnosis1"/>
+		<property name="dz_diagnosis2"/>
+		<property name="dz_diagnosis3"/>
+		<property name="dz_diagnosis4"/>
+		<property name="dz_diagnosis5"/>
+		<property name="dz_diagnosis6"/>
+		<property name="dz_diagnosis7"/>
+		<property name="dz_diagnosis8"/>
+		<property name="dz_diagnosis9"/>
+		<property name="dz_diagnosis10"/>
+		<property name="dz_diagnosis11"/>
+		<property name="dz_diagnosis12"/>
+		<property name="dz_diagnosis13"/>
+		<property name="dz_diagnosis14"/>
+		<property name="dz_inhspDoctorId"/>
+		<property name="dz_treatDoctorId"/>
+		<property name="dz_directorDoctorId"/>
+		<property name="dz_inhspSignDate"/>
+		<property name="dz_treatSignDate"/>
+		<property name="dz_directorSignDate"/>
+	</class>
+	<!-- 出院记录映射 -->
+	<class name="OutHspRec" table="t_InHsp_Liver_OutHspRec">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="memberGroupId"/>
+		<property name="outHspDate"/>
+		<property name="inHspWard"/>
+		<property name="outHspWard"/>
+		<property name="xNo"/>
+		<property name="ctNo"/>
+		<property name="mriNo"/>
+		<property name="blNo"/>
+		<property name="allergyHistory"/>
+		<property name="outIlls1"/>
+		<property name="outIlls2"/>
+		<property name="outIlls3"/>
+		<property name="outIlls4"/>
+		<property name="outIlls5"/>
+		<property name="outIlls6"/>
+		<property name="outIlls7"/>
+		<property name="outIlls8"/>
+		<property name="outIlls9"/>
+		<property name="outIlls10"/>
+		<property name="outIlls11"/>
+		<property name="outIlls12"/>
+		<property name="outIlls13"/>
+		<property name="outIlls14"/>
+		<property name="outIlls15"/>
+		<property name="outIlls16"/>
+		<property name="outIlls17"/>
+		<property name="outIlls18"/>
+		<property name="outIlls19"/>
+		<property name="outIlls20"/>
+		<property name="outIlls21"/>
+		<property name="outIlls22"/>
+		<property name="outIlls23"/>
+		<property name="outIlls24"/>
+		<property name="outIlls25"/>
+		<property name="outIlls26"/>
+		<property name="outIlls27"/>
+		<property name="outIlls28"/>
+		<property name="outIlls29"/>
+		<property name="outIlls30"/>
+		<property name="inHspStatu"/>
+		<property name="labExaminationResult"/>
+		<property name="treatProcess"/>
+		<property name="outHspStatu"/>
+		<property name="outHspOrders"/>
+		<property name="inhspDoctorId"/>
+		<property name="inhspSignDate"/>
+		<property name="treatDoctorId"/>
+		<property name="treatSignDate"/>
+		<property name="directorDoctorId"/>
+		<property name="directorSignDate"/>
+		<property name="oldOperation"/>
+		<many-to-one name="lab" class="LabExamination" cascade="all" column="pk_labExam_id" unique="true" lazy="false"/>
+	</class>
+	<!-- 出院记录医嘱模板映射 -->
+	<class name="OutHspRecYiZhu" table="t_InHsp_Liver_OutHspRec_YiZhu">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="type"/>
+		<property name="name"/>
+		<property name="perValumon"/>
+		<property name="unit"/>
+		<property name="useFn"/>
+		<property name="course"/>
+		<property name="courseUnit"/>
+		<property name="memo"/>
+		<property name="orderNo"/>
+	</class>
+	
+	<class name="TreatResult_Dict" table="TreatResult_Dict">
+		<id column="coding" name="coding"></id>
+		<property name="treeNode"/>
+		<property name="nodeName"/>
+	</class>
+	
+</hibernate-mapping>

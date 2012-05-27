@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.system.MemberGroup">
+	<class name="MemberGroupTpl" table="SYS_MemberGroup_Tpl">
+		<id name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="groupId"/>
+		<property name="type"/>
+		<property name="name"/>
+		<property name="perValumon"/>
+		<property name="unit"/>
+		<property name="useFn"/>
+		<property name="course"/>
+		<property name="courseUnit"/>
+		<property name="memo"/>
+	</class>
+</hibernate-mapping>

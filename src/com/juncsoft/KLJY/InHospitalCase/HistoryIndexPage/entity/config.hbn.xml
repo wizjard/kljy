@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+                                   
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.HistoryIndexPage.entity">
+	
+	<class name="InHospitalPage" table="t_InHsp_InHospitalPage">
+   		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+	  	<property name="caseId" />
+	   	<property name="policymanualNo" />
+	   <property name="menzhenhao" />
+	   <property name="typeOfPayment" />
+	   <property name="birthplace" />
+	   <property name="contacterAdd" />
+	   <property name="menzhen" />
+	   <property name="outIlls1" />
+	   <property name="leaveHospital1" />
+	   <property name="icd1" />
+	   <property name="outIlls2" />
+	   <property name="leaveHospital2" />
+	   <property name="icd2" />
+	   <property name="outIlls3" />
+	   <property name="leaveHospital3" />
+	   <property name="icd3" />
+	   <property name="outIlls4" />
+	   <property name="leaveHospital4" />
+	   <property name="icd4" />
+	   <property name="outIlls5" />
+	   <property name="leaveHospital5" />
+	   <property name="icd5" />
+	   <property name="outIlls6" />
+	   <property name="leaveHospital6" />
+	   <property name="icd6" />
+	   <property name="outIlls7" />
+	   <property name="leaveHospital7" />
+	   <property name="icd7" />
+	   <property name="outIlls8" />
+	   <property name="leaveHospital8" />
+	   <property name="icd8" />
+	   <property name="ganran" />
+	   <property name="pathology" />
+	   <property name="harm" />
+	   <property name="drugAllergy" />
+	   <property name="hbsag" />
+	   <property name="hcvab" />
+	   <property name="hivab" />
+	   <property name="contagion" />
+	   <property name="baoka" />
+	   <property name="menzhen_chuyuan" />
+	   <property name="ruyuan_chuyuan" />
+	   <property name="shuqian_shuhou" />
+	   <property name="linchuang_bingli" />
+	   <property name="fangshe_bingli" />
+	   <property name="qiangjiu" />
+	   <property name="succed" />
+	   <property name="kezhuren_show" />
+	   <property name="directorDoctorId_show" />
+	   <property name="treatDoctorId_show" />
+	   <property name="inhspDoctorId_show" />
+	   <property name="jinxiu_show" />
+	   <property name="yanjiusheng_show" />
+	   <property name="shixi_show" />
+	   <property name="bianma" />
+	   <property name="bingan" />
+	   <property name="qcyishi" />
+	   <property name="qchushi" />
+	   <property name="badate" />
+	   <property name="operationNo" />
+	   <property name="tdate" />
+	   <property name="surgeryName" />
+	   <property name="surgeryDocName" />
+	   <property name="surgeryAssistant1" />
+	   <property name="surgeryAssistant2" />
+	   <property name="anesthesiaMode" />
+	   <property name="cut" />
+	   <property name="anesthesiologist" />
+	   <property name="operationNo2" />
+	   <property name="tdate2" />
+	   <property name="surgeryName2" />
+	   <property name="surgeryDocName2" />
+	   <property name="surgeryAssistant21" />
+	   <property name="surgeryAssistant22" />
+	   <property name="anesthesiaMode2" />
+	   <property name="cut2" />
+	   <property name="anesthesiologist2" />
+	   <property name="operationNo3" />
+	   <property name="tdate3" />
+	   <property name="surgeryName3" />
+	   <property name="surgeryDocName3" />
+	   <property name="surgeryAssistant31" />
+	   <property name="surgeryAssistant32" />
+	   <property name="anesthesiaMode3" />
+	   <property name="cut3" />
+	   <property name="anesthesiologist3" />
+	   <property name="operationNo4" />
+	   <property name="tdate4" />
+	   <property name="surgeryName4" />
+	   <property name="surgeryDocName4" />
+	   <property name="surgeryAssistant41" />
+	   <property name="surgeryAssistant42" />
+	   <property name="anesthesiaMode4" />
+	   <property name="cut4" />
+	   <property name="anesthesiologist4" />
+	   
+	   <property name="operationNo5"/>
+	   <property name="tdate5"/>
+	   <property name="surgeryName5"/>
+	   <property name="surgeryDocName5"/>
+	   <property name="surgeryAssistant51"/>
+	   <property name="surgeryAssistant52"/>
+	   <property name="anesthesiaMode5"/>
+	   <property name="cut5"/>
+	   <property name="anesthesiologist5"/>
+	   
+	   <property name="criticalCare" />
+	   <property name="oneRank" />
+	   <property name="twoRank" />
+	   <property name="threeRank" />
+	   <property name="icu" />
+	   <property name="ccu" />
+	   <property name="icuName1" />
+	   <property name="icuTurnInto1" />
+	   <property name="icuDropOut1" />
+	   <property name="icuName2" />
+	   <property name="icuTurnInto2" />
+	   <property name="icuDropOut2" />
+	   <property name="icuName3" />
+	   <property name="icuTurnInto3" />
+	   <property name="icuDropOut3" />
+	   <property name="hixi" />
+	   <property name="hunmi_ruyuanqian_hour" />
+	   <property name="hunmi_ruyuanqian_minute" />
+	   <property name="hunmi_ruyuanhou_hour" />
+	   <property name="hunmi_ruyuanhou_minute" />
+	   <property name="liyuanType" />
+	   <property name="shiftTo" />
+	   <property name="obstetrics" />
+	   <property name="obs_checkUp" />
+	   <property name="obs_checkUp_times" />
+	   <property name="deliveryTime" />
+	   <property name="weight" />
+	   <property name="obs_totalTime_hour" />
+	   <property name="obs_totalTime_minute" />
+	   <property name="deliveryType" />
+	   <property name="obs_amountOfBleeding" />
+	   <property name="birth_position" />
+	   <property name="apgar" />
+	   <property name="healthCare" />
+	   <property name="gcaaoc" />
+	   <property name="neonatus" />
+	   <property name="neonatus_sex" />
+	   <property name="neonatus_ruyuan_weight" />
+	   <property name="neonatus_chuyuan_weight" />
+	   <property name="feedType" />
+	   <property name="bcg" />
+	   <property name="yigan" />
+	   <property name="hibg" />
+	   <property name="neonatus_disease1" />
+	   <property name="neonatus_disease2" />
+	   <property name="neonatus_disease3" />
+	   <property name="autopsy" />
+	   <property name="ops_treat_checkUp_dia" />
+	   <property name="followUpClinic" />
+	   <property name="fuc_timelimit" />
+	   <property name="fuc_timelimit_unit" />
+	   <property name="teach" />
+	   <property name="bloodType" />
+	   <property name="rh" />
+	   <property name="transfusion" />
+	   <property name="tf_variety" />
+	   <property name="redBloodCell_unit" />
+	   <property name="bloodCells" />
+	   <property name="bloodPlasma" />
+	   <property name="wholeBlood" />
+	   <property name="auto_blood" />
+	   <property name="other_blood" />
+	   <property name="patientName" />
+	   <property name="gender" />
+	   <property name="birthday" />
+	   <property name="patientNo" />
+	   <property name="nationality" />
+	   <property name="idNo" />
+	   <property name="people" />
+	   <property name="occupation" />
+	   <property name="marrageStatus" />
+	   <property name="workUnitAddr" />
+	   <property name="workUnitPostCode" />
+	   <property name="workUnitTel" />
+	   <property name="contacterName" />
+	   <property name="contacterTel" />
+	   <property name="contacterRelationship" />
+	   <property name="age" />
+	   <property name="xno" />
+	   <property name="mriNo" />
+	   <property name="ctNo" />
+	   <property name="inHspTimes" />
+	   <property name="homeAddr" />
+	   <property name="homePostCode" />
+	   <property name="inHspDate" />
+	   <property name="outHspDate" />
+	   <property name="hspDate2" />
+	   <property name="inWardCode" />
+	   <property name="outHspWard" />
+	   <property name="inStatus" />
+	   <property name="inIllsShow" />
+	   <property name="queding_checkdate" />
+	   <property name="inWard"/>
+	   <property name="outWard"/>
+	   <property name="creditWard"/>
+	   
+	   <property name="province"/>
+	   <property name="city"/>
+	   <property name="area"/>
+	</class>
+
+	<!-- 病案首页续页-出院情况实体映射 -->
+	<class name="ContinuePage_Sysptom" table="t_InHsp_InHospitalPage_ContinuePage_Sysptom">
+		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+   		<property name="caseId"/>
+   		<property name="sysptom"/>
+   		<property name="leaveHospital"/>
+   		<property name="icd"/>
+	</class>
+	
+	<!-- 病案首页续页-手术部分实体映射 -->
+	<class name="ContinuePage_Ops" table="t_InHsp_InHospitalPage_ContinuePage_Ops">
+		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+   		<property name="caseId"/>
+   		<property name="operationNo"/>
+   		<property name="tdate"/>
+   		<property name="surgeryName"/>
+   		<property name="surgeryDocName"/>
+   		<property name="surgeryAssistant1"/>
+   		<property name="surgeryAssistant2"/>
+   		<property name="anesthesiaMode"/>
+   		<property name="cut"/>
+   		<property name="analgesist"/>
+	</class>
+	
+	<!-- 病案首页续页-重病监护室部分实体映射 -->
+	<class name="ContinuePage_Ward" table="t_InHsp_InHospitalPage_ContinuePage_Ward">
+		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+   		<property name="caseId"/>
+   		<property name="icuName"/>
+   		<property name="icuTurnInto"/>
+   		<property name="icuDropOut"/>
+	</class>
+	
+	<!-- 病案首页续页-医生部分实体映射 -->
+	<class name="ContinuePage_Doctor" table="t_InHsp_InHospitalPage_ContinuePage_Doctor">
+		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+   		<property name="caseId"/>
+   		<property name="kezhuren_show"/>
+   		<property name="directorDoctorId_show"/>
+   		<property name="treatDoctorId_show"/>
+   		<property name="inhspDoctorId_show"/>
+   		<property name="jinxiu_show"/>
+   		<property name="yanjiusheng_show"/>
+   		<property name="shixi_show"/>
+   		<property name="bianma"/>
+   		<property name="bingan"/>
+   		<property name="qcyishi"/>
+   		<property name="qchushi"/>
+   		<property name="badate"/>
+   		<property name="state"/>
+	</class>
+
+	<!-- 首页正页 -->
+	<class name="InHosptialOne" table="t_InHsp_InHospital_Index_One">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId" />
+		<property name="patientName" />
+		<property name="gender" />
+		<property name="birthday" />
+		<property name="patientNo" />
+		<property name="nationality" />
+		<property name="idNo" />
+		<property name="people" />
+		<property name="occupation" />
+		<property name="marrageStatus" />
+		<property name="workUnitAddr" />
+		<property name="workUnitPostCode" />
+		<property name="workUnitTel" />
+		<property name="contacterName" />
+		<property name="contacterTel" />
+		<property name="contacterRelationship" />
+		<property name="age" />
+		<property name="age_months"/>
+		<property name="age_day"/>
+		
+		<property name="xno" />
+		<property name="mriNo" />
+		<property name="ctNo" />
+		<property name="inHspTimes" />
+		<property name="homeAddr" />
+		<property name="homePostCode" />
+		<property name="inHspDate" />
+		<property name="outHspDate" />
+		<property name="hspDate2" />
+		<property name="inWardCode" />
+		<property name="inWard" />
+		<property name="outHspWard" />
+		<property name="outWard" />
+		<property name="inStatus" />
+		<property name="inIllsShow" />
+		<property name="queding_checkdate" />
+		<property name="policymanualNo" />
+		<property name="menzhenhao" />
+		<property name="typeOfPayment" />
+		<property name="birthplace" />
+		<property name="province" />
+		<property name="city" />
+		<property name="area" />
+		<property name="contacterAdd" />
+		<property name="menzhen" />
+		<property name="outIlls1" />
+		<property name="leaveHospital1" />
+		<property name="icd1" />
+		<property name="outIlls2" />
+		<property name="leaveHospital2" />
+		<property name="icd2" />
+		<property name="outIlls3" />
+		<property name="leaveHospital3" />
+		<property name="icd3" />
+		<property name="outIlls4" />
+		<property name="leaveHospital4" />
+		<property name="icd4" />
+		<property name="outIlls5" />
+		<property name="leaveHospital5" />
+		<property name="icd5" />
+		<property name="outIlls6" />
+		<property name="leaveHospital6" />
+		<property name="icd6" />
+		<property name="outIlls7" />
+		<property name="leaveHospital7" />
+		<property name="icd7" />
+		<property name="outIlls8" />
+		<property name="leaveHospital8" />
+		<property name="icd8" />
+		
+		<property name="icd9"/>
+		<property name="icd10"/>
+		
+		<property name="ganran" />
+		<property name="pathology" />
+		<property name="harm" />
+		<property name="drugAllergy" />
+		<property name="hbsag" />
+		<property name="hcvab" />
+		<property name="hivab" />
+		<property name="contagion" />
+		<property name="baoka" />
+		<property name="menzhen_chuyuan" />
+		<property name="ruyuan_chuyuan" />
+		<property name="shuqian_shuhou" />
+		<property name="linchuang_bingli" />
+		<property name="fangshe_bingli" />
+		<property name="qiangjiu" />
+		<property name="succed" />
+		<property name="kezhuren_show" />
+		<property name="directorDoctorId_show" />
+		<property name="treatDoctorId_show" />
+		<property name="inhspDoctorId_show" />
+		<property name="jinxiu_show" />
+		<property name="yanjiusheng_show" />
+		<property name="shixi_show" />
+		<property name="bianma" />
+		<property name="bingan" />
+		<property name="qcyishi" />
+		<property name="qchushi" />
+		<property name="badate" />
+		<property name="creditWard"/>
+	</class>
+	
+	<!-- 首页-反面 -->
+	<class name="InHosptialTwo" table="t_InHsp_InHospital_Index_Two">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId" />
+		<property name="operationNo" />
+		<property name="tdate" />
+		<property name="surgeryName" />
+		<property name="surgeryDocName" />
+		<property name="surgeryAssistant1" />
+		<property name="surgeryAssistant2" />
+		<property name="anesthesiaMode" />
+		<property name="cut" />
+		<property name="anesthesiologist" />
+		<property name="operationNo2" />
+		<property name="tdate2" />
+		<property name="surgeryName2" />
+		<property name="surgeryDocName2" />
+		<property name="surgeryAssistant21" />
+		<property name="surgeryAssistant22" />
+		<property name="anesthesiaMode2" />
+		<property name="cut2" />
+		<property name="anesthesiologist2" />
+		<property name="operationNo3" />
+		<property name="tdate3" />
+		<property name="surgeryName3" />
+		<property name="surgeryDocName3" />
+		<property name="surgeryAssistant31" />
+		<property name="surgeryAssistant32" />
+		<property name="anesthesiaMode3" />
+		<property name="cut3" />
+		<property name="anesthesiologist3" />
+		<property name="operationNo4" />
+		<property name="tdate4" />
+		<property name="surgeryName4" />
+		<property name="surgeryDocName4" />
+		<property name="surgeryAssistant41" />
+		<property name="surgeryAssistant42" />
+		<property name="anesthesiaMode4" />
+		<property name="cut4" />
+		<property name="anesthesiologist4" />
+		<property name="operationNo5" />
+		<property name="tdate5" />
+		<property name="surgeryName5" />
+		<property name="surgeryDocName5" />
+		<property name="surgeryAssistant51" />
+		<property name="surgeryAssistant52" />
+		<property name="anesthesiaMode5" />
+		<property name="cut5" />
+		<property name="anesthesiologist5" />
+		<property name="criticalCare" />
+		<property name="oneRank" />
+		<property name="twoRank" />
+		<property name="threeRank" />
+		<property name="icu" />
+		<property name="ccu" />
+		<property name="icuName1" />
+		<property name="icuTurnInto1" />
+		<property name="icuDropOut1" />
+		<property name="icuName2" />
+		<property name="icuTurnInto2" />
+		<property name="icuDropOut2" />
+		<property name="icuName3" />
+		<property name="icuTurnInto3" />
+		<property name="icuDropOut3" />
+		<property name="hixi" />
+		<property name="hunmi" />
+		<property name="hunmi_ruyuanqian_hour" />
+		<property name="hunmi_ruyuanqian_minute" />
+		<property name="hunmi_ruyuanhou_hour" />
+		<property name="hunmi_ruyuanhou_minute" />
+		<property name="liyuanType" />
+		<property name="shiftTo" />
+		<property name="obstetrics" />
+		<property name="obs_checkUp" />
+		<property name="obs_checkUp_times" />
+		<property name="deliveryTime" />
+		<property name="weight" />
+		<property name="obs_totalTime_hour" />
+		<property name="obs_totalTime_minute" />
+		<property name="deliveryType" />
+		<property name="obs_amountOfBleeding" />
+		<property name="birth_position" />
+		<property name="apgar" />
+		<property name="healthCare" />
+		<property name="gcaaoc" />
+		<property name="neonatus" />
+		<property name="neonatus_sex" />
+		<property name="neonatus_ruyuan_weight" />
+		<property name="neonatus_chuyuan_weight" />
+		<property name="feedType" />
+		<property name="bcg" />
+		<property name="yigan" />
+		<property name="hibg" />
+		<property name="neonatus_disease1" />
+		<property name="neonatus_disease2" />
+		<property name="neonatus_disease3" />
+		<property name="autopsy" />
+		<property name="ops_treat_checkUp_dia" />
+		<property name="followUpClinic" />
+		<property name="fuc_timelimit" />
+		<property name="fuc_timelimit_unit" />
+		<property name="teach" />
+		<property name="bloodType" />
+		<property name="rh" />
+		<property name="transfusion" />
+		<property name="tf_variety" />
+		<property name="redBloodCell_unit" />
+		<property name="bloodCells" />
+		<property name="bloodPlasma" />
+		<property name="wholeBlood" />
+		<property name="auto_blood" />
+		<property name="other_blood" />
+	</class>
+	
+	<class name="Address" table="t_patient_address">
+		<id column="id" name="id" >
+			<generator class="native"></generator>
+   		</id>
+   		<property name="ename"/>
+   		<property name="addressNo"/>
+   		<property name="name"/>
+   		<property name="shortName"/>
+	</class>
+</hibernate-mapping>

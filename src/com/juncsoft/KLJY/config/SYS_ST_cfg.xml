@@ -1,0 +1,89 @@
+<Tables>
+	<table name="性别编码(GB/T 2261)" code="SYS_ZD_GB_gender">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="性别" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="婚姻状况(GB/T 2261)" code="SYS_ZD_GB_MarriageStatus">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="婚姻状况" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="从业状况(GB/T 2261)" code="SYS_ZD_GB_Occupation">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="个体标识号类别代码" code="SYS_ZD_GB_IDType">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="全国省份编码" code="SYS_ZD_Province">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="拼音码" code="PYCODE" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="国标国籍代码" code="SYS_ZD_GB_Nationality">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="数字代码" code="CODE" type="string"/>
+			<column name="两字符代码" code="CODE2" type="string"/>
+			<column name="三字符代码" code="CODE3" type="string"/>
+			<column name="中文简称" code="NAME_CN" type="string"/>
+			<column name="英文简称" code="NAME_EN" type="string"/>
+			<column name="中文和英文全称" code="NAME_ALL" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="教育程度" code="SYS_ZD_EducationLv">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="住院-入院状态" code="SYS_ZD_InHspStatus">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+	<table name="住院-诊断库" code="SYS_ZD_Ills">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="拼音" code="PYCODE" type="string"/>
+		</columns>
+	</table>
+	<table name="CRF登记表定义" code="SYS_ZD_CRF">
+		<key code="ID" type="int"/>
+		<columns>
+			<column name="代码" code="CODE" type="string"/>
+			<column name="名称" code="NAME" type="string"/>
+			<column name="URL" code="URL" type="string"/>
+			<column name="描述" code="s_DESC" type="string"/>
+			<column name="排序" code="ORDERNO" type="int"/>
+		</columns>
+	</table>
+</Tables>

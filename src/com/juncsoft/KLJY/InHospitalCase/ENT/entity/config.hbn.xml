@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" package="com.juncsoft.KLJY.InHospitalCase.ENT.entity">
+	<!-- 专科检查 -->
+	<class name="com.juncsoft.KLJY.InHospitalCase.ENT.entity.SpecialExamination" table="t_InHsp_ENT_SpecialExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="specail_erl"/>
+		<property name="specail_err"/>
+		<property name="specail_waierl"/>
+		<property name="specail_waierr"/>
+		<property name="specail_gumol"/>
+		<property name="specail_gumor"/>
+		<property name="specail_biqiang"/>
+		<property name="specail_houbi"/>
+		<property name="specail_yanbu"/>
+		<property name="specail_houbu"/>
+		
+		<property name="erkou_chongxue" />
+		<property name="erkou_shuizhong" />
+		<property name="erkou_zhongwu" />
+		<property name="erkou_weizhi" />
+		<property name="erkou_biaomian" />
+		<property name="erkou_daxiao" />
+		<property name="erkou_other" />
+		<property name="waierdao_chongxue" />
+		<property name="waierdao_shuizhong" />
+		<property name="waierdao_zhongwu" />
+		<property name="waierdao_biaomian" />
+		<property name="waierdao_daxiao" />
+		<property name="waierdao_jiezhong" />
+		<property name="waierdao_loukou" />
+		<property name="waierdao_xiazhai" />
+		<property name="waierdao_fenbiwu" />
+		<property name="waierdao_qiwei" />
+		<property name="waierdao_other" />
+		<property name="gumo_yanse" />
+		<property name="gumo_biaozhi" />
+		<property name="gumo_chongxue" />
+		<property name="gumo_zhongzhang" />
+		<property name="gumo_neixian" />
+		<property name="gumo_zenghou" />
+		<property name="gumo_jiye" />
+		<property name="gumo_rouya" />
+		<property name="gumo_danzhiliu" />
+		<property name="gumo_chuankong" />
+		<property name="gumo_weiyu" />
+		<property name="gumo_type" />
+		<property name="gumo_xingzhuang" />
+		<property name="waibi_pifu" />
+		<property name="waibi_waiqu" />
+		<property name="waibi_anbi" />
+		<property name="biqianting_hongzhong" />
+		<property name="biqianting_longqi" />
+		<property name="biqianting_cucao" />
+		<property name="biqiang_zhongwu" />
+		<property name="biqiang_shulian" />
+		<property name="biqiang_biaomian" />
+		<property name="biqiang_yanse" />
+		<property name="biqiang_xingzhuang" />
+		<property name="biqiang_tanzhongwu" />
+		<property name="biqiang_jidi" />
+		<property name="bijia_zhongzhang" />
+		<property name="bijia_chongxue" />
+		<property name="bijia_shuizhong" />
+		<property name="bijia_yanse" />
+		<property name="bijia_biaomian" />
+		<property name="bijia_xingtai" />
+		<property name="bidao_fenbiwu" />
+		<property name="bidao_fenbiwu_weizhi" />
+		<property name="bidao_yanse" />
+		<property name="bidao_xingzhi" />
+		<property name="bidao_zhongwu" />
+		<property name="bidao_shulian" />
+		<property name="bidao_biaomian" />
+		<property name="bidao_zhongwu_yanse" />
+		<property name="bidao_xingzhuang" />
+		<property name="bidao_tanzhongwu" />
+		<property name="bidao_jidi" />
+		<property name="bidao_feida" />
+		<property name="bidao_zhongjia" />
+		<property name="bidao_pianqu" />
+		<property name="bidao_guji" />
+		<property name="bidao_chuankong" />
+		<property name="bidao_chuankong_daxiao" />
+		<property name="bidao_chuankong_weizhi" />
+		<property name="bidao_milan" />
+		<property name="bidao_kuiyang" />
+		<property name="yanyinwo_chongxue" />
+		<property name="yanyinwo_shuizhong" />
+		<property name="yanyinwo_nianmo" />
+		<property name="yanyinwo_xinshengwu" />
+		<property name="yanyinwo_biaomian" />
+		<property name="yanyinwo_yanse" />
+		<property name="yanyinwo_xingzhuang" />
+		<property name="yggyz_chongxue" />
+		<property name="yggyz_shuizhong" />
+		<property name="yggyz_nianmo" />
+		<property name="yggyz_xinshengwu" />
+		<property name="yggyz_biaomian" />
+		<property name="yggyz_yanse" />
+		<property name="yggyz_xingzhuang" />
+		<property name="biyandingbi_chongxue" />
+		<property name="biyandingbi_shuizhong" />
+		<property name="biyandingbi_nianmo" />
+		<property name="biyandingbi_xinshengwu" />
+		<property name="biyandingbi_biaomian" />
+		<property name="biyandingbi_yanse" />
+		<property name="biyandingbi_xingzhuang" />
+		<property name="ruane_tanhuan" />
+		<property name="ruane_chuongxue" />
+		<property name="ruane_kuiyan" />
+		<property name="ruane_quesun" />
+		<property name="ruane_penglong" />
+		<property name="ruane_xinshengwu" />
+		<property name="ruane_biaomian" />
+		<property name="ruane_yanse" />
+		<property name="ruane_xingzhuang" />
+		<property name="ruane_daxiao" />
+		<property name="ruane_bahen" />
+		<property name="ruane_xuanyongchui" />
+		<property name="btti_zhongda" />
+		<property name="btti_daxiao" />
+		<property name="btti_chongxue" />
+		<property name="btti_nongdian" />
+		<property name="btti_kuiyang" />
+		<property name="btti_jiaohuawu" />
+		<property name="btti_xinshengwu" />
+		<property name="btti_biaomian" />
+		<property name="btti_yanse" />
+		<property name="btti_xingzhuang" />
+		<property name="btti_xinsheng_daxiao" />
+		<property name="yhb_chongxue" />
+		<property name="yhb_linba" />
+		<property name="yhb_nianmo" />
+		<property name="yhb_cesuo" />
+		<property name="huiyan_chongxue" />
+		<property name="huiyan_chongxue_chengdu" />
+		<property name="huiyan_zhongzhang" />
+		<property name="huiyan_nianmo" />
+		<property name="huiyan_taiju" />
+		<property name="huiyan_xinshengwu" />
+		<property name="huiyan_biaomian" />
+		<property name="huiyan_yanse" />
+		<property name="huiyan_xingzhuang" />
+		<property name="huiyan_daxiao" />
+		<property name="huiyan_weizhi" />
+		<property name="huiyan_cebie" />
+		<property name="shidai_nianmo" />
+		<property name="shidai_chongxue" />
+		<property name="shidai_chongxue_cebie" />
+		<property name="shidai_chongxue_chengdu" />
+		<property name="shidai_xiachu" />
+		<property name="shidai_xiachu_chengdu" />
+		<property name="shidai_feihou" />
+		<property name="shidai_feihou_chengdu" />
+		<property name="shidai_xinshengwu" />
+		<property name="shidai_biaomian" />
+		<property name="shidai_yanse" />
+		<property name="shidai_xingzhuang" />
+		<property name="houshi_qingxi" />
+		<property name="houshi_cebie" />
+		<property name="houshi_nianmo" />
+		<property name="houshi_xinshengwu" />
+		<property name="houshi_biaomian" />
+		<property name="houshi_yanse" />
+		<property name="houshi_xingzhuang" />
+		<property name="shaozhuang_yundong" />
+		<property name="shaozhuang_cebie" />
+		<property name="shaozhuang_duichen" />
+		<property name="shaozhuang_chongxue" />
+		<property name="shaozhuang_xinshengwu" />
+		<property name="shaozhuang_biaomian" />
+		<property name="shaozhuang_yanse" />
+		<property name="shaozhuang_xingzhuang" />
+		<property name="lizhuang_nianmo" />
+		<property name="lizhuang_cebie" />
+		<property name="lizhuang_jiye" />
+		<property name="lizhuang_xingtai" />
+		<property name="lizhuang_zhongwu" />
+		<property name="lizhuang_biaomian" />
+		<property name="lizhuang_yanse" />
+		<property name="lizhuang_xingzhuang" />
+		<property name="huanhou_nianmo" />
+		<property name="huanhou_jiye" />
+		<property name="huanhou_xingtai" />
+		<property name="huanhou_shengmen" />
+		<property name="gumo_other" />
+		<property name="biqian_other" />
+		<property name="bijia_other" />
+		<property name="bizhongge_other" />
+		<property name="biyanbu_other" />
+		<property name="shengdai_other" />
+		<property name="houshi_other" />
+		<property name="shaozhuang_other" />
+		<property name="huanhouxi_other" />
+		<property name="zuihou_other" />
+ 	</class>
+ 	<!-- 现病史（2010年7月2日 XieLiang） -->
+ 	<class name="PresentIllnessHistoryENT" table="t_InHsp_ENT_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content"/>
+		<property name="spiritStatu"/>
+		<property name="positiveSysptom"/>
+		<property name="eatVolume"/>
+		<property name="sleep"/>
+		<property name="piss"/>
+		<property name="excrement"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<!-- 现病史一对多 -->
+		<bag name="details" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistoryENTDetails"/>
+		</bag>
+	</class>
+	<class name="PresentIllnessHistoryENTDetails" table="t_InHsp_ENT_PresentIllnessHistoryENTDetails">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistoryENT"/>
+		<property name="illTime"/>
+		<property name="illTimeUnit"/>
+		<property name="causes"/>
+		<property name="sysptomMain"/>
+		<property name="sysptomSide"/>
+		<property name="evolution"/>
+		<property name="evolution0"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+		<property name="er" />
+	   	<property name="earache" />
+	   	<property name="erCacesthesia" />
+	   	<property name="ecWeiZhi" />
+	   	<property name="ecFaZuo" />
+	   	<property name="ecXingZhi" />
+	   	<property name="otorrhea" />
+	   	<property name="eotWeiZhi" />
+	   	<property name="eotChengDu" />
+	   	<property name="eotFaZuo" />
+	   	<property name="eotYanSe" />
+	   	<property name="eotXingZhi" />
+	   	<property name="deaf" />
+	   	<property name="edXingZhi" />
+	   	<property name="edFaZuo" />
+	   	<property name="tinnitus" />
+	   	<property name="etXingZhi" />
+	   	<property name="etChengDu" />
+	   	<property name="etFaZuo" />
+	  	<property name="dizziness" />
+	  	<property name="edizzXingZhi" />
+	  	<property name="edizzFaZuo" />
+	   	<property name="edizzChengDu" />
+	  	<property name="erOther" />
+	   	<property name="erOtherValue" />
+		<property name="erConcomitant" />
+		<property name="econcomitantSymptom" />
+		<property name="nose" />
+		<property name="noBiSe" />
+		<property name="noXingZhi" />
+		<property name="noChengDu" />
+		<property name="noFaZuo" />
+		<property name="snot" />
+		<property name="noWeiZhi" />
+		<property name="noQiWei" />
+		<property name="nosnFaZuo" />
+		<property name="nosnYanSe" />
+		<property name="noseChengDu" />
+		<property name="noseXingZhi" />
+		<property name="noseZhengZhuang" />
+		<property name="sneeze" />
+		<property name="snXingZhi" />
+		<property name="snFaZuo" />
+		<property name="epistaxis" />
+		<property name="epWeiZhi" />
+		<property name="epXingZhi" />
+		<property name="headache" />
+		<property name="heFaZuo" />
+		<property name="heXingZhi" />
+		<property name="paraosmia" />
+		<property name="parWeiZhi" />
+		<property name="parFaZuo" />
+		<property name="parXingZhi" />
+		<property name="noseCacesthesia" />
+		<property name="noCaValue" />
+		<property name="snuffle" />
+		<property name="snuValue" />
+		<property name="noseOther" />
+		<property name="noseOtherValue" />
+		<property name="noSymptom" />
+		<property name="noConcomitant" />
+		<property name="throat" />
+		<property name="angina" />
+		<property name="anWeiZhi" />
+		<property name="anChengDu" />
+		<property name="anXingZhi" />
+		<property name="anFaZuo" />
+		<property name="anYanBian" />
+		<property name="thCacesthesia" />
+		<property name="thcFaZuo" />
+		<property name="tchXingZhi" />
+		<property name="dysphagia" />
+		<property name="dysXingZhi" />
+		<property name="articulation" />
+		<property name="artXingZhi" />
+		<property name="yanPalateFanLiu" />
+		<property name="ypflXingZhi" />
+		<property name="trachyphonia" />
+		<property name="trachXingZhi" />
+		<property name="trachFaZuo" />
+		<property name="laryngealstridor" />
+		<property name="larXingZhi" />
+		<property name="larFaZuo" />
+		<property name="dyspnea" />
+		<property name="dyspneaXingZhi" />
+		<property name="hematemesis" />
+		<property name="hemaFaZuo" />
+		<property name="hemaYanSe" />
+		<property name="cough" />
+		<property name="couFanZuo" />
+		<property name="couXingZhi" />
+		<property name="expectoration" />
+		<property name="expXingZhi" />
+		<property name="throatOther" />
+		<property name="throatOtherValue" />
+		<property name="throSymptom" />
+		<property name="throConcomitant" />
+		<property name="neck" />
+		<property name="neCervicalMuscle" />
+		<property name="impairedVision" />
+		<property name="eyeballFacade" />
+		<property name="eyeballDyskinesia" />
+		<property name="neckBoss" />
+		<property name="neboDescribe" />
+		<property name="neckStiff" />
+		<property name="nestDescribe" />
+		<property name="cervicodynia" />
+		<property name="cerXingZhi" />
+		<property name="neckLouDao" />
+		<property name="neckDescribe" />
+		<property name="jujue" />
+		<property name="jujueDescribe" />
+		<property name="neckOther" />
+		<property name="neckOtherValue" />
+		<property name="neckSymptom" />
+		<property name="neckConcomitant" />
+		<property name="composeContent"/>
+	</class>
+ 	<!-- 06-12修改 -->
+ 	<!--现病史映射-->
+	<class name="PresentIllnessHistory" table="t_InHsp_ENT_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content1"/>
+		<property name="spiritStatu"/>
+		<property name="positiveSysptom"/>
+		<property name="eatVolume"/>
+		<property name="sleep"/>
+		<property name="piss"/>
+		<property name="excrement"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<!-- 起病史 -->
+		<bag name="onsets" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistory_OnSet"/>
+		</bag>
+	</class>
+	<!-- 起病史 -->
+	<class name="PresentIllnessHistory_OnSet" table="t_InHsp_ENT_PresentIllnessHistory_OnSet">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<!-- 主要症状及伴随症状 -->
+		<one-to-one name="ccs" class="ChiefComplaintSysptom" cascade="all"></one-to-one>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>
+		<property name="illTime"/>
+		<property name="illTimeUnit"/>
+		<property name="causes"/>
+		<property name="predisposingfactors" />
+		<property name="sysptomMain"/>
+		<property name="sysptomSide"/>
+		<property name="evolution"/>
+		<property name="evolution0"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+	</class>
+	<!-- 主要症状及伴随症状 -->
+	<class name="ChiefComplaintSysptom" table="t_InHsp_ENT_ChiefComplaintSysptom">
+		<id column="id" name="id">
+			<generator class="foreign">
+				<param name="property">preOn</param>
+			</generator>
+		</id>
+		<one-to-one name="preOn" constrained="true"></one-to-one>
+		<!--<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>-->
+		<property name="er" />
+	   	<property name="earache" />
+	   	<property name="erCacesthesia" />
+	   	<property name="ecWeiZhi" />
+	   	<property name="ecFaZuo" />
+	   	<property name="ecXingZhi" />
+	   	<property name="otorrhea" />
+	   	<property name="eotWeiZhi" />
+	   	<property name="eotChengDu" />
+	   	<property name="eotFaZuo" />
+	   	<property name="eotYanSe" />
+	   	<property name="eotXingZhi" />
+	   	<property name="deaf" />
+	   	<property name="edXingZhi" />
+	   	<property name="edFaZuo" />
+	   	<property name="tinnitus" />
+	   	<property name="etXingZhi" />
+	   	<property name="etChengDu" />
+	   	<property name="etFaZuo" />
+	  	<property name="dizziness" />
+	  	<property name="edizzXingZhi" />
+	  	<property name="edizzFaZuo" />
+	   	<property name="edizzChengDu" />
+	  	<property name="erOther" />
+	   	<property name="erOtherValue" />
+		<property name="erConcomitant" />
+		<property name="econcomitantSymptom" />
+		<property name="nose" />
+		<property name="noBiSe" />
+		<property name="noXingZhi" />
+		<property name="noChengDu" />
+		<property name="noFaZuo" />
+		<property name="snot" />
+		<property name="noWeiZhi" />
+		<property name="noQiWei" />
+		<property name="nosnFaZuo" />
+		<property name="nosnYanSe" />
+		<property name="noseChengDu" />
+		<property name="noseXingZhi" />
+		<property name="noseZhengZhuang" />
+		<property name="sneeze" />
+		<property name="snXingZhi" />
+		<property name="snFaZuo" />
+		<property name="epistaxis" />
+		<property name="epWeiZhi" />
+		<property name="epXingZhi" />
+		<property name="headache" />
+		<property name="heFaZuo" />
+		<property name="heXingZhi" />
+		<property name="paraosmia" />
+		<property name="parWeiZhi" />
+		<property name="parFaZuo" />
+		<property name="parXingZhi" />
+		<property name="noseCacesthesia" />
+		<property name="noCaValue" />
+		<property name="snuffle" />
+		<property name="snuValue" />
+		<property name="noseOther" />
+		<property name="noseOtherValue" />
+		<property name="noSymptom" />
+		<property name="noConcomitant" />
+		<property name="throat" />
+		<property name="angina" />
+		<property name="anWeiZhi" />
+		<property name="anChengDu" />
+		<property name="anXingZhi" />
+		<property name="anFaZuo" />
+		<property name="anYanBian" />
+		<property name="thCacesthesia" />
+		<property name="thcFaZuo" />
+		<property name="tchXingZhi" />
+		<property name="dysphagia" />
+		<property name="dysXingZhi" />
+		<property name="articulation" />
+		<property name="artXingZhi" />
+		<property name="yanPalateFanLiu" />
+		<property name="ypflXingZhi" />
+		<property name="trachyphonia" />
+		<property name="trachXingZhi" />
+		<property name="trachFaZuo" />
+		<property name="laryngealstridor" />
+		<property name="larXingZhi" />
+		<property name="larFaZuo" />
+		<property name="dyspnea" />
+		<property name="dyspneaXingZhi" />
+		<property name="hematemesis" />
+		<property name="hemaFaZuo" />
+		<property name="hemaYanSe" />
+		<property name="cough" />
+		<property name="couFanZuo" />
+		<property name="couXingZhi" />
+		<property name="expectoration" />
+		<property name="expXingZhi" />
+		<property name="throatOther" />
+		<property name="throatOtherValue" />
+		<property name="throSymptom" />
+		<property name="throConcomitant" />
+		<property name="neck" />
+		<property name="neCervicalMuscle" />
+		<property name="impairedVision" />
+		<property name="eyeballFacade" />
+		<property name="eyeballDyskinesia" />
+		<property name="neckBoss" />
+		<property name="neboDescribe" />
+		<property name="neckStiff" />
+		<property name="nestDescribe" />
+		<property name="cervicodynia" />
+		<property name="cerXingZhi" />
+		<property name="neckLouDao" />
+		<property name="neckDescribe" />
+		<property name="jujue" />
+		<property name="jujueDescribe" />
+		<property name="neckOther" />
+		<property name="neckOtherValue" />
+		<property name="neckSymptom" />
+		<property name="neckConcomitant" />
+	</class>
+	
+	<!-- 目前情况 -->
+	<!--  
+		<class name="PresentIllnessHistory_This" table="t_InHsp_ENT_PresentIllnessHistory_This">
+			<id column="id" name="id">
+				<generator class="foreign">
+					<param name="property">pi</param>
+				</generator>
+			</id>
+			<one-to-one name="pi" constrained="true"></one-to-one>
+			<property name="spiritStatu"/>
+			<property name="positiveSysptom"/>
+			<property name="eatVolume"/>
+			<property name="sleep"/>
+			<property name="piss"/>
+			<property name="excrement"/>
+			<property name="bodyWeight"/>
+			<property name="bodyWeight_time"/>
+			<property name="bodyWeight_timeUnit"/>
+			<property name="bodyWeight_kg"/>
+		</class>
+	-->
+</hibernate-mapping>

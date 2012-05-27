@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.aids.entity">
+	
+	<class name="AidsHistoryTree" table="t_InHsp_AidsHistory_Tree">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="tier"/>
+		<property name="href"/>
+	</class>
+	<class name="AidsHistory" table="t_InHsp_AidsHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content"/>
+		<property name="oldOperations"/>
+		
+		<bag name="aidsHistory_cases" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_Cases"/>
+		</bag>
+		<bag name="aidsHistory_mainSymptom" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_MainSymptom"/>
+		</bag>
+		<bag name="aidsHistory_otherPositive" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_otherPositiveSymptom"/>
+		</bag>
+		<bag name="aidsHistory_sideSysptom" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_sideSymptom"/>
+		</bag>
+		<bag name="aidsHistory_treat" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_TreatProcess"/>
+		</bag>
+		<bag name="aidsHistory_currentStatus" order-by="id asc" inverse="true" cascade="save-update" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="AidsHistory_CurrentStatus"/>
+		</bag>
+	</class>
+	
+	
+	<!--发病情况-->
+	<class name="AidsHistory_Cases" table="t_InHsp_AidsHistory_Cases">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="time"/>
+		<property name="timeUnit"/>
+		<property name="timeUnitSuffix"/>
+		<property name="causesFlag"/>
+		<property name="causes"/>
+		<property name="medicalFind"/>
+		<property name="medicalexperunit"/>
+		<property name="medicalquestionDesc"/>
+		<property name="otherTimeCausesFlag"/>
+		<property name="otherTimeCauses"/>
+	</class>
+	<!--主要症状-->
+	<class name="AidsHistory_MainSymptom" table="t_InHsp_AidsHistory_MainSymptom">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="fare"/>
+		<property name="fare_type"/>
+		<property name="fare_tiwen"/>
+		<property name="fare_topt"/>
+		<property name="fare_performance"/>
+		<property name="fare_side"/>
+		<property name="fali"/>
+		<property name="fali_detail"/>
+		<property name="daohan"/>
+		<property name="xiaoshou"/>
+		<property name="xiaoshouDegree"/>
+		<property name="pinxue"/>
+		<property name="pinxueDegree"/>
+		<property name="pinxueSpeed"/>
+		<property name="pinxueYear"/>
+		<property name="pinxueMonth"/>
+		<property name="pinxueDay"/>
+		<property name="lymphNode"/>
+		<property name="lymphNodePos"/>
+		<property name="lymphNodeNum"/>
+		<property name="lymphNodeSize"/>
+		<property name="skinEruption"/>
+		<property name="skinEruptionOrder"/>
+		<property name="skinErDist"/>
+		<property name="skinErDistDesc"/>
+		<property name="skinErCharacter"/>
+		<property name="skinEruptionSize"/>
+		<property name="skinPruritus"/>
+		<property name="skinPruritusDegree"/>
+		<property name="skinPruritusPos"/>
+		<property name="jaundice"/>
+		<property name="jaundiceDegree"/>
+		<property name="jaundicePos"/>
+		<property name="chuxue"/>
+		<property name="chuxuePos"/>
+		<property name="chuxueCharacter"/>
+		<property name="edema"/>
+		<property name="edemaOrder"/>
+		<property name="edemaDistr"/>
+		<property name="edemaDistrDesc"/>
+		<property name="jedemaDegree"/>
+		<property name="edemaCharacter"/>
+		<property name="throatPain"/>
+		<property name="mouthUlcer"/>
+		<property name="mouthUlcerNum"/>
+		<property name="mouthUlcerRatio"/>
+		<property name="cough"/>
+		<property name="coughTimeRhythm"/>
+		<property name="coughVoice"/>
+		<property name="sputum"/>
+		<property name="sputumColor"/>
+		<property name="sputumProperty"/>
+		<property name="sputumCharacter"/>
+		<property name="sputumNum"/>
+		<property name="sputumSmell"/>
+		<property name="hemoptysis"/>
+		<property name="hemoptysisNum"/>
+		<property name="hemoptysisColor"/>
+		<property name="hemoptysisCharacter"/>
+		<property name="chestPain"/>
+		<property name="chestPainFix"/>
+		<property name="chestPainPos"/>
+		<property name="chestPainFst"/>
+		<property name="breathe"/>
+		<property name="breatheState"/>
+		<property name="breatheDegree"/>
+		<property name="breatheShow"/>
+		<property name="breatheRelation"/>
+		<property name="breatheRelief"/>
+		<property name="cyanopathy"/>
+		<property name="cyanopathyState"/>
+		<property name="cyanopathyCourse"/>
+		<property name="cyanopathyDistr"/>
+		<property name="palpitation"/>
+		<property name="shishao"/>
+		<property name="shishaoShow"/>
+		<property name="shishaoReduce"/>
+		<property name="tunyanDif"/>
+		<property name="tunyanPain"/>
+		<property name="exin"/>
+		<property name="exinDegree"/>
+		<property name="outu"/>
+		<property name="outu_shape"/>
+		<property name="outu_thing"/>
+		<property name="outu_countDay"/>
+		<property name="outu_volumeDay"/>
+		<property name="outu_countTotal"/>
+		<property name="outu_volumeTotal"/>
+		<property name="fuzhang"/>
+		<property name="fuzhangDegree"/>
+		<property name="futong"/>
+		<property name="futong_cases"/>
+		<property name="futong_position"/>
+		<property name="futong_performance"/>
+		<property name="futong_degree"/>
+		<property name="futong_rate"/>
+		<property name="futong_position2"/>
+		<property name="futong_time"/>
+		<property name="futong_fangshe"/>
+		<property name="futong_fangshe0"/>
+		<property name="futong_change"/>
+		<property name="fuxie"/>
+		<property name="fuxie_liji"/>
+		<property name="fuxie_shape"/>
+		<property name="fuxie_countDay"/>
+		<property name="fuxie_volumeDay"/>
+		<property name="niaoye"/>
+		<property name="niaoye_color"/>
+		<property name="niaoye_qldegree"/>
+		<property name="niaoye_volume"/>
+		<property name="niaoye_volumeTotal"/>
+		<property name="dabian"/>
+		<property name="dabian_huibai"/>
+		<property name="dabian_xue"/>
+		<property name="dabian_color"/>
+		<property name="dabian_shape"/>
+		<property name="dabian_countDay"/>
+		<property name="dabian_volumeDay"/>
+		<property name="dabian_countTotal"/>
+		<property name="dabian_volumeTotal"/>
+		<property name="dabian_side"/>
+		<property name="shenzhi"/>
+		<property name="shenzhi_performance"/>
+		<property name="shenzhi_answer"/>
+		<property name="xingwei"/>
+		<property name="xingwei_performance"/>
+		<property name="headPain"/>
+		<property name="headPainCase1"/>
+		<property name="headPainCase2"/>
+		<property name="headPainCase3"/>
+		<property name="headPainFix1"/>
+		<property name="headPainFix2"/>
+		<property name="headPainFix3"/>
+		<property name="headPainFix4"/>
+		<property name="headPainDegree"/>
+		<property name="headPainCharacter"/>
+		<property name="headPainTime"/>
+		<property name="jxqz"/>
+		<property name="twitch"/>
+		<property name="twitchCharacter"/>
+		<property name="twitchCharacter2"/>
+		<property name="twitchShow"/>
+		<property name="pianmang"/>
+		<property name="miantan"/>
+		<property name="miantanPos"/>
+		<property name="acroparalysis"/>
+		<property name="acrPos1"/>
+		<property name="acrPos2"/>
+		<property name="masclePain"/>
+		<property name="masclePainCharacter"/>
+		<property name="jointPain"/>
+		<property name="jointPainPos"/>
+		<property name="jointPainNum"/>
+		<property name="jointPainDegree"/>
+		<property name="hivVirus"/>
+		<property name="hivVirusYear"/>
+		<property name="hivVirusMonth"/>
+		<property name="hivVirusNum"/>
+		<property name="hivAnti"/>
+		<property name="hivAntiYear"/>
+		<property name="hivAntiMonth"/>
+		<property name="cd4Cell"/>
+		<property name="cd4CellDetail"/>
+		<property name="continueTime"/>
+		<property name="symptomContinueTime"/>
+		<property name="illState"/>
+		<property name="illState1"/>
+		<property name="illState2"/>
+	</class>
+	<!--次要症状-->
+	<class name="AidsHistory_otherPositiveSymptom" table="t_InHsp_AidsHistory_otherPositiveSymptom">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="pqsbs"/>
+		<property name="ppfsy"/>
+		<property name="ppfsy_posi"/>
+		<property name="ppfsy_degree"/>
+		<property name="ppqqk"/>
+		<property name="pfbbk"/>
+		<property name="pfbbk_posi"/>
+		<property name="pfbbk_size"/>
+		<property name="pfbbk_yd"/>
+		<property name="pfbbk_zhd"/>
+		<property name="pfbbk_yt"/>
+		<property name="pfbbk_zhl"/>
+		<property name="pgqbs"/>
+		<property name="ppqbs"/>
+		<property name="ptykn"/>
+		<property name="ptykn_degree"/>
+		<property name="pchx"/>
+		<property name="pchx_desc"/>
+		<property name="pxggb"/>
+		<property name="pxggb_desc"/>
+		<property name="pxwyc"/>
+		<property name="pxwyc_desc"/>
+		<property name="phj"/>
+		<property name="phj_desc"/>
+		<property name="pjsl"/>
+		<property name="pdxl"/>
+		<property name="otherPosit"/>
+	</class>
+	<!--伴随症状-->
+	<class name="AidsHistory_sideSymptom" table="t_InHsp_AidsHistory_sideSymptom">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="side_xiaohua"/>
+		<property name="side_xiaohua0"/>
+		<property name="side_xunhuan"/>
+		<property name="side_xunhuan0"/>
+		<property name="side_huxi"/>
+		<property name="side_huxi0"/>
+		<property name="side_miniao"/>
+		<property name="side_miniao0"/>
+		<property name="side_xueye"/>
+		<property name="side_xueye0"/>
+		<property name="side_nei"/>
+		<property name="side_nei0"/>
+		<property name="side_shenjing"/>
+		<property name="side_shenjing0"/>
+		<property name="side_jirou"/>
+		<property name="side_jirou0"/>
+		<property name="side_fengshi"/>
+		<property name="side_fengshi0"/>
+		<property name="side_qita"/>
+		<property name="side_qita0"/>
+	</class>
+	<!--诊疗经过-->
+	<class name="AidsHistory_TreatProcess" table="t_InHsp_AidsHistory_treatProcess">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="treatProcessFlag"/>
+		<property name="treatProcessDesc"/>
+		<property name="unitTimeTypeDesc"/>
+		<property name="inspectionUnit"/>
+		<property name="treatTime"/>
+		<property name="treatTimeUnit"/>
+		<property name="treatTimeUnitSuffix"/>
+		<property name="treatFn"/>
+		<property name="treatFn0"/>
+		<property name="checkRstFlag"/>
+		<property name="checkRst"/>
+		<property name="diagRstFlag"/>
+		<property name="diagRst"/>
+		<property name="diagRst0"/>
+		<property name="treatFlag"/>
+		<property name="treat"/>
+		<property name="treatRst"/>
+	</class>
+	<!--当前状况-->
+	<class name="AidsHistory_CurrentStatus" table="t_InHsp_AidsHistory_currentStatus">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="aidsHistory" column="pid" class="AidsHistory"/>
+		<property name="spiritStatu"/>
+		<property name="spiritStatu0"/>
+		<property name="eatVolume"/>
+		<property name="eatVolume0"/>
+		<property name="sleep"/>
+		<property name="sleep0"/>
+		<property name="piss"/>
+		<property name="piss0"/>
+		<property name="excrement"/>
+		<property name="excrement0"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<property name="mainSysptomEve"/>
+		<property name="newSysptom"/>
+		<property name="otherCurrent"/>
+	</class>
+</hibernate-mapping>

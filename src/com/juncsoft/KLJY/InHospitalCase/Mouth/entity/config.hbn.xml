@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" package="com.juncsoft.KLJY.InHospitalCase.Mouth.entity">
+	<!--现病史映射-->
+	<class name="PresentIllnessHistory" table="t_InHsp_Mouth_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content1"/>
+		<property name="content2"/>
+		<bag name="onsets" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistory_OnSet"/>
+		</bag>
+		<bag name="treats" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pk_id" not-null="true"/>
+			<one-to-many class="PresentIllnessHistory_Treat"/>
+		</bag>
+		<many-to-one name="illThis" class="PresentIllnessHistory_This" cascade="all" column="this_id" unique="true" lazy="false"/>
+	</class>
+	<class name="PresentIllnessHistory_OnSet" table="t_InHsp_Mouth_PresentIllnessHistory_OnSet">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>
+		<property name="illTime"/>
+		<property name="illTimeUnit"/>
+		<property name="causes"/>
+		<property name="sysptomMain"/>
+		<property name="sysptomSide"/>
+		<property name="evolution"/>
+		<property name="evolution0"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+	</class>
+	<class name="PresentIllnessHistory_Treat" table="t_InHsp_Mouth_PresentIllnessHistory_Treat">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="pi" column="pk_id" class="PresentIllnessHistory"/>
+		<property name="evolution"/>
+		<property name="seeDoct"/>
+		<property name="seeDoct0"/>
+		<property name="examination"/>
+		<property name="diagnosis"/>
+		<property name="diagnosis0"/>
+		<property name="treatment"/>
+	</class>
+	<class name="PresentIllnessHistory_This" table="t_InHsp_Mouth_PresentIllnessHistory_This">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="time"/>
+		<property name="timeUnit"/>
+		<property name="causes"/>
+		<property name="sideSysptomDesc"/>
+		<property name="treatmentDesc"/>
+		<property name="place_position"/>
+		<property name="place_hemianbu"/>
+		<property name="place_kouqiang"/>
+		<property name="place_gu"/>
+		<property name="place_jingbu"/>
+		<property name="place_other"/>
+		<property name="zhongliu"/>
+		<property name="zhongliu_zhw"/>
+		<property name="zhongliu_zhzh"/>
+		<property name="zhongliu_tt"/>
+		<property name="zhongliu_mm"/>
+		<property name="zhongliu_mt"/>
+		<property name="zhongliu_zhk"/>
+		<property name="zhongliu_pk"/>
+		<property name="zhongliu_chx"/>
+		<property name="waishang"/>
+		<property name="waishang_gzh"/>
+		<property name="waishang_zhk"/>
+		<property name="waishang_mb"/>
+		<property name="waishang_chx"/>
+		<property name="waishang_ty"/>
+		<property name="waishang_ex"/>
+		<property name="waishang_ot"/>
+		<property name="yanzheng"/>
+		<property name="yanzheng_zhzh"/>
+		<property name="yanzheng_tt"/>
+		<property name="yanzheng_ph"/>
+		<property name="yanzheng_ps"/>
+		<property name="yanzheng_hn"/>
+		<property name="yanzheng_kl"/>
+		<property name="yanzheng_zhk"/>
+		<property name="yanzheng_ty"/>
+		<property name="yanzheng_kch"/>
+		<property name="nmych"/>
+		<property name="nmych_ps"/>
+		<property name="nmych_hzg"/>
+		<property name="nmych_chx"/>
+		<property name="nmych_ky"/>
+		<property name="nmych_ml"/>
+		<property name="nmych_hx"/>
+		<property name="nmych_cx"/>
+		<property name="she"/>
+		<property name="she_hzh"/>
+		<property name="she_zhd"/>
+		<property name="she_chx"/>
+		<property name="she_ky"/>
+		<property name="she_ml"/>
+		<property name="she_yd"/>
+		<property name="she_shsh"/>
+		<property name="she_tg"/>
+		<property name="she_wj"/>
+		<property name="ya"/>
+		<property name="ya_sd"/>
+		<property name="ya_yw"/>
+		<property name="ya_shch"/>
+		<property name="ya_zhd"/>
+		<property name="ya_tl"/>
+		<property name="ya_zsh"/>
+		<property name="ya_mf"/>
+		<property name="ya_dsh"/>
+		<property name="ya_cg"/>
+		<property name="ya_jx"/>
+		<property name="ya_kh"/>
+		<property name="ya_fh"/>
+		<property name="xianxian"/>
+		<property name="xianxian_tt"/>
+		<property name="xianxian_zhd"/>
+		<property name="xianxian_zhzh"/>
+		<property name="xianxian_yt"/>
+		<property name="xianxian_gz"/>
+		<property name="niexia"/>
+		<property name="niexia_tt"/>
+		<property name="niexia_yt"/>
+		<property name="niexia_zhk"/>
+		<property name="niexia_bk"/>
+		<property name="niexia_tx"/>
+		<property name="linbajie"/>
+		<property name="linbajie_zhd"/>
+		<property name="linbajie_tt"/>
+		<property name="erbi"/>
+		<property name="erbi_yx"/>
+		<property name="erbi_yn"/>
+		<property name="erbi_jx"/>
+		<property name="yanqiu"/>
+		<property name="yanqiu_tch"/>
+		<property name="yanqiu_fl"/>
+		<property name="yanqiu_xsh"/>
+		<property name="yanqiu_fsh"/>
+		<property name="zhongliu_zhw_size"/>
+		<property name="zhongliu_tt_tt"/>
+		<property name="zhongliu_tt_fz"/>
+		<property name="zhongliu_tt_yb"/>
+		<property name="waishang_gzh_leix"/>
+		<property name="waishang_ot_per"/>
+		<property name="waishang_ot_perVol"/>
+		<property name="waishang_ot_tol"/>
+		<property name="waishang_ot_tolVol"/>
+		<property name="waishang_ot_w"/>
+		<property name="yanzheng_tt_tt"/>
+		<property name="yanzheng_tt_fz"/>
+		<property name="yanzheng_tt_yb"/>
+		<property name="nmych_ps_xt1"/>
+		<property name="nmych_ps_xt2"/>
+		<property name="xianxian_tt_tt"/>
+		<property name="xianxian_tt_fz"/>
+		<property name="xianxian_tt_yb"/>
+		<property name="niexia_tt_tt"/>
+		<property name="niexia_tt_fz"/>
+		<property name="niexia_tt_yb"/>
+		<property name="linbajie_zhd_shl"/>
+		<property name="linbajie_zhd_zhj"/>
+		<property name="linbajie_tt_tt"/>
+		<property name="linbajie_tt_fz"/>
+		<property name="linbajie_tt_yb"/>
+		<property name="zhongliu_zhw_zhidi"/>
+		<property name="zhongliu_zhw_bianjie"/>
+		<property name="zhongliu_zhw_huodongdu"/>
+		<property name="zhongliu_zhk_chengdu"/>
+		<property name="waishang_zhk_chengdu"/>
+		<property name="waishang_ot_xzh"/>
+		<property name="yanzheng_zhzh_chd"/>
+		<property name="yanzheng_zhk_chengdu"/>
+		<property name="nmych_ps_xt"/>
+		<property name="nmych_ps_sd"/>
+		<property name="nmych_ps_by"/>
+		<property name="nmych_ps_wr"/>
+		<property name="ya_sd_chd"/>
+		<property name="ya_yw_fx"/>
+		<property name="ya_zhd_lx"/>
+		<property name="ya_tl_lx"/>
+		<property name="ya_zsh_lx"/>
+		<property name="xianxian_dgk"/>
+		<property name="xianxian_ty"/>
+		<property name="niexia_tx_time"/>
+		<property name="linbajie_zhd_zhd"/>
+		<property name="linbajie_zhd_hd"/>
+		<property name="linbajie_zhd_jd"/>
+		<property name="yanqiu_xsh_lx"/>
+		<property name="spiritStatu"/>
+		<property name="positiveSysptom"/>
+		<property name="eatVolume"/>
+		<property name="sleep"/>
+		<property name="piss"/>
+		<property name="excrement"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<property name="side_xiaohua"/>
+		<property name="side_xunhuan"/>
+		<property name="side_xunhuan0"/>
+		<property name="side_huxi"/>
+		<property name="side_huxi0"/>
+		<property name="side_miniao"/>
+		<property name="side_miniao0"/>
+		<property name="side_xueye"/>
+		<property name="side_xueye0"/>
+		<property name="side_nei"/>
+		<property name="side_nei0"/>
+		<property name="side_shenjing"/>
+		<property name="side_shenjing0"/>
+		<property name="side_jirou"/>
+		<property name="side_jirou0"/>
+		<property name="side_qita"/>
+		<property name="side_qita0"/>
+	</class>
+</hibernate-mapping>

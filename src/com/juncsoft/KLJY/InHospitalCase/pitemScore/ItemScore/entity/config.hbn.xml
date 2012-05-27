@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.pitemScore.ItemScore.entity">
+	<!--肝病功能评分实体-->
+	<class name="LFunction" table="ItemScore_LFunction">
+		<id column="lfId" name="lfId">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientID" />
+		<property name="opeDate" />
+		<property name="CreateTime" />
+		<property name="LastModifyTime" />
+		<property name="CPC1" />
+		<property name="CPCS1" />
+		<property name="CPC2" />
+		<property name="CPCS2" />
+		<property name="CPC3" />
+		<property name="CPCS3" />
+		<property name="CPC4" />
+		<property name="CPCS4" />
+		<property name="CPC5" />
+		<property name="CPCS5" />
+		<property name="CPSEx" />
+		<property name="CPS" />
+		<property name="MELDC1" />
+		<property name="MELDC2" />
+		<property name="MELDC3" />
+		<property name="MELDC4" />
+		<property name="MELDS" />
+		<property name="shen1" />
+		<property name="shen2" />
+		<property name="shen3" />
+		<property name="shen4" />
+		<property name="shen5" />
+		<property name="shen6" />
+		<property name="shen7" />
+		<property name="shen8" />
+		<property name="shen9" />
+		<property name="shen10" />
+		<property name="shen11" />
+		<property name="shen12" />
+		<property name="shen13" />
+		<property name="shen14" />
+		<property name="shen15" />
+		<property name="shen16" />
+		<property name="shen17" />
+		<property name="shen18" />
+		<property name="xin1" />
+		<property name="xin2" />
+		<property name="xin3" />
+		<property name="xin4" />
+		<property name="xin5" />
+		<property name="xin6" />
+		<property name="xin7" />
+		<property name="xin8" />
+		<property name="fei1" />
+		<property name="fei2" />
+		<property name="fei3" />
+		<property name="fei4" />
+		<property name="fei5" />
+		<property name="fei6" />
+		<property name="shenjing1" />
+		<property name="shenjing2" />
+		<property name="shenjing3" />
+		<property name="shenjing4" />
+		<property name="shenjing5" />
+		<property name="shenjing6" />
+		<property name="shenjing7" />
+		<property name="shenjing8" />
+		<property name="shenjing9" />
+		<property name="shenjing10" />
+		<property name="shenjing11" />
+		<property name="shenjing12" />
+		<property name="ningxue1" />
+		<property name="ningxue2" />
+		<property name="ningxue3" />
+		<property name="ningxue4" />
+		<property name="ningxue5" />
+		<property name="ningxue6" />
+		<property name="ningxue7" />
+		<property name="ningxue8" />
+		<property name="ningxue9" />
+		<property name="ningxue10" />
+		<property name="ningxue11" />
+		<property name="ningxue12" />
+		<property name="other" />
+	</class>
+	
+	<!-- 肝癌进展程度评估实体  -->
+	<class name="Lcdegree" table="ItemScore_LCdegree">
+		<id column="lcDegreeId" name="lcDegreeId">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientID" />
+	   <property name="createTime" />
+	   <property name="LastModifyTime" />
+	   <property name="opeDate" />
+	   <property name="miLAN" />
+	   <property name="ucsf" />
+	   <property name="bclc" />
+	   <property name="llobe" />
+	   <property name="rlobe" />
+	   <property name="caud" />
+	   <property name="seg1" />
+	   <property name="seg2" />
+	   <property name="seg3" />
+	   <property name="seg4" />
+	   <property name="seg5" />
+	   <property name="seg6" />
+	   <property name="seg7" />
+	   <property name="seg8" />
+	   <property name="lolt" />
+	   <property name="wolt" />
+	   <property name="lost" />
+	   <property name="wost" />
+	   <property name="tmorp" />
+	   <property name="ascit1" />
+	   <property name="intra" />
+	   <property name="uright" />
+	   <property name="uleft" />
+	   <property name="umain" />
+	   <property name="hvein" />
+	   <property name="ivci" />
+	   <property name="biled" />
+	   <property name="usgi" />
+	   <property name="llobe1" />
+	   <property name="rlobe1" />
+	   <property name="caud1" />
+	   <property name="lolt1" />
+	   <property name="wolt1" />
+	   <property name="lost1" />
+	   <property name="wost1" />
+	   <property name="tmorp1" />
+	   <property name="lipiod" />
+	   <property name="ctivc" />
+	   <property name="cthvein" />
+	   <property name="ctleft" />
+	   <property name="ctright" />
+	   <property name="ctmain" />
+	   <property name="lympha" />
+	   <property name="ctlung" />
+	   <property name="ctpelv" />
+	   <property name="tlv" />
+	   <property name="lrv" />
+	   <property name="cti" />
+	   <property name="llobe3" />
+	   <property name="rlobe3" />
+	   <property name="caud3" />
+	   <property name="lolt3" />
+	   <property name="wolt3" />
+	   <property name="lost3" />
+	   <property name="wost3" />
+	   <property name="tmorp3" />
+	   <property name="mleet" />
+	   <property name="mright" />
+	   <property name="mmain" />
+	   <property name="mhvein" />
+	   <property name="mriivc" />
+	   <property name="mlympha" />
+	   <property name="mrilung" />
+	   <property name="mripelv" />
+	   <property name="mri1" />
+	   <property name="pathno" />
+	   <property name="notn" />
+	   <property name="sltw" />
+	   <property name="sltl" />
+	   <property name="diasum" />
+	   <property name="edmon" />
+	   <property name="enw_edmo" />
+	   <property name="pst" />
+	   <property name="venini" />
+	   <property name="eggel" />
+	   <property name="encap" />
+	   <property name="microsat" />
+	   <property name="capinv" />
+	   <property name="lnihr" />
+	   <property name="lnic" />
+	   <property name="ntl" />
+	   <property name="l_inv" />
+	   <property name="imhbcag" />
+	   <property name="imhbsag" />
+	   <property name="intrab" />
+	   <property name="rightb" />
+	   <property name="mpv" />
+	   <property name="mhv" />
+	   <property name="ivc" />
+	   <property name="diaph" />
+	   <property name="duode" />
+	   <property name="stoma" />
+	   <property name="adrmn" />
+	   <property name="kidney" />
+	   <property name="spleen" />
+	   <property name="colon" />
+	   <property name="other6" />
+	   <property name="second" />
+	   <property name="secondo" />
+	   <property name="tstage" />
+	   <property name="okuda" />
+	   <property name="pathother" />
+	   <property name="alinj1" />
+	   <property name="toce3" />
+	   <property name="rresect" />
+	   <property name="ltransp" />
+	   <property name="sysche" />
+	   <property name="tmx1" />
+	   <property name="xeloda" />
+	   <property name="rfat" />
+	   <property name="other12" />
+	   <property name="other120" />
+	   <property name="excis" />
+	   <property name="sysche1" />
+	   <property name="eitmx" />
+	   <property name="other13" />
+	   <property name="other130" />
+	   <property name="excis1" />
+	   <property name="sysch2" />
+	   <property name="prtmx" />
+	   <property name="other14" />
+	   <property name="other140" />
+	   <property name="tlor" />
+	   <property name="rt" />
+	   <property name="excis2" />
+	   <property name="chemo" />
+	   <property name="other15" />
+	   <property name="other150" />
+	   <property name="rliver" />
+	   <property name="rthorax" />
+	   <property name="rbrain" />
+	   <property name="rbone" />
+	   <property name="rother" />
+	   <property name="recurda" />
+	</class>
+
+	<class name="ScoreComment" table="t_ScoreComment">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="ssmId"/>
+		<property name="caseId"/>
+		<property name="scoreTime"/>
+		<property name="scoreStage"/>
+		<property name="doc1"/>
+		<property name="doc2"/>
+		<property name="doc3"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="ChildPugh" table="t_ScoreComment_ChildPugh">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="hepaticEp"/>
+		<property name="ascites"/>
+		<property name="bilirubin"/>
+		<property name="albumin"/>
+		<property name="prothrombinTime"/>
+		<property name="totalScore"/>
+		<property name="scoreGrade"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Meld" table="t_ScoreComment_Meld">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="creatinine"/>
+		<property name="bilirubin"/>
+		<property name="inr"/>
+		<property name="etiology"/>
+		<property name="result"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Bclc" table="t_ScoreComment_Bclc">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="pstIllScore"/>
+		<property name="tumorStage"/>
+		<property name="okudaStage"/>
+		<property name="liverFun"/>
+		<property name="bclcStage"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Bmi" table="t_ScoreComment_Bmi">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="weight"/>
+		<property name="height"/>
+		<property name="bodyMi"/>
+		<property name="clinicalValue"/>
+		<property name="whoClinicalValue"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Clip" table="t_ScoreComment_Clip">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="cpGrade"/>
+		<property name="cpGrade2"/>
+		<property name="knubType"/>
+		<property name="knubType2"/>
+		<property name="jtAlbumen"/>
+		<property name="jtAlbumen2"/>
+		<property name="pvEmbolism"/>
+		<property name="pvEmbolism2"/>
+		<property name="totalScore"/>
+		<property name="stage"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Gcs" table="t_ScoreComment_Gcs">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="openEyeResult"/>
+		<property name="openEyeScore"/>
+		<property name="languageRespResult"/>
+		<property name="languageRespScore"/>
+		<property name="moveRespResult"/>
+		<property name="moveRespScore"/>
+		<property name="gcsScore"/>
+		<property name="gcsMeaning"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Plc" table="t_ScoreComment_Plc">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="tumor"/>
+		<property name="ce1"/>
+		<property name="ce2"/>
+		<property name="ce3"/>
+		<property name="ce4"/>
+		<property name="ce5"/>
+		<property name="ce6"/>
+		<property name="cln"/>
+		<property name="pm"/>
+		<property name="cgrade"/>
+		<property name="stage"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Tnm" table="t_ScoreComment_Tnm">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="tnmt"/>
+		<property name="tnmn"/>
+		<property name="tnmm"/>
+		<property name="tnmStage"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Lctos" table="t_ScoreComment_Lctos">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="milanStandard"/>
+		<property name="ucsfStandard"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="He" table="t_ScoreComment_He">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="pds_ams1"/>
+		<property name="pds_ns"/>
+		<property name="pds_eeg"/>
+		<property name="pds_ams2"/>
+		<property name="pcs_ams1"/>
+		<property name="pcs_ns1"/>
+		<property name="pcs_eeg"/>
+		<property name="pcs_ams2"/>
+		<property name="pcs_ns2"/>
+		<property name="pcs_ams3"/>
+		<property name="pcs_ns3"/>
+		<property name="pcs_ams4"/>
+		<property name="pcs_ns4"/>
+		<property name="pcs_ns5"/>
+		<property name="pcs_ns6"/>
+		<property name="ls_ams1"/>
+		<property name="ls_ns1"/>
+		<property name="ls_eeg"/>
+		<property name="ls_ams2"/>
+		<property name="ls_ns2"/>
+		<property name="ls_ams3"/>
+		<property name="ls_ns3"/>
+		<property name="ls_ns4"/>
+		<property name="ls_ns5"/>
+		<property name="cs_ams1"/>
+		<property name="cs_ns1"/>
+		<property name="cs_eeg1"/>
+		<property name="cs_ns2"/>
+		<property name="cs_ns3"/>
+		<property name="cs_ams2"/>
+		<property name="cs_ns4"/>
+		<property name="cs_eeg2"/>
+		<property name="cs_ns5"/>
+		<property name="cs_ns6"/>
+		<property name="cs_ns7"/>
+		<property name="cs_ns8"/>
+		<property name="cs_ns9"/>
+		<property name="result"/>
+		<property name="hesRst"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Hepatomyocardosis" table="t_ScoreComment_Hepatomyocardosis">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="lvs0"/>
+		<property name="lvs"/>
+		<property name="lvpwa0"/>
+		<property name="lvpwa"/>
+		<property name="ivsa0"/>
+		<property name="ivsa"/>
+		<property name="ef0"/>
+		<property name="ef"/>
+		<property name="eaRatio0"/>
+		<property name="eaRatio"/>
+		<property name="dtl0"/>
+		<property name="dtl"/>
+		<property name="irtl0"/>
+		<property name="irtl"/>
+		<property name="laid"/>
+		<property name="laid0"/>
+		<property name="myoqa"/>
+		<property name="ecgl0"/>
+		<property name="ecgl"/>
+		<property name="bnp"/>
+		<property name="teup"/>
+		<property name="epabn"/>
+		<property name="crabn"/>
+		<property name="mec"/>
+		<property name="unadd"/>
+		<property name="ismyoc"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Hps" table="t_ScoreComment_Hps">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="hepatosisHis"/>
+		<property name="pao2"/>
+		<property name="aado2"/>
+		<property name="ce"/>
+		<property name="maa"/>
+		<property name="bdc"/>
+		<property name="result"/>
+		<property name="grade"/>
+		<property name="isPao2"/>
+		<property name="isAado2"/>
+		<property name="isMaa"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Hrs" table="t_ScoreComment_Hrs">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="gyhfs"/>
+		<property name="xjs"/>
+		<property name="wxk"/>
+		<property name="wdxrl"/>
+		<property name="wsdywsy"/>
+		<property name="wssj"/>
+		<property name="result"/>
+		<property name="gszf"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Hc" table="t_ScoreComment_Hc">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="hcbismuth"/>
+		<property name="hct"/>
+		<property name="bismuthRst"/>
+		<property name="hctRst"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="ScoreSetMeal" table="t_ScoreSetMeal">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="tier"/>
+		<property name="subScoreItems"/>
+	</class>
+	<!--门诊（器官） -->
+	<class name="ScoreSetMealmenzhen" table="t_ScoreSetMealmenzhen">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="tier"/>
+		<property name="subScoreItems"/>
+	</class>
+	<class name="OrganFunc" table="t_ScoreComment_OrganFunc">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="hepaticEp"/>
+		<property name="ascites"/>
+		<property name="cpBilirubin"/>
+		<property name="albumin"/>
+		<property name="prothrombinTime"/>
+		<property name="totalScore"/>
+		<property name="scoreGrade"/>
+		<property name="creatinine"/>
+		<property name="meldBilirubin"/>
+		<property name="meldInr"/>
+		<property name="etiology"/>
+		<property name="meldResult"/>
+		<property name="xindian"/>
+		<property name="dongXindian"/>
+		<property name="csXindong"/>
+		<property name="ntha"/>
+		<property name="chestX"/>
+		<property name="chestCT"/>
+		<property name="chestCheck"/>
+		<property name="xyFengya"/>
+		<property name="xeFengya"/>
+		<property name="xyBaohe"/>
+		<property name="niaovolum"/>
+		<property name="ndanbai"/>
+		<property name="xueniaoN"/>
+		<property name="xuejigan"/>
+		<property name="ccr"/>
+		<property name="szChaosheng"/>
+		<property name="ningxueFunc"/>
+		<property name="pta"/>
+		<property name="inr"/>
+		<property name="dic"/>
+		<property name="gxjisui"/>
+		<property name="headCT"/>
+		<property name="otherOrgan"/>
+		<property name="weijing"/>
+		<property name="weidiantu"/>
+		<property name="xuerusuan"/>
+		<property name="ndanbaiYDesc"/>
+		<property name="yingyangBmi"/>
+		<property name="yingyangNrs"/>
+		<property name="xqbdb"/>
+		<property name="xqqbdb"/>
+		<property name="lbxbjs"/>
+		
+		<property name="xindian0"/>
+		<property name="dongXindian0"/>
+		<property name="csXindong0"/>
+		<property name="ntha0"/>
+		<property name="chestX0"/>
+		<property name="chestCT0"/>
+		<property name="chestCheck0"/>
+		<property name="xyFengya0"/>
+		<property name="xeFengya0"/>
+		<property name="xyBaohe0"/>
+		<property name="niaovolum0"/>
+		<property name="ndanbai0"/>
+		<property name="xueniaoN0"/>
+		<property name="xuejigan0"/>
+		<property name="ccr0"/>
+		<property name="szChaosheng0"/>
+		<property name="ningxueFunc0"/>
+		<property name="pta0"/>
+		<property name="inr0"/>
+		<property name="dic0"/>
+		<property name="gxjisui0"/>
+		<property name="headCT0"/>
+		<property name="weijing0"/>
+		<property name="weidiantu0"/>
+		<property name="xuerusuan0"/>
+		<property name="yingyangBmi0"/>
+		<property name="yingyangNrs0"/>
+		<property name="xqbdb0"/>
+		<property name="xqqbdb0"/>
+		<property name="lbxbjs0"/>
+		
+		<property name="weight"/>
+		<property name="height"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Apacheii" table="t_ScoreComment_Apacheii">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="qiangjiu1"/>
+		<property name="zhuyao1"/>
+		<property name="zhuyao2"/>
+		<property name="hebing1"/>
+		<property name="hebing2"/>
+		<property name="hebing3"/>
+		<property name="ascore0"/>
+		<property name="ascore"/>
+		<property name="bscore0"/>
+		<property name="bscore"/>
+		<property name="cscore"/>
+		<property name="eye0"/>
+		<property name="eye"/>
+		<property name="language0"/>
+		<property name="language"/>
+		<property name="move0"/>
+		<property name="move"/>
+		<property name="hasShen"/>
+		<property name="tiwen0"/>
+		<property name="tiwen"/>
+		<property name="xueya0"/>
+		<property name="xueya"/>
+		<property name="xinlv0"/>
+		<property name="xinlv"/>
+		<property name="huxi0"/>
+		<property name="huxi"/>
+		<property name="paoFio0"/>
+		<property name="paoFio"/>
+		<property name="dongmaixue0"/>
+		<property name="dongmaixue"/>
+		<property name="xueqingNa0"/>
+		<property name="xueqingNa"/>
+		<property name="xueqingK0"/>
+		<property name="xueqingK"/>
+		<property name="xqjiqian0"/>
+		<property name="xqjiqian"/>
+		<property name="xueqiuJiya0"/>
+		<property name="xueqiuJiya"/>
+		<property name="wbc0"/>
+		<property name="wbc"/>
+		<property name="doctorName"/>
+		<property name="dscore"/>
+		<property name="apas1"/>
+		<property name="apas2"/>
+		<property name="apas3"/>
+		<property name="apas4"/>
+		<property name="apas5"/>
+		<property name="apas6"/>
+		<property name="apas7"/>
+		<property name="gcsScore"/>
+		<property name="aado0"/>
+		<property name="aado"/>
+		<property name="hco0"/>
+		<property name="hco"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Phi" table="t_ScoreComment_Phi">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="weizhong1"/>
+		<property name="weizhong2"/>
+		<property name="weizhong3"/>
+		<property name="weizhong4"/>
+		<property name="weizhong5"/>
+		<property name="weizhong6"/>
+		<property name="weizhong7"/>
+		<property name="weizhong8"/>
+		<property name="weizhong9"/>
+		<property name="weizhong10"/>
+		<property name="weizhong11"/>
+		<property name="weizhong12"/>
+		<property name="weizhong13"/>
+		<property name="weizhong14"/>
+		<property name="weizhong15"/>
+		<property name="weizhong16"/>
+		<property name="weizhong17"/>
+		<property name="weizhong18"/>
+		<property name="weizhong19"/>
+		<property name="weizhong20"/>
+		<property name="weizhong21"/>
+		<property name="weizhong22"/>
+		<property name="zhuyao1"/>
+		<property name="zhuyao2"/>
+		<property name="ciyao1"/>
+		<property name="ciyao2"/>
+		<property name="shousuo0"/>
+		<property name="shousuo"/>
+		<property name="maibo0"/>
+		<property name="maibo"/>
+		<property name="huxi0"/>
+		<property name="huxi"/>
+		<property name="shenzhi0"/>
+		<property name="shenzhi"/>
+		<property name="doctorName"/>
+		<property name="phi1"/>
+		<property name="phi2"/>
+		<property name="fiag"/>
+	</class>
+	
+	<class name="Ts" table="t_ScoreComment_Ts">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="scId"/>
+		<property name="caseId"/>
+		<property name="weizhong1"/>
+		<property name="weizhong2"/>
+		<property name="weizhong3"/>
+		<property name="weizhong4"/>
+		<property name="weizhong5"/>
+		<property name="weizhong6"/>
+		<property name="weizhong7"/>
+		<property name="weizhong8"/>
+		<property name="weizhong9"/>
+		<property name="weizhong10"/>
+		<property name="weizhong11"/>
+		<property name="weizhong12"/>
+		<property name="weizhong13"/>
+		<property name="weizhong14"/>
+		<property name="weizhong15"/>
+		<property name="weizhong16"/>
+		<property name="weizhong17"/>
+		<property name="weizhong18"/>
+		<property name="weizhong19"/>
+		<property name="weizhong20"/>
+		<property name="weizhong21"/>
+		<property name="weizhong22"/>
+		<property name="zhuyao1"/>
+		<property name="zhuyao2"/>
+		<property name="bebing1"/>
+		<property name="bebing2"/>
+		<property name="huxi0"/>
+		<property name="huxi"/>
+		<property name="huxifudu0"/>
+		<property name="huxifudu"/>
+		<property name="shousuoya0"/>
+		<property name="shousuoya"/>
+		<property name="maoxi0"/>
+		<property name="maoxi"/>
+		<property name="eye0"/>
+		<property name="eye"/>
+		<property name="language0"/>
+		<property name="language"/>
+		<property name="move0"/>
+		<property name="move"/>
+		<property name="ec"/>
+		<property name="tc"/>
+		<property name="doctorName"/>
+		<property name="fiag"/>
+	</class>
+</hibernate-mapping>

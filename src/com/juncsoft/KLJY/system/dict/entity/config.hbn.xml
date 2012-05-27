@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.system.dict.entity">
+	<class name="DictModule" table="SYS_DICT_Modules">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="pid" type="java.lang.Long"/>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="comment"/>
+	</class>
+	<class name="DictFldcode" table="SYS_DICT_FldCode">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="moduleId" type="java.lang.Long"/>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="comment"/>
+	</class>
+	<class name="DictItem" table="SYS_DICT_Item">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="fldCodeId" type="java.lang.Long"/>
+		<property name="value"/>
+		<property name="text"/>
+		<property name="comment"/>
+		<property name="orderNo"/>
+	</class>
+	<class name="DictModuleEx" table="SYS_DICT_Modules">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="pid" type="java.lang.Long"/>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="comment"/>
+	</class>
+	<class name="DictFldcodeEx" table="SYS_DICT_FldCode">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="moduleId" type="java.lang.Long"/>
+		<property name="name"/>
+		<property name="code"/>
+		<property name="comment"/>
+	</class>
+	<class name="DictItemEx" table="SYS_DICT_Item">
+		<id column="id" name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="fldCodeId" type="java.lang.Long"/>
+		<property name="value"/>
+		<property name="text"/>
+		<property name="comment"/>
+		<property name="orderNo"/>
+	</class>
+</hibernate-mapping>

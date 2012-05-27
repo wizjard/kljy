@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<!-- 专科检查 -->
+	<class name="com.juncsoft.KLJY.InHospitalCase.Default.entity.SpecialExamination" table="t_InHsp_default_SpecialExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="result"/>
+ 	</class>
+ 	<!-- 现病史 -->
+ 	<class name="com.juncsoft.KLJY.InHospitalCase.Default.entity.PresentIllnessHistory" table="t_InHsp_default_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content1"/>
+		<property name="content2"/>
+ 	</class>
+</hibernate-mapping>

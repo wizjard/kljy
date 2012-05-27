@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.Liver.PresentHistory">
+	<!--现病史-->
+	<class name="PresentIllnessHistoryN" table="t_InHsp_Liver_PresentIllnessHistory">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="content" column="content2"/>
+		<property name="spiritStatu"/>
+		<property name="eatVolume"/>
+		<property name="sleep"/>
+		<property name="piss"/>
+		<property name="excrement"/>
+		<property name="spiritStatu0"/>
+		<property name="eatVolume0"/>
+		<property name="sleep0"/>
+		<property name="piss0"/>
+		<property name="excrement0"/>
+		<property name="bodyWeight"/>
+		<property name="bodyWeight_time"/>
+		<property name="bodyWeight_timeUnit"/>
+		<property name="bodyWeight_kg"/>
+		<property name="mainSysptomEve"/>
+		<property name="newSysptom"/>
+		<property name="otherCurrent"/>
+		<property name="otherdesease"/>
+		<bag name="nxs" order-by="id asc" inverse="true" cascade="all" lazy="false">
+			<key column="pId" not-null="true"/>
+			<one-to-many class="PresentIllnessHistoryNx"/>
+		</bag>
+	</class>
+	<!--现病史多次映射-->
+	<class name="PresentIllnessHistoryNx" table="t_InHsp_Liver_PresentIllnessHistoryNx">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="n" column="pId" class="PresentIllnessHistoryN"/>
+		<property name="casesDesc"/>
+		<property name="mainSysptomDesc"/>
+		<property name="sideSysptomDesc"/>
+		<property name="treatmentDesc"/>
+		<property name="time"/>
+		<property name="timeUnit"/>
+		<property name="timeUnitSuffix"/>
+		<property name="causesFlag"/>
+		
+		<property name="experunit"/>
+		<property name="questionDesc"/>
+		
+		<property name="causes"/>
+		<property name="otherTimeCausesFlag"/>
+		<property name="otherTimeCauses"/>
+		<property name="fali"/>
+		<property name="fali_performance"/>
+		<property name="yanyou"/>
+		<property name="shishao"/>
+		<property name="shishao_performance"/>
+		<property name="shishao_reduce"/>
+		<property name="fansuan"/>
+		<property name="fansuan_time"/>
+		<property name="aiqi"/>
+		<property name="exin"/>
+		<property name="outu"/>
+		<property name="outu_shape"/>
+		<property name="outu_thing"/>
+		<property name="outu_countDay"/>
+		<property name="outu_volumeDay"/>
+		<property name="outu_countTotal"/>
+		<property name="outu_volumeTotal"/>
+		<property name="ouxue"/>
+		<property name="ouxue_shape"/>
+		<property name="ouxue_countDay"/>
+		<property name="ouxue_volumeDay"/>
+		<property name="ouxue_countTotal"/>
+		<property name="ouxue_volumeTotal"/>
+		<property name="ouxue_side"/>
+		<property name="fuzhang"/>
+		<property name="futong"/>
+		<property name="futong_cases"/>
+		<property name="futong_position"/>
+		<property name="futong_performance"/>
+		<property name="futong_degree"/>
+		<property name="futong_rate"/>
+		<property name="futong_position2"/>
+		<property name="futong_time"/>
+		<property name="futong_fangshe"/>
+		<property name="futong_fangshe0"/>
+		<property name="futong_change"/>
+		<property name="fuxie"/>
+		<property name="fuxie_liji"/>
+		<property name="fuxie_shape"/>
+		<property name="fuxie_countDay"/>
+		<property name="fuxie_volumeDay"/>
+		<property name="shuizhong"/>
+		<property name="shuizhong_buwei"/>
+		<property name="shuizhong_chengdu"/>
+		<property name="shuizhong_xingzhi"/>
+		<property name="fare"/>
+		<property name="fare_type"/>
+		<property name="fare_tiwen"/>
+		<property name="fare_topt"/>
+		<property name="fare_performance"/>
+		<property name="fare_side"/>
+		<property name="huangran"/>
+		<property name="huangran_performance"/>
+		<property name="huangran_degree"/>
+		<property name="huangran_side"/>
+		<property name="huangran_noside"/>
+		<property name="niaoye"/>
+		<property name="niaoye_color"/>
+		<property name="niaoye_qldegree"/>
+		<property name="niaoye_volume"/>
+		<property name="niaoye_volumeTotal"/>
+		<property name="dabian"/>
+		<property name="dabian_huibai"/>
+		<property name="dabian_xue"/>
+		<property name="dabian_color"/>
+		<property name="dabian_shape"/>
+		<property name="dabian_countDay"/>
+		<property name="dabian_volumeDay"/>
+		<property name="dabian_countTotal"/>
+		<property name="dabian_volumeTotal"/>
+		<property name="dabian_side"/>
+		<property name="shenzhi"/>
+		<property name="shenzhi_performance"/>
+		<property name="shenzhi_answer"/>
+		<property name="xingwei"/>
+		<property name="xingwei_performance"/>
+		<property name="negativeOrder"/>
+		<property name="positiveOrder"/>
+		<property name="otherPosiSysptom"/>
+		<property name="negaSysptom"/>
+		<property name="side_xiaohua"/>
+		<property name="side_xiaohua0"/>
+		<property name="side_xunhuan"/>
+		<property name="side_xunhuan0"/>
+		<property name="side_huxi"/>
+		<property name="side_huxi0"/>
+		<property name="side_miniao"/>
+		<property name="side_miniao0"/>
+		<property name="side_xueye"/>
+		<property name="side_xueye0"/>
+		<property name="side_nei"/>
+		<property name="side_nei0"/>
+		<property name="side_shenjing"/>
+		<property name="side_shenjing0"/>
+		<property name="side_jirou"/>
+		<property name="side_jirou0"/>
+		<property name="side_qita"/>
+		<property name="side_qita0"/>
+		<property name="treatProcessFlag"/>
+		<property name="treatProcessDesc"/>
+		<!-- ==============新增========== -->
+		<property name="inspectionUnit"/>	
+		
+		<property name="treatTime"/>
+		<property name="treatTimeUnit"/>
+		<property name="treatTimeUnitSuffix"/>
+		<property name="treatFn"/>
+		<property name="treatFn0"/>
+		<property name="checkRstFlag"/>
+		<property name="checkRst"/>
+		<property name="diagRstFlag"/>
+		<property name="diagRst"/>
+		<property name="diagRst0"/>
+		<property name="treatFlag"/>
+		<property name="treat"/>
+		<property name="treatRst"/>
+		<property name="pQsbs"/>
+		<property name="pPfsy"/>
+		<property name="pPfsy_posi"/>
+		<property name="pPfsy_degree"/>
+		<property name="pPqqk"/>
+		<property name="pFbbk"/>
+		<property name="pFbbk_posi"/>
+		<property name="pFbbk_size"/>
+		<property name="pFbbk_yd"/>
+		<property name="pFbbk_zhd"/>
+		<property name="pFbbk_yt"/>
+		<property name="pFbbk_zhl"/>
+		<property name="pGqbs"/>
+		<property name="pPqbs"/>
+		<property name="pTykn"/>
+		<property name="pTykn_degree"/>
+		<property name="pChx"/>
+		<property name="pXggb"/>
+		<property name="pXggb_desc"/>
+		<property name="pXwyc"/>
+		<property name="pXwyc_desc"/>
+		<property name="pHj"/>
+		<property name="pHj_desc"/>
+		<property name="pJsl"/>
+		<property name="pDxl"/>
+		<property name="otherPosit"/>
+		<property name="side_fengshi"/>
+		<property name="side_fengshi0"/>
+		<property name="pchx_desc"/>
+		<bag name="grids" order-by="orderNo asc" inverse="true" cascade="all" lazy="false">
+			<key column="nxId" not-null="true"/>
+			<one-to-many class="TreatGrid"/>
+		</bag>
+	</class>
+	<class name="TreatGrid" table="t_InHsp_Liver_PresentIllnessHistory_TreatGrid">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<many-to-one name="nx" column="nxId" class="PresentIllnessHistoryNx"/>
+		<property name="gridType"/>
+		<property name="content1"/>
+		<property name="content2"/>
+		<property name="content3"/>
+		<property name="orderNo"/>
+	</class>
+</hibernate-mapping>

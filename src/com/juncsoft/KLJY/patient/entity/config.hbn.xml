@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.patient.entity">
+	<class name="Patient" table="t_Patient">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientNo"/>
+		<property name="patientName"/>
+		<property name="gender"/>
+		<property name="birthday"/>
+		<property name="idType"/>
+		<property name="idType0"/>
+		<property name="idNo"/>
+		<property name="nationality"/>
+		<property name="nationality0"/>
+		<property name="people"/>
+		<property name="people0"/>
+		<property name="province"/>
+		<property name="province0"/>
+		<property name="occupation"/>
+		<property name="occupation0"/>
+		<property name="homeTel"/>
+		<property name="homePostCode"/>
+		<property name="homeAddr"/>
+		<property name="marrageStatus"/>
+		<property name="marrageStatus0"/>
+		<property name="educationLv"/>
+		<property name="educationLv0"/>
+		<property name="mobilePhone"/>
+		<property name="email"/>
+		<property name="workUnit"/>
+		<property name="workUnitAddr"/>
+		<property name="workUnitTel"/>
+		<property name="workUnitPostCode"/>
+		<property name="contacterName"/>
+		<property name="contacterRelationship"/>
+		<property name="contacterRelationship0"/>
+		<property name="contacterTel"/>
+		<property name="createDate"/>
+		<property name="modifyDate"/>
+		<property name="currentWardCode"/>
+		<property name="patientId"/>
+		<property name="outDeptCode"/>
+		<property name="isOut"/>
+		<property name="diagGrounp"/>
+	</class>
+	
+	<class name="SysZdUserBelong" table="SYS_ZD_UserBelong">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pcode"/>
+		<property name="code"/>
+		<property name="name"/>
+		<property name="pycode"/>
+		<property name="memo"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.CaseMaster.entity">
+	<!-- 病历主表映射 -->
+	<class name="InHspCaseMaster" table="t_InHsp_CaseMaster">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId"/>
+		<property name="age"/>
+		<property name="inHspTimes"/>
+		<property name="inHspDate"/>
+		<property name="inHspDateModify"/>
+		<property name="inWardCode"/>
+		<property name="inIlls"/>
+		<property name="inStatus"/>
+		<property name="outDate"/>
+		<property name="outIlls"/>
+		<property name="outWardCode"/>
+		<property name="responsibleDoc"/>
+		<property name="currentWordCode"/>
+		<property name="caseModuleId"/>
+		<property name="flag"/>
+	</class>
+</hibernate-mapping>

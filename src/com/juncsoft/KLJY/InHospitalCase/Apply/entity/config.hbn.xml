@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.Apply.entity">
+	<!-- 骨髓检查申请单 -->
+	<class name="MarrowApply" table="Marrow_Apply">
+		<id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId"/>
+   <property name="historyCaseId"/>
+<!--<property name="patientName" />
+   <property name="patientSex" />
+   <property name="patientAge" />--><!-- 病区未找到 -->
+   <property name="patientArea" />
+   <property name="patientNum" />
+   <property name="checkNum" />
+   <property name="labNum" />
+   <property name="clinicalShow" />
+   <property name="clinicalDiagnosis" />
+   <property name="WBC" />
+   <property name="LYM" />
+   <property name="MON" />
+   <property name="NEU" />
+   <property name="EOS" />
+   <property name="BAS" />
+   <property name="HGB" />
+   <property name="RBC" />
+   <property name="HCT" />
+   <property name="MCV" />
+   <property name="MCH" />
+   <property name="MCHC" />
+   <property name="RDW" />
+   <property name="Ret" />
+   <property name="LIC" />
+   <property name="redName" />
+   <property name="redValue" />
+   <property name="redOther" />
+   <property name="PLT" />
+   <property name="MPV" />
+   <property name="PDW" />
+   <property name="PVT" />
+   <property name="plateletOther" />
+   <property name="checkEnd" />
+   <property name="bloodSliceNum" />
+   <property name="marrowSliceNum" />
+   <property name="checkDate" />
+   <property name="doctorName" />
+	</class>
+	<!-- 肿瘤肝胆介入治疗中心介入诊断、治疗预约单 -->
+	<class name="CancerTreatBespoke" table="Cancer_Treat_Bespoke">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <!-- <property name="patientName" />
+   <property name="gender" />
+   <property name="age" /> 
+   <property name="patientCaseId" />-->
+   <property name="officeAssort" />
+   <property name="patientId"/>
+   <property name="historyCaseId"/>
+   <property name="bedNum" />
+   <property name="ctNum" />
+   <property name="mrNum" />
+   <property name="joinNum" />
+   <property name="diagnose" />
+   <property name="joinItemName" />
+   <property name="checkDate" />
+   <property name="doctorName" />
+   <property name="songDate" />
+</class>
+<!-- 肿瘤肝胆介入治疗中心介入诊断治疗申请单 -->
+<class name="CancerJoinApply" table="Cancer_Join_Apply">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId" />
+   <property name="historyCaseId" />
+   <!-- <property name="patientName" />
+   <property name="gender" />
+   <property name="age" />
+   <property name="patientCaseId" />-->
+   <property name="officeAssort" /> 
+   <property name="bedNum" />
+   <property name="ctNum" />
+   <property name="mrNum" />
+   <property name="joinNum" />
+   <property name="diagnose" />
+   <property name="one" />
+   <property name="two" />
+   <property name="three" />
+   <property name="four" />
+   <property name="five" />
+   <property name="six" />
+   <property name="seven" />
+   <property name="eight" />
+   <property name="nine" />
+   <property name="ten" />
+   <property name="eleven" />
+   <property name="twelve" />
+   <property name="otherText" />
+   <property name="mainTell" />
+   <property name="nowHistory" />
+   <property name="pastHistory" />
+   <property name="face" />
+   <property name="liverPalms" />
+   <property name="spider" />
+   <property name="skin" />
+   <property name="lungSound" />
+   <property name="bosomWater" />
+   <property name="heartSpeed" />
+   <property name="heartLaw" />
+   <property name="noisy" />
+   <property name="belly" />
+   <property name="liverRib" />
+   <property name="sword" />
+   <property name="spleenRib" />
+   <property name="bellyWater" />
+   <property name="legs" />
+   <property name="guBing" />
+   <property name="zongDanBai" />
+   <property name="xueHong" />
+   <property name="guCao" />
+   <property name="baiDanBai" />
+   <property name="xueXiaoBan" />
+   <property name="zongDanHong" />
+   <property name="jiaTaiDanBai" />
+   <property name="danJianZhiMei" />
+   <property name="zhiDanHong" />
+   <property name="baiXiBao" />
+   <property name="ningXue" />
+   <property name="specialCheck" />
+   <property name="doctorName" />
+   <property name="checkDate" />
+</class>
+<!-- 医患沟通记录 -->
+<class name="Communication" table="Communication">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId" />
+   <property name="historyCaseId" />
+   <!-- <property name="patientName" />
+   <property name="gender" />
+   <property name="age" /> -->
+   <property name="communicationNum" />
+   <property name="diagnose" />
+   <property name="joinPatient" />
+   <property name="joinDoctor" />
+   <property name="conditionNeed"/>
+   <property name="patientAsk"/>
+   <property name="familyAsk"/>
+   <property name="fandpAsk"/>
+   <property name="otherNeed"/>
+   <property name="otherText" />
+   <property name="concreteContent" />
+   <property name="pfIdea" />
+   <property name="patientSign" />
+   
+  <!--  <property name="patientPhone" /> -->
+   <property name="patientDate" />
+   <property name="familySign" />
+   <!-- 
+   <property name="frelation" />
+   <property name="familyPhone" /> -->
+   <property name="familyDate" />
+   <property name="doctorsign" />
+   <property name="checkDate" />
+</class>
+<!-- 肝活检病理检查申请单 -->
+<class name="LiverCheckApply" table="Liver_Check_Apply">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId" />
+   <property name="historyCaseId" />
+<!--<property name="patientName" />
+   <property name="gender" />
+   <property name="age" />
+   <property name="career" />
+	<property name="hosNum" />
+    <property name="phoneNum" />-->
+   <property name="pathobiologyNum" />
+  <property name="depRoom" />
+   <property name="acceptDate" />
+   <property name="liverHistory" />
+   <property name="familyHistory" />
+   <property name="operationHistory" />
+   <property name="drinkYear" />
+   <property name="everyDayGram" />
+   <property name="bloodHistory" />
+   <property name="drugHistory" />
+   <property name="checkedPathobiologyNum" />
+   <property name="benWaiYuan" />
+   <property name="dateOne" />
+   <property name="dateTwo" />
+   <property name="altOne" />
+   <property name="altTwo" />
+   <property name="astOne" />
+   <property name="astTwo" />
+   <property name="alpOne" />
+   <property name="alpTwo" />
+   <property name="ggtOne" />
+   <property name="ggtTwo" />
+   <property name="tbilOne" />
+   <property name="tbilTwo" />
+   <property name="dbilOne" />
+   <property name="dbilTwo" />
+   <property name="tbaOne" />
+   <property name="tbaTwo" />
+   <property name="asOne" />
+   <property name="asTow" />
+   <property name="gsOne" />
+   <property name="gsTwo" />
+   <property name="ptaOne" />
+   <property name="ptaTwo" />
+   <property name="otherOne" />
+   <property name="otherTwo" />
+   <property name="hbsag" />
+   <property name="hbsab" />
+   <property name="hbeab" />
+   <property name="hbeag"/>
+   <property name="hbcab" />
+   <property name="pres1ag" />
+   <property name="hbvdna" />
+   <property name="khbclgm" />
+   <property name="khavlgm" />
+   <property name="khavlgg" />
+   <property name="khcvlgm" />
+   <property name="khcvlgg" />
+   <property name="hcvrna" />
+   <property name="hdv" />
+   <property name="khevlgm" />
+   <property name="khevlgg" />
+   <property name="ebv" />
+   <property name="cmv" />
+   <property name="virusOther" />
+   <property name="antibody" />
+   <property name="liverSing" />
+   <property name="bloodFat" />
+   <property name="liverDiagnose" />
+   <property name="concentration" />
+   <property name="liverDeep" />
+   <property name="liverLength" />
+   <property name="liverSlope" />
+   <property name="inside" />
+   <property name="liverReecho" />
+   <property name="liverOccupy" />
+   <property name="occupySize" />
+   <property name="spleenDeep" />
+   <property name="spleenLength" />
+   <property name="spleenInside" />
+   <property name="spleenOther" />
+   <property name="imageResult" />
+   <property name="clinicalDiagnosis" />
+   <property name="doctorName" />
+   <property name="checkDate" />
+</class>
+<!-- 病理标本检查申请单 -->
+<class name="SpecimenCheckApply" table="Specimen_Check_Apply">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId" />
+   <property name="historyCaseId" />
+   <!--  
+   <property name="patientName" />
+   <property name="nativePlace" />
+   <property name="career" />
+   <property name="age" />
+   <property name="gender" />
+   	-->
+   <property name="sickBay" />
+   <property name="ward" />
+   <property name="patientCaseNum" />
+   <property name="pathologyNum" />
+   <property name="acceptDate" />
+   <property name="clinicSummary" />
+   <property name="operationFindings" />
+   <property name="cancerGrowTime" />
+   <property name="cancerSize" />
+   <property name="cancerPosition" />
+   <property name="cancerShift" />
+   <property name="shiftPosition" />
+   <property name="mensesCalender" />
+   <property name="menarche" />
+   <property name="mensesQuantity" />
+   <property name="periodPersistTime" />
+   <property name="lastMenstrual" />
+   <property name="hemorrhageQuantity" />
+   <property name="laborTreat" />
+   <property name="laborTreatDate" />
+   <property name="dose" />
+   <property name="collectionDate" />
+   <property name="specimenSource" />
+   <property name="stationaryLiquid" />
+   <property name="biopsyPart" />
+   <property name="everCheck" />
+   <property name="specimenCheckNum" />
+   <property name="clinicalDiagnosis" />
+   <property name="doctorName" />
+   <property name="checkDate" />
+</class>
+<!-- 院外会诊申请单 -->
+<class name="ConsultationApply" table="Consultation_Apply">
+   <id column="id" name="id" >
+	<generator class="native"></generator>
+   </id>
+   <property name="patientId" />
+   <property name="historyCaseId" />
+   <!-- 
+   <property name="patientName" />
+   <property name="gender" />
+   <property name="age" />
+    -->
+   <property name="familySign" />
+   <!-- 
+   <property name="relationship" />
+    -->
+   <property name="patientCaseNum" />
+   <property name="department" />
+   <property name="bedNum" />
+   <property name="consultationGrade" />
+   <property name="checkDate" />
+   <property name="caseHistorySummary" />
+   <property name="primaryDiagnosis" />
+   <property name="consultationEnd" />
+   <property name="applyHospital" />
+   <property name="applyDepartment" />
+   <property name="applyJobTitle" />
+   <property name="specifyExpert" />
+   <property name="consultationFashion" />
+   <property name="patientConsultationCost" />
+   <property name="patientTrafficCost" />
+   <property name="patientTravellingCost" />
+   <property name="hosptalConsultationCost" />
+   <property name="hosptalTrafficCost" />
+   <property name="hosptalTravellingCost" />
+   <property name="patientSign" />
+   <property name="treatDoctor" />
+   <property name="superiorDoctor" />
+   <property name="directorDoctor" />
+   <property name="departmentPhone" />
+   <property name="linkman" />
+   <property name="address" />
+   <property name="postNum" />
+   <property name="sickBayPhone" />
+   <property name="faxNum" />
+   <property name="sickBaySign" />
+   <property name="issueDate" />
+  </class>
+</hibernate-mapping>

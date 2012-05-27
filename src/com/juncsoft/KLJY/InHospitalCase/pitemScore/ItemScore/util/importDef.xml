@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="GB2312"?>
+<TemplateConfig>
+		
+<TABLE code="ZD_Unit" 
+	     SourceCode="ZD_Unit"
+	     name="字典_计量单位" >
+	<KEY_FIELD code="UnitID" 
+		         SourceCode="UNITID"
+						 name="主键"
+			       type="int"
+			       size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="UnitName" 
+			     SourceCode="UNITNAME"
+			     name="计量单位名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="ZD_MeasureUnit" 
+	     SourceCode="ZD_MeasureUnit"
+	     name="字典_剂量单位" >
+	<KEY_FIELD code="MeasureUnitID" 
+		       SourceCode="MEASUNITID"
+			   name="主键"
+			   type="int"
+			   size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="MeasureUnitName" 
+			     SourceCode="MEASUNITNAME"
+			     name="剂量单位名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="ZD_MedUseMethod" 
+	     SourceCode="ZD_MedUseMethod"
+	     name="字典_默认用法" >
+	<KEY_FIELD code="MethodID" 
+		         SourceCode="METHODID"
+						 name="主键"
+			       type="int"
+			       size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="MethodName" 
+			     SourceCode="METHODNAME"
+			     name="用法名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="OrgTree" 
+	     SourceCode="ZD_OrgTree"
+	     name="字典_科室" >
+	<OTHERFIELDS>
+		<FIELD code="OrgCode" 
+			     SourceCode="ORGCODE"
+			     name="科室代码"
+			     type="string"
+			     size="20" >
+		</FIELD>
+		<FIELD code="OrgName" 
+			     SourceCode="ORGNAME"
+			     name="科室名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="ZD_Title" 
+	     SourceCode="ZD_Title"
+	     name="字典_职称" >
+	<KEY_FIELD code="TitleID" 
+		       SourceCode="TITLEID"
+				name="主键"
+			    type="int"
+			       size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="TitleName" 
+			     SourceCode="TITLENAME"
+			     name="职务名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="ZD_Nationnality" 
+	     SourceCode="ZD_Nationnality"
+	     name="字典_国家" >
+	<KEY_FIELD code="NationalityID" 
+		         SourceCode="NATIONNALITYID"
+						 name="主键"
+			       type="int"
+			       size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="NationalityName" 
+			     SourceCode="NATIONNAME"
+			     name="国家名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="ZD_People" 
+	     SourceCode="ZD_People"
+	     name="字典_民族" >
+	<KEY_FIELD code="PeopleID" 
+		         SourceCode="PEOPLEID"
+						 name="主键"
+			       type="int"
+			       size="0" >
+	</KEY_FIELD>
+	<OTHERFIELDS>
+		<FIELD code="PeopleName" 
+			     SourceCode="PEOPLENAME"
+			     name="民族名称"
+			     type="string"
+			     size="50" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="UserDict" 
+	     SourceCode="ZD_Doctor"
+	     name="字典_医生" >
+	<OTHERFIELDS>
+		<FIELD code="RelKeyID" 
+			     SourceCode="DOCTORID"
+			     name="医生外键"
+			     type="string"
+			     size="20" >
+		</FIELD>
+		<FIELD code="UserName" 
+			     SourceCode="DOCTORNAME"
+			     name="姓名"
+			     type="string"
+			     size="50" >
+		</FIELD>
+		<FIELD code="TitleID" 
+			     SourceCode="TITLEID"
+			     name="职务ID"
+			     type="int"
+			     size="0" >
+		</FIELD>
+		<FIELD code="OrgCode" 
+			     SourceCode="ORGID"
+			     name="科室ID"
+			     type="string"
+			     size="10" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+<TABLE code="Patient" 
+	     SourceCode="Patient"
+	     name="病人表" >
+	<OTHERFIELDS>
+		<FIELD code="RelKeyID" 
+			     SourceCode="PATIENTID"
+			     name="病人外键"
+			     type="string"
+			     size="20" >
+		</FIELD>
+		<FIELD code="PatientNo" 
+			     SourceCode="PATIENTNO"
+			     name="病案号"
+			     type="string"
+			     size="50" >
+		</FIELD>
+		<FIELD code="PatientName" 
+			     SourceCode="PATIENTNAME"
+			     name="病人姓名"
+			     type="string"
+			     size="50" >
+		</FIELD>
+		<FIELD code="SexEx" 
+			     SourceCode="SEXID"
+			     name="性别"
+			     type="string"
+			     size="6" >
+		</FIELD>
+		<FIELD code="BirthDay" 
+			     SourceCode="BIRTHDAY"
+			     name="出生日期"
+			     type="date"
+			     size="0" >
+		</FIELD>
+		<FIELD code="NationalityID" 
+			     SourceCode="NATIONALITYID"
+			     name="国家ID"
+			     type="int"
+			     size="0" >
+		</FIELD>
+		<FIELD code="PeopleID" 
+			     SourceCode="PEOPLEID"
+			     name="民族ID"
+			     type="int"
+			     size="0" >
+		</FIELD>
+		<FIELD code="HomeAddr" 
+			     SourceCode="HOMEADDR"
+			     name="家庭住址"
+			     type="string"
+			     size="60" >
+		</FIELD>
+		<FIELD code="HomePostCode" 
+			     SourceCode="HOMEPOSTCODE"
+			     name="邮编"
+			     type="string"
+			     size="50" >
+		</FIELD>
+		<FIELD code="HomeTel" 
+			     SourceCode="HOMETEL"
+			     name="家庭电话"
+			     type="string"
+			     size="50" >
+		</FIELD>
+		<FIELD code="WorkOrg" 
+			     SourceCode="WORKORG"
+			     name="工作单位"
+			     type="string"
+			     size="60" >
+		</FIELD>
+	</OTHERFIELDS>			
+	<DEL_CONTROL SqlText="select -1 as KeepRecIDS "  >
+	</DEL_CONTROL>		
+</TABLE>
+
+</TemplateConfig>
+		

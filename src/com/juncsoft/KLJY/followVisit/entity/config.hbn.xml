@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.followVisit.entity">
+	
+	<!-- 症状映射 -->
+	<class name="T_symptom" table="t_symptom">
+	<id column="t_id" name="t_id">
+			<generator class="native"></generator>
+		</id>
+		<property name="symptomName"/>
+		<property name="sy_url"/>
+		<property name="tp_id"/>
+	</class>
+	<!-- 状态表与症状表关联映射 -->
+	<class name="Symptomst" table="symptomst">
+	<id column="sy_id" name="sy_id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pt_id"/>
+		<property name="t_symptom_ID"/>
+		<property name="t_state_ID"/>
+		<property name="sy_text"/>
+	</class>
+	<!-- 状态映射 -->
+	<class name="T_state" table="t_state">
+	<id column="t_id" name="t_id">
+			<generator class="native"></generator>
+		</id>
+		<property name="t_statu"/>
+		</class>
+		<!-- 病人症状时间与symptomst映射 -->
+	<class name="Ptsymptomst" table="ptsymptomst">
+	<id column="pt_id" name="pt_id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pid"/>
+		<property name="ptimes"/>
+		</class>
+</hibernate-mapping>

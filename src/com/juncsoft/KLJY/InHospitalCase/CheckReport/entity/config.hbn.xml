@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.CheckReport.entity">
+	<!-- ReportForm映射 -->
+	<class name="ReportForm" table="ReportForm">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="receiveDate"/>
+		<property name="sectionNo"/>
+		<property name="testTypeNo"/>
+		<property name="sampleNo"/>
+		<property name="statusNo"/>
+		<property name="sampleTypeNo"/>
+		<property name="patNo"/>
+		<property name="cname"/>
+		<property name="genderNo"/>
+		<property name="birthday"/>
+		<property name="age"/>
+		<property name="ageUnitNo"/>
+		<property name="folkNo"/>
+		<property name="districtNo"/>
+		<property name="wardNo"/>
+		<property name="bed"/>
+		<property name="deptNo"/>
+		<property name="doctor"/>
+		<property name="chargeNo"/>
+		<property name="charge"/>
+		<property name="collecter"/>
+		<property name="collectDate"/>
+		<property name="collectTime"/>
+		<property name="formMemo"/>
+		<property name="technician"/>
+		<property name="testTime"/>
+		<property name="testDate"/>
+		<property name="operator"/>
+		<property name="operDate"/>
+		<property name="operTime"/>
+		<property name="checker"/>
+		<property name="checkDate"/>
+		<property name="checkTime"/>
+		<property name="serialNo"/>
+		<property name="requestSource"/>
+		<property name="diagNo"/>
+		<property name="printTimes"/>
+	</class>
+	
+	<!--ReportItem映射-->
+	<class name="ReportItem" table="ReportItem">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="receiveDate"/>
+		<property name="sectionNo"/>
+		<property name="testTypeNo"/>
+		<property name="sampleNo"/>
+		<property name="parItemNo"/>
+		<property name="itemNo"/>
+		<property name="originalValue"/>
+		<property name="reportValue"/>
+		<property name="originalDesc"/>
+		<property name="reportDesc"/>
+		<property name="statusNo"/>
+		<property name="refRange"/>
+		<property name="equipNo"/>
+		<property name="modified"/>
+		<property name="itemDate"/>
+		<property name="itemTime"/>
+		<property name="isMatch"/>
+		<property name="resultStatus"/>
+		<property name="hisValue"/>
+		<property name="hisComp"/>
+		<property name="isReceive"/>
+		<property name="serialNoParent"/>
+		<property name="countNodesItemSource"/>
+		<property name="unit"/>
+		<property name="plateNo"/>
+		<property name="positionNo"/>
+		<property name="equipCommMemo"/>
+		<property name="originalCName"/>
+		<property name="home_foreign"/>
+	</class>
+	
+	<class name="GroupItem" table="GroupItem">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pitemNo"/>
+		<property name="itemNo"/>
+	</class>
+	
+	<class name="TestItem" table="TestItem">
+		<id column="itemNo" name="itemNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="ename"/>
+		<property name="shortName"/>
+		<property name="shortCode"/>
+		<property name="diagMethod"/>
+		<property name="unit"/>
+		<property name="isCalc"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="prec"/>
+		<property name="isProfile"/>
+		<property name="OrderNo"/>
+		<property name="standardCode"/>
+		<property name="itemDesc"/>
+		<property name="refRange"></property>
+	</class>
+	
+	<class name="TestType" table="TestType">
+		<id column="testTypeNo" name="testTypeNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="testTypeDesc"/>
+		<property name="shortCode"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="hisOrderCode"/>
+	</class>
+	
+	<!-- ReportFormforRemote映射 -->
+	<class name="ReportFormforRemote" table="ReportFormforRemote">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="receiveDate" column="receiveDate"/>
+		<property name="sectionNo" column="sectionNo"/>
+		<property name="testTypeNo" column="testTypeNo"/>
+		<property name="sampleNo" column="sampleNo"/>
+		<property name="statusNo"/>
+		<property name="sampleTypeNo"/>
+		<property name="patNo"/>
+		<property name="cname"/>
+		<property name="genderNo"/>
+		<property name="birthday"/>
+		<property name="age"/>
+		<property name="ageUnitNo"/>
+		<property name="folkNo"/>
+		<property name="districtNo"/>
+		<property name="wardNo"/>
+		<property name="bed"/>
+		<property name="deptNo"/>
+		<property name="doctor"/>
+		<property name="chargeNo"/>
+		<property name="charge"/>
+		<property name="collecter"/>
+		<property name="collectDate"/>
+		<property name="collectTime"/>
+		<property name="formMemo"/>
+		<property name="technician"/>
+		<property name="testTime"/>
+		<property name="testDate"/>
+		<property name="operator"/>
+		<property name="operDate"/>
+		<property name="operTime"/>
+		<property name="checker"/>
+		<property name="checkDate"/>
+		<property name="checkTime"/>
+		<property name="serialNo"/>
+		<property name="requestSource"/>
+		<property name="diagNo"/>
+		<property name="printTimes"/>
+		<property name="hospitalName"/>
+		<property name="isAdd"/>
+		<property name="home_foreign"/>
+		<property name="isFromOutHospital"/>
+		<property name="isPatientOrDoctorWriteZanCun"/>
+		<property name="sheHeDate"/>
+		<property name="guiDangDate"/>
+		<property name="luRuDate"/>
+		<property name="cheXiaoFlag"/>
+		<property name="cheXiaoTrue"/>
+	</class>
+	
+	<!--ReportItem映射-->
+	<class name="ReportItemforRemote" table="ReportItemforRemote">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="receiveDate"/>
+		<property name="sectionNo"/>
+		<property name="testTypeNo"/>
+		<property name="sampleNo"/>
+		<property name="parItemNo"/>
+		<property name="itemNo"/>
+		<property name="originalValue"/>
+		<property name="reportValue"/>
+		<property name="originalDesc"/>
+		<property name="reportDesc"/>
+		<property name="statusNo"/>
+		<property name="refRange"/>
+		<property name="equipNo"/>
+		<property name="modified"/>
+		<property name="itemDate"/>
+		<property name="itemTime"/>
+		<property name="isMatch"/>
+		<property name="resultStatus"/>
+		<property name="hisValue"/>
+		<property name="hisComp"/>
+		<property name="isReceive"/>
+		<property name="serialNoParent"/>
+		<property name="countNodesItemSource"/>
+		<property name="unit"/>
+		<property name="isAdd"/>
+		<property name="home_foreign"/>
+		<property name="EquipCommMemo"/>
+		<property name="waiyuan_reportValue"/>
+	</class>
+	
+	<class name="GroupItemforRemote" table="GroupItemforRemote">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="pitemNo"/>
+		<property name="itemNo"/>
+	</class>
+	
+	<class name="TestItemforRemote" table="TestItemforRemote">
+		<id column="itemNo" name="itemNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="ename"/>
+		<property name="shortName"/>
+		<property name="shortCode"/>
+		<property name="diagMethod"/>
+		<property name="unit"/>
+		<property name="isCalc"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="prec"/>
+		<property name="isProfile"/>
+		<property name="OrderNo"/>
+		<property name="standardCode"/>
+		<property name="itemDesc"/>
+	</class>
+	
+	<class name="DiagnosisClinical" table="Diagnosis">
+		<id column="diagNo" name="diagNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="diagDesc"/>
+		<property name="shortCode"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="hisOrderCode"/>
+		<property name="stemfrom"/>
+	</class>
+	
+	<class name="SampleType" table="SampleType">
+		<id column="sampleTypeNo" name="sampleTypeNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="shortCode"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="hisOrderCode"/>
+		<property name="stemfrom"/>
+	</class>
+	
+	<class name="SectorType" table="SectorType">
+		<id column="sectorTypeNo" name="sectorTypeNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="sectorName"/>
+		<property name="shortCode"/>
+		<property name="dispOrder"/>
+		<property name="hisOrderCode"/>
+		<property name="stemfrom"/>
+	</class>
+	
+	<class name="Department" table="Department">
+		<id column="deptNo" name="deptNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="shortName"/>
+		<property name="shortCode"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="hisOrderCode"/>
+	</class>
+
+	<class name="Pgroup" table="Pgroup">
+		<id column="sectionNo" name="sectionNo">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		<property name="shortName"/>
+		<property name="shortCode"/>
+		<property name="visible"/>
+		<property name="dispOrder"/>
+		<property name="superGroupNo"/>
+		<property name="sectionDesc"/>
+		<property name="sectionType"/>
+	</class>
+	
+	<class name="UpdateReportFormForRemoteRecord" table="UpdateReportFormForRemoteRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="itemId"/>
+		<property name="updateAuthor"/>
+		<property name="oldValue"/>
+		<property name="newValue"/>
+		<property name="updateDate"/>
+	</class>
+
+</hibernate-mapping>

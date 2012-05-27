@@ -1,0 +1,302 @@
+<!--科室与入院记录模块配置-->
+<Root>
+	<S001 name="感染三科">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通入院记录</desc>
+		</InHspRec>
+	</S001>
+	<S002 name="肝胆外科一病房">
+		<InHspRec>
+			<code>surgery</code>
+			<name>外科入院记录</name>
+			<url>/module/InHospitalCase/Surgery/InHspRec.html</url>
+			<desc>外科入院记录</desc>
+		</InHspRec>
+	</S002>
+	<S003 name="肝胆外科二病房">
+		<InHspRec>
+			<code>surgery</code>
+			<name>外科入院记录</name>
+			<url>/module/InHospitalCase/Surgery/InHspRec.html</url>
+			<desc>外科入院记录</desc>
+		</InHspRec>
+	</S003>
+	<S004 name="外科ICU">
+		<InHspRec>
+			<code>surgery</code>
+			<name>外科入院记录</name>
+			<url>/module/InHospitalCase/Surgery/InHspRec.html</url>
+			<desc>外科入院记录</desc>
+		</InHspRec>
+	</S004>
+	<S005 name="肝病肾病科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S005>
+	<S006 name="肝病免疫科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S006>
+	<S007 name="肝病内分泌科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S007>
+	<S008 name="中毒性肝病科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S008>
+	<S009 name="重症肝病科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S009>
+	<S010 name="肝病五科病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S010>
+	<S011 name="人工肝中心病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S011>
+	<S012 name="中西医科">
+		<InHspRec>
+			<code>liver</code>
+			<name>西医入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>西医肝病入院记录</desc>
+		</InHspRec>
+		<InHspRec>
+			<code>TCM</code>
+			<name>中医入院记录</name>
+			<url>/module/InHospitalCase/TraditionalChineseMedical/InHspRec.html</url>
+			<desc>中医病历入院记录</desc>
+		</InHspRec>
+	</S012>
+	<S013 name="五官科病房">
+		<InHspRec>
+			<code>ENT</code>
+			<name>耳鼻喉入院记录</name>
+			<url>/module/InHospitalCase/ENT/InHspRec.html</url>
+			<desc>耳鼻喉科入院记录</desc>
+		</InHspRec>
+		<InHspRec>
+			<code>Mouth</code>
+			<name>口腔入院记录</name>
+			<url>/module/InHospitalCase/Mouth/InHspRec.html</url>
+			<desc>口腔科入院记录</desc>
+		</InHspRec>
+<!-- 以下内容包括眼科病历begin -->
+		<InHspRec>
+			<code>EYE</code>
+			<name>眼科入院记录</name>
+			<url>/module/InHospitalCase/EYE/InHspRec.html</url>
+			<desc>眼科入院记录</desc>
+		</InHspRec>	
+<!-- 以上内容包括眼科病历end -->
+	</S013>
+	<S014 name="泌尿中心病房">
+		<InHspRec>
+			<code>default</code>
+			<name>西医入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>西医肝病入院记录</desc>
+		</InHspRec>
+	</S014>
+	<S015 name="感染一科病房">
+		<InHspRec>
+			<code>default</code>
+			<name>西医入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>西医肝病入院记录</desc>
+		</InHspRec>
+		<!-- 以下内容包括H1N1病历begin -->			
+		<InHspRec>
+			<code>h1n1</code>
+			<name>H1N1入院记录</name>
+			<url>/module/InHospitalCase/H1N1/InHspRec.html</url>
+			<desc>H1N1入院记录</desc>
+		</InHspRec>
+<!-- 以上内容包括H1N1病历end -->
+
+<!-- 以下内容包括Aids病历begin -->			
+		<InHspRec>
+			<code>aids</code>
+			<name>艾滋病入院记录</name>
+			<url>/module/InHospitalCase/aids/InHspRec.html</url>
+			<desc>H1N1入院记录</desc>
+		</InHspRec>
+<!-- 以上内容包括Aids病历end -->
+<!-- 以下内容包括西医发热病历begin -->	
+		<InHspRec>
+			<code>fever</code>
+			<name>西医发热入院记录</name>
+			<url>/module/InHospitalCase/Fever/InHspRec.html</url>
+			<desc>西医发热入院记录</desc>
+		</InHspRec>
+<!-- 以上内容包括西医发热病历end -->
+<!-- 以下内容包括中医发热病历begin -->	
+		<InHspRec>
+			<code>feverTCM</code>
+			<name>中医发热入院记录</name>
+			<url>/module/InHospitalCase/Fever/InHspRecofTCM.html</url>
+			<desc>中医发热入院记录</desc>
+		</InHspRec>
+<!-- 以上内容包括中医发热病历end -->
+	</S015>
+	<S016 name="感染二科病房">
+		<InHspRec>
+			<code>default</code>
+			<name>西医入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>西医肝病入院记录</desc>
+		</InHspRec>
+	</S016>
+	<S017 name="产科病房">
+		<InHspRec>
+			<code>Gynecology</code>
+			<name>西医入院记录</name>
+			<url>/module/InHospitalCase/Gynecology/InHspRec.html</url>
+			<desc>西医肝病入院记录</desc>
+		</InHspRec>
+	</S017>
+	<S018 name="肝病消化一中心病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S018>
+	<S019 name="肝病消化二中心病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S019>
+	<S020 name="国际医疗部病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S020>
+	<S021 name="肿瘤生物治疗病房">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</S021>
+	<S022 name="血液透析病房">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</S022>
+	<S023 name="婴儿病房">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</S023>
+	<S024 name="重肝ICU">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S024>
+	<S025 name="妇科病房">
+		<InHspRec>
+			<code>Gynecology</code>
+			<name>入院记录(妇产科)</name>
+			<url>/module/InHospitalCase/Gynecology/InHspRec.html</url>
+			<desc>妇产科病历入院记录</desc>
+		</InHspRec>
+	</S025>
+	<S026 name="肝病介入治疗中心一区">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S026>
+	<S027 name="肝病介入治疗中心二区">
+		<InHspRec>
+			<code>liver</code>
+			<name>肝病入院记录</name>
+			<url>/module/InHospitalCase/Liver/InHspRec.html</url>
+			<desc>肝病入院记录</desc>
+		</InHspRec>
+	</S027>
+	<S028 name="国家药物临床试验病房">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</S028>
+	<S090 name="放化疗病房">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</S090>
+	<default name="默认科室">
+		<InHspRec>
+			<code>default</code>
+			<name>普通入院记录</name>
+			<url>/module/InHospitalCase/default/InHspRec.html</url>
+			<desc>普通病历入院记录</desc>
+		</InHspRec>
+	</default>
+</Root>

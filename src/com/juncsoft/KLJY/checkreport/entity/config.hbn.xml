@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.checkreport.entity">
+ <class name="Pacs" table="pacs">
+  <id column="id" name="id">
+   <generator class="native"/>
+  </id>
+  <property generated="never" lazy="false" name="checkOrderNum"/>
+  <property generated="never" lazy="false" name="checkDate"/>
+  <property generated="never" lazy="false" name="checkItem"/>
+  <property generated="never" lazy="false" name="checkPart"/>
+  <property generated="never" lazy="false" name="reportDate"/>
+  <property generated="never" lazy="false" name="reportDoctor"/>
+  <property generated="never" lazy="false" name="reportOrderNum"/>
+  <property generated="never" lazy="false" name="imageView"/>
+  <property generated="never" lazy="false" name="reportResult"/>
+  <property generated="never" lazy="false" name="reviewDoctor"/>
+  <property generated="never" lazy="false" name="patientId"/>
+  <property generated="never" lazy="false" name="inHspNum"/>
+  <property generated="never" lazy="false" name="outNum"/>
+  
+  <property name="isFromOutHospital"/>
+  <property name="isPatientOrDoctorWriteZanCun"/>
+  <property name="sheHeDate"/>
+  <property name="guiDangDate"/>
+  <property name="luRuDate"/>
+  <property name="cheXiaoFlag"/>
+  <property name="cheXiaoTrue"/>
+  <property name="duiDangAuthor"/>
+  <property name="luRuAuthor"/>
+  <property name="age"/>
+  <property name="check_danwei"/>
+  
+ </class>
+ <class name="Maidi" table="maidi">
+  <id column="id" name="id">
+   <generator class="native"/>
+  </id>
+  <property generated="never" lazy="false" name="patientId"/>
+  <property generated="never" lazy="false" name="patientName"/>
+  <property generated="never" lazy="false" name="outNum"/>
+  <property generated="never" lazy="false" name="inHspNum"/>
+  <property generated="never" lazy="false" name="checkNum"/>
+  <property generated="never" lazy="false" name="checkAutoNum"/>
+  <property generated="never" lazy="false" name="checkItem"/>
+  <property generated="never" lazy="false" name="equipmentType"/>
+  <property generated="never" lazy="false" name="checkDate"/>
+  <property generated="never" lazy="false" name="checkPart"/>
+  <property generated="never" lazy="false" name="imageView"/>
+  <property generated="never" lazy="false" name="reportResult"/>
+  <property generated="never" lazy="false" name="reportName"/>
+  <property generated="never" lazy="false" name="reportFileName"/>
+  <property generated="never" lazy="false" name="isPositive"/>
+  <property generated="never" lazy="false" name="checkCode"/>
+  <property generated="never" lazy="false" name="codeSystem"/>
+  <property generated="never" lazy="false" name="codeSystemName"/>
+  <property generated="never" lazy="false" name="displayName"/>
+  <property name="isFromOutHospital"/>
+  <property name="isPatientOrDoctorWriteZanCun"/>
+  <property name="sheHeDate"/>
+  <property name="guiDangDate"/>
+  <property name="luRuDate"/>
+  <property name="cheXiaoFlag"/>
+  <property name="cheXiaoTrue"/>
+  <property name="duiDangAuthor"/>
+  <property name="luRuAuthor"/>
+  <property name="age"/>
+  <property name="check_danwei"/>
+ </class>
+</hibernate-mapping>

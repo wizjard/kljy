@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.outoremergency.entity">
+	<!-- 门诊病人映射 -->
+	<class name="OutOrMergencyCase" table="t_OutOrMergencyCase">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="outCount"/>
+        <property name="outType"/>
+        <property name="outTime"/>
+        <property name="outFollowTimes"/>
+        <property name="outFollowCycle"/>
+        <property name="outFollowContent"/>
+        <property name="outNoticeDate"/>
+        <property name="outReserveDate"/>
+        <property name="outPlanDate"/>
+        <property name="biaoben"/>
+        <property name="outMainDoctor"/>
+        <property name="patientId"/>
+        <property name="actdate"/>
+        <property name="outRegno"/>
+        <property name="outDeptcode"/>
+        <property name="outDeptname"/>
+        <property name="groupName"/>
+        <property name="memo"/>
+        <property name="outTitle"/>
+        <property name="outContent"/>
+        <property name="outSubmiter"/>
+        <property name="outSubmitTime"/>
+        <property name="outChecker"/>
+        <property name="outCheckTime"/>
+        <property name="outVerifyStatus"/>
+        <property name="outOldOperation"/>
+        <property name="outModifyTime"/>
+        <property name="outWriteTime"/>
+        <property name="outSuiFangStartTime"/>
+        <property name="planIds"/>
+        <property name="planItemIds"/>
+        <property name="planItems"/>
+	</class>
+	<class name="YiZhou" table="t_yizhou">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+        <property name="ptno"/>
+        <property name="indate"/>
+        <property name="bdate"/>
+        <property name="insertid"/>
+        <property name="drname"/>
+        <property name="ordercode"/>
+        <property name="ordername"/>
+        <property name="plusname"/>
+        <property name="jsqty"/>
+        <property name="unit"/>
+	</class>
+</hibernate-mapping>

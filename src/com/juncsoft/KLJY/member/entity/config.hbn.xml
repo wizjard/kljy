@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.member.entity">
+	<class name="Member" table="t_Member">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId"/>
+		<property name="caseId"/>
+		<property name="memberNo"/>
+		<property name="account"/>
+		<property name="password"/>
+		<property name="inDate"/>
+		<property name="memo"/>
+		<property name="memberType"/>
+		<property name="memberStatus"/>
+	</class>
+	<class name="MemberFirstGroup" table="t_Member_FirstGroup">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="memberGroupId"/>
+		<property name="startDate"/>
+		<property name="checkName"/>
+		<property name="checkCycle"/>
+	</class>
+</hibernate-mapping>

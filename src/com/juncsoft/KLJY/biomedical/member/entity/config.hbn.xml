@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.biomedical.member.entity">
+	<class name="HealthRecord" table="HealthRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="registDate"/>
+		<property name="symptom"/>
+		<property name="shiliang"/>
+		<property name="shuimian"/>
+		<property name="tizhong"/>
+		<property name="jingshen"/>
+		<property name="niaoliang"/>
+		<property name="dabian"/>
+		<property name="yanbian"/>
+		<property name="zhiliao"/>
+		<property name="haozhuan"/>
+		<property name="jiuzhen"/>
+		<many-to-one name="mem" class="com.juncsoft.KLJY.biomedical.entity.MemberInfo" cascade="none">
+			<column name="memberNo"></column>
+		</many-to-one>
+	</class>
+	<class name="MemberMsg" table="MemberMsg">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="askTime"/>
+		<property name="ask"/>
+		<property name="ward"/>
+		<property name="answerDate"/>
+		<property name="answer"/>
+		<property name="doctor"/>
+		<many-to-one name="mem" class="com.juncsoft.KLJY.biomedical.entity.MemberInfo" cascade="none" fetch="join">
+			<column name="memberNo"></column>
+		</many-to-one>
+		<many-to-one name="hr" class="com.juncsoft.KLJY.biomedical.member.entity.HealthRecord" cascade="none" fetch="join">
+			<column name="hrId"></column>
+		</many-to-one>
+	</class>
+	<class name="MemberUploadFile" table="MemberUploadFile">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="uploadTime"/>
+		<property name="fileName"/>
+		<property name="fileSaveName"/>
+		<property name="fileSize"/>
+		<property name="memo"/>
+		<many-to-one name="mem" class="com.juncsoft.KLJY.biomedical.entity.MemberInfo" cascade="none" fetch="join">
+			<column name="memberNo"></column>
+		</many-to-one>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+<session-factory>
+	
+	<property name="connection.datasource">java:comp/env/jdbc/juncsoftDB</property>
+	
+	<property name="dialect">
+		org.hibernate.dialect.SQLServerDialect
+	</property>
+	
+	<property name="show_sql">false</property>
+	<property name="format_sql">false</property>
+	
+	<!-- 系统模块实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/system/module/entity/config.hbn.xml"/>
+	<!-- Common模块实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/Public/entity/config.hbn.xml"/>
+	<!-- 字典实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/system/dict/entity/config.hbn.xml"/>
+	<!-- 用户实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/user/entity/config.hbn.xml"/>
+	<!-- 病人实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/patient/entity/config.hbn.xml"/>
+	
+	<!-- 住院病历主表实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/CaseMaster/entity/config.hbn.xml"/>
+	<!-- 默认普通住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Default/entity/config.hbn.xml"/>
+	<!-- 肝病住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Liver/entity/config.hbn.xml"/>
+	<!-- 中医住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/TraditionalChineseMedical/entity/config.hbn.xml"/>
+	<!-- 耳鼻喉科住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/ENT/entity/config.hbn.xml"/>
+	<!-- 口腔科住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Mouth/entity/config.hbn.xml"/>
+	<!-- 外科住院病历实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Surgery/entity/config.hbn.xml"/>
+	<!-- 病程记录实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/CourseRecording/entity/config.hbn.xml"/>
+	
+	<!-- 课题实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/system/Research/entity/config.hbn.xml"/>
+	<!-- 病人入选课题及随访映射 -->
+	<mapping resource="com/juncsoft/KLJY/ResearchFollowup/entity/config.hbn.xml"/>
+	<!-- 会员分组随访模板实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/system/MemberGroup/config.hbn.xml"/>
+	<!-- 阳性症状检测表-->
+	<mapping resource="com/juncsoft/KLJY/followVisit/entity/config.hbn.xml"/>
+	<!-- 会员-->
+	<mapping resource="com/juncsoft/KLJY/member/entity/config.hbn.xml"/>
+	
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Liver/PresentHistory/config.hbn.xml" />
+	
+	<!-- 麻醉科实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Anaesthetization/entity/anaesthetizationRec.hbn.xml"/>
+	
+	<!-- 新生儿实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/BabyRec/entity/config.hbn.xml"/>
+	
+	<!-- 检查报告实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/CheckReport/entity/config.hbn.xml"/>
+	
+	<!-- 病案首页 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/HistoryIndexPage/entity/config.hbn.xml" />
+	
+	<!-- 申请单 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Apply/entity/config.hbn.xml" />
+	<!-- 生物医学中心 -->
+	<mapping resource="com/juncsoft/KLJY/biomedical/entity/config.hbn.xml" />
+	<mapping resource="com/juncsoft/KLJY/biomedical/member/entity/config.hbn.xml" />
+	<!-- 评分表 -->
+	<mapping
+		resource="com/juncsoft/KLJY/InHospitalCase/pitemScore/ItemScore/entity/config.hbn.xml" />
+	<!-- 公告管理 -->
+	<mapping resource="com/juncsoft/KLJY/system/notice/entity/config.hbn.xml"/>
+	<mapping resource="com/juncsoft/KLJY/system/picture/entity/config.hbn.xml"/>
+	
+	<!-- 最新现病史 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Liver/PresentHistoryNew/config.hbn.xml"/>
+	<!--十二分级诊断-->
+	<!-- 眼科检查 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Eye/entity/config.hbn.xml"/>
+	<!-- 眼科检查 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/GradingDiag/entity/config.hbn.xml"/>
+	
+	<!-- 门诊病人实体映射 -->
+	<mapping resource="com/juncsoft/KLJY/outoremergency/entity/config.hbn.xml"/>
+	<!--外网病人 和医生网上留言 -->
+	<mapping resource="com/juncsoft/KLJY/patientanddoctoroperator/entity/config.hbn.xml"/>
+	<!-- 新增会员组别，会员责任制划分 -->
+	<mapping resource="com/juncsoft/KLJY/membergrounp/entity/config.hbn.xml"/>
+	<!-- 麦迪 瑞科 -->
+	<mapping resource="com/juncsoft/KLJY/plan/entity/config.hbn.xml"/>
+	<mapping resource="com/juncsoft/KLJY/checkreport/entity/config.hbn.xml"/>
+	
+	<!-- 短信管理 -->
+	<mapping resource="com/juncsoft/KLJY/message/entity/config.hbn.xml"/>
+	
+	<!-- 艾滋病史 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/aids/entity/config.hbn.xml"/>
+	
+	<!-- 发热病史 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/Fever/PresentHistoryNew/config.hbn.xml"/>
+
+	<!-- 甲流病史 -->
+	<mapping resource="com/juncsoft/KLJY/InHospitalCase/H1N1/entity/config.hbn.xml"/>
+</session-factory>
+
+</hibernate-configuration>

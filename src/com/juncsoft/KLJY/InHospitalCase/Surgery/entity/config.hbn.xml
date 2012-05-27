@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<!-- 专科检查 -->
+	<class name="com.juncsoft.KLJY.InHospitalCase.Surgery.entity.SpecialExamination" table="t_InHsp_Surgery_SpecialExamination">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="specialExamOther"/>
+		<property name="fubu_waixing"/>
+		<property name="fubu_huxi"/>
+		<property name="fubu_jingmai"/>
+		<property name="fubu_shizhen_o"/>
+		<property name="fubu_shizhen_oDesc"/>
+		<property name="fubu_fubi"/>
+		<property name="fubu_jijzh"/>
+		<property name="fubu_yatong"/>
+		<property name="fubu_fantt"/>
+		<property name="fubu_fubi0"/>
+		<property name="fubu_jijzh0"/>
+		<property name="fubu_yatong0"/>
+		<property name="fubu_fantt0"/>
+		<property name="fubu_baokuai"/>
+		<property name="fubu_baokuaiDesc"/>
+		<property name="fubu_yebo"/>
+		<property name="fubu_zhenshui"/>
+		<property name="fubu_murphy"/>
+		<property name="fubu_ganzang"/>
+		<property name="fubu_ganzangDesc"/>
+		<property name="fubu_dannang"/>
+		<property name="fubu_dannangDesc"/>
+		<property name="fubu_pi"/>
+		<property name="fubu_piDesc"/>
+		<property name="fubu_shen"/>
+		<property name="fubu_shenDesc"/>
+		<property name="fubu_ganzhuo"/>
+		<property name="fubu_ganqukt"/>
+		<property name="fubu_shenkt"/>
+		<property name="fubu_ganshangjie"/>
+		<property name="fubu_yidong"/>
+		<property name="fubu_fushui"/>
+		<property name="fubu_changming"/>
+		<property name="fubu_qishui"/>
+		<property name="fubu_xueguan"/>
+		<property name="fubu_xueguanDesc"/>
+ 	</class>
+</hibernate-mapping>

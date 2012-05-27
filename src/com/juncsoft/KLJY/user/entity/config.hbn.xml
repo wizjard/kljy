@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.user.entity">
+	<class name="User" table="t_User">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name"/>
+		<property name="account"/>
+		<property name="password"/>
+		<property name="birthday"/>
+		<property name="sex"/>
+		<property name="phoneNo"/>
+		<property name="email"/>
+		<property name="selfMemo"/>
+		<property name="valid"/>
+		<property name="role"/>
+		<property name="belong"/>
+		<property name="createDate"/>
+		<property name="modifyDate"/>
+		<property name="unkown1"/>
+		<property name="deptcode"/>
+		<property name="deptcodename"/>
+		<property name="drdept1"/>
+		<property name="drdeptname1"/>
+		<property name="drdept2"/>
+		<property name="drdeptname2"/>
+		<property name="drdept3"/>
+		<property name="drdeptname3"/>
+		<property name="drdept4"/>
+		<property name="drdeptname4"/>
+		<property name="drdept5"/>
+		<property name="drdeptname5"/>
+		<property name="hisDoctorId"/>
+		<property name="gbjaejik"/>
+		<property name="drgrade"/>
+		<property name="vestdept"/>
+		<property name="gbspc"/>
+		<property name="gbjupsu"/>
+		<property name="hisPassword"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.InHospitalCase.CourseRecording.entity">
+	<!-- 日常病程实体映射 -->
+	<class name="DailyCourseRec" table="t_CourseRec_DailyCourseRec">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="patientId"/>
+		<property name="time"/>
+		<property name="title"/>
+		<property name="content"/>
+		<property name="submiter"/>
+		<property name="submitTime"/>
+		<property name="checker"/>
+		<property name="checkTime"/>
+		<property name="verifyStatus"/>
+		<property name="createTime"/>
+		<property name="modifyTime"/>
+		<property name="oldOperation"/>
+	</class>
+	<!-- 会诊记录实体映射 -->
+	<class name="Consultation" table="t_CourseRec_Consultation">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="patientNo"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="ward"/>
+		<property name="bedNo"/>
+		<property name="apptime"/>
+		<property name="conLv"/>
+		<property name="appward"/>
+		<property name="simpleCase"/>
+		<property name="conTarget"/>
+		<property name="conAdv"/>
+		<property name="recName"/>
+		<property name="rectime"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+		<!-- ========新增属性09-09============== -->
+		<property name="appDoctors"/>
+		<property name="superDoctors"/>
+		<property name="invitedWard"/>
+		<property name="invitedDoctors"/>
+		<property name="conTarget0"/>
+	</class>
+	<!-- 术前小结实体映射 -->
+	<class name="PreviousSurgerySummary" table="t_CourseRec_PreviousSurgerySummary">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="inhspTime"/>
+		<property name="diag"/>
+		<property name="diagBasis"/>
+		<property name="planSurgery"/>
+		<property name="surgerySysptom"/>
+		<property name="anesthesiaMode"/>
+		<property name="surgeryTime"/>
+		<property name="surgeryPrevPrepar"/>
+		<property name="surgeryAttention"/>
+		<property name="surgeryAfterDeal"/>
+		<property name="recName"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+	</class>
+	<!-- 术前病历讨论实体映射 -->
+	<class name="PreviousCaseDiscuss" table="t_CourseRec_PreviousCaseDiscuss">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="inhspTime"/>
+		<property name="discussTime"/>
+		<property name="joinPerson"/>
+		<property name="discussPlace"/>
+		<property name="chairPerson"/>
+		<property name="discussSubject"/>
+		<property name="discussContent"/>
+		<property name="surgeryName"/>
+		<property name="recName"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+	</class>
+	<!-- 手术记录实体映射 -->
+	<class name="SurgeryRecord" table="t_CourseRec_SurgeryRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="bedNo"/>
+		<property name="operatingRoom"/>
+		<property name="previousSurgeryDiag"/>
+		<property name="afterSurgeryDiag"/>
+		<property name="surgeryAdapt"/>
+		<property name="surgeryName"/>
+		<property name="surgeryDocName"/>
+		<property name="surgeryAssistant1"/>
+		<property name="surgeryAssistant2"/>
+		<property name="surgeryFromTime"/>
+		<property name="surgeryToTime"/>
+		<property name="anesthesiaMode"/>
+		<property name="washNurse"/>
+		<property name="aroundNurse"/>
+		<property name="bleedingVolumn"/>
+		<property name="transBloodVolumn"/>
+		<property name="surgeryProcess"/>
+		<property name="surgeryResultSample"/>
+		<property name="sample2Pathology"/>
+		<property name="sampleNum"/>
+		<property name="anesthesiaEffect"/>
+		<property name="surgeryDocSign"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+	</class>
+	<!-- 死亡记录实体映射 -->
+	<class name="DeathRecord" table="t_CourseRec_DeathRecord">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="ward"/>
+		<property name="inhspTime"/>
+		<property name="deathTime"/>
+		<property name="inhspDiag"/>
+		<property name="deathDiag"/>
+		<property name="pathologyDiag"/>
+		<property name="deathDiag2"/>
+		<property name="deathDiag3"/>
+		<property name="deathDiag4"/>
+		<property name="deathDiag5"/>
+		<property name="deathDiag6"/>
+		<property name="deathDiag7"/>
+		<property name="deathDiag8"/>
+		<property name="deathDiag9"/>
+		<property name="deathDiag10"/>
+		<property name="deathDiag11"/>
+		<property name="deathDiag12"/>
+		<property name="deathDiag13"/>
+		<property name="deathDiag14"/>
+		<property name="deathDiag15"/>
+		<property name="deathDiag16"/>
+		<property name="deathDiag17"/>
+		<property name="deathDiag18"/>
+		<property name="deathDiag19"/>
+		<property name="deathDiag20"/>
+		<property name="deathDiag21"/>
+		<property name="deathDiag22"/>
+		<property name="deathDiag23"/>
+		<property name="deathDiag24"/>
+		<property name="deathDiag25"/>
+		<property name="deathDiag26"/>
+		<property name="deathDiag27"/>
+		<property name="deathDiag28"/>
+		<property name="deathDiag29"/>
+		<property name="deathDiag30"/>
+		<property name="caseSummary"/>
+		<property name="treatDocName"/>
+		<property name="inhspDocName"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+		<!-- 新增入院情况 09-13-->
+		<property name="inHspStatu"/>
+	</class>
+	<!-- 死亡病历讨论记录实体映射 -->
+	<class name="DeathCaseDiscuss" table="t_CourseRec_DeathCaseDiscuss">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="time"/>
+		<property name="name"/>
+		<property name="gender"/>
+		<property name="age"/>
+		<property name="ward"/>
+		<property name="discussTime"/>
+		<property name="joinPerson"/>
+		<property name="discussPlace"/>
+		<property name="chairPerson"/>
+		<property name="caseSummary"/>
+		<property name="discussContent"/>
+		<property name="deathReason"/>
+		<property name="deathDiag"/>
+		<property name="discussResult"/>
+		<property name="recName"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+	</class>
+	<!-- 24小时出入院记录 -->
+	<class name="InHspRec24" table="t_CourseRec_InHspRec24">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="age"/>
+		<property name="time"/>
+		<property name="inhspTime"/>
+		<property name="outhspTime"/>
+		<property name="narrator"/>
+		<property name="narrator0"/>
+		<property name="reliability"/>
+		<property name="chiefComplaint"/>
+		<property name="inHspStatu"/>
+		<property name="inHspDiag"/>
+		
+		<property name="outHspDiag"/>
+		<property name="outHspDiag2"/>
+		<property name="outHspDiag3"/>
+		<property name="outHspDiag4"/>
+		<property name="outHspDiag5"/>
+		<property name="outHspDiag6"/>
+		<property name="outHspDiag7"/>
+		<property name="outHspDiag8"/>
+		<property name="outHspDiag9"/>
+		<property name="outHspDiag10"/>
+		<property name="outHspDiag11"/>
+		<property name="outHspDiag12"/>
+		<property name="outHspDiag13"/>
+		<property name="outHspDiag14"/>
+		<property name="outHspDiag15"/>
+		<property name="outHspDiag16"/>
+		<property name="outHspDiag17"/>
+		<property name="outHspDiag18"/>
+		<property name="outHspDiag19"/>
+		<property name="outHspDiag20"/>
+		<property name="outHspDiag21"/>
+		<property name="outHspDiag22"/>
+		<property name="outHspDiag23"/>
+		<property name="outHspDiag24"/>
+		<property name="outHspDiag25"/>
+		<property name="outHspDiag26"/>
+		<property name="outHspDiag27"/>
+		<property name="outHspDiag28"/>
+		<property name="outHspDiag29"/>
+		<property name="outHspDiag30"/>
+		
+		<property name="treatProcess"/>
+		<property name="outHspStatu"/>
+		<property name="outHspOrder"/>
+		<property name="recName"/>
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+	</class>
+	<!-- 24小时入院死亡记录 -->
+	<class name="InHspDied24" table="t_CourseRec_InHspDied24">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="caseId"/>
+		<property name="age"/>
+		<property name="time"/>
+		<property name="inhspTime"/>
+		<property name="outhspTime"/>
+		<property name="narrator"/>
+		<property name="narrator0"/>
+		<property name="reliability"/>
+		<property name="chiefComplaint"/>
+		<property name="inHspStatu"/>
+		<property name="inHspDiag"/>
+		
+		<property name="treatProcess"/>
+		<property name="diedReason"/>
+		
+		
+
+		<property name="submiter"/>
+		<property name="checker"/>
+		<property name="verifyStatus"/>
+		
+		<property name="mainDoctor"/>
+		<property name="inhspDoctor"/>
+		
+		<property name="diedOrder"/>
+		<property name="diedOrder2"/>
+		<property name="diedOrder3"/>
+		<property name="diedOrder4"/>
+		<property name="diedOrder5"/>
+		<property name="diedOrder6"/>
+		<property name="diedOrder7"/>
+		<property name="diedOrder8"/>
+		<property name="diedOrder9"/>
+		<property name="diedOrder10"/>
+		<property name="diedOrder11"/>
+		<property name="diedOrder12"/>
+		<property name="diedOrder13"/>
+		<property name="diedOrder14"/>
+		<property name="diedOrder15"/>
+		<property name="diedOrder16"/>
+		<property name="diedOrder17"/>
+		<property name="diedOrder18"/>
+		<property name="diedOrder19"/>
+		<property name="diedOrder20"/>
+		<property name="diedOrder21"/>
+		<property name="diedOrder22"/>
+		<property name="diedOrder23"/>
+		<property name="diedOrder24"/>
+		<property name="diedOrder25"/>
+		<property name="diedOrder26"/>
+		<property name="diedOrder27"/>
+		<property name="diedOrder28"/>
+		<property name="diedOrder29"/>
+		<property name="diedOrder30"/>
+		
+	</class>
+	<!-- 查房记录实体映射 -->
+	<class name="WardRoundRec" table="t_CourseRec_WardRoundRec">
+		<id column="id" name="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="patientId" column="patientId"/>
+		<property name="time"/>
+		<property name="title"/>
+		<property name="content"/>
+		<property name="submiter"/>
+		<property name="submitTime"/>
+		<property name="checker"/>
+		<property name="checkTime"/>
+		<property name="verifyStatus"/>
+		<property name="createTime"/>
+		<property name="modifyTime"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.juncsoft.KLJY.message.entity">
+
+	<class name = "Message" table = "t_Message">
+		<id name = "id" column = "id">
+			<generator class = "native"></generator>
+		</id>
+		
+		<property name = "messageDate"  />
+		<property name = "messageContent" />
+		
+		<many-to-one name="memberInfo" class="com.juncsoft.KLJY.biomedical.entity.MemberInfo" cascade="none" lazy="false" fetch="join">
+			<column name="memberNo"></column>
+		</many-to-one>
+		
+		<many-to-one name="user" class="com.juncsoft.KLJY.user.entity.User" cascade="none"  fetch="join" lazy="false">
+			<column name="account"></column>
+		</many-to-one>
+	</class>
+</hibernate-mapping>
